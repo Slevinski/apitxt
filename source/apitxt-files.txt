@@ -1,0 +1,17 @@
+group	file
+	route	/index.txt	Index as ApiTxt format
+		method	GET	Get the index as ApiTxt format
+			code	getFile('index.txt');
+	route	/index.json	Index as JSON
+		method	GET	Get the index as JSON
+			code	getFile('index.json');
+	route	/index.md	Index as Markdown
+		method	GET	Get the index as Markdowns
+			code	getFile('index.md');
+	route	/index.html	Index as HTML
+		method	GET	Get the index as HTML
+			code	getFile('index.html');
+	route	/	Root as index.html
+		method	GET	Get the index as HTML
+			code	getFile('index.html');
+

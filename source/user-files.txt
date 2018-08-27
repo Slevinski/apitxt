@@ -1,0 +1,6 @@
+group	userfiles
+	route	/user/	Root as index.html
+		method	GET	Get the index as HTML
+			code	getFile('api/user.html');
+			response	200	text/plain
+				line	index.html file contents here

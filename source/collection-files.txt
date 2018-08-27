@@ -1,0 +1,6 @@
+group	collectionfiles
+	route	/collection/	Root as collection.html
+		method	GET	Get the collection as HTML
+			code	getFile('api/collection.html');
+			response	200	text/plain
+				line	collection.html file contents here

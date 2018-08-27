@@ -1,0 +1,88 @@
+root	collection	SignPuddle Collection API	https://signpuddle.net/v3
+	line	> v3.0.0
+	line	
+	line	+ [txt](../src/collection.txt) - ApiTxt format
+	line	+ [json](../src/collection.json) - array of JSON objects
+	line	+ [html](../api/collection.html) - HTML API Interface
+	line	+ [md](../docs/collection.md) - API Blueprint
+	line	+ [htm](../docs/collection.htm) - Stand Alone HTML
+group	collection	Resources related to making collections
+	route	/collection	Available collections
+		method	GET	Get available languages
+			code	  echo "en\nase";
+			response	200	text/plain
+				line	en
+				line	ase
+	route	/collection/{name}	Collection resource	Access to available collections
+		parameter	name	en-US-interface-sp3	string	The name of a collection
+		method	GET	retrieve collection or available collections
+			code	$check = $app->request->headers->get('If-None-Match');
+			code	$dir = 'data/txt/';
+			code	$ext = '.txt';
+			code	$file = $dir . $name . $ext;
+			code	$err = invalidName($name);
+			code	if ($err){
+			code	  haltBadRequest($err);
+			code	}
+			code	if(file_exists($file)) {
+			code	  $md5 = md5_file($file);
+			code	  $app->response->headers->set('ETag', $md5);
+			code	  if ($md5 == $check){
+			code	    haltNotModified();
+			code	  }
+			code	  getFile($file);
+			code	} else {
+			code	  $out = [];
+			code	  foreach (glob($file) as $filename) {
+			code	    $out[] = str_replace($ext,'',str_replace($dir,'',$filename));
+			code	  }
+			code	  if (count($out)){
+			code	    haltMultipleChoices(implode($out,"\n"));
+			code	  } else {
+			code	    haltNoContent();
+			code	  }
+			code	}
+			request	collection text
+				response	200	text/plain
+					line	print.buttons.main<TAB>message<TAB>description<TAB>icon
+	route	/collection/{name}/md5	Collection resource md5 hash	MD5 hash of collection
+		parameter	name	en-US-interface-sp3	string	The name of a collection
+		method	GET	retrieve collection md5 hash
+			code	$dir = 'data/txt/';
+			code	$ext = '.txt';
+			code	$file = $dir . $name . $ext;
+			code	if (strpos($name,"*")!==false) {
+			code	  $err = invalidNameWild($name);
+			code	  if($err){
+			code	    haltBadRequest($err);
+			code	  }
+			code	  $out = [];
+			code	  foreach (glob($file) as $filename) {
+			code	    $out[] = str_replace($ext,'',str_replace($dir,'',$filename));
+			code	  }
+			code	  if (count($out)){
+			code	    if (count($out)==1) {
+			code	      $app->request->headers->set('Location','/location/' . $out[0] . '/md5');
+			code	      haltSeeOther($out[0]);
+			code	    } else {
+			code	      haltMultipleChoices(implode($out,"\n"));
+			code	    }
+			code	  } else {
+			code	    haltBadRequest("No choices available");
+			code	  }
+			code	} else {
+			code	  $err = invalidName($name);
+			code	  if ($err){
+			code	    haltBadRequest($err);
+			code	  }
+			code	  if(file_exists($file)) {
+			code	    $md5 = md5_file($file);
+			code	    echo $md5;
+			code	  } else {
+			code	    halting(202, md5($name));
+			code	  }
+			code	}
+			request	the md5 hash of a collection
+				header	If-None-Match	af779785a5c3ffd166bc95e6dd530889
+				response	200	text/plain
+					line	9785a5c3ffd166bc95e6dd5308894691

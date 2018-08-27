@@ -1,0 +1,6 @@
+group	fswfiles
+	route	/fsw/	Root as fsw.html
+		method	GET	Get the fsw as HTML
+			code	getFile('api/fsw.html');
+			response	200	text/plain
+				line	fsw.html file contents here

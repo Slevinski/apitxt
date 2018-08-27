@@ -1,0 +1,960 @@
+[
+  {
+    "lines": [
+      "> v3.0.0", 
+      "", 
+      "+ [txt](../src/index.txt) - ApiTxt format", 
+      "+ [json](../src/index.json) - array of JSON objects", 
+      "+ [html](../api/index.html) - HTML API Interface", 
+      "+ [md](../docs/index.md) - API Blueprint", 
+      "+ [htm](../docs/index.htm) - Stand Alone HTML"
+    ], 
+    "host": "https://signpuddle.net/v3", 
+    "meta": "Generated from ApiTxt format (output/index.txt) using txt2json.py", 
+    "root": "index", 
+    "title": "SignPuddle 3"
+  }, 
+  {
+    "group": "tools", 
+    "description": "Resources related to tools"
+  }, 
+  {
+    "route": "/tools/test{?text}", 
+    "lines": [
+      "A general purpose function for testing"
+    ], 
+    "name": "Test with input", 
+    "parameters": [
+      {
+        "description": "Input for testing", 
+        "type": "string", 
+        "name": "text", 
+        "example": "S10000"
+      }
+    ]
+  }, 
+  {
+    "code": [
+      "$timein = microtime(true);", 
+      "$app->contentType('text/plain;charset=utf-8');", 
+      "$test = SignWriting\\test($text);", 
+      "$searchTime = searchtime($timein);", 
+      "header(\"Search-Time: \" . $searchTime);", 
+      "echo $test;"
+    ], 
+    "method": "GET", 
+    "dialog": [
+      {
+        "responses": [
+          {
+            "status": 200, 
+            "lines": [
+              "test output"
+            ], 
+            "type": "text/plain"
+          }
+        ]
+      }
+    ], 
+    "name": "Get test results"
+  }, 
+  {
+    "route": "/tools/define", 
+    "lines": [
+      "The definition tree for character mapping"
+    ], 
+    "name": "Character definition tree"
+  }, 
+  {
+    "code": [
+      "$timein = microtime(true);", 
+      "$app->contentType('text/plain;charset=utf-8');", 
+      "$define = SignWriting\\define();", 
+      "$searchTime = searchtime($timein);", 
+      "header(\"Search-Time: \" . $searchTime);", 
+      "echo json_pretty($define);"
+    ], 
+    "method": "GET", 
+    "dialog": [
+      {
+        "responses": [
+          {
+            "status": 200, 
+            "lines": [
+              "{", 
+              "  \"utf-8\": {},", 
+              "  \"utf-16\": {},", 
+              "  \"utf-32\": {},", 
+              "  \"fsw\": {},", 
+              "  \"swu\": {},", 
+              "  \"style\": {}", 
+              "}"
+            ], 
+            "type": "text/plain"
+          }
+        ]
+      }
+    ], 
+    "name": "Get main define"
+  }, 
+  {
+    "route": "/tools/define/{section}", 
+    "lines": [
+      "A section of the definition tree"
+    ], 
+    "name": "Section definition", 
+    "parameters": [
+      {
+        "description": "The name of section", 
+        "type": "string", 
+        "name": "section", 
+        "example": "fsw"
+      }
+    ]
+  }, 
+  {
+    "code": [
+      "global $regex_define;", 
+      "if ($section == \"regex\"){", 
+      "  return $regex_define();", 
+      "}", 
+      "global $sample_define;", 
+      "if ($section == \"sample\"){", 
+      "  return $sample_define();", 
+      "}", 
+      "$timein = microtime(true);", 
+      "$app->contentType('text/plain;charset=utf-8');", 
+      "$define = SignWriting\\define($section);", 
+      "$searchTime = searchtime($timein);", 
+      "header(\"Search-Time: \" . $searchTime);", 
+      "echo json_pretty($define);"
+    ], 
+    "method": "GET", 
+    "dialog": [
+      {
+        "responses": [
+          {
+            "status": 200, 
+            "lines": [
+              "{", 
+              "  \"sign\": [],", 
+              "  \"spatial\": [],", 
+              "  \"symbol\": [],", 
+              "  \"coord\": [],", 
+              "  \"prefix\": [],", 
+              "  \"box\": [],", 
+              "  \"query\": []", 
+              "}"
+            ], 
+            "type": "text/plain"
+          }
+        ]
+      }
+    ], 
+    "name": "Get section define"
+  }, 
+  {
+    "route": "/tools/define/{section}/{part}", 
+    "lines": [
+      "A part of the section definition"
+    ], 
+    "name": "Part definition", 
+    "parameters": [
+      {
+        "description": "The name of section", 
+        "type": "string", 
+        "name": "section", 
+        "example": "swu"
+      }, 
+      {
+        "description": "The part of the definition", 
+        "type": "string", 
+        "name": "part", 
+        "example": "symbol"
+      }
+    ]
+  }, 
+  {
+    "code": [
+      "$timein = microtime(true);", 
+      "$app->contentType('text/plain;charset=utf-8');", 
+      "$define = SignWriting\\define($section,$part);", 
+      "$searchTime = searchtime($timein);", 
+      "header(\"Search-Time: \" . $searchTime);", 
+      "echo json_pretty($define);"
+    ], 
+    "method": "GET", 
+    "dialog": [
+      {
+        "responses": [
+          {
+            "status": 200, 
+            "lines": [
+              "[", 
+              "  \"individual symbol\",", 
+              "  \"S10000\",", 
+              "  \"[\\\\x{40000}-\\\\x{4F428}]\"", 
+              "]"
+            ], 
+            "type": "text/plain"
+          }
+        ]
+      }
+    ], 
+    "name": "Get part define"
+  }, 
+  {
+    "route": "/tools/parse{?text,utf}", 
+    "lines": [
+      "A function to analyze text and parse it into individual components"
+    ], 
+    "name": "Parse text", 
+    "parameters": [
+      {
+        "description": "The text to parse", 
+        "type": "string", 
+        "name": "text", 
+        "example": "S10000"
+      }, 
+      {
+        "description": "The UTF number of 8, 16, 32 or 'x'", 
+        "type": "string", 
+        "name": "utf", 
+        "example": "32"
+      }
+    ]
+  }, 
+  {
+    "code": [
+      "$timein = microtime(true);", 
+      "if (!in_array($utf,[8,16,32,'x'])){", 
+      "  $utf = 16;", 
+      "}", 
+      "$app->contentType('text/plain;charset=utf-8');", 
+      "$parse = SignWriting\\parse($text);", 
+      "$searchTime = searchtime($timein);", 
+      "header(\"Search-Time: \" . $searchTime);", 
+      "$json = json_pretty($parse);", 
+      "echo SignWriting\\cast($json,$utf);"
+    ], 
+    "method": "GET", 
+    "dialog": [
+      {
+        "responses": [
+          {
+            "status": 200, 
+            "lines": [
+              "parse results of text"
+            ], 
+            "type": "text/plain"
+          }
+        ]
+      }
+    ], 
+    "name": "Get parse results"
+  }, 
+  {
+    "route": "/tools/encode{?text,slash}", 
+    "lines": [
+      "A function to encode SignWriting in Unicode (SWU) as UTF-16"
+    ], 
+    "name": "Encode text", 
+    "parameters": [
+      {
+        "description": "The text to encode", 
+        "type": "string", 
+        "name": "text", 
+        "example": "\\x{1D800}"
+      }, 
+      {
+        "description": "The number of slashes for escaping", 
+        "type": "number", 
+        "name": "slash", 
+        "example": "1"
+      }
+    ]
+  }, 
+  {
+    "code": [
+      "$timein = microtime(true);", 
+      "$app->contentType('text/plain;charset=utf-8');", 
+      "$encode = SignWriting\\encode($text,$slash);", 
+      "$searchTime = searchtime($timein);", 
+      "header(\"Search-Time: \" . $searchTime);", 
+      "echo $encode;"
+    ], 
+    "method": "GET", 
+    "dialog": [
+      {
+        "responses": [
+          {
+            "status": 200, 
+            "lines": [
+              "\\uD836\\uDC00"
+            ], 
+            "type": "text/plain"
+          }
+        ]
+      }
+    ], 
+    "name": "Get encoded query string"
+  }, 
+  {
+    "route": "/tools/decode{?text}", 
+    "lines": [
+      "A function to decode SignWriting in Unicode (SWU) from UTF-16"
+    ], 
+    "name": "Decode text", 
+    "parameters": [
+      {
+        "description": "The text to decode", 
+        "type": "string", 
+        "name": "text", 
+        "example": "\\\\uD836\\\\uDC00"
+      }
+    ]
+  }, 
+  {
+    "code": [
+      "$timein = microtime(true);", 
+      "$app->contentType('text/plain;charset=utf-8');", 
+      "$decode = SignWriting\\decode($text);", 
+      "$searchTime = searchtime($timein);", 
+      "header(\"Search-Time: \" . $searchTime);", 
+      "echo $decode;"
+    ], 
+    "method": "GET", 
+    "dialog": [
+      {
+        "responses": [
+          {
+            "status": 200, 
+            "lines": [
+              "\\x{1D800}"
+            ], 
+            "type": "text/plain"
+          }
+        ]
+      }
+    ], 
+    "name": "Get decoded query string"
+  }, 
+  {
+    "route": "/tools/utf8{?text}", 
+    "name": "UTF-8 encode text", 
+    "parameters": [
+      {
+        "description": "The text to encode", 
+        "type": "string", 
+        "name": "text", 
+        "example": "\\x{1D800}"
+      }
+    ]
+  }, 
+  {
+    "code": [
+      "$timein = microtime(true);", 
+      "$app->contentType('text/plain;charset=utf-8');", 
+      "", 
+      "$encode = SignWriting\\utf8($text);", 
+      "$searchTime = searchtime($timein);", 
+      "header(\"Search-Time: \" . $searchTime);", 
+      "echo $encode;"
+    ], 
+    "method": "GET", 
+    "dialog": [
+      {
+        "responses": [
+          {
+            "status": 200, 
+            "lines": [
+              "%F0%9D%A0%80"
+            ], 
+            "type": "text/plain"
+          }
+        ]
+      }
+    ], 
+    "name": "Get utf-8 encoded query string"
+  }, 
+  {
+    "group": "fsw", 
+    "description": "Resources related to Formal SignWriting in ASCII (FSW)"
+  }, 
+  {
+    "route": "/fsw{?text,style}", 
+    "name": "FSW Word", 
+    "parameters": [
+      {
+        "description": "The name of sign", 
+        "type": "string", 
+        "name": "text", 
+        "example": "AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520"
+      }, 
+      {
+        "description": "Flag to include styling string", 
+        "type": "boolean,optional", 
+        "name": "style", 
+        "example": "true"
+      }
+    ]
+  }, 
+  {
+    "code": [
+      "$timein = microtime(true);", 
+      "$fsw = SignWriting\\fsw($text,$style);", 
+      "$searchTime = searchtime($timein);", 
+      "header(\"Search-Time: \" . $searchTime);", 
+      "echo $fsw;"
+    ], 
+    "method": "GET", 
+    "dialog": [
+      {
+        "request": {
+          "name": "one Formal SignWriting in ASCII string"
+        }, 
+        "responses": [
+          {
+            "status": 200, 
+            "lines": [
+              "AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520"
+            ], 
+            "type": "text/plain;charset=utf-8"
+          }
+        ]
+      }
+    ], 
+    "name": "first FSW string"
+  }, 
+  {
+    "route": "/fsw/all{?text,style}", 
+    "name": "FSW Text", 
+    "parameters": [
+      {
+        "description": "The name of sign", 
+        "type": "string", 
+        "name": "text", 
+        "example": "AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520"
+      }, 
+      {
+        "description": "Flag to include styling string", 
+        "type": "number", 
+        "name": "style", 
+        "example": "1"
+      }
+    ]
+  }, 
+  {
+    "code": [
+      "$timein = microtime(true);", 
+      "$fsw = SignWriting\\fswAll($text,$style);", 
+      "$searchTime = searchtime($timein);", 
+      "header(\"Search-Time: \" . $searchTime);", 
+      "echo $fsw;"
+    ], 
+    "method": "GET", 
+    "dialog": [
+      {
+        "request": {
+          "name": "many Formal SignWriting in ASCII string"
+        }, 
+        "responses": [
+          {
+            "status": 200, 
+            "lines": [
+              "AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520"
+            ], 
+            "type": "text/plain;charset=utf-8"
+          }
+        ]
+      }
+    ], 
+    "name": "all FSW strings"
+  }, 
+  {
+    "route": "/fsw/swu{?text}", 
+    "name": "FSW to SWU", 
+    "parameters": [
+      {
+        "description": "The name of sign", 
+        "type": "string", 
+        "name": "text", 
+        "example": "AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520"
+      }
+    ]
+  }, 
+  {
+    "code": [
+      "$timein = microtime(true);", 
+      "$swu = SignWriting\\fsw2swu($text);", 
+      "$app->contentType('text/plain;charset=utf-8');", 
+      "$searchTime = searchtime($timein);", 
+      "header(\"Search-Time: \" . $searchTime);", 
+      "echo $swu;"
+    ], 
+    "method": "GET", 
+    "dialog": [
+      {
+        "request": {
+          "name": "original text with Formal SignWriting in ASCII inside"
+        }, 
+        "responses": [
+          {
+            "status": 200, 
+            "lines": [
+              "AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520"
+            ], 
+            "type": "text/plain;charset=utf-8"
+          }
+        ]
+      }
+    ], 
+    "name": "text with FSW strings"
+  }, 
+  {
+    "route": "/fsw/svg/{text}", 
+    "lines": [
+      "Create a stand-alone SVG image using Formal SignWriting in ASCII (FSW)"
+    ], 
+    "name": "SVG image", 
+    "parameters": [
+      {
+        "description": "The name of sign", 
+        "type": "string", 
+        "name": "text", 
+        "example": "AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520"
+      }
+    ]
+  }, 
+  {
+    "code": [
+      "$timein = microtime(true);", 
+      "$req = $app->request();", 
+      "if ($req->get('throwStatus')=='500') {haltNoDatabase();}", 
+      "$app->contentType('image/svg+xml;charset=utf-8');", 
+      "$svg = SignWriting\\svg($text);", 
+      "$searchTime = searchtime($timein);", 
+      "header(\"Search-Time: \" . $searchTime);", 
+      "echo $svg;"
+    ], 
+    "method": "GET", 
+    "dialog": [
+      {
+        "request": {
+          "name": "collection text"
+        }, 
+        "responses": [
+          {
+            "status": 200, 
+            "lines": [
+              "<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" width=\"39\" height=\"64\" viewBox=\"482 483 39 64\">", 
+              "  <text style=\"font-size:0%;\">AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520</text>", 
+              "  <svg x='482' y='483'><g transform=\"translate(0.149874875465,34.7500790925) scale(0.00988906872676,-0.00988956850125)\"><path class=\"sym-line\" fill=\"black\" d=\"M1528 3484 c-592 -92 -1088 -447 -1348 -963 -125 -249 -180 -485 -180 -771 0 -480 183 -911 529 -1242 350 -336 780 -508 1271 -508 451 0 864 150 1193 434 326 281 517 620 591 1051 21 121 21 409 0 530 -43 252 -114 444 -237 639 -282 453 -741 750 -1284 831 -127 19 -413 18 -535 -1z m607 -173 c583 -126 1038 -523 1224 -1069 59 -173 75 -277 75 -492 0 -165 -3 -211 -22 -300 -71 -327 -228 -611 -458 -829 -186 -177 -381 -295 -614 -374 -176 -60 -282 -78 -490 -84 -247 -7 -416 19 -628 97 -549 201 -944 674 -1043 1250 -17 97 -17 383 0 480 99 576 495 1050 1043 1250 105 38 177 58 303 81 143 26 467 21 610 -10z M1720 1800 l0 -600 80 0 80 0 0 600 0 600 -80 0 -80 0 0 -600z\"/></g></svg>", 
+              "  <svg x='506' y='500'><g transform=\"translate(0.0,15.0) scale(0.01,-0.01)\"><path class=\"sym-fill\" fill=\"white\" d=\"M200 750 l0 -550 300 0 300 0 0 550 0 550 -300 0 -300 0 0 -550z\"/><path class=\"sym-line\" fill=\"black\" d=\"M0 750 l0 -750 750 0 750 0 0 750 0 750 -750 0 -750 0 0 -750z m800 0 l0 -550 -300 0 -300 0 0 550 0 550 300 0 300 0 0 -550z\"/></g></svg>", 
+              "  <svg x='503' y='520'><g transform=\"translate(0.196840829729,26.6999810561) scale(0.00975214136907,-0.00983390502079)\"><path class=\"sym-line\" fill=\"black\" d=\"M345 2350 l-350 -350 325 -325 325 -325 -325 -325 -325 -325 353 -353 352 -352 0 303 0 302 350 0 350 0 0 100 0 100 -350 0 -350 0 0 550 0 550 350 0 350 0 0 100 0 100 -350 0 -350 0 -2 300 -3 300 -350 -350z M1600 1350 l0 -1350 100 0 100 0 0 1350 0 1350 -100 0 -100 0 0 -1350z\"/></g></svg>", 
+              "</svg>"
+            ], 
+            "type": "image/svg+xml;charset=utf-8"
+          }
+        ]
+      }
+    ], 
+    "name": "retrieve stand-alone SVG image"
+  }, 
+  {
+    "route": "/fsw/svg/font/{text}", 
+    "lines": [
+      "Create an SVG with font using Formal SignWriting in ASCII (FSW)"
+    ], 
+    "name": "SVG with font", 
+    "parameters": [
+      {
+        "description": "The name of sign", 
+        "type": "string", 
+        "name": "text", 
+        "example": "AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520"
+      }
+    ]
+  }, 
+  {
+    "code": [
+      "$timein = microtime(true);", 
+      "$req = $app->request();", 
+      "if ($req->get('throwStatus')=='500') {haltNoDatabase();}", 
+      "$app->contentType('image/svg+xml;charset=utf-8');", 
+      "$svg = SignWriting\\svg($text,true);", 
+      "$searchTime = searchtime($timein);", 
+      "header(\"Search-Time: \" . $searchTime);", 
+      "echo $svg;"
+    ], 
+    "method": "GET", 
+    "dialog": [
+      {
+        "request": {
+          "name": "collection text"
+        }, 
+        "responses": [
+          {
+            "status": 200, 
+            "lines": [
+              "<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" width=\"49\" height=\"69\" viewBox=\"476 466 49 69\">", 
+              "  <text font-size=\"0\">AS10011S10019S2e704S2e748M525x535S2e748483x510S10011501x466S2e704510x500S10019476x475</text>", 
+              "  <g transform=\"translate(483,510)\"><text class=\"sym-fill\" style=\"pointer-events:none;font-family:'SuttonSignWritingFill';font-size:30px;fill:white;\">\udbed\udee9</text><text class=\"sym-line\" style=\"pointer-events:none;font-family:'SuttonSignWritingLine';font-size:30px;fill:black;\">\udbad\udee9</text></g>", 
+              "  <g transform=\"translate(501,466)\"><text class=\"sym-fill\" style=\"pointer-events:none;font-family:'SuttonSignWritingFill';font-size:30px;fill:white;\">\udbc0\udc12</text><text class=\"sym-line\" style=\"pointer-events:none;font-family:'SuttonSignWritingLine';font-size:30px;fill:black;\">\udb80\udc12</text></g>", 
+              "  <g transform=\"translate(510,500)\"><text class=\"sym-fill\" style=\"pointer-events:none;font-family:'SuttonSignWritingFill';font-size:30px;fill:white;\">\udbed\udea5</text><text class=\"sym-line\" style=\"pointer-events:none;font-family:'SuttonSignWritingLine';font-size:30px;fill:black;\">\udbad\udea5</text></g>", 
+              "  <g transform=\"translate(476,475)\"><text class=\"sym-fill\" style=\"pointer-events:none;font-family:'SuttonSignWritingFill';font-size:30px;fill:white;\">\udbc0\udc1a</text><text class=\"sym-line\" style=\"pointer-events:none;font-family:'SuttonSignWritingLine';font-size:30px;fill:black;\">\udb80\udc1a</text></g>", 
+              "</svg>"
+            ], 
+            "type": "image/svg+xml;charset=utf-8"
+          }
+        ]
+      }
+    ], 
+    "name": "retrieve SVG with font"
+  }, 
+  {
+    "group": "swu", 
+    "description": "Resources related to Formal SignWriting in ASCII (SWU)"
+  }, 
+  {
+    "route": "/swu{?text,style}", 
+    "name": "SWU Word", 
+    "parameters": [
+      {
+        "description": "The name of sign", 
+        "type": "string", 
+        "name": "text", 
+        "example": "AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520"
+      }, 
+      {
+        "description": "Flag to include styling string", 
+        "type": "number", 
+        "name": "style", 
+        "example": "1"
+      }
+    ]
+  }, 
+  {
+    "code": [
+      "$timein = microtime(true);", 
+      "$swu = SignWriting\\swu($text,$style);", 
+      "$searchTime = searchtime($timein);", 
+      "header(\"Search-Time: \" . $searchTime);", 
+      "echo $swu;"
+    ], 
+    "method": "GET", 
+    "dialog": [
+      {
+        "request": {
+          "name": "one Formal SignWriting in ASCII string"
+        }, 
+        "responses": [
+          {
+            "status": 200, 
+            "lines": [
+              "AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520"
+            ], 
+            "type": "text/plain;charset=utf-8"
+          }
+        ]
+      }
+    ], 
+    "name": "first SWU string"
+  }, 
+  {
+    "route": "/swu/all{?text,style}", 
+    "name": "SWU Text", 
+    "parameters": [
+      {
+        "description": "The name of sign", 
+        "type": "string", 
+        "name": "text", 
+        "example": "AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520"
+      }, 
+      {
+        "description": "Flag to include styling string", 
+        "type": "number", 
+        "name": "style", 
+        "example": "1"
+      }
+    ]
+  }, 
+  {
+    "code": [
+      "$timein = microtime(true);", 
+      "$swu = SignWriting\\swuAll($text,$style);", 
+      "$searchTime = searchtime($timein);", 
+      "header(\"Search-Time: \" . $searchTime);", 
+      "echo $swu;"
+    ], 
+    "method": "GET", 
+    "dialog": [
+      {
+        "request": {
+          "name": "many Formal SignWriting in ASCII string"
+        }, 
+        "responses": [
+          {
+            "status": 200, 
+            "lines": [
+              "AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520"
+            ], 
+            "type": "text/plain;charset=utf-8"
+          }
+        ]
+      }
+    ], 
+    "name": "all SWU strings"
+  }, 
+  {
+    "route": "/swu/fsw{?text}", 
+    "name": "SWU to FSW", 
+    "parameters": [
+      {
+        "description": "The name of sign", 
+        "type": "string", 
+        "name": "text", 
+        "example": "AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520"
+      }
+    ]
+  }, 
+  {
+    "code": [
+      "$timein = microtime(true);", 
+      "$fsw = SignWriting\\swu2fsw($text);", 
+      "$app->contentType('text/plain;charset=utf-8');", 
+      "$searchTime = searchtime($timein);", 
+      "header(\"Search-Time: \" . $searchTime);", 
+      "echo $fsw;"
+    ], 
+    "method": "GET", 
+    "dialog": [
+      {
+        "request": {
+          "name": "original text with Formal SignWriting in ASCII inside"
+        }, 
+        "responses": [
+          {
+            "status": 200, 
+            "lines": [
+              "AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520"
+            ], 
+            "type": "text/plain;charset=utf-8"
+          }
+        ]
+      }
+    ], 
+    "name": "text with SWU strings"
+  }, 
+  {
+    "route": "/swu/svg/{text}", 
+    "lines": [
+      "Create a stand-alone SVG image using Formal SignWriting in ASCII (SWU)"
+    ], 
+    "name": "SVG image", 
+    "parameters": [
+      {
+        "description": "The name of sign", 
+        "type": "string", 
+        "name": "text", 
+        "example": "AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520"
+      }
+    ]
+  }, 
+  {
+    "code": [
+      "$timein = microtime(true);", 
+      "$req = $app->request();", 
+      "if ($req->get('throwStatus')=='500') {haltNoDatabase();}", 
+      "$app->contentType('image/svg+xml;charset=utf-8');", 
+      "$svg = SignWriting\\svg($text);", 
+      "$searchTime = searchtime($timein);", 
+      "header(\"Search-Time: \" . $searchTime);", 
+      "echo $svg;"
+    ], 
+    "method": "GET", 
+    "dialog": [
+      {
+        "request": {
+          "name": "collection text"
+        }, 
+        "responses": [
+          {
+            "status": 200, 
+            "lines": [
+              "<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" width=\"39\" height=\"64\" viewBox=\"482 483 39 64\">", 
+              "  <text style=\"font-size:0%;\">AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520</text>", 
+              "  <svg x='482' y='483'><g transform=\"translate(0.149874875465,34.7500790925) scale(0.00988906872676,-0.00988956850125)\"><path class=\"sym-line\" fill=\"black\" d=\"M1528 3484 c-592 -92 -1088 -447 -1348 -963 -125 -249 -180 -485 -180 -771 0 -480 183 -911 529 -1242 350 -336 780 -508 1271 -508 451 0 864 150 1193 434 326 281 517 620 591 1051 21 121 21 409 0 530 -43 252 -114 444 -237 639 -282 453 -741 750 -1284 831 -127 19 -413 18 -535 -1z m607 -173 c583 -126 1038 -523 1224 -1069 59 -173 75 -277 75 -492 0 -165 -3 -211 -22 -300 -71 -327 -228 -611 -458 -829 -186 -177 -381 -295 -614 -374 -176 -60 -282 -78 -490 -84 -247 -7 -416 19 -628 97 -549 201 -944 674 -1043 1250 -17 97 -17 383 0 480 99 576 495 1050 1043 1250 105 38 177 58 303 81 143 26 467 21 610 -10z M1720 1800 l0 -600 80 0 80 0 0 600 0 600 -80 0 -80 0 0 -600z\"/></g></svg>", 
+              "  <svg x='506' y='500'><g transform=\"translate(0.0,15.0) scale(0.01,-0.01)\"><path class=\"sym-fill\" fill=\"white\" d=\"M200 750 l0 -550 300 0 300 0 0 550 0 550 -300 0 -300 0 0 -550z\"/><path class=\"sym-line\" fill=\"black\" d=\"M0 750 l0 -750 750 0 750 0 0 750 0 750 -750 0 -750 0 0 -750z m800 0 l0 -550 -300 0 -300 0 0 550 0 550 300 0 300 0 0 -550z\"/></g></svg>", 
+              "  <svg x='503' y='520'><g transform=\"translate(0.196840829729,26.6999810561) scale(0.00975214136907,-0.00983390502079)\"><path class=\"sym-line\" fill=\"black\" d=\"M345 2350 l-350 -350 325 -325 325 -325 -325 -325 -325 -325 353 -353 352 -352 0 303 0 302 350 0 350 0 0 100 0 100 -350 0 -350 0 0 550 0 550 350 0 350 0 0 100 0 100 -350 0 -350 0 -2 300 -3 300 -350 -350z M1600 1350 l0 -1350 100 0 100 0 0 1350 0 1350 -100 0 -100 0 0 -1350z\"/></g></svg>", 
+              "</svg>"
+            ], 
+            "type": "image/svg+xml;charset=utf-8"
+          }
+        ]
+      }
+    ], 
+    "name": "retrieve stand-alone SVG image"
+  }, 
+  {
+    "route": "/swu/svg/font/{text}", 
+    "lines": [
+      "Create an SVG with font using Formal SignWriting in ASCII (SWU)"
+    ], 
+    "name": "SVG with font", 
+    "parameters": [
+      {
+        "description": "The name of sign", 
+        "type": "string", 
+        "name": "text", 
+        "example": "AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520"
+      }
+    ]
+  }, 
+  {
+    "code": [
+      "$timein = microtime(true);", 
+      "$req = $app->request();", 
+      "if ($req->get('throwStatus')=='500') {haltNoDatabase();}", 
+      "$app->contentType('image/svg+xml;charset=utf-8');", 
+      "$svg = SignWriting\\svg($text,true);", 
+      "$searchTime = searchtime($timein);", 
+      "header(\"Search-Time: \" . $searchTime);", 
+      "echo $svg;"
+    ], 
+    "method": "GET", 
+    "dialog": [
+      {
+        "request": {
+          "name": "collection text"
+        }, 
+        "responses": [
+          {
+            "status": 200, 
+            "lines": [
+              "<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" width=\"49\" height=\"69\" viewBox=\"476 466 49 69\">", 
+              "  <text font-size=\"0\">AS10011S10019S2e704S2e748M525x535S2e748483x510S10011501x466S2e704510x500S10019476x475</text>", 
+              "  <g transform=\"translate(483,510)\"><text class=\"sym-fill\" style=\"pointer-events:none;font-family:'SuttonSignWritingFill';font-size:30px;fill:white;\">\udbed\udee9</text><text class=\"sym-line\" style=\"pointer-events:none;font-family:'SuttonSignWritingLine';font-size:30px;fill:black;\">\udbad\udee9</text></g>", 
+              "  <g transform=\"translate(501,466)\"><text class=\"sym-fill\" style=\"pointer-events:none;font-family:'SuttonSignWritingFill';font-size:30px;fill:white;\">\udbc0\udc12</text><text class=\"sym-line\" style=\"pointer-events:none;font-family:'SuttonSignWritingLine';font-size:30px;fill:black;\">\udb80\udc12</text></g>", 
+              "  <g transform=\"translate(510,500)\"><text class=\"sym-fill\" style=\"pointer-events:none;font-family:'SuttonSignWritingFill';font-size:30px;fill:white;\">\udbed\udea5</text><text class=\"sym-line\" style=\"pointer-events:none;font-family:'SuttonSignWritingLine';font-size:30px;fill:black;\">\udbad\udea5</text></g>", 
+              "  <g transform=\"translate(476,475)\"><text class=\"sym-fill\" style=\"pointer-events:none;font-family:'SuttonSignWritingFill';font-size:30px;fill:white;\">\udbc0\udc1a</text><text class=\"sym-line\" style=\"pointer-events:none;font-family:'SuttonSignWritingLine';font-size:30px;fill:black;\">\udb80\udc1a</text></g>", 
+              "</svg>"
+            ], 
+            "type": "image/svg+xml;charset=utf-8"
+          }
+        ]
+      }
+    ], 
+    "name": "retrieve SVG with font"
+  }, 
+  {
+    "lines": [
+      "", 
+      "### Country code", 
+      "The country codes are from ISO-3166.", 
+      "Each country is coded with two uppercase letters.", 
+      "", 
+      "### Language code", 
+      "The language codes are from ISO-639-1 for spoken languages and ISO-639-3 for sign languages.", 
+      "Each spoken language is coded with two lowercase letters.", 
+      "Each sign language is coded with three lowercase letters."
+    ], 
+    "group": "user", 
+    "description": "SignPuddle 3 collections are organized by country and language codes"
+  }, 
+  {
+    "route": "/user/who/", 
+    "name": "Who uses SignWriting?", 
+    "description": "List of countries with size and activity."
+  }, 
+  {
+    "description": "The available countries where signs are available.", 
+    "method": "GET", 
+    "dialog": [
+      {
+        "request": {
+          "name": "user-who"
+        }, 
+        "responses": [
+          {
+            "status": 200, 
+            "lines": [
+              "BR", 
+              "US"
+            ], 
+            "type": "text/plain"
+          }
+        ]
+      }
+    ], 
+    "name": "Retrieve country list"
+  }, 
+  {
+    "route": "/user/salt", 
+    "name": "Salt is used for request validations", 
+    "description": "A string for accounting and validation"
+  }, 
+  {
+    "code": [
+      "  echo userSalt();"
+    ], 
+    "method": "GET", 
+    "dialog": [
+      {
+        "request": {
+          "name": "user salt"
+        }, 
+        "responses": [
+          {
+            "status": 200, 
+            "lines": [
+              "e3bedc9e9f83cb9dd7ae61250b9e6921"
+            ], 
+            "type": "text/plain"
+          }
+        ]
+      }
+    ], 
+    "name": "String for accounting and validation"
+  }, 
+  {
+    "route": "/user/login", 
+    "name": "User login", 
+    "description": "Validation of user with salted password"
+  }, 
+  {
+    "code": [
+      "  $data = $app->request->getbody();", 
+      "  $data = json_decode($data,true);", 
+      "  $results = userVerify($data['username'],$data['salt'],$data['salted']);", 
+      "  $return = array();", 
+      "  $return['meta']=array();", 
+      "  $return['results']=$results;", 
+      "  $return['meta']['method']='POST';", 
+      "  $return['meta']['location']='/user/login';", 
+      "  $return['meta']['searchTime'] = searchtime($timein);", 
+      "  echo json_pretty($return);"
+    ], 
+    "method": "POST", 
+    "dialog": [
+      {
+        "request": {
+          "lines": [
+            "{\"user\":\"anonymous\",\"salt\":\"af77...\",\"salted\":\"2793f...\"}"
+          ], 
+          "name": "verify user"
+        }, 
+        "responses": [
+          {
+            "status": 200, 
+            "lines": [
+              "{\"user-profile\":\"\"}"
+            ], 
+            "type": "text/plain"
+          }
+        ]
+      }
+    ], 
+    "name": "Process log in to server"
+  }
+]

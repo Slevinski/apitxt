@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"> 
+  <meta id="idviewport" name="viewport" content="width=device-width, user-scalable=no, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>SignPuddle Swu API</title>
+  <link rel="stylesheet" type="text/css" href="../include/common.css" />
+  <style>
+h1.brand {
+  color: #b33;
+}
+header.three {
+  display: grid;
+  grid-template-columns: 1fr 3fr 1fr;
+  background: lightgray;
+  margin-bottom: 1em;
+  height: 3em;
+}
+@media (min-width: 30em) {
+  header.three {
+    grid-template-columns: 1fr 4fr 1fr;
+    grid-gap: 1em;
+  }
+}
+@media (min-width: 50em) {
+  header.three {
+    grid-template-columns: 1fr 5fr 1fr;
+  }
+}
+</style>
+  <script src="../include/min.js"></script>
+  <script src="../include/icons.js"></script>
+  <noscript><link rel="stylesheet" type="text/css" href="../include/noscript.css" /></noscript>
+</head>
+<body>
+  <noscript>
+    <img src="../include/icon.svg" /><h1>SignPuddle Swu API</h1>
+    <br clear="all">
+    <hr><p>Please enable JavaScript and reload the page.</p><hr>
+  </noscript>
+  <script src="swu.js"></script>
+</body>
+</html>

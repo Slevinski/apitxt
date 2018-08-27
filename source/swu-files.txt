@@ -1,0 +1,6 @@
+group	swufiles
+	route	/swu/	Root as swu.html
+		method	GET	Get the swu as HTML
+			code	getFile('api/swu.html');
+			response	200	text/plain
+				line	swu.html file contents here

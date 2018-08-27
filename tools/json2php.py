@@ -7,6 +7,7 @@
 
 import sys
 import argparse
+import glob
 import json
 from pprint import pprint
 
@@ -40,10 +41,16 @@ print "* generated with tools/json2php.py from https://github.com/Slevinski/apit
 print "*/"
 print ""
 print "header('Access-Control-Allow-Origin: *');"
-print "header('Access-Control-Allow-Headers: X-Requested-With, Content-Type');"
+print "header('Access-Control-Allow-Headers: Content-Type, ETag, If-None-Match');"
 print "header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');"
-print "header('X-Powered-By: API Structure');"
+print "header('X-Powered-By: SignPuddle 3');"
 print ""
+files = glob.glob('../website/include/*php')
+if len(files):
+	for file in files:
+		file = file.replace('../website/','')
+		if file != 'include/rewrite.php':
+			print 'require "' + file + '";'
 print ""
 print "$_ENV['SLIM_MODE'] = 'development'; //'development' or 'production'"
 print "require 'Slim/Slim.php';"
@@ -71,11 +78,13 @@ print "    ));"
 print "});"
 print ""
 print "/********************/"
-print "/* common functions */"
+print "/* halting functions */"
+print "$app->notFound(function () use ($app) {"
+print "  halting(404,'Not Found');"
+print "});"
 print ""
-print "function searchtime($timein){"
-print "  return intval((microtime(true)-$timein)*1000*100)/100 . ' ms';"
-print "}"
+print "/********************/"
+print "/* common functions */"
 print "function getFile($file){"
 print "  global $app;"
 print "  $parts = explode('.',$file);"
@@ -87,14 +96,24 @@ print "      case 'db':"
 print "        $app->contentType('application/x-sqlite3');"
 print "        $app->response->headers->set('Content-Disposition','attachment; filename=' . pathinfo($app->request->getResourceUri(),PATHINFO_FILENAME) . '.db');"
 print "        break;"
+print "      case 'css':"
+print "        $app->contentType('text/css');"
+print "        break;"
+print "      case 'svg':"
+print "        $app->contentType('image/svg+xml');"
+print "        break;"
+print "      case 'htm':"
 print "      case 'html':"
-print "        $app->contentType('text/html;charset=utf-8');"
+print "        $app->contentType('text/html; charset=utf-8');"
 print "        break;"
 print "      case 'js':"
-print "        $app->contentType('application/json;charset=utf-8');"
+print "        $app->contentType('application/javascript');"
+print "        break;"
+print "      case 'json':"
+print "        $app->contentType('application/json');"
 print "        break;"
 print "      default:"
-print "        $app->contentType('text/plain;charset=utf-8');"
+print "        $app->contentType('text/plain; charset=utf-8');"
 print "        break;"
 print "    }"
 print "    echo file_get_contents($rel_api);"
@@ -160,7 +179,12 @@ for segment in data:
 		except:
 			vars = ''
 
-		print "$app->get('" + routing + "', function (" + vars + ") use ($app) {"
+		if (routing[-1]=="/"):
+			print "$app->get('" + routing[0:-1] + "', function (" + vars + ") use ($app) {"
+			print "  $app->redirect('" + routing + "');"
+			print "});"
+		print "$app->options('" + routing + "', function (){});"
+		print "$app->" + segment['method'].lower() + "('" + routing + "', function (" + vars + ") use ($app) {"
 		for query in queries:
 			print "  $" + query + " = $app->request()->get('" + query + "');"
 		print "  $timein = microtime(true);"
@@ -168,8 +192,6 @@ for segment in data:
 			print "  $app->contentType('" + segment['dialog'][0]['responses'][0]['type'] + "');"
 		except:
 			pass
-		print "  $searchTime = searchtime($timein);"
-		print "  header('Search-Time: ' . $searchTime);"
 		if "code" in segment:
 			for bline in segment['code']:
 				print "  " + bline

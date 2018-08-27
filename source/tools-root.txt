@@ -1,0 +1,8 @@
+root	tools	SignPuddle Tools API	https://signpuddle.net/v3
+	line	> v3.0.0
+	line	
+	line	+ [txt](../src/tools.txt) - ApiTxt format
+	line	+ [json](../src/tools.json) - array of JSON objects
+	line	+ [html](../api/tools.html) - HTML API Interface
+	line	+ [md](../docs/tools.md) - API Blueprint
+	line	+ [htm](../docs/tools.htm) - Stand Alone HTML

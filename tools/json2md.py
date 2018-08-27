@@ -63,11 +63,10 @@ for segment in data:
 		print "## Group " + segment['group']
 		if 'description' in segment:
 			print segment['description'].replace("\t","&#9;")
-		print
 		if 'lines' in segment:
 			for line in segment['lines']:
 				print line.replace("\t","&#9;")
-			print
+		print
 
 	elif 'route' in segment:
 		if 'name' in segment:

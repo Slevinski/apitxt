@@ -1,0 +1,138 @@
+root	tools	SignPuddle Tools API	https://signpuddle.net/v3
+	line	> v3.0.0
+	line	
+	line	+ [txt](../src/tools.txt) - ApiTxt format
+	line	+ [json](../src/tools.json) - array of JSON objects
+	line	+ [html](../api/tools.html) - HTML API Interface
+	line	+ [md](../docs/tools.md) - API Blueprint
+	line	+ [htm](../docs/tools.htm) - Stand Alone HTML
+group	tools	Resources related to tools
+	route	/tools/test{?text}	Test with input
+		line	A general purpose function for testing
+		parameter	text	S10000	string	Input for testing
+		method	GET	Get test results
+			code	$timein = microtime(true);
+			code	$app->contentType('text/plain;charset=utf-8');
+			code	$test = SignWriting\test($text);
+			code	$searchTime = searchtime($timein);
+			code	header("Search-Time: " . $searchTime);
+			code	echo $test;
+			response	200	text/plain
+				line	test output
+	route	/tools/define	Character definition tree
+		line	The definition tree for character mapping
+		method	GET	Get main define
+			code	$timein = microtime(true);
+			code	$app->contentType('text/plain;charset=utf-8');
+			code	$define = SignWriting\define();
+			code	$searchTime = searchtime($timein);
+			code	header("Search-Time: " . $searchTime);
+			code	echo json_pretty($define);
+			response	200	text/plain
+				line	{
+				line	  "utf-8": {},
+				line	  "utf-16": {},
+				line	  "utf-32": {},
+				line	  "fsw": {},
+				line	  "swu": {},
+				line	  "style": {}
+				line	}
+	route	/tools/define/{section}	Section definition
+		line	A section of the definition tree
+		parameter	section	fsw	string	The name of section
+		method	GET	Get section define
+			code	global $regex_define;
+			code	if ($section == "regex"){
+			code	  return $regex_define();
+			code	}
+			code	global $sample_define;
+			code	if ($section == "sample"){
+			code	  return $sample_define();
+			code	}
+			code	$timein = microtime(true);
+			code	$app->contentType('text/plain;charset=utf-8');
+			code	$define = SignWriting\define($section);
+			code	$searchTime = searchtime($timein);
+			code	header("Search-Time: " . $searchTime);
+			code	echo json_pretty($define);
+			response	200	text/plain
+				line	{
+				line	  "sign": [],
+				line	  "spatial": [],
+				line	  "symbol": [],
+				line	  "coord": [],
+				line	  "prefix": [],
+				line	  "box": [],
+				line	  "query": []
+				line	}
+	route	/tools/define/{section}/{part}	Part definition
+		line	A part of the section definition
+		parameter	section	swu	string	The name of section
+		parameter	part	symbol	string	The part of the definition
+		method	GET	Get part define
+			code	$timein = microtime(true);
+			code	$app->contentType('text/plain;charset=utf-8');
+			code	$define = SignWriting\define($section,$part);
+			code	$searchTime = searchtime($timein);
+			code	header("Search-Time: " . $searchTime);
+			code	echo json_pretty($define);
+			response	200	text/plain
+				line	[
+				line	  "individual symbol",
+				line	  "S10000",
+				line	  "[\\x{40000}-\\x{4F428}]"
+				line	]
+	route	/tools/parse{?text,utf}	Parse text
+		line	A function to analyze text and parse it into individual components
+		parameter	text	S10000	string	The text to parse
+		parameter	utf	32	string	The UTF number of 8, 16, 32 or 'x'
+		method	GET	Get parse results
+			code	$timein = microtime(true);
+			code	if (!in_array($utf,[8,16,32,'x'])){
+			code	  $utf = 16;
+			code	}
+			code	$app->contentType('text/plain;charset=utf-8');
+			code	$parse = SignWriting\parse($text);
+			code	$searchTime = searchtime($timein);
+			code	header("Search-Time: " . $searchTime);
+			code	$json = json_pretty($parse);
+			code	echo SignWriting\cast($json,$utf);
+			response	200	text/plain
+				line	parse results of text
+	route	/tools/encode{?text,slash}	Encode text
+		line	A function to encode SignWriting in Unicode (SWU) as UTF-16
+		parameter	text	\x{1D800}	string	The text to encode
+		parameter	slash	1	number	The number of slashes for escaping
+		method	GET	Get encoded query string
+			code	$timein = microtime(true);
+			code	$app->contentType('text/plain;charset=utf-8');
+			code	$encode = SignWriting\encode($text,$slash);
+			code	$searchTime = searchtime($timein);
+			code	header("Search-Time: " . $searchTime);
+			code	echo $encode;
+			response	200	text/plain
+				line	\uD836\uDC00
+	route	/tools/decode{?text}	Decode text
+		line	A function to decode SignWriting in Unicode (SWU) from UTF-16
+		parameter	text	\\uD836\\uDC00	string	The text to decode
+		method	GET	Get decoded query string
+			code	$timein = microtime(true);
+			code	$app->contentType('text/plain;charset=utf-8');
+			code	$decode = SignWriting\decode($text);
+			code	$searchTime = searchtime($timein);
+			code	header("Search-Time: " . $searchTime);
+			code	echo $decode;
+			response	200	text/plain
+				line	\x{1D800}
+	route	/tools/utf8{?text}	UTF-8 encode text
+		parameter	text	\x{1D800}	string	The text to encode
+		method	GET	Get utf-8 encoded query string
+			code	$timein = microtime(true);
+			code	$app->contentType('text/plain;charset=utf-8');
+			code	
+			code	$encode = SignWriting\utf8($text);
+			code	$searchTime = searchtime($timein);
+			code	header("Search-Time: " . $searchTime);
+			code	echo $encode;
+			response	200	text/plain
+				line	%F0%9D%A0%80

@@ -1,0 +1,8 @@
+root	collection	SignPuddle Collection API	https://signpuddle.net/v3
+	line	> v3.0.0
+	line	
+	line	+ [txt](../src/collection.txt) - ApiTxt format
+	line	+ [json](../src/collection.json) - array of JSON objects
+	line	+ [html](../api/collection.html) - HTML API Interface
+	line	+ [md](../docs/collection.md) - API Blueprint
+	line	+ [htm](../docs/collection.htm) - Stand Alone HTML

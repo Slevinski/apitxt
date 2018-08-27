@@ -1,0 +1,45 @@
+root	user	SignPuddle user API	https://signpuddle.net/v3
+	line	> v3.0.0
+	line	
+	line	+ [txt](user/index.txt) - ApiTxt format
+	line	+ [json](user/index.json) - array of JSON objects
+	line	+ [md](user/index.md) - API Blueprint
+	line	+ [html](user/index.html) - HTML documentation
+group	user	SignPuddle 3 collections are organized by country and language codes
+	line	
+	line	### Country code
+	line	The country codes are from ISO-3166.
+	line	Each country is coded with two uppercase letters.
+	line	
+	line	### Language code
+	line	The language codes are from ISO-639-1 for spoken languages and ISO-639-3 for sign languages.
+	line	Each spoken language is coded with two lowercase letters.
+	line	Each sign language is coded with three lowercase letters.
+	route	/user/who/	Who uses SignWriting?	List of countries with size and activity.
+		method	GET	Retrieve country list	The available countries where signs are available.
+			request	user-who
+				response	200	text/plain
+					line	BR
+					line	US
+	route	/user/salt	Salt is used for request validations	A string for accounting and validation
+		method	GET	String for accounting and validation
+			code	  echo userSalt();
+			request	user salt
+				response	200	text/plain
+					line	e3bedc9e9f83cb9dd7ae61250b9e6921
+	route	/user/login	User login	Validation of user with salted password
+		method	POST	Process log in to server
+			code	  $data = $app->request->getbody();
+			code	  $data = json_decode($data,true);
+			code	  $results = userVerify($data['username'],$data['salt'],$data['salted']);
+			code	  $return = array();
+			code	  $return['meta']=array();
+			code	  $return['results']=$results;
+			code	  $return['meta']['method']='POST';
+			code	  $return['meta']['location']='/user/login';
+			code	  $return['meta']['searchTime'] = searchtime($timein);
+			code	  echo json_pretty($return);
+			request	verify user
+				line	{"user":"anonymous","salt":"af77...","salted":"2793f..."}
+				response	200	text/plain
+					line	{"user-profile":""}

@@ -1,95 +1,19 @@
-# ApiTxt
-> v1.0.0  
-HOST: https://signpuddle.com/apitxt/
+# SignPuddle Development System
+> SignPuddle API for SignWriting Text  
+ApiTxt v2.0.0  
+HOME: https://signpuddle.com  
+AUTHOR: https://SteveSlevinski.me  
+SUPPORT: https://www.patreon.com/signwriting
 
-ApiTxt defines a highly structured plain text format used to define multiple facets of a website api.
-Each line in an ApiTxt document is a self-contained element which starts with a name and is followed by &lt;TAB> separated fields.
-Writing ApiTxt documents is easier when tabs and spaces appear different, so use a plain text editor and turn on the invisible characters option.
 
-## ApiTxt Elements
-ApiTxt uses ten types of line elements to define an API: 
-root, group, route, parameter, method, request, response, header, line, and code.
+## Group Filesystem
+ApiTxt uses several directories for structure
 
-Every document should start with a root element.
-After the root, the other elements are used to create complex website APIs.
-The order of the lines matters and will effect the structure of the JSON objects.
-
-There are two groups of elements, the frame elements and the detail elements.
-The frame elements structure a website api and the detail elements attach to a previous frame element.
-
-### Frame elements
-There are six frame elements: root, group, route, method, request, and response.
-The lines are written in a specific order to create an array of JSON objects.
-
-**route organization**
-
-An ApiTxt document starts with a root, or an assumed root.
-Any route that occur before a group element, will be associated with the root.
-Groups are always associated with the root.
-Group elements can contain routes.
-
-```
-    root
-      | - routes
-      | - groups
-            | - routes
-```
-
-**route structure**
-
-A route can be associated with a variety of HTTP methods.
-Each method can have several requests and responses.
-Any response before a request will assume a generic request.
-Any response after a request will be associated with that request.
-```
-    route
-      | - methods
-        | - responses
-        | - requests
-              | - responses
-```
-## Detail elements
-There are four detail elements: line, code, parameter, and header.  The detail lines attach to a previous frame element if correctly structured.
-
-**single line elements**
-```
-    lines for all frame elements
-
-    parameters for route
-
-    codes for method
-
-    headers for request and response
-```
-
-## Input and Output Formats
-The various formats are used to define the structure and function of a website API.
-The original source is written in ApiTxt format and transformed into an array of JSON objects.
-The JSON objects are used to write other formats, including API Blueprint.
-
-### ApiTxt Format (txt)
-ApiTxt format uses plain text divided into multiple lines, where each line contains &lt;TAB> delimited fields.
-Writing ApiTxt documents is easier when tabs and spaces appear different, so use a plain text editor and turn on the invisible characters option.
-
-### Array of JSON Objects (json)
-Each line of ApiTxt format is converted into a JSON object or added to an existing object.  The various objects are stored in an ordered array.
-
-### API Blueprint (md)
-[API Blueprint](https://apiblueprint.org/) is a high-level API description language for web APIs. API Blueprint is widely supported with various tooling available.
-
-#### HTML Documentaion (html)
-The HTML documentation is generated from the API Blueprint document using the project [bukalapak/snowboard](https://github.com/bukalapak/snowboard/), written in golang.
-
-#### PHP Server (php)
-The PHP server is written for the PHP project [Slim Framework v2](https://docs.slimframework.com/) to create the functional web API.
-The website directory contains an .htaccess file for an Apache server with PHP support.
-Alternatively, the server can be started with a shell script (start_server.sh) using PHP's built in web server and a custom rewrite.php file.
+root, group, route, parameter, method, request, response, header, line, code, and body.
 
 ## Filesystem
 ```
     README.md
-    docs
-      | - Project Documentation as HTML, Markdown, JSON Objects, and ApiTxt format
     source
       | - Documents in sections of ApiTxt format
     tools
@@ -97,7 +21,9 @@ Alternatively, the server can be started with a shell script (start_server.sh) u
       | - template
       | - output
             | - various files with extensions txt, json, md, and html
-    website
+    front
+      | - HTML, CSS, and JavaScript pages
+    back
       | - Slim Framework v2
       | - PHP Server generated from ApiTxt Format
 ```
@@ -140,8 +66,8 @@ Running the full mocking script without any command line arguements will analyze
 >> python txt2mock.py 
 
 Please specify a document from ../source/
-	python txt2mock.py -d apitxt
-	python txt2mock.py -d apitxt -r -s "elements test"
+    python txt2mock.py -d apitxt
+    python txt2mock.py -d apitxt -r -s "elements test"
 ```
 
 Running the full mocking script with the appropriate arguements will test and build the web api.
@@ -157,16 +83,16 @@ OK
 
 Mock server is ready. Use 127.0.0.1:8087
 Available Routes:
-GET	200	/root
-GET	200	/group
-GET	200	/route
-GET	200	/parameter
-GET	200	/method
-GET	200	/request
-GET	200	/response
-GET	200	/header
-GET	200	/line
-GET	200	/code
+GET&#9;200&#9;/root
+GET&#9;200&#9;/group
+GET&#9;200&#9;/route
+GET&#9;200&#9;/parameter
+GET&#9;200&#9;/method
+GET&#9;200&#9;/request
+GET&#9;200&#9;/response
+GET&#9;200&#9;/header
+GET&#9;200&#9;/line
+GET&#9;200&#9;/code
 ```
 
 With the **-w** option, the HTML, Markdown, JSON Objects, and ApiTxt format files are copied to the **website** directory.  
@@ -182,6 +108,94 @@ The website is built with a fully functional web API in PHP using the Slim Frame
 The PHP Server requires an Apache webserver that can use rewrite rules written in the **.htaccess** file.  
 
 Alternatively, you can start the built-in PHP webserver using the **website/start_server.sh** shell script which uses the rewrite rules contained in the **website/include/rewrite.php** file.
+
+## Group Resources
+
++ [txt](website/src/apitxt.txt) - ApiTxt format
++ [json](website/src/apitxt.json) - array of JSON objects
++ [html](website/api/apitxt.html) - HTML API Interface
++ [md](website/doc/apitxt.md) - API Blueprint
++ [htm](website/doc/apitxt.htm) - Stand Alone HTML
+
+ApiTxt is the build environment to create the SignPuddle 3 API for SignWriting Text.
+ApiTxt format is a highly structured plain text format that defines multiple facets of a website api.
+
+A variety of python programs and shell scripts are used to transform the source ApiTxt format into a fully functional and documented website.
+
+## Input and Output Formats
+The various formats are used to define the structure and function of a website API.
+The original source is written in ApiTxt format and transformed into an array of JSON objects.
+The JSON objects are used to write other formats, including API Blueprint.
+API Blueprint has an extensive toolkit of additional transformations.
+
+### ApiTxt Format (txt)
+ApiTxt defines a highly structured plain text format used to define multiple facets of a website api.
+Each line in an ApiTxt document is a self-contained element which starts with a name and is followed by &lt;TAB> separated fields.
+Writing ApiTxt documents is easier when tabs and spaces appear different, so use a plain text editor and turn on the invisible characters option.
+
+### Array of JSON Objects (json)
+Each line of ApiTxt format is converted into a JSON object or added to an existing object.
+The various objects are stored as an ordered array.
+The JSON array of objects can be reduced to the root object by appropriately structuring the groups, routes, and methods.
+
+```
+    root
+      | - routes
+            | - methods
+      | - groups
+            | - routes
+                  | - methods
+```
+
+
+### API Blueprint (md)
+[API Blueprint](https://apiblueprint.org/) is a high-level API description language for web APIs. API Blueprint is widely supported with various tooling available.
+
+### Stand-Alone HTM Documentation (htm)
+Stand-alone HTM document created from the API Blueprint using a template and the snowboard tool.
+
+### Interactive HTML API (html)
+Interactive HTML documentation is generated from the JSON elements.
+
+### PHP Server (php)
+The PHP server is written for the PHP project [Slim Framework v2](https://docs.slimframework.com/) to create the functional web API.
+The website directory contains an .htaccess file for an Apache server with PHP support.
+Alternatively, the server can be started with a shell script (start_server.sh) using PHP's built in web server and a custom rewrite.php file.
+
+## Transformations
+Python programs and shell scripts are used to read and write a variety of data formats including plain text, JSON data, API Blueprint, HTML and PHP scripts.
+
+### Plain Text to JSON Objects (txt2json)
+The primary transformation is from the plain text format to an array of JSON objects.
+
+### JSON Objects back to Plain Text (json2txt)
+The transformation can be reversed, resulting in a document that is properly structured with standardized indenting.
+
+### JSON Objects to API Blueprint (json2md)
+The API Blueprint document is created from an array of JSON objects.
+Each object is written as a section of the API Blueprint document using a markdown syntax.
+
+### JSON Objects to PHP Server (json2php)
+A functional PHP server is built from the JSON objects for the Slim Framework v2.
+The server responses can be based on prewritten responses or functional PHP code using URL parameters and query parameters.
+
+### JSON Objects to Interactive HTML Page (json2html)
+A functional reference guide with live calls to the server.
+Detailed reports for requests and responses.
+
+### JSON Objects to Javascript (json2js)
+The interactive Javascript for the user interface and the server calls.
+Detailed reports for requests and responses.
+
+### Snowboard Transformations ([bukalapak/snowboard](https://github.com/bukalapak/snowboard/))
+Part of the API Blueprint toolkit, snowboard offers three different transformations: lint, html, and mock.
+Snowboard lint will check the structure of the markdown text and report errors.
+Snowboard html will create a stand-alone html document using a template.
+Snowboard mock will analyze the responses of the markdown document and serve static responses over HTTP.
+
+
+
+## Group About
 
 
 ## Author
@@ -205,3 +219,5 @@ MIT
 
 ## Version History
 * 1.0.0 - Sept 28th, 2017: v1.0 initial release 
+
+

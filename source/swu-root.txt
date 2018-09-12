@@ -1,4 +1,4 @@
-root	swu	SignPuddle 3 SWU API	https://signpuddle.net/v3
+root	swu	SignPuddle 3 SWU API	https://signpuddle.com/back
 	line	> v3.0.0
 	line	
 	line	+ [txt](../src/swu.txt) - ApiTxt format

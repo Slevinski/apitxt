@@ -1,4 +1,4 @@
-# publish.py is a python script to copy files to the website
+# publish.py is a python script to copy files to the front directory
 #
 # Copyright (c) 2017 Stephen E Slevinski Jr <slevin@signpuddle.net>
 #
@@ -16,7 +16,7 @@ from shutil import copyfile
 ##################
 # Argument Setup
 ##################
-parser = argparse.ArgumentParser(description="API Blueprint to HTML documentation conversion and other files to website"
+parser = argparse.ArgumentParser(description="API Blueprint to HTML documentation conversion and other files to front directory"
 	,epilog="Part of the ApiTxt project available online\nhttps://github.com/slevinski/apitxt")
 parser.add_argument("-d","--document", help="Name of the document to build, test, and mock")
 parser.add_argument("-i","--input", help="Directory with source files")
@@ -50,10 +50,10 @@ if not args.document:
 			print
 	sys.exit()
 
-os.system('cp ' + args.output + args.document + '.html ../website/api/.')
-os.system('cp ' + args.output + args.document + '.js ../website/api/.')
-os.system('cp ' + args.output + args.document + '.txt ../website/src/.')
-os.system('cp ' + args.output + args.document + '.json ../website/src/.')
-os.system('cp ' + args.output + args.document + '.md ../website/doc/.')
-os.system('cp ' + args.output + args.document + '.htm ../website/doc/.')
+os.system('cp ' + args.output + args.document + '.html ../front/api/.')
+os.system('cp ' + args.output + args.document + '.js ../front/api/.')
+os.system('cp ' + args.output + args.document + '.txt ../front/src/.')
+os.system('cp ' + args.output + args.document + '.json ../front/src/.')
+os.system('cp ' + args.output + args.document + '.md ../front/doc/.')
+os.system('cp ' + args.output + args.document + '.htm ../front/doc/.')
 

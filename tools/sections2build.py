@@ -43,11 +43,12 @@ print "python publish.py -d index"
 
 
 sections = args.sections.split()
-subnames = "files"
+subnames = "main "
 for section in sections:
 	print "python txt2compile.py -d " + section + " -s \"root main\" -j -l"
 	print "python publish.py -d " + section
 	subnames += " " + section + " " + section + "-files"
+
 
 print "python txt2compile.py -d index -s \"" + subnames + "\" -p"
 print "python txt2compile.py -d index -s \"" + args.sections + "\" -m"

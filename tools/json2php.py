@@ -36,7 +36,7 @@ def utf8(x):
 
 print "<?php"
 print "/**"
-print "* API v1.0.0"
+print "* API v2.0.0"
 print "* generated with tools/json2php.py from https://github.com/Slevinski/apitxt"
 print "*/"
 print ""
@@ -45,10 +45,10 @@ print "header('Access-Control-Allow-Headers: Content-Type, ETag, If-None-Match')
 print "header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');"
 print "header('X-Powered-By: SignPuddle 3');"
 print ""
-files = glob.glob('../website/include/*php')
+files = glob.glob('../back/include/*php')
 if len(files):
 	for file in files:
-		file = file.replace('../website/','')
+		file = file.replace('../back/','')
 		if file != 'include/rewrite.php':
 			print 'require "' + file + '";'
 print ""

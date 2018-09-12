@@ -1,4 +1,4 @@
-root	user	SignPuddle 3 User API	https://signpuddle.net/v3
+root	user	SignPuddle 3 User API	https://signpuddle.com/back
 	line	> v3.0.0
 	line	
 	line	+ [txt](../src/user.txt) - ApiTxt format

@@ -1,4 +1,18 @@
 group	tools	Resources related to tools
+	route	/tools/	tools index
+		method	GET	Get the tools index
+			response	200	text/plain
+				body	Available routes:
+				body	
+				body	/tools/
+				body	/tools/test{?text}
+				body	/tools/define
+				body	/tools/define/{section}
+				body	/tools/define/{section}/{part}
+				body	/tools/parse{?text,utf}
+				body	/tools/encode{?text,slash}
+				body	/tools/decode{?text}
+				body	/tools/utf8{?text}
 	route	/tools/test{?text}	Test with input
 		line	A general purpose function for testing
 		parameter	text	S10000	string	Input for testing

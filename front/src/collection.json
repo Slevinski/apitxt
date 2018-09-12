@@ -1,0 +1,248 @@
+[
+  {
+    "lines": [
+      "> v3.0.0", 
+      "", 
+      "+ [txt](../src/collection.txt) - ApiTxt format", 
+      "+ [json](../src/collection.json) - array of JSON objects", 
+      "+ [html](../api/collection.html) - HTML API Interface", 
+      "+ [md](../doc/collection.md) - API Blueprint", 
+      "+ [htm](../doc/collection.htm) - Stand Alone HTML"
+    ], 
+    "host": "https://signpuddle.com/back", 
+    "meta": "Generated from ApiTxt format (output/collection.txt) using txt2json.py", 
+    "root": "collection", 
+    "title": "SignPuddle 3 Collection API"
+  }, 
+  {
+    "group": "collection", 
+    "description": "Resources related to making collections"
+  }, 
+  {
+    "route": "/collection", 
+    "name": "Available collections"
+  }, 
+  {
+    "code": [
+      "  echo \"en\\nase\";"
+    ], 
+    "method": "GET", 
+    "dialog": [
+      {
+        "responses": [
+          {
+            "status": 200, 
+            "body": [
+              "en", 
+              "ase"
+            ], 
+            "type": "text/plain"
+          }
+        ]
+      }
+    ], 
+    "name": "Get available languages"
+  }, 
+  {
+    "route": "/collection/{name}", 
+    "name": "Collection resource", 
+    "parameters": [
+      {
+        "description": "The name of a collection", 
+        "type": "string", 
+        "name": "name", 
+        "example": "en-US-interface-sp3"
+      }
+    ], 
+    "description": "Access to available collections"
+  }, 
+  {
+    "code": [
+      "$check = $app->request->headers->get('If-None-Match');", 
+      "$dir = 'data/txt/';", 
+      "$ext = '.txt';", 
+      "$file = $dir . $name . $ext;", 
+      "$err = invalidName($name);", 
+      "if ($err){", 
+      "  haltBadRequest($err);", 
+      "}", 
+      "if(file_exists($file)) {", 
+      "  $md5 = md5_file($file);", 
+      "  $app->response->headers->set('ETag', $md5);", 
+      "  if ($md5 == $check){", 
+      "    haltNotModified();", 
+      "  }", 
+      "  getFile($file);", 
+      "} else {", 
+      "  $out = [];", 
+      "  foreach (glob($file) as $filename) {", 
+      "    $out[] = str_replace($ext,'',str_replace($dir,'',$filename));", 
+      "  }", 
+      "  if (count($out)){", 
+      "    haltMultipleChoices(implode($out,\"\\n\"));", 
+      "  } else {", 
+      "    haltNoContent();", 
+      "  }", 
+      "}"
+    ], 
+    "method": "GET", 
+    "dialog": [
+      {
+        "request": {
+          "name": "collection text"
+        }, 
+        "responses": [
+          {
+            "status": 200, 
+            "body": [
+              "print.buttons.main\tmessage\tdescription\ticon"
+            ], 
+            "type": "text/plain"
+          }
+        ]
+      }
+    ], 
+    "name": "retrieve collection or available collections"
+  }, 
+  {
+    "route": "/collection/{name}/md5", 
+    "name": "Collection resource md5 hash", 
+    "parameters": [
+      {
+        "description": "The name of a collection", 
+        "type": "string", 
+        "name": "name", 
+        "example": "en-US-interface-sp3"
+      }
+    ], 
+    "description": "MD5 hash of collection"
+  }, 
+  {
+    "code": [
+      "$dir = 'data/txt/';", 
+      "$ext = '.txt';", 
+      "$file = $dir . $name . $ext;", 
+      "if (strpos($name,\"*\")!==false) {", 
+      "  $err = invalidNameWild($name);", 
+      "  if($err){", 
+      "    haltBadRequest($err);", 
+      "  }", 
+      "  $out = [];", 
+      "  foreach (glob($file) as $filename) {", 
+      "    $out[] = str_replace($ext,'',str_replace($dir,'',$filename));", 
+      "  }", 
+      "  if (count($out)){", 
+      "    if (count($out)==1) {", 
+      "      $app->request->headers->set('Location','/location/' . $out[0] . '/md5');", 
+      "      haltSeeOther($out[0]);", 
+      "    } else {", 
+      "      haltMultipleChoices(implode($out,\"\\n\"));", 
+      "    }", 
+      "  } else {", 
+      "    haltBadRequest(\"No choices available\");", 
+      "  }", 
+      "} else {", 
+      "  $err = invalidName($name);", 
+      "  if ($err){", 
+      "    haltBadRequest($err);", 
+      "  }", 
+      "  if(file_exists($file)) {", 
+      "    $md5 = md5_file($file);", 
+      "    echo $md5;", 
+      "  } else {", 
+      "    halting(202, md5($name));", 
+      "  }", 
+      "}"
+    ], 
+    "method": "GET", 
+    "dialog": [
+      {
+        "request": {
+          "headers": {
+            "If-None-Match": "af779785a5c3ffd166bc95e6dd530889"
+          }, 
+          "name": "the md5 hash of a collection"
+        }, 
+        "responses": [
+          {
+            "status": 200, 
+            "body": [
+              "9785a5c3ffd166bc95e6dd5308894691"
+            ], 
+            "type": "text/plain"
+          }
+        ]
+      }
+    ], 
+    "name": "retrieve collection md5 hash"
+  }, 
+  {
+    "method": "POST", 
+    "dialog": [
+      {
+        "request": {
+          "headers": {
+            "If-None-Match": "af779785a5c3ffd166bc95e6dd530889"
+          }, 
+          "name": "the md5 hash of a collection"
+        }, 
+        "responses": [
+          {
+            "status": 200, 
+            "body": [
+              "9785a5c3ffd166bc95e6dd5308894691"
+            ], 
+            "type": "text/plain"
+          }
+        ]
+      }
+    ], 
+    "name": "retrieve collection md5 hash"
+  }, 
+  {
+    "method": "PUT", 
+    "dialog": [
+      {
+        "request": {
+          "headers": {
+            "If-None-Match": "af779785a5c3ffd166bc95e6dd530889"
+          }, 
+          "name": "the md5 hash of a collection"
+        }, 
+        "responses": [
+          {
+            "status": 200, 
+            "body": [
+              "9785a5c3ffd166bc95e6dd5308894691"
+            ], 
+            "type": "text/plain"
+          }
+        ]
+      }
+    ], 
+    "name": "retrieve collection md5 hash"
+  }, 
+  {
+    "method": "DELETE", 
+    "dialog": [
+      {
+        "request": {
+          "headers": {
+            "If-None-Match": "af779785a5c3ffd166bc95e6dd530889"
+          }, 
+          "name": "the md5 hash of a collection"
+        }, 
+        "responses": [
+          {
+            "status": 200, 
+            "body": [
+              "9785a5c3ffd166bc95e6dd5308894691"
+            ], 
+            "type": "text/plain"
+          }
+        ]
+      }
+    ], 
+    "name": "retrieve collection md5 hash"
+  }
+]

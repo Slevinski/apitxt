@@ -1,4 +1,4 @@
-root	fsw	Formal SignWriting in ASCII (FSW)	https://signpuddle.net/v3
+root	fsw	Formal SignWriting in ASCII (FSW)	https://signpuddle.com/back
 	line	> SignPuddle v3.0.0
 	line	
 	line	+ [txt](../src/fsw.txt) - ApiTxt format

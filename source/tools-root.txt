@@ -1,4 +1,4 @@
-root	tools	SignPuddle 3 Tools API	https://signpuddle.net/v3
+root	tools	SignPuddle 3 Tools API	https://signpuddle.com/back
 	line	> v3.0.0
 	line	
 	line	+ [txt](../src/tools.txt) - ApiTxt format

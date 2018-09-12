@@ -1,0 +1,2428 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>ApiTxt</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.4/semantic.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/themes/prism-okaidia.min.css" />
+    <style>
+      blockquote {
+        border-left: solid 4px #eee;
+        padding-left: 8px;
+        font-style: italic;
+        margin-left: 0;
+        padding: 8px;
+      }
+
+      .ui.micro.label {
+        font-size: .25rem;
+      }
+
+      .ui.transaction.accordion .title {
+        text-align: center;
+      }
+
+      .ui.transaction.accordion .content {
+        border-top: solid 1px #ddd !important;
+        border-bottom: solid 1px #ddd !important;
+        background-color: rgba(0,0,0,.03);
+        padding: 0.5em 1em !important;
+      }
+
+      .ui.transaction.accordion .content.active {
+        margin-top: 0.5em;
+      }
+
+      .ui.basic.label {
+        text-align: left;
+        overflow: auto;
+      }
+      
+      .ui.basic.label.request-url {
+        user-select: text;
+      }
+
+      .resource .ui.sub.header {
+        text-transform: none;
+      }
+
+      @media only screen and (min-width: 768px) {
+        .sidewrap {
+          margin-right: 2rem;
+        }
+
+        .sidenav {
+          left: 0;
+          top: 0;
+          width: inherit;
+          position: fixed !important;
+          height: 100% !important;
+          overflow-y: auto !important;
+          padding-left: 0.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="ui padded grid">
+      <div class="sidewrap four wide computer five wide tablet sixteen wide mobile column">
+        <div class="sidenav">
+          
+<div class="ui horizontal divider">
+  <a href="#introduction">Introduction</a>
+</div>
+<div class="ui fluid secondary vertical menu">
+  <a class="item" href="#introduction">ApiTxt</a>
+</div>
+
+
+<div class="ui horizontal divider">
+  <a href="#apitxt">apitxt</a>
+</div>
+
+<div class="ui accordion fluid">
+  
+    
+    <div class="title active">
+      <i class="dropdown icon"></i>
+      
+        <strong>root</strong>
+      
+    </div>
+    <div class="content active">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#apitxt-root-get-root-definition">
+          <i class="ui green empty circular label"></i>
+          
+            <span>Get root definition</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+    
+    <div class="title ">
+      <i class="dropdown icon"></i>
+      
+        <strong>group</strong>
+      
+    </div>
+    <div class="content ">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#apitxt-group-get-group-definition">
+          <i class="ui green empty circular label"></i>
+          
+            <span>Get group definition</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+    
+    <div class="title ">
+      <i class="dropdown icon"></i>
+      
+        <strong>route</strong>
+      
+    </div>
+    <div class="content ">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#apitxt-route-get-route-definition">
+          <i class="ui green empty circular label"></i>
+          
+            <span>Get route definition</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+    
+    <div class="title ">
+      <i class="dropdown icon"></i>
+      
+        <strong>parameter</strong>
+      
+    </div>
+    <div class="content ">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#apitxt-parameter-get-parameter-definition">
+          <i class="ui green empty circular label"></i>
+          
+            <span>Get parameter definition</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+    
+    <div class="title ">
+      <i class="dropdown icon"></i>
+      
+        <strong>method</strong>
+      
+    </div>
+    <div class="content ">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#apitxt-method-get-method-definition">
+          <i class="ui green empty circular label"></i>
+          
+            <span>Get method definition</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+    
+    <div class="title ">
+      <i class="dropdown icon"></i>
+      
+        <strong>request</strong>
+      
+    </div>
+    <div class="content ">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#apitxt-request-get-request-definition">
+          <i class="ui green empty circular label"></i>
+          
+            <span>Get request definition</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+    
+    <div class="title ">
+      <i class="dropdown icon"></i>
+      
+        <strong>response</strong>
+      
+    </div>
+    <div class="content ">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#apitxt-response-get-response-definition">
+          <i class="ui green empty circular label"></i>
+          
+            <span>Get response definition</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+    
+    <div class="title ">
+      <i class="dropdown icon"></i>
+      
+        <strong>header</strong>
+      
+    </div>
+    <div class="content ">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#apitxt-header-get-header-definition">
+          <i class="ui green empty circular label"></i>
+          
+            <span>Get header definition</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+    
+    <div class="title ">
+      <i class="dropdown icon"></i>
+      
+        <strong>body</strong>
+      
+    </div>
+    <div class="content ">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#apitxt-body-get-body-definition">
+          <i class="ui green empty circular label"></i>
+          
+            <span>Get body definition</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+    
+    <div class="title ">
+      <i class="dropdown icon"></i>
+      
+        <strong>line</strong>
+      
+    </div>
+    <div class="content ">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#apitxt-line-get-line-definition">
+          <i class="ui green empty circular label"></i>
+          
+            <span>Get line definition</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+    
+    <div class="title ">
+      <i class="dropdown icon"></i>
+      
+        <strong>code</strong>
+      
+    </div>
+    <div class="content ">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#apitxt-code-get-code-definition">
+          <i class="ui green empty circular label"></i>
+          
+            <span>Get code definition</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+</div>
+
+
+        </div>
+      </div>
+      <div class="eleven wide computer ten wide tablet sixteen wide mobile column">
+        
+<div class="ui hidden divider header"></div>
+<h1 class="ui huge header" id="introduction">ApiTxt</h1>
+<hr class="ui divider">
+<div class="description">
+  <blockquote>
+<p>ApiTxt v2.0.0</p>
+</blockquote>
+
+<ul>
+<li><p><a href="../src/apitxt.txt">txt</a> - ApiTxt format</p></li>
+
+<li><p><a href="../src/apitxt.json">json</a> - array of JSON objects</p></li>
+
+<li><p><a href="../api/apitxt.html">html</a> - HTML API Interface</p></li>
+
+<li><p><a href="../doc/apitxt.md">md</a> - API Blueprint</p></li>
+
+<li><p><a href="../doc/apitxt.htm">htm</a> - Stand Alone HTML</p></li>
+</ul>
+
+<p>ApiTxt is the build environment to create the SignPuddle 3 API for SignWriting Text.
+ApiTxt format is a highly structured plain text format that defines multiple facets of a website api.</p>
+
+<p>A variety of python programs and shell scripts are used to transform the source ApiTxt format into a fully functional and documented website.</p>
+
+<h2 id="input-and-output-formats">Input and Output Formats</h2>
+
+<p>The various formats are used to define the structure and function of a website API.
+The original source is written in ApiTxt format and transformed into an array of JSON objects.
+The JSON objects are used to write other formats, including API Blueprint.
+API Blueprint has an extensive toolkit of additional transformations.</p>
+
+<h3 id="apitxt-format-txt">ApiTxt Format (txt)</h3>
+
+<p>ApiTxt defines a highly structured plain text format used to define multiple facets of a website api.
+Each line in an ApiTxt document is a self-contained element which starts with a name and is followed by &lt;TAB&gt; separated fields.
+Writing ApiTxt documents is easier when tabs and spaces appear different, so use a plain text editor and turn on the invisible characters option.</p>
+
+<h3 id="array-of-json-objects-json">Array of JSON Objects (json)</h3>
+
+<p>Each line of ApiTxt format is converted into a JSON object or added to an existing object.
+The various objects are stored as an ordered array.
+The JSON array of objects can be reduced to the root object by appropriately structuring the groups, routes, and methods.</p>
+
+<pre><code>    root
+      | - routes
+            | - methods
+      | - groups
+            | - routes
+                  | - methods
+</code></pre>
+
+<h3 id="api-blueprint-md">API Blueprint (md)</h3>
+
+<p><a href="https://apiblueprint.org/">API Blueprint</a> is a high-level API description language for web APIs. API Blueprint is widely supported with various tooling available.</p>
+
+<h3 id="standalone-htm-documentation-htm">Stand-Alone HTM Documentation (htm)</h3>
+
+<p>Stand-alone HTM document created from the API Blueprint using a template and the snowboard tool.</p>
+
+<h3 id="interactive-html-api-html">Interactive HTML API (html)</h3>
+
+<p>Interactive HTML documentation is generated from the JSON elements.</p>
+
+<h3 id="php-server-php">PHP Server (php)</h3>
+
+<p>The PHP server is written for the PHP project <a href="https://docs.slimframework.com/">Slim Framework v2</a> to create the functional web API.
+The website directory contains an .htaccess file for an Apache server with PHP support.
+Alternatively, the server can be started with a shell script (start_server.sh) using PHP&rsquo;s built in web server and a custom rewrite.php file.</p>
+
+<h2 id="transformations">Transformations</h2>
+
+<p>Python programs and shell scripts are used to read and write a variety of data formats including plain text, JSON data, API Blueprint, HTML and PHP scripts.</p>
+
+<h3 id="plain-text-to-json-objects-txt2json">Plain Text to JSON Objects (txt2json)</h3>
+
+<p>The primary transformation is from the plain text format to an array of JSON objects.</p>
+
+<h3 id="json-objects-back-to-plain-text-json2txt">JSON Objects back to Plain Text (json2txt)</h3>
+
+<p>The transformation can be reversed, resulting in a document that is properly structured with standardized indenting.</p>
+
+<h3 id="json-objects-to-api-blueprint-json2md">JSON Objects to API Blueprint (json2md)</h3>
+
+<p>The API Blueprint document is created from an array of JSON objects.
+Each object is written as a section of the API Blueprint document using a markdown syntax.</p>
+
+<h3 id="json-objects-to-php-server-json2php">JSON Objects to PHP Server (json2php)</h3>
+
+<p>A functional PHP server is built from the JSON objects for the Slim Framework v2.
+The server responses can be based on prewritten responses or functional PHP code using URL parameters and query parameters.</p>
+
+<h3 id="json-objects-to-interactive-html-page-json2html">JSON Objects to Interactive HTML Page (json2html)</h3>
+
+<p>A functional reference guide with live calls to the server.
+Detailed reports for requests and responses.</p>
+
+<h3 id="json-objects-to-javascript-json2js">JSON Objects to Javascript (json2js)</h3>
+
+<p>The interactive Javascript for the user interface and the server calls.
+Detailed reports for requests and responses.</p>
+
+<h3 id="snowboard-transformations-bukalapaksnowboardhttpsgithubcombukalapaksnowboard">Snowboard Transformations (<a href="https://github.com/bukalapak/snowboard/">bukalapak/snowboard</a>)</h3>
+
+<p>Part of the API Blueprint toolkit, snowboard offers three different transformations: lint, html, and mock.
+Snowboard lint will check the structure of the markdown text and report errors.
+Snowboard html will create a stand-alone html document using a template.
+Snowboard mock will analyze the responses of the markdown document and serve static responses over HTTP.</p>
+
+</div>
+
+        <div class="ui hidden divider"></div>
+        
+
+  <div class="ui horizontal divider" id="apitxt">
+    apitxt
+  </div>
+  <div class="ui header center aligned">
+    <div class="ui header">
+      <div class="sub header">
+        <p>ApiTxt uses eleven types of element to define an API.</p>
+
+<p>root, group, route, parameter, method, request, response, header, line, code, and body.</p>
+
+      </div>
+    </div>
+  </div>
+  
+    
+      <div class="ui stacked segments">
+        <div class="ui basic segment resource">
+          <div class="ui purple huge ribbon label">
+            root
+          </div>
+          <div class="ui header">
+            <div class="ui sub header">
+              <p>Every document should start with a root element.
+After the root, the other elements are used to quickly create complex website APIs.
+The order of the lines matters and will effect the structure of the JSON objects.</p>
+
+<p>There are two groups of elements, the frame elements and the detail elements.
+The frame elements structure a website api and the detail elements attach to a previous frame element.</p>
+
+<h3 id="frame-elements">Frame elements</h3>
+
+<p>There are six frame elements: root, group, route, method, request, and response.
+The lines are written in a specific order to create an array of JSON objects.</p>
+
+<p><strong>route organization</strong></p>
+
+<p>An ApiTxt document starts with a root, or an assumed root.
+Any route that occur before a group element, will be associated with the root.
+Groups are always associated with the root.
+Group elements can contain routes.</p>
+
+<pre><code>    root
+      | - routes
+      | - groups
+            | - routes
+</code></pre>
+
+<p><strong>route structure</strong></p>
+
+<p>A route can be associated with a variety of HTTP methods.
+Each method can have several requests and responses.
+Any response before a request will assume a generic request.
+Any response after a request will be associated with that request.</p>
+
+<pre><code>    route
+      | - methods
+        | - responses
+        | - requests
+              | - responses
+</code></pre>
+
+<h2 id="detail-elements">Detail elements</h2>
+
+<p>There are five detail elements: line, parameter, code, header, and body.  The detail lines attach to a previous frame element if correctly structured.</p>
+
+<p><strong>single line elements</strong></p>
+
+<ul>
+<li><p>lines for all frame elements</p></li>
+
+<li><p>parameters for route</p></li>
+
+<li><p>code for method</p></li>
+
+<li><p>body for request and response</p></li>
+
+<li><p>headers for request and response</p></li>
+</ul>
+
+            </div>
+          </div>
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui pink micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block center aligned header" id="apitxt-root-get-root-definition">
+              Get root definition
+            </h3>
+            <div class="description"><p>Every document should start with a root element.</p>
+
+<p><strong>root line</strong></p>
+
+<p>root &lt;TAB&gt; name &lt;TAB&gt; title &lt;TAB&gt; host</p>
+
+<ul>
+<li><p>field 1 - name - uniquely identifies a document</p></li>
+
+<li><p>field 2 - title - name of the document</p></li>
+
+<li><p>field 3 - host - website URL</p></li>
+</ul>
+
+<p><strong>root example</strong></p>
+
+<p>root &lt;TAB&gt; apitxt &lt;TAB&gt; ApiTxt &lt;TAB&gt; <a href="https://signpuddle.com/apitxt">https://signpuddle.com/apitxt</a></p>
+
+<p><strong>root line relationships</strong></p>
+
+<pre><code>    root
+     | - lines
+     | - routes
+     | - groups
+</code></pre>
+
+<p><strong>root object</strong></p>
+
+<pre><code class="language-json">{&quot;root&quot;:
+  &quot;root&quot; : field[1],
+  &quot;title&quot; : field[2],
+  &quot;host&quot; : field[3],
+  &quot;lines&quot; : []
+}
+</code></pre>
+</div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST the root definition
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid request-url green label">
+                  <code>https://signpuddle.com/back/apitxt/root</code>
+                </a>
+              </div>
+              
+              
+              
+                <div class="ui stacked segment">
+                  <div class="ui fluid transaction accordion">
+                    <div class="title">
+                      <code></code>
+                    </div>
+                    <div class="content tabbed">
+                      <div class="ui top attached tabular menu">
+                        <a data-tab="body" class="active item">BODY</a>
+                        <a data-tab="schema" class="item">SCHEMA</a>
+                      </div>
+                      <div class="ui bottom attached active tab segment" data-tab="body">
+                        <pre style="white-space: inherit">
+                          <code class="language-">null
+</code>
+                        </pre>
+                      </div>
+                      <div class="ui bottom attached tab segment" data-tab="schema">
+                        <pre style="white-space: inherit">
+                          <code class="language-json"></code>
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>text/plain</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui stacked blue segment">
+                <div class="ui fluid transaction accordion">
+                  <div class="title center aligned">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>text/plain</code>
+                  </div>
+                  <div class="content tabbed">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-">Every document should start with a root element.
+
+**root line**
+
+root   name   title   host
+
+&#43; field 1 - name - uniquely identifies a document
+&#43; field 2 - title - name of the document
+&#43; field 3 - host - website URL
+
+**example**
+
+root   apitxt   ApiTxt   https://signpuddle.com/apitxt
+
+**root line relationships**
+
+```
+    root
+     | - lines
+     | - routes
+     | - groups
+```
+
+**root object**
+
+```json
+{&#34;root&#34;:
+  &#34;root&#34; : field[1],
+  &#34;title&#34; : field[2],
+  &#34;host&#34; : field[3],
+  &#34;lines&#34; : []
+}
+```
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui stacked segments">
+        <div class="ui basic segment resource">
+          <div class="ui purple huge ribbon label">
+            group
+          </div>
+          <div class="ui header">
+            <div class="ui sub header">
+              
+            </div>
+          </div>
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui pink micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block center aligned header" id="apitxt-group-get-group-definition">
+              Get group definition
+            </h3>
+            <div class="description"><p>The group organizes resources into sections</p>
+
+<p><strong>group line</strong></p>
+
+<p>group &lt;TAB&gt; name &lt;TAB&gt; description</p>
+
+<ul>
+<li><p>field 1 - name - the short name used for sections</p></li>
+
+<li><p>field 2 - description - information about the group</p></li>
+</ul>
+
+<p><strong>group example</strong></p>
+
+<p>group &lt;TAB&gt; Section name &lt;TAB&gt; an example section</p>
+
+<p><strong>group line relationships</strong></p>
+
+<pre><code>    group
+     | - lines
+     | - routes
+</code></pre>
+
+<p><strong>group object</strong></p>
+
+<pre><code class="language-json">{&quot;group&quot;:
+  &quot;group&quot; : field[1],
+  &quot;description&quot; : field[2],
+  &quot;lines&quot;: []
+}
+</code></pre>
+</div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST the group definition
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid request-url green label">
+                  <code>https://signpuddle.com/back/apitxt/group</code>
+                </a>
+              </div>
+              
+              
+              
+                <div class="ui stacked segment">
+                  <div class="ui fluid transaction accordion">
+                    <div class="title">
+                      <code></code>
+                    </div>
+                    <div class="content tabbed">
+                      <div class="ui top attached tabular menu">
+                        <a data-tab="body" class="active item">BODY</a>
+                        <a data-tab="schema" class="item">SCHEMA</a>
+                      </div>
+                      <div class="ui bottom attached active tab segment" data-tab="body">
+                        <pre style="white-space: inherit">
+                          <code class="language-">null
+</code>
+                        </pre>
+                      </div>
+                      <div class="ui bottom attached tab segment" data-tab="schema">
+                        <pre style="white-space: inherit">
+                          <code class="language-json"></code>
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>text/plain</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui stacked blue segment">
+                <div class="ui fluid transaction accordion">
+                  <div class="title center aligned">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>text/plain</code>
+                  </div>
+                  <div class="content tabbed">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-">The group organizes resources into sections
+
+**group line**
+
+group   name   description
+
+&#43; field 1 - name - the short name used for sections
+&#43; field 2 - description - information about the group
+
+**group example**
+
+group   Section name   an example section
+
+**group line relationships**
+
+```
+    group
+     | - lines
+     | - routes
+```
+
+**group object**
+
+```json
+{&#34;group&#34;:
+  &#34;group&#34; : field[1],
+  &#34;description&#34; : field[2],
+  &#34;lines&#34;: []
+}
+```
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui stacked segments">
+        <div class="ui basic segment resource">
+          <div class="ui purple huge ribbon label">
+            route
+          </div>
+          <div class="ui header">
+            <div class="ui sub header">
+              
+            </div>
+          </div>
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui pink micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block center aligned header" id="apitxt-route-get-route-definition">
+              Get route definition
+            </h3>
+            <div class="description"><p>The route element allows access to a resource</p>
+
+<p><strong>route line</strong></p>
+
+<p>route &lt;TAB&gt; URI template &lt;TAB&gt; name &lt;TAB&gt; description</p>
+
+<ul>
+<li><p>field 1 - URI template - a resource pattern with parameters</p></li>
+
+<li><p>field 2 - name - the route name must be unique</p></li>
+
+<li><p>field 3 - description - information about the resource</p></li>
+</ul>
+
+<p><strong>route example</strong></p>
+
+<p>route &lt;TAB&gt; /example &lt;TAB&gt; an example route &lt;TAB&gt; a description of the route</p>
+
+<p><strong>route line relationships</strong></p>
+
+<pre><code>    route
+     | - lines
+     | - parameters
+     | - methods
+</code></pre>
+
+<p><strong>route object</strong></p>
+
+<pre><code class="language-json">{&quot;route&quot;:
+  &quot;route&quot; : field[1],
+  &quot;name&quot; : field[2],
+  &quot;description&quot; : field[3],
+  &quot;lines&quot;: [],
+  &quot;parameters&quot;: []
+}
+</code></pre>
+</div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST the route definition
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid request-url green label">
+                  <code>https://signpuddle.com/back/apitxt/route</code>
+                </a>
+              </div>
+              
+              
+              
+                <div class="ui stacked segment">
+                  <div class="ui fluid transaction accordion">
+                    <div class="title">
+                      <code></code>
+                    </div>
+                    <div class="content tabbed">
+                      <div class="ui top attached tabular menu">
+                        <a data-tab="body" class="active item">BODY</a>
+                        <a data-tab="schema" class="item">SCHEMA</a>
+                      </div>
+                      <div class="ui bottom attached active tab segment" data-tab="body">
+                        <pre style="white-space: inherit">
+                          <code class="language-">null
+</code>
+                        </pre>
+                      </div>
+                      <div class="ui bottom attached tab segment" data-tab="schema">
+                        <pre style="white-space: inherit">
+                          <code class="language-json"></code>
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>text/plain</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui stacked blue segment">
+                <div class="ui fluid transaction accordion">
+                  <div class="title center aligned">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>text/plain</code>
+                  </div>
+                  <div class="content tabbed">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-">The route element allows access to a resource
+
+**route line**
+
+route   URI template   name   description
+
+&#43; field 1 - URI template - a resource pattern with parameters
+&#43; field 2 - name - the route name must be unique
+&#43; field 3 - description - information about the resource
+
+**route example**
+
+route   /example   an example route   a description of the route
+
+**route line relationships**
+
+```
+    route
+     | - lines
+     | - parameters
+     | - methods
+```
+
+**route object**
+
+```json
+{&#34;route&#34;:
+  &#34;route&#34; : field[1],
+  &#34;name&#34; : field[2],
+  &#34;description&#34; : field[3],
+  &#34;lines&#34;: [],
+  &#34;parameters&#34;: []
+}
+```
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui stacked segments">
+        <div class="ui basic segment resource">
+          <div class="ui purple huge ribbon label">
+            parameter
+          </div>
+          <div class="ui header">
+            <div class="ui sub header">
+              
+            </div>
+          </div>
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui pink micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block center aligned header" id="apitxt-parameter-get-parameter-definition">
+              Get parameter definition
+            </h3>
+            <div class="description"><p>The parameter element is applied to the previous route</p>
+
+<p><strong>parameter line</strong></p>
+
+<p>parameter &lt;TAB&gt; name &lt;TAB&gt; example &lt;TAB&gt; type &lt;TAB&gt; description</p>
+
+<ul>
+<li><p>field 1 - name - the name of a parameter for a route</p></li>
+
+<li><p>field 2 - example - an example value for the parameter</p></li>
+
+<li><p>field 3 - type - the parameter type, such as &ldquo;string&rdquo;, &ldquo;number&rdquo;, &ldquo;boolean&rdquo;, &ldquo;string, optional&rdquo;, &ldquo;string, required&rdquo;</p></li>
+
+<li><p>field 4 - description - information about the parameter</p></li>
+</ul>
+
+<p><strong>parameter example</strong></p>
+
+<p>parameter &lt;TAB&gt; country_code &lt;TAB&gt; US &lt;TAB&gt; string &lt;TAB&gt; the country code of interest</p>
+
+<p><strong>parameter line relationships</strong></p>
+
+<p>parameter lines are added to a parameters array</p>
+
+<p><strong>parameters array</strong></p>
+
+<pre><code class="language-json">{&quot;parameters&quot;:
+  [
+    {
+      &quot;name&quot; : &quot; field[1],
+      &quot;example&quot; : field[2],
+      &quot;type&quot; : field[3],
+      &quot;description&quot; : field[4]
+    }
+  ]
+}
+</code></pre>
+</div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST the parameter definition
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid request-url green label">
+                  <code>https://signpuddle.com/back/apitxt/parameter</code>
+                </a>
+              </div>
+              
+              
+              
+                <div class="ui stacked segment">
+                  <div class="ui fluid transaction accordion">
+                    <div class="title">
+                      <code></code>
+                    </div>
+                    <div class="content tabbed">
+                      <div class="ui top attached tabular menu">
+                        <a data-tab="body" class="active item">BODY</a>
+                        <a data-tab="schema" class="item">SCHEMA</a>
+                      </div>
+                      <div class="ui bottom attached active tab segment" data-tab="body">
+                        <pre style="white-space: inherit">
+                          <code class="language-">null
+</code>
+                        </pre>
+                      </div>
+                      <div class="ui bottom attached tab segment" data-tab="schema">
+                        <pre style="white-space: inherit">
+                          <code class="language-json"></code>
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>text/plain</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui stacked blue segment">
+                <div class="ui fluid transaction accordion">
+                  <div class="title center aligned">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>text/plain</code>
+                  </div>
+                  <div class="content tabbed">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-">The parameter element is applied to the previous route
+
+**parameter line**
+
+parameter   name   example   type   description
+
+&#43; field 1 - name - the name of a parameter for a route
+&#43; field 2 - example - an example value for the parameter
+&#43; field 3 - type - the parameter type, such as &#34;string&#34;, &#34;number&#34;, &#34;boolean&#34;, &#34;string, optional&#34;, &#34;string, required&#34;
+&#43; field 4 - description - information about the parameter
+
+**parameter example**
+
+parameter   country_code   US   string   the country code of interest
+
+**parameter line relationships**
+
+parameter lines are added to a parameters array
+
+**parameters array**
+
+```json
+{&#34;parameters&#34;:
+  [
+    {
+      &#34;name&#34; : &#34; field[1],
+      &#34;example&#34; : field[2],
+      &#34;type&#34; : field[3],
+      &#34;description&#34; : field[4]
+    }
+  ]
+}
+```
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui stacked segments">
+        <div class="ui basic segment resource">
+          <div class="ui purple huge ribbon label">
+            method
+          </div>
+          <div class="ui header">
+            <div class="ui sub header">
+              
+            </div>
+          </div>
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui pink micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block center aligned header" id="apitxt-method-get-method-definition">
+              Get method definition
+            </h3>
+            <div class="description"><p>The method element represents an action that can be performed on a route</p>
+
+<p><strong>method line</strong></p>
+
+<p>method &lt;TAB&gt; HTTP method &lt;TAB&gt; name &lt;TAB&gt; description</p>
+
+<ul>
+<li><p>field 1 - HTTP method - the type of action to perform: GET, POST, PUT, DELETE</p></li>
+
+<li><p>field 2 - name - the name of the action</p></li>
+
+<li><p>field 3 - description - information about the method</p></li>
+</ul>
+
+<p><strong>method example</strong></p>
+
+<p>method &lt;TAB&gt; GET &lt;TAB&gt; Get an example &lt;TAB&gt; This method retrieves an example document</p>
+
+<p><strong>method line relationships</strong></p>
+
+<pre><code>    method
+     | - lines
+     | - code
+     | - requests
+     | - responses
+</code></pre>
+
+<p><strong>method object</strong></p>
+
+<pre><code class="language-json">{
+  &quot;method&quot; : field[1],
+  &quot;name&quot; : field[2],
+  &quot;description&quot; : field[3],
+  &quot;lines&quot; : [],
+  &quot;code&quot; : [],
+  &quot;dialog&quot; : [
+    {
+      &quot;request&quot; : {},
+      &quot;responses&quot; : []
+    }
+  ]
+}
+</code></pre>
+</div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST the method definition
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid request-url green label">
+                  <code>https://signpuddle.com/back/apitxt/method</code>
+                </a>
+              </div>
+              
+              
+              
+                <div class="ui stacked segment">
+                  <div class="ui fluid transaction accordion">
+                    <div class="title">
+                      <code></code>
+                    </div>
+                    <div class="content tabbed">
+                      <div class="ui top attached tabular menu">
+                        <a data-tab="body" class="active item">BODY</a>
+                        <a data-tab="schema" class="item">SCHEMA</a>
+                      </div>
+                      <div class="ui bottom attached active tab segment" data-tab="body">
+                        <pre style="white-space: inherit">
+                          <code class="language-">null
+</code>
+                        </pre>
+                      </div>
+                      <div class="ui bottom attached tab segment" data-tab="schema">
+                        <pre style="white-space: inherit">
+                          <code class="language-json"></code>
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>text/plain</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui stacked blue segment">
+                <div class="ui fluid transaction accordion">
+                  <div class="title center aligned">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>text/plain</code>
+                  </div>
+                  <div class="content tabbed">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-">The method element represents an action that can be performed on a route
+
+**method line**
+
+method   HTTP method   name   description
+
+&#43; field 1 - HTTP method - the type of action to perform: GET, POST, PUT, DELETE
+&#43; field 2 - name - the name of the action
+&#43; field 3 - description - information about the method
+
+**method example**
+
+method   GET   Get an example   This method retrieves an example document
+
+**method line relationships**
+
+```
+    method
+     | - lines
+     | - code
+     | - requests
+     | - responses
+```
+
+**method object**
+
+```json
+{
+  &#34;method&#34; : field[1],
+  &#34;name&#34; : field[2],
+  &#34;description&#34; : field[3],
+  &#34;lines&#34; : [],
+  &#34;code&#34; : [],
+  &#34;dialog&#34; : [
+    {
+      &#34;request&#34; : {},
+      &#34;responses&#34; : []
+    }
+  ]
+}
+```
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui stacked segments">
+        <div class="ui basic segment resource">
+          <div class="ui purple huge ribbon label">
+            request
+          </div>
+          <div class="ui header">
+            <div class="ui sub header">
+              
+            </div>
+          </div>
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui pink micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block center aligned header" id="apitxt-request-get-request-definition">
+              Get request definition
+            </h3>
+            <div class="description"><p>The request element is associated with a specific method and can be paired with multiple responses.</p>
+
+<p><strong>request line</strong></p>
+
+<p>request &lt;TAB&gt; name &lt;TAB&gt; type</p>
+
+<ul>
+<li><p>field 1 - name - uniquely identifies a request</p></li>
+
+<li><p>field 2 - type - the content type of the request body</p></li>
+</ul>
+
+<p><strong>request example</strong></p>
+
+<p>request &lt;TAB&gt; matching text within request body &lt;TAB&gt; plain/text</p>
+
+<p><strong>request line relationships</strong></p>
+
+<pre><code>    request
+     | - lines
+     | - headers
+     | - body
+</code></pre>
+
+<p><strong>request object</strong></p>
+
+<pre><code class="language-json">{
+  &quot;name&quot; : field[1],
+  &quot;type&quot; : field[2],
+  &quot;lines&quot; : [],
+  &quot;headers&quot; : {},
+  &quot;body&quot; : []
+}
+</code></pre>
+</div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST the request definition
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid request-url green label">
+                  <code>https://signpuddle.com/back/apitxt/request</code>
+                </a>
+              </div>
+              
+              
+              
+                <div class="ui stacked segment">
+                  <div class="ui fluid transaction accordion">
+                    <div class="title">
+                      <code></code>
+                    </div>
+                    <div class="content tabbed">
+                      <div class="ui top attached tabular menu">
+                        <a data-tab="body" class="active item">BODY</a>
+                        <a data-tab="schema" class="item">SCHEMA</a>
+                      </div>
+                      <div class="ui bottom attached active tab segment" data-tab="body">
+                        <pre style="white-space: inherit">
+                          <code class="language-">null
+</code>
+                        </pre>
+                      </div>
+                      <div class="ui bottom attached tab segment" data-tab="schema">
+                        <pre style="white-space: inherit">
+                          <code class="language-json"></code>
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>text/plain</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui stacked blue segment">
+                <div class="ui fluid transaction accordion">
+                  <div class="title center aligned">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>text/plain</code>
+                  </div>
+                  <div class="content tabbed">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-">The request element is associated with a specific method and can be paired with multiple responses.
+
+**request line**
+
+request   name   type
+
+&#43; field 1 - name - uniquely identifies a request
+&#43; field 2 - type - the content type of the request body
+
+**request example**
+
+request   matching text within request body   plain/text
+
+**request line relationships**
+
+```
+    request
+     | - lines
+     | - headers
+     | - body
+```
+
+**request object**
+
+```json
+{
+  &#34;name&#34; : field[1],
+  &#34;type&#34; : field[2],
+  &#34;lines&#34; : [],
+  &#34;headers&#34; : {},
+  &#34;body&#34; : []
+}
+```
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui stacked segments">
+        <div class="ui basic segment resource">
+          <div class="ui purple huge ribbon label">
+            response
+          </div>
+          <div class="ui header">
+            <div class="ui sub header">
+              
+            </div>
+          </div>
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui pink micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block center aligned header" id="apitxt-response-get-response-definition">
+              Get response definition
+            </h3>
+            <div class="description"><p>The response element is associated with a specific request, or associated with a specific method with an assumed generic request.</p>
+
+<p><strong>response line</strong></p>
+
+<p>response &lt;TAB&gt; status &lt;TAB&gt; type</p>
+
+<ul>
+<li><p>field 1 - status - an HTTP response code indicating the status of the request</p></li>
+
+<li><p>field 2 - type - the content type of the response body</p></li>
+</ul>
+
+<p><strong>response example</strong></p>
+
+<p>response &lt;TAB&gt; 200 &lt;TAB&gt; plain/text</p>
+
+<p><strong>response line relationships</strong></p>
+
+<pre><code>    response
+     | - lines
+     | - headers
+     | - body
+</code></pre>
+
+<p><strong>response object</strong></p>
+
+<pre><code class="language-json">{
+  &quot;status&quot; : field[1],
+  &quot;type&quot; : field[2],
+  &quot;lines&quot; : [],
+  &quot;headers&quot; : {},
+  &quot;body&quot; : []
+}
+</code></pre>
+</div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST the response definition
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid request-url green label">
+                  <code>https://signpuddle.com/back/apitxt/response</code>
+                </a>
+              </div>
+              
+              
+              
+                <div class="ui stacked segment">
+                  <div class="ui fluid transaction accordion">
+                    <div class="title">
+                      <code></code>
+                    </div>
+                    <div class="content tabbed">
+                      <div class="ui top attached tabular menu">
+                        <a data-tab="body" class="active item">BODY</a>
+                        <a data-tab="schema" class="item">SCHEMA</a>
+                      </div>
+                      <div class="ui bottom attached active tab segment" data-tab="body">
+                        <pre style="white-space: inherit">
+                          <code class="language-">null
+</code>
+                        </pre>
+                      </div>
+                      <div class="ui bottom attached tab segment" data-tab="schema">
+                        <pre style="white-space: inherit">
+                          <code class="language-json"></code>
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>text/plain</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui stacked blue segment">
+                <div class="ui fluid transaction accordion">
+                  <div class="title center aligned">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>text/plain</code>
+                  </div>
+                  <div class="content tabbed">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-">The response element is associated with a specific request, or associated with a specific method with an assumed generic request.
+
+**response line**
+
+response   status   type
+
+&#43; field 1 - status - an HTTP response code indicating the status of the request
+&#43; field 2 - type - the content type of the response body
+
+**response example**
+
+response   200   plain/text
+
+**response line relationships**
+
+```
+    response
+     | - lines
+     | - headers
+     | - body
+```
+
+**response object**
+
+```json
+{
+  &#34;status&#34; : field[1],
+  &#34;type&#34; : field[2],
+  &#34;lines&#34; : [],
+  &#34;headers&#34; : {},
+  &#34;body&#34; : []
+}
+```
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui stacked segments">
+        <div class="ui basic segment resource">
+          <div class="ui purple huge ribbon label">
+            header
+          </div>
+          <div class="ui header">
+            <div class="ui sub header">
+              
+            </div>
+          </div>
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui pink micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block center aligned header" id="apitxt-header-get-header-definition">
+              Get header definition
+            </h3>
+            <div class="description"><p>The header element is applied to a preceding route</p>
+
+<p><strong>header line</strong></p>
+
+<p>header &lt;TAB&gt; name &lt;TAB&gt; value</p>
+
+<ul>
+<li><p>field 1 - name - the header variable name</p></li>
+
+<li><p>field 2 - value - the header variable value</p></li>
+</ul>
+
+<p><strong>header example</strong></p>
+
+<p>header &lt;TAB&gt; X-Powered-By &lt;TAB&gt; ApiTxt</p>
+
+<p><strong>header object</strong></p>
+
+<pre><code class="language-json">{ field[1] : field[2] }
+</code></pre>
+</div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST the header definition
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid request-url green label">
+                  <code>https://signpuddle.com/back/apitxt/header</code>
+                </a>
+              </div>
+              
+              
+              
+                <div class="ui stacked segment">
+                  <div class="ui fluid transaction accordion">
+                    <div class="title">
+                      <code></code>
+                    </div>
+                    <div class="content tabbed">
+                      <div class="ui top attached tabular menu">
+                        <a data-tab="body" class="active item">BODY</a>
+                        <a data-tab="schema" class="item">SCHEMA</a>
+                      </div>
+                      <div class="ui bottom attached active tab segment" data-tab="body">
+                        <pre style="white-space: inherit">
+                          <code class="language-">null
+</code>
+                        </pre>
+                      </div>
+                      <div class="ui bottom attached tab segment" data-tab="schema">
+                        <pre style="white-space: inherit">
+                          <code class="language-json"></code>
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>text/plain</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui stacked blue segment">
+                <div class="ui fluid transaction accordion">
+                  <div class="title center aligned">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>text/plain</code>
+                  </div>
+                  <div class="content tabbed">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-">The header element is applied to a preceding request or response
+
+**header line**
+
+header   name   value
+
+&#43; field 1 - name - the header variable name
+&#43; field 2 - value - the header variable value
+
+**header example**
+
+header   X-Powered-By   ApiTxt
+
+**header object**
+
+```json
+{ field[1] : field[2] }
+```
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui stacked segments">
+        <div class="ui basic segment resource">
+          <div class="ui purple huge ribbon label">
+            body
+          </div>
+          <div class="ui header">
+            <div class="ui sub header">
+              
+            </div>
+          </div>
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui pink micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block center aligned header" id="apitxt-body-get-body-definition">
+              Get body definition
+            </h3>
+            <div class="description"><p>The body element adds contents to a preceding request or response.</p>
+
+<p>The text of the body is everything after the string &ldquo;body &lt;TAB&gt;&ldquo;.</p>
+</div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST the body definition
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid request-url green label">
+                  <code>https://signpuddle.com/back/apitxt/body</code>
+                </a>
+              </div>
+              
+              
+              
+                <div class="ui stacked segment">
+                  <div class="ui fluid transaction accordion">
+                    <div class="title">
+                      <code></code>
+                    </div>
+                    <div class="content tabbed">
+                      <div class="ui top attached tabular menu">
+                        <a data-tab="body" class="active item">BODY</a>
+                        <a data-tab="schema" class="item">SCHEMA</a>
+                      </div>
+                      <div class="ui bottom attached active tab segment" data-tab="body">
+                        <pre style="white-space: inherit">
+                          <code class="language-">null
+</code>
+                        </pre>
+                      </div>
+                      <div class="ui bottom attached tab segment" data-tab="schema">
+                        <pre style="white-space: inherit">
+                          <code class="language-json"></code>
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>text/plain</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui stacked blue segment">
+                <div class="ui fluid transaction accordion">
+                  <div class="title center aligned">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>text/plain</code>
+                  </div>
+                  <div class="content tabbed">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-">The body element adds contents to a preceding request or response.
+
+The text of the body is everything after the string &#34;body &lt;TAB&gt;&#34;
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui stacked segments">
+        <div class="ui basic segment resource">
+          <div class="ui purple huge ribbon label">
+            line
+          </div>
+          <div class="ui header">
+            <div class="ui sub header">
+              
+            </div>
+          </div>
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui pink micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block center aligned header" id="apitxt-line-get-line-definition">
+              Get line definition
+            </h3>
+            <div class="description"><p>The line element adds additional text to frame elements.</p>
+
+<p>For the root, group, route, method, request, and response, the lines add details to an element.</p>
+
+<p>The text of the line is everything after the string &ldquo;line &lt;TAB&gt;&ldquo;.</p>
+</div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST the line definition
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid request-url green label">
+                  <code>https://signpuddle.com/back/apitxt/line</code>
+                </a>
+              </div>
+              
+              
+              
+                <div class="ui stacked segment">
+                  <div class="ui fluid transaction accordion">
+                    <div class="title">
+                      <code></code>
+                    </div>
+                    <div class="content tabbed">
+                      <div class="ui top attached tabular menu">
+                        <a data-tab="body" class="active item">BODY</a>
+                        <a data-tab="schema" class="item">SCHEMA</a>
+                      </div>
+                      <div class="ui bottom attached active tab segment" data-tab="body">
+                        <pre style="white-space: inherit">
+                          <code class="language-">null
+</code>
+                        </pre>
+                      </div>
+                      <div class="ui bottom attached tab segment" data-tab="schema">
+                        <pre style="white-space: inherit">
+                          <code class="language-json"></code>
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>text/plain</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui stacked blue segment">
+                <div class="ui fluid transaction accordion">
+                  <div class="title center aligned">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>text/plain</code>
+                  </div>
+                  <div class="content tabbed">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-">The line element adds additional text to frame elements.
+
+For the root, group, route, method, request, and response, the lines add details to an element.
+
+The text of the line is everything after the string &#34;line &lt;TAB&gt;&#34;.
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui stacked segments">
+        <div class="ui basic segment resource">
+          <div class="ui purple huge ribbon label">
+            code
+          </div>
+          <div class="ui header">
+            <div class="ui sub header">
+              
+            </div>
+          </div>
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui pink micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block center aligned header" id="apitxt-code-get-code-definition">
+              Get code definition
+            </h3>
+            <div class="description"><p>The code element adds functionality to the method element.</p>
+
+<p>The code element contains programming text.  ApiTxt comes integrated with the PHP project the Slim Framework v2.  The conversion to working PHP adds boilerplate details for routes and method, with named parameters and query parameters available as functional variables.</p>
+
+<p>The text of the code is everything after the string &ldquo;code &lt;TAB&gt;&ldquo;.</p>
+</div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST the code definition
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid request-url green label">
+                  <code>https://signpuddle.com/back/apitxt/code</code>
+                </a>
+              </div>
+              
+              
+              
+                <div class="ui stacked segment">
+                  <div class="ui fluid transaction accordion">
+                    <div class="title">
+                      <code></code>
+                    </div>
+                    <div class="content tabbed">
+                      <div class="ui top attached tabular menu">
+                        <a data-tab="body" class="active item">BODY</a>
+                        <a data-tab="schema" class="item">SCHEMA</a>
+                      </div>
+                      <div class="ui bottom attached active tab segment" data-tab="body">
+                        <pre style="white-space: inherit">
+                          <code class="language-">null
+</code>
+                        </pre>
+                      </div>
+                      <div class="ui bottom attached tab segment" data-tab="schema">
+                        <pre style="white-space: inherit">
+                          <code class="language-json"></code>
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>text/plain</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui stacked blue segment">
+                <div class="ui fluid transaction accordion">
+                  <div class="title center aligned">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>text/plain</code>
+                  </div>
+                  <div class="content tabbed">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-">The code element adds functionality to the method element.
+
+The code element contains programming text.  ApiTxt comes integrated with the PHP project the Slim Framework v2.  The conversion to working PHP adds boilerplate details for routes and method, with named parameters and query parameters available as functional variables.
+
+The text of the code is everything after the string &#34;code &lt;TAB&gt;&#34;.
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+
+
+      </div>
+    </div>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/components/accordion.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/components/tab.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/components/transition.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/components/popup.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.13.0/prism.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.13.0/components/prism-json.min.js"></script>
+    <script type="text/javascript">
+      $(function() {
+        $('.ui.accordion').accordion({ animateChildren: false, duration: 0 });
+        $('.content.tabbed').each(function(index) {
+          $('.ui.tabular .item', $(this)).tab({ context: $(this) });
+        });
+        $('.ui.vertical.menu').on('click', '.item', function() {
+          $('.ui.vertical.menu .item').removeClass('active');
+          $(this).addClass('active');
+        });
+        $('.ui.empty.circular.label').popup();
+      });
+    </script>
+  </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

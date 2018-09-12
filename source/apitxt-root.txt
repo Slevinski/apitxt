@@ -1,4 +1,4 @@
-root	apitxt	ApiTxt	https://signpuddle.net/v3
+root	apitxt	ApiTxt	https://signpuddle.com/back
 	line	> ApiTxt v2.0.0
 	line	
 	line	+ [txt](../src/apitxt.txt) - ApiTxt format

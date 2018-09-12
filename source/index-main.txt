@@ -1,0 +1,12 @@
+group	main
+	route	/	Route index
+		method	GET	Get the root index
+			response	200	text/plain
+				body	Available routes:
+				body	
+				body	/tools
+				body	/fsw
+				body	/swu
+				body	/user
+				body	/collection
+				body	/apitxt

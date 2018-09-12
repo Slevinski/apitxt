@@ -1,4 +1,4 @@
-root	index	SignPuddle 3	https://signpuddle.net/v3
+root	index	SignPuddle 3 API	https://signpuddle.com/back
 	line	> v3.0.0
 	line	
 	line	+ [txt](../src/index.txt) - ApiTxt format

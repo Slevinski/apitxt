@@ -1,11 +1,11 @@
-root	tools	SignPuddle Tools API	https://signpuddle.net/v3
+root	tools	SignPuddle 3 Tools API	https://signpuddle.net/v3
 	line	> v3.0.0
 	line	
 	line	+ [txt](../src/tools.txt) - ApiTxt format
 	line	+ [json](../src/tools.json) - array of JSON objects
 	line	+ [html](../api/tools.html) - HTML API Interface
-	line	+ [md](../docs/tools.md) - API Blueprint
-	line	+ [htm](../docs/tools.htm) - Stand Alone HTML
+	line	+ [md](../doc/tools.md) - API Blueprint
+	line	+ [htm](../doc/tools.htm) - Stand Alone HTML
 group	tools	Resources related to tools
 	route	/tools/test{?text}	Test with input
 		line	A general purpose function for testing
@@ -18,7 +18,7 @@ group	tools	Resources related to tools
 			code	header("Search-Time: " . $searchTime);
 			code	echo $test;
 			response	200	text/plain
-				line	test output
+				body	test output
 	route	/tools/define	Character definition tree
 		line	The definition tree for character mapping
 		method	GET	Get main define
@@ -29,14 +29,14 @@ group	tools	Resources related to tools
 			code	header("Search-Time: " . $searchTime);
 			code	echo json_pretty($define);
 			response	200	text/plain
-				line	{
-				line	  "utf-8": {},
-				line	  "utf-16": {},
-				line	  "utf-32": {},
-				line	  "fsw": {},
-				line	  "swu": {},
-				line	  "style": {}
-				line	}
+				body	{
+				body	  "utf-8": {},
+				body	  "utf-16": {},
+				body	  "utf-32": {},
+				body	  "fsw": {},
+				body	  "swu": {},
+				body	  "style": {}
+				body	}
 	route	/tools/define/{section}	Section definition
 		line	A section of the definition tree
 		parameter	section	fsw	string	The name of section
@@ -56,15 +56,15 @@ group	tools	Resources related to tools
 			code	header("Search-Time: " . $searchTime);
 			code	echo json_pretty($define);
 			response	200	text/plain
-				line	{
-				line	  "sign": [],
-				line	  "spatial": [],
-				line	  "symbol": [],
-				line	  "coord": [],
-				line	  "prefix": [],
-				line	  "box": [],
-				line	  "query": []
-				line	}
+				body	{
+				body	  "sign": [],
+				body	  "spatial": [],
+				body	  "symbol": [],
+				body	  "coord": [],
+				body	  "prefix": [],
+				body	  "box": [],
+				body	  "query": []
+				body	}
 	route	/tools/define/{section}/{part}	Part definition
 		line	A part of the section definition
 		parameter	section	swu	string	The name of section
@@ -77,11 +77,11 @@ group	tools	Resources related to tools
 			code	header("Search-Time: " . $searchTime);
 			code	echo json_pretty($define);
 			response	200	text/plain
-				line	[
-				line	  "individual symbol",
-				line	  "S10000",
-				line	  "[\\x{40000}-\\x{4F428}]"
-				line	]
+				body	[
+				body	  "individual symbol",
+				body	  "S10000",
+				body	  "[\\x{40000}-\\x{4F428}]"
+				body	]
 	route	/tools/parse{?text,utf}	Parse text
 		line	A function to analyze text and parse it into individual components
 		parameter	text	S10000	string	The text to parse
@@ -98,7 +98,7 @@ group	tools	Resources related to tools
 			code	$json = json_pretty($parse);
 			code	echo SignWriting\cast($json,$utf);
 			response	200	text/plain
-				line	parse results of text
+				body	parse results of text
 	route	/tools/encode{?text,slash}	Encode text
 		line	A function to encode SignWriting in Unicode (SWU) as UTF-16
 		parameter	text	\x{1D800}	string	The text to encode
@@ -111,7 +111,7 @@ group	tools	Resources related to tools
 			code	header("Search-Time: " . $searchTime);
 			code	echo $encode;
 			response	200	text/plain
-				line	\uD836\uDC00
+				body	\uD836\uDC00
 	route	/tools/decode{?text}	Decode text
 		line	A function to decode SignWriting in Unicode (SWU) from UTF-16
 		parameter	text	\\uD836\\uDC00	string	The text to decode
@@ -123,7 +123,7 @@ group	tools	Resources related to tools
 			code	header("Search-Time: " . $searchTime);
 			code	echo $decode;
 			response	200	text/plain
-				line	\x{1D800}
+				body	\x{1D800}
 	route	/tools/utf8{?text}	UTF-8 encode text
 		parameter	text	\x{1D800}	string	The text to encode
 		method	GET	Get utf-8 encoded query string
@@ -135,4 +135,4 @@ group	tools	Resources related to tools
 			code	header("Search-Time: " . $searchTime);
 			code	echo $encode;
 			response	200	text/plain
-				line	%F0%9D%A0%80
+				body	%F0%9D%A0%80

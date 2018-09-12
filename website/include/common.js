@@ -62,7 +62,7 @@ var SpecialPages = {
           keys.filter(function(key,i){
             return start?(key.indexOf(test) === 0):(key.indexOf(test) !== -1);
           }).map(function(icon){
-            return m(Button,{icon:icon,text:icon});
+            return m(CommonPages["button"],{icon:icon,text:icon});
           })
 
         ])
@@ -84,57 +84,57 @@ var SpecialPages = {
           m("hr"),
           m("h3","Text"),
           m("nav", classes.map(function(classname){
-            return m(Button,{class: classname + " " + state.addon,text:classname,onclick:function(e){console.log(e)}});
+            return m(CommonPages["button"],{class: classname + " " + state.addon,text:classname,onclick:function(e){console.log(e)}});
           })),
           m("hr"),
           m("h3","Symbol Text"),
           m("nav", classes.map(function(classname){
-            return m(Button,{class: classname + " " + state.addon, text:ssw.fsw2swu("S10000")});
+            return m(CommonPages["button"],{class: classname + " " + state.addon, text:ssw.fsw2swu("S10000")});
           })),
           m("hr"),
           m("h3","Sign SVG"),
           m("nav", classes.map(function(classname){
-            return m(Button,{class: classname + " " + state.addon, text:"𝠀񀀒񀀚񋚥񋛩𝠃𝤟𝤩񋛩𝣵𝤐񀀒𝤇𝣤񋚥𝤐𝤆񀀚𝣮𝣭"});
+            return m(CommonPages["button"],{class: classname + " " + state.addon, text:"𝠀񀀒񀀚񋚥񋛩𝠃𝤟𝤩񋛩𝣵𝤐񀀒𝤇𝣤񋚥𝤐𝤆񀀚𝣮𝣭"});
           })),
           m("hr"),
           m("h3","Image"),
           m("nav", classes.map(function(classname){
-            return m(Button,{class: classname + " " + state.addon,img:"include/icon.svg"});
+            return m(CommonPages["button"],{class: classname + " " + state.addon,img:"include/icon.svg"});
           })),
           m("hr"),
           m("h3","Image and Text"),
           m("nav", classes.map(function(classname){
-            return m(Button,{class: classname + " " + state.addon, img:"include/icon.svg", text:classname});
+            return m(CommonPages["button"],{class: classname + " " + state.addon, img:"include/icon.svg", text:classname});
           })),
           m("hr"),
           m("h3","Image and Symbol Text"),
           m("nav", classes.map(function(classname){
-            return m(Button,{class: classname + " " + state.addon, img:"include/icon.svg", text:ssw.fsw2swu("S10000")});
+            return m(CommonPages["button"],{class: classname + " " + state.addon, img:"include/icon.svg", text:ssw.fsw2swu("S10000")});
           })),
           m("hr"),
           m("h3","Image and Sign SVG"),
           m("nav", classes.map(function(classname){
-            return m(Button,{class: classname + " " + state.addon, img:"include/icon.svg",text:"𝠀񀀒񀀚񋚥񋛩𝠃𝤟𝤩񋛩𝣵𝤐񀀒𝤇𝣤񋚥𝤐𝤆񀀚𝣮𝣭"});
+            return m(CommonPages["button"],{class: classname + " " + state.addon, img:"include/icon.svg",text:"𝠀񀀒񀀚񋚥񋛩𝠃𝤟𝤩񋛩𝣵𝤐񀀒𝤇𝣤񋚥𝤐𝤆񀀚𝣮𝣭"});
           })),
           m("hr"),
           m("h3","Icon"),
           m("nav", classes.map(function(classname){
-            return m(Button,{class: classname + " " + state.addon, icon:"clipboard"});
+            return m(CommonPages["button"],{class: classname + " " + state.addon, icon:"clipboard"});
           })),
           m("hr"),
           m("h3","Icon and Text"),
           m("nav", classes.map(function(classname){
-            return m(Button,{class: classname + " " + state.addon, icon:"clipboard",text:"Clip it!"});
+            return m(CommonPages["button"],{class: classname + " " + state.addon, icon:"clipboard",text:"Clip it!"});
           })),
           m("hr"),
           m("h3","Icon and Symbol Text"),
           m("nav", classes.map(function(classname){
-            return m(Button,{class: classname + " " + state.addon, icon:"clipboard",text:ssw.fsw2swu("S10000")});
+            return m(CommonPages["button"],{class: classname + " " + state.addon, icon:"clipboard",text:ssw.fsw2swu("S10000")});
           })),
           m("hr"),
           m("h3","Icon and Sign SVG"),
           m("nav", classes.map(function(classname){
-            return m(Button,{class: classname + " " + state.addon, icon:"clipboard",text:"𝠀񀀒񀀚񋚥񋛩𝠃𝤟𝤩񋛩𝣵𝤐񀀒𝤇𝣤񋚥𝤐𝤆񀀚𝣮𝣭"});
+            return m(CommonPages["button"],{class: classname + " " + state.addon, icon:"clipboard",text:"𝠀񀀒񀀚񋚥񋛩𝠃𝤟𝤩񋛩𝣵𝤐񀀒𝤇𝣤񋚥𝤐𝤆񀀚𝣮𝣭"});
           }))
         ])
       ];
@@ -153,6 +153,15 @@ var SpecialPages = {
           }).join("\n"))
         ])
       ];
+    }
+  },
+  'canvas':{
+    view: function(vnode){
+      return [
+        m(CommonPages['header']),
+        m(SpecialPages['nav']),
+        m('canvas#cc',{"style":"border:1px solid grey","width":300,"height":300})
+      ]
     }
   }
 }
@@ -227,7 +236,7 @@ var NavOs = {
   view: function() {
     return m("nav#nav-os", [
       Object.keys(osInfo.icons).map(function(os){
-        return m(Button,{class:state.os==os?'primary':"outline",onclick: function(){setOs(os);},icon:osInfo.icons[os].icon,text:osInfo.icons[os].title})
+        return m(CommonPages["button"],{class:state.os==os?'primary':"outline",onclick: function(){setOs(os);},icon:osInfo.icons[os].icon,text:osInfo.icons[os].title})
       })
     ])
   }
@@ -240,7 +249,7 @@ var PageOs = {
         m("h2",osInfo.icons[state.os].title),
         m("p", "Please install the following fonts:"),
         m("nav", [swFonts.swLine, swFonts.swFill, swFonts.swOneD, swFonts.swNull].map(function(font){
-          return m(Button,{class: "outline",text:font.name,onclick:function(e){e.redraw=false;downloadlink(font.local,font.file)}})
+          return m(CommonPages["button"],{class: "outline",text:font.name,onclick:function(e){e.redraw=false;downloadlink(font.local,font.file)}})
         })),
         m("hr"),
         [swFonts.swLine, swFonts.swFill, swFonts.swOneD, swFonts.swNull].map(function(font){
@@ -261,7 +270,7 @@ var PageOs = {
         m("p", "Congratulations, you have an excellent operating system for SignWriting.  You can use SignWriting for file names, folder names, and as system wide text"),
         m("p", "Please install the following configuration profiles:"),
         m("nav", [swProfiles.swSymbol, swProfiles.swOne].map(function(profile){
-          return m(Button,{class: "outline",text:profile.name,onclick:function(e){e.redraw=false;downloadlink(profile.local,profile.file)}})
+          return m(CommonPages["button"],{class: "outline",text:profile.name,onclick:function(e){e.redraw=false;downloadlink(profile.local,profile.file)}})
         })),
         m("hr"),
         [swProfiles.swSymbol, swProfiles.swOne].map(function(profile){
@@ -285,7 +294,7 @@ var PageOs = {
         m("p", "Congratulations, you have an excellent operating system for SignWriting."),
         m("p", "Please install the following configuration profiles:"),
         m("nav", [swProfiles.swSymbol, swProfiles.swOne].map(function(profile){
-          return m(Button,{class: "outline",text:profile.name,onclick:function(e){e.redraw=false;downloadlink(profile.local,profile.file)}})
+          return m(CommonPages["button"],{class: "outline",text:profile.name,onclick:function(e){e.redraw=false;downloadlink(profile.local,profile.file)}})
         })),
         m("hr"),
         [swProfiles.swSymbol, swProfiles.swOne].map(function(profile){
@@ -309,7 +318,7 @@ var PageOs = {
         m("p", "Congratulations, you have an excellent operating system for SignWriting.  You can use SignWriting for file names, folder names, and as system wide text."),
         m("p", "Please install the following fonts:"),
         m("nav", [swFonts.swLine, swFonts.swFill, swFonts.swOneD, swFonts.swNull].map(function(font){
-          return m(Button,{class: "outline",text:font.name,onclick:function(e){e.redraw=false;downloadlink(font.local,font.file)}})
+          return m(CommonPages["button"],{class: "outline",text:font.name,onclick:function(e){e.redraw=false;downloadlink(font.local,font.file)}})
         })),
         m("hr"),
         [swFonts.swLine, swFonts.swFill, swFonts.swOneD, swFonts.swNull].map(function(font){
@@ -361,7 +370,7 @@ var NavBrowser = {
     return m("nav#nav-browser", [
       Object.keys(browserInfo.match).map(function(browser){
         if (browserInfo['support'][browser].indexOf(state.os) > -1) {
-          return m(Button,{class:state.browser==browser?'success':"outline",onclick: function(){setBrowser(browser);},icon:browser,text:browserInfo.match[browser]});
+          return m(CommonPages["button"],{class:state.browser==browser?'success':"outline",onclick: function(){setBrowser(browser);},icon:browser,text:browserInfo.match[browser]});
         }
       })
     ])

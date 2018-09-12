@@ -5,7 +5,7 @@ function downloadlink(href,download){
   link.click();
 }
 
-var spVersion = "3"
+var spVersion = "3";
 
 var spLogo = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 382.39499 393.798"><g transform="translate(-153.728 -166.677)">  <path fill="#000" d="M348.22 266.68v259.504h-7V266.68"/></g><g transform="translate(-153.728 -166.677)">  <path fill="#000" d="M348.22 166.677v32.32h-7v-32.32"/></g><g transform="translate(-153.728 -166.677)">  <linearGradient id="c" gradientUnits="userSpaceOnUse" x1="138.098" y1="180.746" x2="536.098" y2="375.746">  <stop offset="0" stop-color="#ff0700"/>  <stop offset="1" stop-color="#b40000"/>  </linearGradient>  <path d="M198.26 300.806c18.388 0 35.327 6.168 48.89 16.532 13.56-10.364 30.5-16.532 48.887-16.532s35.326 6.168 48.888 16.532c13.562-10.364 30.5-16.532 48.888-16.532 18.387 0 35.326 6.168 48.89 16.532 13.56-10.364 30.5-16.532 48.888-16.532 16.467 0 31.773 4.948 44.533 13.423-27.962-78.602-103-134.882-191.197-134.882-88.196 0-163.236 56.28-191.198 134.88 12.76-8.475 28.066-13.422 44.533-13.422z" fill="url(#c)"/></g></svg>';
 
@@ -33,7 +33,7 @@ var statefn = {
       "alphabet": "",
       "fingerspell": "",
       "keyboard": "",
-      "specials": ['icons','buttons','style','test'],
+      "specials": ['icons','buttons','style','test','canvas'],
     }
   },
   "save": function(){
@@ -429,8 +429,8 @@ var InterfacePages = {
 t = interfacefn.text;
 interfacefn.default();
 
-// m(CommonPages["button"],{class: "thin pseudo onLeft", disabled: routes.index<1,onclick: function(){routesfn.index(routes.index-1);},icon:"arrow-left"}),
-// m(CommonPages["button"],{class: "thin pseudo onLeft", disabled: routes.index>=routes.list.length-1,onclick: function(){routesfn.index(routes.index+1);},icon:"arrow-right"})
+// m(CommonPages["button"],{class: "tight pseudo onLeft", disabled: routes.index<1,onclick: function(){routesfn.index(routes.index-1);},icon:"arrow-left"}),
+// m(CommonPages["button"],{class: "tight pseudo onLeft", disabled: routes.index>=routes.list.length-1,onclick: function(){routesfn.index(routes.index+1);},icon:"arrow-right"})
 var routes = {
   default: "/",
   items: {
@@ -855,13 +855,13 @@ var CommonPages = {
       delete attrs['icon'];
       delete attrs['img'];
       delete attrs['text'];
-      attrs['class'] = attrs['class'] + ' sswOneD';
+//      attrs['class'] = attrs['class'] + ' sswOneD';
       return m("button", attrs,[
         vnode.attrs.icon?m("i.icon",m.trust(
           '<svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">' + icons[vnode.attrs.icon] + '</svg>'
         )):'',
         vnode.attrs.img?m("img.icon[src=" + vnode.attrs.img + "]"):'',
-        vnode.attrs.text?(ssw.parse(vnode.attrs.text,"swu")?m.trust(ssw.svg(vnode.attrs.text)):vnode.attrs.text):''
+        vnode.attrs.text?(ssw.parse(vnode.attrs.text,"swu")?m.trust(ssw.svg(vnode.attrs.text,{"size":"x"})):m("span",vnode.attrs.text)):''
       ])
     }
   },
@@ -873,7 +873,7 @@ var CommonPages = {
       var title =  t("sp3","system.signpuddle3.title",spVersion);
       var titleShort =  t("sp3","system.signpuddle3.short",spVersion);
       return [
-        m("header.four",[
+        m("header.main",[
           m("button", {class: "pseudo", onclick: function(){routesfn.set("/")}},
             s('country')?m("img",{border:"1",src:"data/flags/" + s('country').toLowerCase() + ".png"}):
               m("i.icon",m.trust(
@@ -882,19 +882,21 @@ var CommonPages = {
             ),
           m("button", {class: "large brand long pseudo",onclick: function(){routesfn.set("/")}}, [
             m("i.icon",m.trust(spLogo)),
-            ssw.parse(title,"swu")?m.trust(ssw.svg(title)):title
+            ssw.parse(title,"swu")?m.trust(ssw.svg(title)):m('span',title)
           ]),
           m("button", {class: "brand short pseudo",onclick: function(){routesfn.set("/")}}, [
             m("i.icon",m.trust(spLogo)),
-            ssw.parse(titleShort,"swu")?m.trust(ssw.svg(titleShort)):titleShort
+            ssw.parse(titleShort,"swu")?m.trust(ssw.svg(titleShort)):m('span',titleShort)
           ]),
-          m(CommonPages["button"],{class: "long " + (settings?"primary":"outline") , icon:"cog",text: t("sp3","settings.main.title"), onclick: function(){routesfn.set("/settings")}}),
-          m(CommonPages["button"],{class: "short " + (settings?"primary":"outline") , icon:"cog", onclick: function(){routesfn.set("/settings")}}),
-          username?
-            [m(CommonPages["button"],{class: "long " + (!settings?"primary":"outline"), icon:"user",text:username, onclick: function(){routesfn.set("/user/profile")}}),
-            m(CommonPages["button"],{class: "short " + (!settings?"primary":"outline"), icon:"user",onclick: function(){routesfn.set("/user/profile")}})]
-            :[m(CommonPages["button"],{class: "long " + (!settings?"primary":"outline"), icon:"user",text:t("sp3","user.login.button"), onclick: function(){routesfn.set("/user/login")}}),
-            m(CommonPages["button"],{class: "short " + (!settings?"primary":"outline"), icon:"user", onclick: function(){routesfn.set("/user/login")}})]
+          m("span", [
+            m(CommonPages["button"],{class: "long " + (settings?"primary":"outline") , icon:"cog",text: t("sp3","settings.main.title"), onclick: function(){routesfn.set("/settings")}}),
+            m(CommonPages["button"],{class: "short " + (settings?"primary":"outline") , icon:"cog", onclick: function(){routesfn.set("/settings")}}),
+            username?
+              [m(CommonPages["button"],{class: "long " + (!settings?"primary":"outline"), icon:"user",text:username, onclick: function(){routesfn.set("/user/profile")}}),
+              m(CommonPages["button"],{class: "short " + (!settings?"primary":"outline"), icon:"user",onclick: function(){routesfn.set("/user/profile")}})]
+              :[m(CommonPages["button"],{class: "long " + (!settings?"primary":"outline"), icon:"user",text:t("sp3","user.login.button"), onclick: function(){routesfn.set("/user/login")}}),
+              m(CommonPages["button"],{class: "short " + (!settings?"primary":"outline"), icon:"user", onclick: function(){routesfn.set("/user/login")}})]
+          ])
         ]),
         m("a#downloadlink", {style:"display: none", type:"button", charset:"utf-8"},"Download")
       ];
@@ -1378,4 +1380,5 @@ m.route(document.body, routes.default, {
   "/special/style": SpecialPages['style'],
   "/special/test": SpecialPages['test'],
   "/special/buttons": SpecialPages['buttons'],
+  "/special/canvas": SpecialPages['canvas']
 })

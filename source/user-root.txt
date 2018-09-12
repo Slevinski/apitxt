@@ -1,7 +1,8 @@
-root	user	SignPuddle user API	https://signpuddle.net/v3
+root	user	SignPuddle 3 User API	https://signpuddle.net/v3
 	line	> v3.0.0
 	line	
-	line	+ [txt](user/index.txt) - ApiTxt format
-	line	+ [json](user/index.json) - array of JSON objects
-	line	+ [md](user/index.md) - API Blueprint
-	line	+ [html](user/index.html) - HTML documentation
+	line	+ [txt](../src/user.txt) - ApiTxt format
+	line	+ [json](../src/user.json) - array of JSON objects
+	line	+ [html](../api/user.html) - HTML API Interface
+	line	+ [md](../doc/user.md) - API Blueprint
+	line	+ [htm](../doc/user.htm) - Stand Alone HTML

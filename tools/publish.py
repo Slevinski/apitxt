@@ -54,6 +54,6 @@ os.system('cp ' + args.output + args.document + '.html ../website/api/.')
 os.system('cp ' + args.output + args.document + '.js ../website/api/.')
 os.system('cp ' + args.output + args.document + '.txt ../website/src/.')
 os.system('cp ' + args.output + args.document + '.json ../website/src/.')
-os.system('cp ' + args.output + args.document + '.md ../website/docs/.')
-os.system('cp ' + args.output + args.document + '.htm ../website/docs/.')
+os.system('cp ' + args.output + args.document + '.md ../website/doc/.')
+os.system('cp ' + args.output + args.document + '.htm ../website/doc/.')
 

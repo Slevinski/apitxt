@@ -1,26 +1,26 @@
 FORMAT: X-1A
 HOST: https://signpuddle.net/v3
 
-# SignPuddle Swu API
-> v3.0.0
+# Formal SignWriting in ASCII (FSW)
+> SignPuddle v3.0.0
 
-+ [txt](../src/swu.txt) - ApiTxt format
-+ [json](../src/swu.json) - array of JSON objects
-+ [html](../api/swu.html) - HTML API Interface
-+ [md](../docs/swu.md) - API Blueprint
-+ [htm](../docs/swu.htm) - Stand Alone HTML
++ [txt](../src/fsw.txt) - ApiTxt format
++ [json](../src/fsw.json) - array of JSON objects
++ [html](../api/fsw.html) - HTML API Interface
++ [md](../doc/fsw.md) - API Blueprint
++ [htm](../doc/fsw.htm) - Stand Alone HTML
 
-## Group swu
-Resources related to Formal SignWriting in ASCII (SWU)
+## Group FSW
+Resources related to Formal SignWriting in ASCII (FSW)
 
-### SWU Word [/swu{?text,style}]
+### FSW Word [/fsw{?text,style}]
 
 + Parameters
 
      + text: AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520 (string) - The name of sign
-     + style: 1 (number) - Flag to include styling string
+     + style: true (boolean,optional) - Flag to include styling string
 
-#### first SWU string [GET]
+#### First FSW string [GET]
 
 + Request one Formal SignWriting in ASCII string
 
@@ -30,19 +30,19 @@ Resources related to Formal SignWriting in ASCII (SWU)
 
 + Response 200 (text/plain;charset=utf-8)
 
-
      + Body
 
             AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520
 
-### SWU Text [/swu/all{?text,style}]
+
+### FSW Text [/fsw/all{?text,style}]
 
 + Parameters
 
      + text: AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520 (string) - The name of sign
      + style: 1 (number) - Flag to include styling string
 
-#### all SWU strings [GET]
+#### All FSW strings [GET]
 
 + Request many Formal SignWriting in ASCII string
 
@@ -52,20 +52,22 @@ Resources related to Formal SignWriting in ASCII (SWU)
 
 + Response 200 (text/plain;charset=utf-8)
 
-
      + Body
 
             AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520
 
-### SWU to FSW [/swu/fsw{?text}]
+
+### FSW to SWU [/fsw/swu{?text}]
 
 + Parameters
 
      + text: AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520 (string) - The name of sign
 
-#### text with SWU strings [GET]
+#### Text with FSW strings [GET]
 
-+ Request original text with Formal SignWriting in ASCII inside
++ Request SWU conversion of FSW string
+
+     transformation from ASCII to Unicode characters.
 
      + Body
 
@@ -73,20 +75,22 @@ Resources related to Formal SignWriting in ASCII (SWU)
 
 + Response 200 (text/plain;charset=utf-8)
 
+     requires font SuttonSignWritingOneD
 
      + Body
 
-            AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520
+            𝠀񆄱񈠣񍉡𝠃𝤛𝤵񍉡𝣴𝣵񆄱𝤌𝤆񈠣𝤉𝤚
 
-### SVG image [/swu/svg/{text}]
 
-Create a stand-alone SVG image using Formal SignWriting in ASCII (SWU)
+### SVG image [/fsw/svg/{text}]
+
+Create a stand-alone SVG image using Formal SignWriting in ASCII (FSW)
 
 + Parameters
 
      + text: AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520 (string) - The name of sign
 
-#### retrieve stand-alone SVG image [GET]
+#### Retrieve stand alone SVG image [GET]
 
 + Request collection text
 
@@ -95,7 +99,6 @@ Create a stand-alone SVG image using Formal SignWriting in ASCII (SWU)
             null
 
 + Response 200 (image/svg+xml;charset=utf-8)
-
 
      + Body
 
@@ -106,15 +109,16 @@ Create a stand-alone SVG image using Formal SignWriting in ASCII (SWU)
               <svg x='503' y='520'><g transform="translate(0.196840829729,26.6999810561) scale(0.00975214136907,-0.00983390502079)"><path class="sym-line" fill="black" d="M345 2350 l-350 -350 325 -325 325 -325 -325 -325 -325 -325 353 -353 352 -352 0 303 0 302 350 0 350 0 0 100 0 100 -350 0 -350 0 0 550 0 550 350 0 350 0 0 100 0 100 -350 0 -350 0 -2 300 -3 300 -350 -350z M1600 1350 l0 -1350 100 0 100 0 0 1350 0 1350 -100 0 -100 0 0 -1350z"/></g></svg>
             </svg>
 
-### SVG with font [/swu/svg/font/{text}]
 
-Create an SVG with font using Formal SignWriting in ASCII (SWU)
+### SVG with font [/fsw/svg/font/{text}]
+
+Create an SVG with font using Formal SignWriting in ASCII (FSW)
 
 + Parameters
 
      + text: AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520 (string) - The name of sign
 
-#### retrieve SVG with font [GET]
+#### Retrieve SVG with font [GET]
 
 + Request collection text
 
@@ -123,7 +127,6 @@ Create an SVG with font using Formal SignWriting in ASCII (SWU)
             null
 
 + Response 200 (image/svg+xml;charset=utf-8)
-
 
      + Body
 
@@ -134,4 +137,5 @@ Create an SVG with font using Formal SignWriting in ASCII (SWU)
               <g transform="translate(510,500)"><text class="sym-fill" style="pointer-events:none;font-family:'SuttonSignWritingFill';font-size:30px;fill:white;">􋚥</text><text class="sym-line" style="pointer-events:none;font-family:'SuttonSignWritingLine';font-size:30px;fill:black;">󻚥</text></g>
               <g transform="translate(476,475)"><text class="sym-fill" style="pointer-events:none;font-family:'SuttonSignWritingFill';font-size:30px;fill:white;">􀀚</text><text class="sym-line" style="pointer-events:none;font-family:'SuttonSignWritingLine';font-size:30px;fill:black;">󰀚</text></g>
             </svg>
+
 

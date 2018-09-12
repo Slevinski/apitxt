@@ -21,7 +21,7 @@ parser.add_argument("-e","--errors", help="check for errors and report", action=
 args = parser.parse_args()
 
 if args.input:
-	lines = [line.strip() for line in open(args.input)]
+	lines = [line.lstrip()[:-1] for line in open(args.input)]
 else:
 	args.input = "sys.stdin"
 	lines = [line for line in sys.stdin]
@@ -40,7 +40,7 @@ num = 0
 for line in lines:
 	num += 1
 
-	raw = line.strip().split("	")
+	raw = line.lstrip().split("	")
 	parts = map(str.strip,raw)
 	segment = parts[0].strip()
 	
@@ -220,7 +220,7 @@ for line in lines:
 
 	elif segment == 'header':
 		if not method.has_key("method"):
-			errors.append({"error":"Line " + str(num) + ": no method available for response","line":line})
+			errors.append({"error":"Line " + str(num) + ": no method available for request/response header","line":line})
 			continue
 		try:
 			hName = parts[1]
@@ -302,6 +302,36 @@ for line in lines:
 				method["code"] = [newline]
 		else:
 			errors.append({"error":"Line " + str(num) + ": code without method","line":line})
+	elif segment == 'body':
+		try:
+			start = line.index("body	")
+			newline = line[start+5:].replace("<TAB>","	").replace("<tab>","<TAB>")
+		except:
+			newline = ""
+
+		if not method.has_key("method"):
+			errors.append({"error":"Line " + str(num) + ": no method available for request/response body","line":line})
+			continue
+		
+		if "dialog" in method:
+			if len(method["dialog"]):
+				if "responses" in method["dialog"][-1]:
+					if len(method["dialog"][-1]["responses"]):
+						if "body" in method["dialog"][-1]["responses"][-1]:
+							method["dialog"][-1]["responses"][-1]["body"].append(newline)
+						else:
+							method["dialog"][-1]["responses"][-1]["body"] = [newline]
+					else:
+						errors.append({"error":"Line " + str(num) + ": dialog exchange responses is empty"})
+				elif "request" in method["dialog"][-1]:
+					if "body" in method["dialog"][-1]["request"]:
+						method["dialog"][-1]["request"]["body"].append(newLine)
+					else:
+						method["dialog"][-1]["request"]["body"] = [newline]
+				else:
+					errors.append({"error":"Line " + str(num) + ": dialog exchange without a request or response"})
+			else:
+				errors.append({"error":"Line " + str(num) + ": dialog has no exchanges"})
 	else:
 		if line:
 			errors.append({"error":"Line " + str(num) + ": segment not found","line":line})

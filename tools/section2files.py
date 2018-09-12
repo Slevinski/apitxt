@@ -45,8 +45,8 @@ else:
 	print "	line	+ [txt](../src/" + args.section + ".txt) - ApiTxt format"
 	print "	line	+ [json](../src/" + args.section + ".json) - array of JSON objects"
 	print "	line	+ [html](../api/" + args.section + ".html) - HTML API Interface"
-	print "	line	+ [md](../docs/" + args.section + ".md) - API Blueprint"
-	print "	line	+ [htm](../docs/" + args.section + ".htm) - Stand Alone HTML"
+	print "	line	+ [md](../doc/" + args.section + ".md) - API Blueprint"
+	print "	line	+ [htm](../doc/" + args.section + ".htm) - Stand Alone HTML"
 
 # {section}-files.txt
 fname = args.output + args.section + '-files.txt'

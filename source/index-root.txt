@@ -4,5 +4,5 @@ root	index	SignPuddle 3	https://signpuddle.net/v3
 	line	+ [txt](../src/index.txt) - ApiTxt format
 	line	+ [json](../src/index.json) - array of JSON objects
 	line	+ [html](../api/index.html) - HTML API Interface
-	line	+ [md](../docs/index.md) - API Blueprint
-	line	+ [htm](../docs/index.htm) - Stand Alone HTML
+	line	+ [md](../doc/index.md) - API Blueprint
+	line	+ [htm](../doc/index.htm) - Stand Alone HTML

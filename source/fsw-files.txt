@@ -3,4 +3,4 @@ group	fswfiles
 		method	GET	Get the fsw as HTML
 			code	getFile('api/fsw.html');
 			response	200	text/plain
-				line	fsw.html file contents here
+				body	fsw.html file contents here

@@ -1,35 +1,53 @@
-root	apitxt	ApiTxt	https://signpuddle.com/apitxt/
-	line	> v1.0.0
+root	apitxt	ApiTxt	https://signpuddle.net/v3
+	line	> ApiTxt v2.0.0
 	line	
-	line	+ [txt](index.txt) - ApiTxt format
-	line	+ [json](index.json) - array of JSON objects
-	line	+ [md](index.md) - API Blueprint
-	line	+ [html](index.html) - HTML documentation
+	line	+ [txt](../src/apitxt.txt) - ApiTxt format
+	line	+ [json](../src/apitxt.json) - array of JSON objects
+	line	+ [html](../api/apitxt.html) - HTML API Interface
+	line	+ [md](../doc/apitxt.md) - API Blueprint
+	line	+ [htm](../doc/apitxt.htm) - Stand Alone HTML
 	line	
+	line	ApiTxt is the build environment to create the SignPuddle 3 API for SignWriting Text.
+	line	ApiTxt format is a highly structured plain text format that defines multiple facets of a website api.
 	line	
-	line	ApiTxt defines a highly structured plain text format used to define multiple facets of a website api.
-	line	Each line in an ApiTxt document is a self-contained element which starts with a name and is followed by &lt;TAB> separated fields.
-	line	Writing ApiTxt documents is easier when tabs and spaces appear different, so use a plain text editor and turn on the invisible characters option.
+	line	A variety of python programs and shell scripts are used to transform the source ApiTxt format into a fully functional and documented website.
 	line	
 	line	## Input and Output Formats
 	line	The various formats are used to define the structure and function of a website API.
 	line	The original source is written in ApiTxt format and transformed into an array of JSON objects.
 	line	The JSON objects are used to write other formats, including API Blueprint.
+	line	API Blueprint has an extensive toolkit of additional transformations.
 	line	
 	line	### ApiTxt Format (txt)
-	line	ApiTxt format uses plain text divided into multiple lines, where each line contains &lt;TAB> delimited fields.
+	line	ApiTxt defines a highly structured plain text format used to define multiple facets of a website api.
+	line	Each line in an ApiTxt document is a self-contained element which starts with a name and is followed by &lt;TAB> separated fields.
 	line	Writing ApiTxt documents is easier when tabs and spaces appear different, so use a plain text editor and turn on the invisible characters option.
 	line	
 	line	### Array of JSON Objects (json)
-	line	Each line of ApiTxt format is converted into a JSON object or added to an existing object.  The various objects are stored in an ordered array.
+	line	Each line of ApiTxt format is converted into a JSON object or added to an existing object.
+	line	The various objects are stored as an ordered array.
+	line	The JSON array of objects can be reduced to the root object by appropriately structuring the groups, routes, and methods.
+	line	
+	line	```
+	line	    root
+	line	      | - routes
+	line	            | - methods
+	line	      | - groups
+	line	            | - routes
+	line	                  | - methods
+	line	```
+	line	
 	line	
 	line	### API Blueprint (md)
 	line	[API Blueprint](https://apiblueprint.org/) is a high-level API description language for web APIs. API Blueprint is widely supported with various tooling available.
 	line	
-	line	#### HTML Documentaion (html)
-	line	The HTML documentation is generated from the API Blueprint document using the project [bukalapak/snowboard](https://github.com/bukalapak/snowboard/), written in golang.
+	line	### Stand-Alone HTM Documentation (htm)
+	line	Stand-alone HTM document created from the API Blueprint using a template and the snowboard tool.
 	line	
-	line	#### PHP Server (php)
+	line	### Interactive HTML API (html)
+	line	Interactive HTML documentation is generated from the JSON elements.
+	line	
+	line	### PHP Server (php)
 	line	The PHP server is written for the PHP project [Slim Framework v2](https://docs.slimframework.com/) to create the functional web API.
 	line	The website directory contains an .htaccess file for an Apache server with PHP support.
 	line	Alternatively, the server can be started with a shell script (start_server.sh) using PHP's built in web server and a custom rewrite.php file.
@@ -51,7 +69,17 @@ root	apitxt	ApiTxt	https://signpuddle.com/apitxt/
 	line	A functional PHP server is built from the JSON objects for the Slim Framework v2.
 	line	The server responses can be based on prewritten responses or functional PHP code using URL parameters and query parameters.
 	line	
-	line	### Plain Text to Tested Mock Servers (txt2mock)
-	line	This script calls the previous scripts to create, check, and build the various website API documents.
-	line	Multiple calls to [bukalapak/snowboard](https://github.com/bukalapak/snowboard/) are used to check the validity of the API Blueprint, to create the HTML documentation, and to create a mock server.
-
+	line	### JSON Objects to Interactive HTML Page (json2html)
+	line	A functional reference guide with live calls to the server.
+	line	Detailed reports for requests and responses.
+	line	
+	line	### JSON Objects to Javascript (json2js)
+	line	The interactive Javascript for the user interface and the server calls.
+	line	Detailed reports for requests and responses.
+	line	
+	line	### Snowboard Transformations ([bukalapak/snowboard](https://github.com/bukalapak/snowboard/))
+	line	Part of the API Blueprint toolkit, snowboard offers three different transformations: lint, html, and mock.
+	line	Snowboard lint will check the structure of the markdown text and report errors.
+	line	Snowboard html will create a stand-alone html document using a template.
+	line	Snowboard mock will analyze the responses of the markdown document and serve static responses over HTTP.
+	line	

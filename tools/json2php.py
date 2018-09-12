@@ -197,7 +197,7 @@ for segment in data:
 				print "  " + bline
 		else:
 			try:
-				for bline in segment['dialog'][0]['responses'][0]['lines']:
+				for bline in segment['dialog'][0]['responses'][0]['body']:
 					print "  echo '" + bline.replace("'","\\'") + "' . \"\\n\";"
 			except:
 				pass

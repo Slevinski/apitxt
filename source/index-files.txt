@@ -3,54 +3,59 @@ group	files
 		method	GET	Get the index as HTML
 			code	getFile('index.html');
 			response	200	text/html
-				line	index.html file contents here
+				body	index.html file contents here
 	route	/index.js	Root index js
 		method	GET	Get the index js file
 			code	getFile('index.js');
 			response	200	application/javascript
-				line	index.js file contents here
+				body	index.js file contents here
 	route	/index.css	Root index css
 		method	GET	Get the index css
 			code	getFile('index.css');
 			response	200	text/css
-				line	index.css file contents here
+				body	index.css file contents here
 	route	/include/common.css	Common css
 		method	GET	Get the common css
 			code	getFile('include/common.css');
 			response	200	text/css
-				line	common.css file contents here
+				body	common.css file contents here
 	route	/include/common.js	Common JS
 		method	GET	Get the common js
 			code	getFile('include/common.js');
 			response	200	text/javascript
-				line	common.js file contents here
+				body	common.js file contents here
 	route	/include/world.js	World JS
 		method	GET	Get the world js
 			code	getFile('include/world.js');
 			response	200	text/javascript
-				line	world.js file contents here
+				body	world.js file contents here
 	route	/include/min.js	Minified JS
 		method	GET	Get the min js
 			code	getFile('include/min.js');
 			response	200	text/javascript
-				line	min.js file contents here
+				body	min.js file contents here
+	route	/include/majax.js	MajaX request library
+		method	GET	Get the majax js
+			code	getFile('include/majax.js');
+			response	200	text/javascript
+				body	majax.js file contents here
 	route	/include/SuttonSignWriting.min.js	Sutton SignWriting js minified
 		method	GET	Get the SSW js
 			code	getFile('include/SuttonSignWriting.min.js');
 			response	200	text/javascript
-				line	SuttonSignWriting.min.js file contents here
+				body	SuttonSignWriting.min.js file contents here
 	route	/include/icons.js	icons
 		method	GET	Get the icons
 			code	getFile('include/icons.js');
 			response	200	text/javascript
-				line	icons.js file contents here
+				body	icons.js file contents here
 	route	/include/noscript.css	style for no JS
 		method	GET	Get the no script css
 			code	getFile('include/noscript.css');
 			response	200	text/css
-				line	noscript.css file contents here
+				body	noscript.css file contents here
 	route	/include/icon.svg	Group icons
 		method	GET	Get the common css
 			code	getFile('include/icon.svg');
 			response	200	image/svg+xml
-				line	icon svg file contents here
+				body	icon svg file contents here

@@ -131,9 +131,9 @@ else:
 		os.system('python json2php.py -i ' + args.output + args.document + '.json -o ../website/index.php')
 
 	if args.htm:
-		os.system('python json2htm.py -i ' + args.output + args.document + '.json -o ' + args.output + args.document + '.htm')
+		#os.system('python json2htm.py -i ' + args.output + args.document + '.json -o ' + args.output + args.document + '.htm')
 		#os.system('python md2htm.py -i ' + args.output + args.document + '.md -o ' + args.output + args.document + '.htm')
-		#os.system('~/snowboard html ' + args.output + args.document + '.md -t ' + args.template + ' > ' + args.output + args.document + '.htm')
+		os.system('~/snowboard html ' + args.output + args.document + '.md -t ' + args.template + ' > ' + args.output + args.document + '.htm')
 	if args.js:
 		os.system('python json2js.py -i ' + args.output + args.document + '.json -o ' + args.output + args.document + '.js')
 		os.system('python json2html.py -i ' + args.output + args.document + '.json -o ' + args.output + args.document + '.html')

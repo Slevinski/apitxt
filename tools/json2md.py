@@ -64,6 +64,7 @@ for segment in data:
 		if 'description' in segment:
 			print segment['description'].replace("\t","&#9;")
 		if 'lines' in segment:
+			print
 			for line in segment['lines']:
 				print line.replace("\t","&#9;")
 		print
@@ -115,6 +116,10 @@ for segment in data:
 						if qa['request']['type']:
 							line += ' (' + qa['request']['type'] + ')'
 					print line
+					if 'lines' in qa['request']:
+						print
+						for line in qa['request']['lines']:
+							print indent1 + utf8(line)
 					if 'headers' in qa['request']:
 						print
 						print indent1 + "+ Headers"
@@ -125,8 +130,8 @@ for segment in data:
 					print indent1 + "+ Body"
 					print
 					try:
-						for line in qa['request']['lines']:
-							print indent3 + utf8(line.replace("\t","   "))
+						for body in qa['request']['body']:
+							print indent3 + utf8(body.replace("\t","   "))
 					except:
 						print indent3 + "null"
 					print
@@ -139,6 +144,10 @@ for segment in data:
 						if 'type' in response:
 							line += ' (' + response['type'] + ')'
 						print line
+						if 'lines' in response:
+							print
+							for line in response['lines']:
+								print indent1 + utf8(line)
 						if 'headers' in response:
 							print
 							print indent1 + "+ Headers"
@@ -146,13 +155,15 @@ for segment in data:
 							for attr in response['headers']:
 								print indent3 + attr + ": " + response['headers'][attr]
 						print
-						if 'lines' in response:
+						print indent1 + "+ Body"
+						print
+						if 'body' in response:
+							for body in response['body']:
+								print indent3 + utf8(body.replace("\t","   "))
 							print
-							print indent1 + "+ Body"
-							print
-							for line in response['lines']:
-								print indent3 + utf8(line.replace("\t","   "))
-							print
+						else:
+							print indent3 + "null"
+						print
 
 	elif 'lines' in segment:
 		for line in segment['lines']:

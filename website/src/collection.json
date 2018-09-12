@@ -6,13 +6,13 @@
       "+ [txt](../src/collection.txt) - ApiTxt format", 
       "+ [json](../src/collection.json) - array of JSON objects", 
       "+ [html](../api/collection.html) - HTML API Interface", 
-      "+ [md](../docs/collection.md) - API Blueprint", 
-      "+ [htm](../docs/collection.htm) - Stand Alone HTML"
+      "+ [md](../doc/collection.md) - API Blueprint", 
+      "+ [htm](../doc/collection.htm) - Stand Alone HTML"
     ], 
     "host": "https://signpuddle.net/v3", 
     "meta": "Generated from ApiTxt format (output/collection.txt) using txt2json.py", 
     "root": "collection", 
-    "title": "SignPuddle Collection API"
+    "title": "SignPuddle 3 Collection API"
   }, 
   {
     "group": "collection", 
@@ -32,7 +32,7 @@
         "responses": [
           {
             "status": 200, 
-            "lines": [
+            "body": [
               "en", 
               "ase"
             ], 
@@ -94,7 +94,7 @@
         "responses": [
           {
             "status": 200, 
-            "lines": [
+            "body": [
               "print.buttons.main\tmessage\tdescription\ticon"
             ], 
             "type": "text/plain"
@@ -166,7 +166,76 @@
         "responses": [
           {
             "status": 200, 
-            "lines": [
+            "body": [
+              "9785a5c3ffd166bc95e6dd5308894691"
+            ], 
+            "type": "text/plain"
+          }
+        ]
+      }
+    ], 
+    "name": "retrieve collection md5 hash"
+  }, 
+  {
+    "method": "POST", 
+    "dialog": [
+      {
+        "request": {
+          "headers": {
+            "If-None-Match": "af779785a5c3ffd166bc95e6dd530889"
+          }, 
+          "name": "the md5 hash of a collection"
+        }, 
+        "responses": [
+          {
+            "status": 200, 
+            "body": [
+              "9785a5c3ffd166bc95e6dd5308894691"
+            ], 
+            "type": "text/plain"
+          }
+        ]
+      }
+    ], 
+    "name": "retrieve collection md5 hash"
+  }, 
+  {
+    "method": "PUT", 
+    "dialog": [
+      {
+        "request": {
+          "headers": {
+            "If-None-Match": "af779785a5c3ffd166bc95e6dd530889"
+          }, 
+          "name": "the md5 hash of a collection"
+        }, 
+        "responses": [
+          {
+            "status": 200, 
+            "body": [
+              "9785a5c3ffd166bc95e6dd5308894691"
+            ], 
+            "type": "text/plain"
+          }
+        ]
+      }
+    ], 
+    "name": "retrieve collection md5 hash"
+  }, 
+  {
+    "method": "DELETE", 
+    "dialog": [
+      {
+        "request": {
+          "headers": {
+            "If-None-Match": "af779785a5c3ffd166bc95e6dd530889"
+          }, 
+          "name": "the md5 hash of a collection"
+        }, 
+        "responses": [
+          {
+            "status": 200, 
+            "body": [
               "9785a5c3ffd166bc95e6dd5308894691"
             ], 
             "type": "text/plain"

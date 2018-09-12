@@ -3,4 +3,4 @@ group	userfiles
 		method	GET	Get the index as HTML
 			code	getFile('api/user.html');
 			response	200	text/plain
-				line	index.html file contents here
+				body	index.html file contents here

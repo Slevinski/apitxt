@@ -1,16 +1,18 @@
 FORMAT: X-1A
 HOST: https://signpuddle.net/v3
 
-# SignPuddle user API
+# SignPuddle 3 User API
 > v3.0.0
 
-+ [txt](user/index.txt) - ApiTxt format
-+ [json](user/index.json) - array of JSON objects
-+ [md](user/index.md) - API Blueprint
-+ [html](user/index.html) - HTML documentation
++ [txt](../src/user.txt) - ApiTxt format
++ [json](../src/user.json) - array of JSON objects
++ [html](../api/user.html) - HTML API Interface
++ [md](../doc/user.md) - API Blueprint
++ [htm](../doc/user.htm) - Stand Alone HTML
 
 ## Group user
 SignPuddle 3 collections are organized by country and language codes
+
 
 ### Country code
 The country codes are from ISO-3166.
@@ -35,11 +37,11 @@ The available countries where signs are available.
 
 + Response 200 (text/plain)
 
-
      + Body
 
             BR
             US
+
 
 ### Salt is used for request validations [/user/salt]
 A string for accounting and validation
@@ -54,26 +56,31 @@ A string for accounting and validation
 
 + Response 200 (text/plain)
 
-
      + Body
 
             e3bedc9e9f83cb9dd7ae61250b9e6921
+
 
 ### User login [/user/login]
 Validation of user with salted password
 
 #### Process log in to server [POST]
 
-+ Request verify user
++ Request verify user (application/json)
+
+     + Even a list
+     + name `Name` of the metaproperty, should be alphanumeric only. Uneditable.
 
      + Body
 
-            {"user":"anonymous","salt":"af77...","salted":"2793f..."}
+            {"username":"anonymous","salt":"af77...","salted":"2793f..."}
 
-+ Response 200 (text/plain)
++ Response 200 (application/json)
 
+     response text here
 
      + Body
 
             {"user-profile":""}
+
 

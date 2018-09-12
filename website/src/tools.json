@@ -6,13 +6,13 @@
       "+ [txt](../src/tools.txt) - ApiTxt format", 
       "+ [json](../src/tools.json) - array of JSON objects", 
       "+ [html](../api/tools.html) - HTML API Interface", 
-      "+ [md](../docs/tools.md) - API Blueprint", 
-      "+ [htm](../docs/tools.htm) - Stand Alone HTML"
+      "+ [md](../doc/tools.md) - API Blueprint", 
+      "+ [htm](../doc/tools.htm) - Stand Alone HTML"
     ], 
     "host": "https://signpuddle.net/v3", 
     "meta": "Generated from ApiTxt format (output/tools.txt) using txt2json.py", 
     "root": "tools", 
-    "title": "SignPuddle Tools API"
+    "title": "SignPuddle 3 Tools API"
   }, 
   {
     "group": "tools", 
@@ -48,7 +48,7 @@
         "responses": [
           {
             "status": 200, 
-            "lines": [
+            "body": [
               "test output"
             ], 
             "type": "text/plain"
@@ -80,7 +80,7 @@
         "responses": [
           {
             "status": 200, 
-            "lines": [
+            "body": [
               "{", 
               "  \"utf-8\": {},", 
               "  \"utf-16\": {},", 
@@ -135,7 +135,7 @@
         "responses": [
           {
             "status": 200, 
-            "lines": [
+            "body": [
               "{", 
               "  \"sign\": [],", 
               "  \"spatial\": [],", 
@@ -189,7 +189,7 @@
         "responses": [
           {
             "status": 200, 
-            "lines": [
+            "body": [
               "[", 
               "  \"individual symbol\",", 
               "  \"S10000\",", 
@@ -243,7 +243,7 @@
         "responses": [
           {
             "status": 200, 
-            "lines": [
+            "body": [
               "parse results of text"
             ], 
             "type": "text/plain"
@@ -289,7 +289,7 @@
         "responses": [
           {
             "status": 200, 
-            "lines": [
+            "body": [
               "\\uD836\\uDC00"
             ], 
             "type": "text/plain"
@@ -329,7 +329,7 @@
         "responses": [
           {
             "status": 200, 
-            "lines": [
+            "body": [
               "\\x{1D800}"
             ], 
             "type": "text/plain"
@@ -367,7 +367,7 @@
         "responses": [
           {
             "status": 200, 
-            "lines": [
+            "body": [
               "%F0%9D%A0%80"
             ], 
             "type": "text/plain"

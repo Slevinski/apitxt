@@ -133,6 +133,9 @@ for segment in data:
 					if "lines" in qa['request']:
 						for line in qa['request']['lines']:
 							print "				line	" + utf8(line.replace("<TAB>","<tab>").replace("\t","<TAB>"))
+					if "body" in qa['request']:
+						for body in qa['request']['body']:
+							print "				body	" + utf8(body.replace("<TAB>","<tab>").replace("\t","<TAB>"))
 
 				if 'responses' in qa:
 					for response in qa["responses"]:
@@ -155,3 +158,6 @@ for segment in data:
 						if "lines" in response:
 							for line in response['lines']:
 								print "				" + "	"*request + "line	" + utf8(line.replace("<TAB>","<tab>").replace("\t","<TAB>"))
+						if "body" in response:
+							for body in response['body']:
+								print "				" + "	"*request + "body	" + utf8(body.replace("<TAB>","<tab>").replace("\t","<TAB>"))

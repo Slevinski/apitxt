@@ -3,4 +3,4 @@ group	toolsfiles
 		method	GET	Get the tools as HTML
 			code	getFile('api/tools.html');
 			response	200	text/plain
-				line	tools.html file contents here
+				body	tools.html file contents here

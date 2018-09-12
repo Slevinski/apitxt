@@ -30,15 +30,24 @@ html {
   box-sizing: inherit;
 }
 
-/* body {
-  background-image: url("icons/alice.png");
-  background-position: center;
-} */
-
 /* forms */
 form {
   overflow: hidden;
   margin-bottom: 2em;
+}
+label.large,
+input.large,
+select.large,
+textarea.large {
+  font-size: 2em;
+  border-width: 3px !important;
+}
+label.medium,
+input.medium,
+select.medium,
+textarea.medium {
+  font-size: 1.5em;
+  border-width: 2px !important;
 }
 input,
 select,
@@ -50,7 +59,7 @@ textarea {
   max-width: 100%;
   border: 1px solid #cdcdcd;
   border-radius: 4px;
-  font-size: .95rem;
+  font-size: .95em;
 }
 
 input:focus,
@@ -84,13 +93,12 @@ label {
 
 /* Buttons */
 button {
-  display: inline-block;
-  padding-bottom: 0.3em;
+  display: inline-flex;
+  justify-content: space-around;
   font-size: 1.15em;
   font-weight: normal;
-  text-align: center;
-  white-space: normal;
-  vertical-align: middle;
+  height: 2em;
+  min-height: 2em;
   -ms-touch-action: manipulation;
       touch-action: manipulation;
   cursor: pointer;
@@ -103,7 +111,6 @@ button {
   border-radius: 0.3em;
   background: #EEE;
   color: #111;
-  min-height: 2em;
 }
 
 button.large {
@@ -112,8 +119,79 @@ button.large {
   border-radius: 0.3em;
 }
 
-header button.large {
-  margin-top: 0;
+button > * {
+  margin: auto .1em auto .1em;
+}
+
+button > span {
+  display: inline-flex;
+  align-items: center;
+}
+button img.icon, button i {
+  height: 80%;
+  min-width: 1.5em;
+}
+
+button > i > svg{
+  height: 100%;
+}
+
+i.icon svg {
+}
+
+i.icon svg path {
+  fill: currentColor !important;
+}
+
+button > svg {
+  height: 80%;
+}
+
+button > svg g text.sym-line {
+  fill: currentColor !important;
+}
+
+button > svg g text.sym-fill {
+  fill: #eee !important;
+}
+
+button.outline > svg g text.sym-fill {
+  fill: #fff !important;
+}
+
+button.primary > svg g text.sym-fill {
+  fill: #337ab7 !important;
+}
+
+button.success > svg g text.sym-fill {
+  fill: #5cb85c !important;
+}
+
+
+button.info > svg g text.sym-fill {
+  fill: #5bc0de !important;
+}
+
+
+button.warning > svg g text.sym-fill {
+  fill: #f0ad4e !important;
+}
+
+button.danger > svg g text.sym-fill {
+  fill: #d9534f !important;
+}
+
+button.link  > svg g text.sym-fill {
+  fill: #fff !important;
+}
+
+button[disabled] {
+  fill: #bbb !important;
+}
+
+button.tight {
+  margin-left:1px;
+  margin-right:1px;
 }
 
 button:focus,
@@ -446,133 +524,63 @@ input.danger, select.danger, textarea.danger {
   border: 1px solid #d9534f;
 }
 
-/* buttons and forms */
-button img.icon, button i.icon {
-  position: relative;
-  height: 1em;
-  width: 1em;
-  margin-right: .3em;
-  top: .1em;
-}
-
-i.icon svg {
-  position: relative;
-  width: 1em;
-  height: 1em;
-}
-
-i.icon svg path {
-  fill: currentColor !important;
-}
-
-button > svg {
-  position: relative;
-  width: 1.3em;
-  height: 1.3em;
-  top: .2em;
-}
-
-button > svg g text.sym-line {
-  fill: currentColor !important;
-}
-
-button > svg g text.sym-fill {
-  fill: #eee !important;
-}
-
-button.outline > svg g text.sym-fill {
-  fill: #fff !important;
-}
-
-button.primary > svg g text.sym-fill {
-  fill: #337ab7 !important;
-}
-
-button.success > svg g text.sym-fill {
-  fill: #5cb85c !important;
-}
-
-
-button.info > svg g text.sym-fill {
-  fill: #5bc0de !important;
-}
-
-
-button.warning > svg g text.sym-fill {
-  fill: #f0ad4e !important;
-}
-
-button.danger > svg g text.sym-fill {
-  fill: #d9534f !important;
-}
-
-button.link  > svg g text.sym-fill {
-  fill: #fff !important;
-}
-
-button[disabled] {
-  fill: #bbb !important;
-}
-
 .invalid {
   box-shadow: 0 0 5px #d45252;
   border-color: #b03535
 }
 
-button.thin {
-  margin-left:0;
-  margin-right:0;
+input.swu {
+  font-size: 2em;
 }
 
-button.onLeft, div.onLeft {
-  float: left;
+div.indent {
+  padding-left: 10px;
+}
+.tree, .tree * {
+  list-style-type: none;
+  padding-left: 10px;
 }
 
-button.onRight, div.onRight {
-  float: right;
+.tree pre {
+  border-left: 1px solid lightgray;
+  white-space: pre-line;
+}
+.tree > li:before {
+  content: "- ";
+}
+.tree .collapse:before {
+  content: "+ ";
+  border: none;
+}
+.tree .collapse > * {
+  display: none;
 }
 
-header.three {
-  display: grid;
-  grid-template-columns: 1fr 3fr 1fr;
+header.main, header.group, header.route {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   background: lightgray;
-  margin-bottom: 1em;
   height: 3em;
-}
-@media (min-width: 30em) {
-  header.three {
-    grid-template-columns: 1fr 4fr 1fr;
-    grid-gap: 1em;
-  }
-}
-@media (min-width: 50em) {
-  header.three {
-    grid-template-columns: 1fr 5fr 1fr;
-  }
+  min-height: 3em;
 }
 
-header.four {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  background: lightgray;
-  margin-bottom: 1em;
-  height: 3em;
+header.main {
+  background: #888;
 }
-@media (min-width: 30em) {
-  header.four {
-    grid-template-columns: 1fr 2fr 1fr 1fr;
-    grid-gap: 1em;
-  }
+header.group {
+  background: #AAA;
 }
-@media (min-width: 50em) {
-  header.four {
-    grid-template-columns: 1fr 4fr 1fr 1fr;
-  }
+header.route {
+  background: #DDD;
 }
 
-header button{
-  margin-top: 0.3em;
+header > span > button {
+  margin-left: 0.2em;
+  margin-right: 0.2em;
 }
+
 button.brand {
   color: #b33;
 }
@@ -601,9 +609,7 @@ button.message i{
 }
 
 section {
-  margin: auto;
-  margin-top: 1em;
-  margin-bottom: 1em;
+  margin: 3em auto;
   padding: 1em;
   padding-top: .5em;
   max-width:780px;
@@ -640,29 +646,18 @@ section.boxed:after
     transform:skew(8deg) rotate(3deg);
 }
 
-section button{
+section button.padded{
  margin: 0.5em;
 }
 button.long {
   display: none;
 }
-@media (min-width: 30em) {
-  button.long {display: initial;}
-  button.short {display: none;}
-}
-
 .tight {
   padding: 0.1em;
 }
 
-input.swu {
-  font-size: 2em;
-}
-
-@media (min-width: 30em) {
-  div.label, label {float: left; width: 28%; clear: both; vertical-align: middle;}
-  div.wide, input {float: right; width: 72%;}
-  h2 {clear: both;}
-  form button {float: left}
+@media (min-width: 40em) {
+  button.long {display: inline-flex;}
+  button.short {display: none;}
 }
 

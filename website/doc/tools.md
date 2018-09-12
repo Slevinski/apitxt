@@ -1,14 +1,14 @@
 FORMAT: X-1A
 HOST: https://signpuddle.net/v3
 
-# SignPuddle Tools API
+# SignPuddle 3 Tools API
 > v3.0.0
 
 + [txt](../src/tools.txt) - ApiTxt format
 + [json](../src/tools.json) - array of JSON objects
 + [html](../api/tools.html) - HTML API Interface
-+ [md](../docs/tools.md) - API Blueprint
-+ [htm](../docs/tools.htm) - Stand Alone HTML
++ [md](../doc/tools.md) - API Blueprint
++ [htm](../doc/tools.htm) - Stand Alone HTML
 
 ## Group tools
 Resources related to tools
@@ -25,10 +25,10 @@ A general purpose function for testing
 
 + Response 200 (text/plain)
 
-
      + Body
 
             test output
+
 
 ### Character definition tree [/tools/define]
 
@@ -37,7 +37,6 @@ The definition tree for character mapping
 #### Get main define [GET]
 
 + Response 200 (text/plain)
-
 
      + Body
 
@@ -49,6 +48,7 @@ The definition tree for character mapping
               "swu": {},
               "style": {}
             }
+
 
 ### Section definition [/tools/define/{section}]
 
@@ -62,7 +62,6 @@ A section of the definition tree
 
 + Response 200 (text/plain)
 
-
      + Body
 
             {
@@ -74,6 +73,7 @@ A section of the definition tree
               "box": [],
               "query": []
             }
+
 
 ### Part definition [/tools/define/{section}/{part}]
 
@@ -88,7 +88,6 @@ A part of the section definition
 
 + Response 200 (text/plain)
 
-
      + Body
 
             [
@@ -96,6 +95,7 @@ A part of the section definition
               "S10000",
               "[\\x{40000}-\\x{4F428}]"
             ]
+
 
 ### Parse text [/tools/parse{?text,utf}]
 
@@ -110,10 +110,10 @@ A function to analyze text and parse it into individual components
 
 + Response 200 (text/plain)
 
-
      + Body
 
             parse results of text
+
 
 ### Encode text [/tools/encode{?text,slash}]
 
@@ -128,10 +128,10 @@ A function to encode SignWriting in Unicode (SWU) as UTF-16
 
 + Response 200 (text/plain)
 
-
      + Body
 
             \uD836\uDC00
+
 
 ### Decode text [/tools/decode{?text}]
 
@@ -145,10 +145,10 @@ A function to decode SignWriting in Unicode (SWU) from UTF-16
 
 + Response 200 (text/plain)
 
-
      + Body
 
             \x{1D800}
+
 
 ### UTF-8 encode text [/tools/utf8{?text}]
 
@@ -160,8 +160,8 @@ A function to decode SignWriting in Unicode (SWU) from UTF-16
 
 + Response 200 (text/plain)
 
-
      + Body
 
             %F0%9D%A0%80
+
 

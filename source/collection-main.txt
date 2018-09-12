@@ -3,8 +3,8 @@ group	collection	Resources related to making collections
 		method	GET	Get available languages
 			code	  echo "en\nase";
 			response	200	text/plain
-				line	en
-				line	ase
+				body	en
+				body	ase
 	route	/collection/{name}	Collection resource	Access to available collections
 		parameter	name	en-US-interface-sp3	string	The name of a collection
 		method	GET	retrieve collection or available collections
@@ -36,7 +36,7 @@ group	collection	Resources related to making collections
 			code	}
 			request	collection text
 				response	200	text/plain
-					line	print.buttons.main<TAB>message<TAB>description<TAB>icon
+					body	print.buttons.main<TAB>message<TAB>description<TAB>icon
 	route	/collection/{name}/md5	Collection resource md5 hash	MD5 hash of collection
 		parameter	name	en-US-interface-sp3	string	The name of a collection
 		method	GET	retrieve collection md5 hash
@@ -77,4 +77,19 @@ group	collection	Resources related to making collections
 			request	the md5 hash of a collection
 				header	If-None-Match	af779785a5c3ffd166bc95e6dd530889
 				response	200	text/plain
-					line	9785a5c3ffd166bc95e6dd5308894691
+					body	9785a5c3ffd166bc95e6dd5308894691
+		method	POST	retrieve collection md5 hash
+			request	the md5 hash of a collection
+				header	If-None-Match	af779785a5c3ffd166bc95e6dd530889
+				response	200	text/plain
+					body	9785a5c3ffd166bc95e6dd5308894691
+		method	PUT	retrieve collection md5 hash
+			request	the md5 hash of a collection
+				header	If-None-Match	af779785a5c3ffd166bc95e6dd530889
+				response	200	text/plain
+					body	9785a5c3ffd166bc95e6dd5308894691
+		method	DELETE	retrieve collection md5 hash
+			request	the md5 hash of a collection
+				header	If-None-Match	af779785a5c3ffd166bc95e6dd530889
+				response	200	text/plain
+					body	9785a5c3ffd166bc95e6dd5308894691

@@ -875,7 +875,7 @@ var CommonPages = {
       return [
         m("header.main",[
           m("button", {class: "pseudo", onclick: function(){routesfn.set("/")}},
-            s('country')?m("img",{border:"1",src:"data/flags/" + s('country').toLowerCase() + ".png"}):
+            s('country')?m("img",{border:"1",src:"include/flags/" + s('country').toLowerCase() + ".png"}):
               m("i.icon",m.trust(
                 '<svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">' + icons['globe'] + '</svg>'
               ))
@@ -1073,7 +1073,7 @@ var SettingsPages = {
       }
       return [ 
         m("form", [
-          s('country')?m("img",{border:1,src:"data/flags/" + s('country').toLowerCase() + ".png"}):
+          s('country')?m("img",{border:1,src:"include/flags/" + s('country').toLowerCase() + ".png"}):
             m("button.pseudo",{onclick: function(){
               state.country_temp = '';
             }},m("i.icon",m.trust(
@@ -1094,7 +1094,7 @@ var SettingsPages = {
           m("div.wide",buttons)
         ]),
         flag_list.map(function(val,i){
-          return m(CommonPages["button"],{class: "outline", text:val, img:"data/flags/" + val.toLowerCase() + ".png",onclick: function(){
+          return m(CommonPages["button"],{class: "outline", text:val, img:"include/flags/" + val.toLowerCase() + ".png",onclick: function(){
             statefn.remove("country_temp");
             statefn.update("country",val);
           }})

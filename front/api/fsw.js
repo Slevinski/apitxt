@@ -1,20 +1,14 @@
 var spVersion = "3";
 var host = "https://signpuddle.com/back";
-host = "http://192.168.254.6:8888";
+host = "http://signpuddle.com/back";
 var spLogo = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 382.39499 393.798"><g transform="translate(-153.728 -166.677)">  <path fill="#000" d="M348.22 266.68v259.504h-7V266.68"/></g><g transform="translate(-153.728 -166.677)">  <path fill="#000" d="M348.22 166.677v32.32h-7v-32.32"/></g><g transform="translate(-153.728 -166.677)">  <linearGradient id="c" gradientUnits="userSpaceOnUse" x1="138.098" y1="180.746" x2="536.098" y2="375.746">  <stop offset="0" stop-color="#ff0700"/>  <stop offset="1" stop-color="#b40000"/>  </linearGradient>  <path d="M198.26 300.806c18.388 0 35.327 6.168 48.89 16.532 13.56-10.364 30.5-16.532 48.887-16.532s35.326 6.168 48.888 16.532c13.562-10.364 30.5-16.532 48.888-16.532 18.387 0 35.326 6.168 48.89 16.532 13.56-10.364 30.5-16.532 48.888-16.532 16.467 0 31.773 4.948 44.533 13.423-27.962-78.602-103-134.882-191.197-134.882-88.196 0-163.236 56.28-191.198 134.88 12.76-8.475 28.066-13.422 44.533-13.422z" fill="url(#c)"/></g></svg>';
 
 var data = {
   "title": "Formal SignWriting in ASCII (FSW)", 
   "lines": [
-    "> SignPuddle v3.0.0", 
-    "", 
-    "+ [txt](../src/fsw.txt) - ApiTxt format", 
-    "+ [json](../src/fsw.json) - array of JSON objects", 
-    "+ [html](../api/fsw.html) - HTML API Interface", 
-    "+ [md](../doc/fsw.md) - API Blueprint", 
-    "+ [htm](../doc/fsw.htm) - Stand Alone HTML"
+    "> v3.0.0"
   ], 
-  "html": "<blockquote>\n<p>SignPuddle v3.0.0</p>\n</blockquote>\n<ul>\n<li><a href=\"../src/fsw.txt\">txt</a> - ApiTxt format</li>\n<li><a href=\"../src/fsw.json\">json</a> - array of JSON objects</li>\n<li><a href=\"../api/fsw.html\">html</a> - HTML API Interface</li>\n<li><a href=\"../doc/fsw.md\">md</a> - API Blueprint</li>\n<li><a href=\"../doc/fsw.htm\">htm</a> - Stand Alone HTML</li>\n</ul>", 
+  "html": "<blockquote>\n<p>v3.0.0</p>\n</blockquote>", 
   "host": "https://signpuddle.com/back", 
   "meta": "Generated from ApiTxt format (output/fsw.txt) using txt2json.py", 
   "groups": [
@@ -273,6 +267,12 @@ var data = {
         }
       ], 
       "group": "FSW", 
+      "html": "<ul>\n<li>Source: <a href=\"../src/fsw.txt\">ApiTxt format</a> and <a href=\"../src/fsw.json\">JSON objects</a></li>\n<li>Documents: <a href=\"../doc/fsw.md\">API Blueprint</a> and <a href=\"../doc/fsw.htm\">Stand Alone HTML</a></li>\n<li>Live Page: <a href=\"../api/fsw.html\">API Interface</a> and <a href=\"../api/fsw.js\">JavaScript</a></li>\n</ul>", 
+      "lines": [
+        "+ Source: [ApiTxt format](../src/fsw.txt) and [JSON objects](../src/fsw.json)", 
+        "+ Documents: [API Blueprint](../doc/fsw.md) and [Stand Alone HTML](../doc/fsw.htm)", 
+        "+ Live Page: [API Interface](../api/fsw.html) and [JavaScript](../api/fsw.js)"
+      ], 
       "description": "Resources related to Formal SignWriting in ASCII (FSW)"
     }
   ], 

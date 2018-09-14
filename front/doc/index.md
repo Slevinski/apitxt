@@ -4,14 +4,16 @@ HOST: https://signpuddle.com/back
 # SignPuddle 3 API
 > v3.0.0
 
-+ [txt](../src/index.txt) - ApiTxt format
-+ [json](../src/index.json) - array of JSON objects
-+ [html](../api/index.html) - HTML API Interface
-+ [md](../doc/index.md) - API Blueprint
-+ [htm](../doc/index.htm) - Stand Alone HTML
++ Source: [ApiTxt format](../src/index.txt) and [JSON objects](../src/index.json)
++ Documents: [API Blueprint](../doc/index.md) and [Stand Alone HTML](../doc/index.htm)
++ Live Page: [API Interface](../api/index.html) and [JavaScript](../api/index.js)
 
 ## Group tools
 Resources related to tools
+
++ Source: [ApiTxt format](../src/tools.txt) and [JSON objects](../src/tools.json)
++ Documents: [API Blueprint](../doc/tools.md) and [Stand Alone HTML](../doc/tools.htm)
++ Live Page: [API Interface](../api/tools.html) and [JavaScript](../api/tools.js)
 
 ### tools index [/tools/]
 
@@ -32,23 +34,6 @@ Resources related to tools
             /tools/encode{?text,slash}
             /tools/decode{?text}
             /tools/utf8{?text}
-
-
-### Test with input [/tools/test{?text}]
-
-A general purpose function for testing
-
-+ Parameters
-
-     + text: S10000 (string) - Input for testing
-
-#### Get test results [GET]
-
-+ Response 200 (text/plain)
-
-     + Body
-
-            test output
 
 
 ### Character definition tree [/tools/define]
@@ -186,8 +171,29 @@ A function to decode SignWriting in Unicode (SWU) from UTF-16
             %F0%9D%A0%80
 
 
+### Test with input [/tools/test{?text}]
+
+A general purpose function for testing
+
++ Parameters
+
+     + text: S10000 (string) - Input for testing
+
+#### Get test results [GET]
+
++ Response 200 (text/plain)
+
+     + Body
+
+            test output
+
+
 ## Group FSW
 Resources related to Formal SignWriting in ASCII (FSW)
+
++ Source: [ApiTxt format](../src/fsw.txt) and [JSON objects](../src/fsw.json)
++ Documents: [API Blueprint](../doc/fsw.md) and [Stand Alone HTML](../doc/fsw.htm)
++ Live Page: [API Interface](../api/fsw.html) and [JavaScript](../api/fsw.js)
 
 ### FSW Word [/fsw{?text,style}]
 
@@ -318,6 +324,10 @@ Create an SVG with font using Formal SignWriting in ASCII (FSW)
 ## Group swu
 Resources related to Formal SignWriting in ASCII (SWU)
 
++ Source: [ApiTxt format](../src/swu.txt) and [JSON objects](../src/swu.json)
++ Documents: [API Blueprint](../doc/swu.md) and [Stand Alone HTML](../doc/swu.htm)
++ Live Page: [API Interface](../api/swu.html) and [JavaScript](../api/swu.js)
+
 ### SWU Word [/swu{?text,style}]
 
 + Parameters
@@ -443,6 +453,9 @@ Create an SVG with font using Formal SignWriting in ASCII (SWU)
 ## Group user
 SignPuddle 3 collections are organized by country and language codes
 
++ Source: [ApiTxt format](../src/user.txt) and [JSON objects](../src/user.json)
++ Documents: [API Blueprint](../doc/user.md) and [Stand Alone HTML](../doc/user.htm)
++ Live Page: [API Interface](../api/user.html) and [JavaScript](../api/user.js)
 
 ### Country code
 The country codes are from ISO-3166.
@@ -516,6 +529,10 @@ Validation of user with salted password
 
 ## Group collection
 Resources related to making collections
+
++ Source: [ApiTxt format](../src/collection.txt) and [JSON objects](../src/collection.json)
++ Documents: [API Blueprint](../doc/collection.md) and [Stand Alone HTML](../doc/collection.htm)
++ Live Page: [API Interface](../api/collection.html) and [JavaScript](../api/collection.js)
 
 ### Available collections [/collection]
 
@@ -639,6 +656,9 @@ ApiTxt uses eleven types of element to define an API.
 
 root, group, route, parameter, method, request, response, header, line, code, and body.
 
++ Source: [ApiTxt format](../src/apitxt.txt) and [JSON objects](../src/apitxt.json)
++ Documents: [API Blueprint](../doc/apitxt.md) and [Stand Alone HTML](../doc/apitxt.htm)
++ Live Page: [API Interface](../api/apitxt.html) and [JavaScript](../api/apitxt.js)
 
 ### root [/apitxt/root]
 

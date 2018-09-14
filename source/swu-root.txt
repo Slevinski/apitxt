@@ -1,8 +1,2 @@
-root	swu	SignPuddle 3 SWU API	https://signpuddle.com/back
+root	SWU	SignPuddle 3 SWU API	https://signpuddle.com/back
 	line	> v3.0.0
-	line	
-	line	+ [txt](../src/swu.txt) - ApiTxt format
-	line	+ [json](../src/swu.json) - array of JSON objects
-	line	+ [html](../api/swu.html) - HTML API Interface
-	line	+ [md](../doc/swu.md) - API Blueprint
-	line	+ [htm](../doc/swu.htm) - Stand Alone HTML

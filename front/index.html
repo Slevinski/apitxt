@@ -8,29 +8,29 @@
   <link rel="stylesheet" type="text/css" href="include/common.css" />
   <script>
     var defaults = {};
-    function loadJSON(file,callback) {   
-      var xobj = new XMLHttpRequest();
-      xobj.overrideMimeType("application/json");
-      xobj.open('GET', 'include/' + file, true); // Replace 'my_data' with the path to your file
-      xobj.onreadystatechange = function () {
-        if (xobj.readyState == 4 && xobj.status == "200") {
-          // Required use of an anonymous callback as .open will NOT return a value but simply returns undefined in asynchronous mode
-          callback(xobj.responseText);
-        }
-      };
-      xobj.send(null);  
-    }
-    loadJSON("test.json",function(response) {
-      // Parse JSON string into object
-      var actual_JSON = JSON.parse(response);
-      console.log(actual_JSON);
-    });
+//    function loadJSON(file,callback) {   
+//      var xobj = new XMLHttpRequest();
+//      xobj.overrideMimeType("application/json");
+//      xobj.open('GET', 'include/' + file, true); // Replace 'my_data' with the path to your file
+//      xobj.onreadystatechange = function () {
+//        if (xobj.readyState == 4 && xobj.status == "200") {
+//          // Required use of an anonymous callback as .open will NOT return a value but simply returns undefined in asynchronous mode
+//          callback(xobj.responseText);
+//        }
+//      };
+//      xobj.send(null);  
+//    }
+//    loadJSON("test.json",function(response) {
+//      // Parse JSON string into object
+//      var actual_JSON = JSON.parse(response);
+//      console.log(actual_JSON);
+//    });
     var interfaces = {};
   </script>
   <script src="include/world.js"></script>
   <script src="data/js/interface-sp3.js"></script>
-  <script src="data/js/interface-print.js"></script>
-  <script src="data/js/interface-world.js"></script>
+  <script xsrc="data/js/interface-print.js"></script>
+  <script xsrc="data/js/interface-world.js"></script>
   <script src="include/min.js"></script>
   <script src="include/icons.js"></script>
 </head>

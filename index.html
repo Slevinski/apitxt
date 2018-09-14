@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>SignPuddle Development System</title>
+    <title>SignPuddle Development</title>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
@@ -76,12 +76,12 @@ code[class*=language-],pre[class*=language-]{color:#f8f8f2;background:0 0;text-s
   <a href="#introduction">Introduction</a>
 </div>
 <div class="ui fluid secondary vertical menu">
-  <a class="item" href="#introduction">SignPuddle Development System</a>
+  <a class="item" href="#introduction">SignPuddle Development</a>
 </div>
 
 
 <div class="ui horizontal divider">
-  <a href="#filesystem">filesystem</a>
+  <a href="#background">Background</a>
 </div>
 
 <div class="ui accordion fluid">
@@ -90,7 +90,43 @@ code[class*=language-],pre[class*=language-]{color:#f8f8f2;background:0 0;text-s
 
 
 <div class="ui horizontal divider">
-  <a href="#resources">Resources</a>
+  <a href="#status">Status</a>
+</div>
+
+<div class="ui accordion fluid">
+  
+</div>
+
+
+<div class="ui horizontal divider">
+  <a href="#front">Front</a>
+</div>
+
+<div class="ui accordion fluid">
+  
+</div>
+
+
+<div class="ui horizontal divider">
+  <a href="#back">Back</a>
+</div>
+
+<div class="ui accordion fluid">
+  
+</div>
+
+
+<div class="ui horizontal divider">
+  <a href="#source">Source</a>
+</div>
+
+<div class="ui accordion fluid">
+  
+</div>
+
+
+<div class="ui horizontal divider">
+  <a href="#tools">Tools</a>
 </div>
 
 <div class="ui accordion fluid">
@@ -112,14 +148,25 @@ code[class*=language-],pre[class*=language-]{color:#f8f8f2;background:0 0;text-s
       <div class="eleven wide computer ten wide tablet sixteen wide mobile column">
         
 <div class="ui hidden divider header"></div>
-<h1 class="ui huge header" id="introduction">SignPuddle Development System</h1>
+<h1 class="ui huge header" id="introduction">SignPuddle Development</h1>
 <hr class="ui divider">
 <div class="description">
-  <blockquote>
-<p>SignPuddle API for SignWriting Text<br>
-ApiTxt v2.0.0<br>
-HOME: <a href="https://signpuddle.com">https://signpuddle.com</a><br>
-AUTHOR: <a href="https://SteveSlevinski.me">https://SteveSlevinski.me</a><br>
+  <ul>
+<li><p><a href="README.md">README.md</a> - Markdown version</p></li>
+
+<li><p><a href="index.html">index.html</a> - HTML version</p></li>
+</ul>
+
+<p>Welcome to the top page of the ApiTxt Project: a custom build environment for the development of SignPuddle 3 and other RESTful APIs.</p>
+
+<blockquote>
+<p>ApiTxt Project: v3.0.0-alpha</p>
+
+<p>ONLINE: <a href="https://signpuddle.com">https://signpuddle.com</a><br>
+DOWNLOAD: <a href="https://github.com/Slevinski/apitxt/archive/master.zip">https://github.com/Slevinski/apitxt/archive/master.zip</a><br>
+REPO: <a href="https://github.com/slevinski/apitxt">https://github.com/slevinski/apitxt</a></p>
+
+<p>AUTHOR: <a href="https://SteveSlevinski.me">https://SteveSlevinski.me</a><br>
 SUPPORT: <a href="https://www.patreon.com/signwriting">https://www.patreon.com/signwriting</a></p>
 </blockquote>
 
@@ -128,51 +175,141 @@ SUPPORT: <a href="https://www.patreon.com/signwriting">https://www.patreon.com/s
         <div class="ui hidden divider"></div>
         
 
-  <div class="ui horizontal divider" id="filesystem">
-    filesystem
+  <div class="ui horizontal divider" id="background">
+    Background
   </div>
   <div class="ui header aligned">
     <div class="ui sub header">
-      <p>ApiTxt uses several directories for structure</p>
+      <p>A <a href="https://slevinski.github.io/SuttonSignWriting/guide.html">general introduction</a> to the foundational technologies of SignWriting is available in the Sutton SignWriting Project: <a href="https://slevinski.github.io/SuttonSignWriting">online</a>, <a href="https://github.com/Slevinski/SuttonSignWriting/archive/master.zip">download</a>, and <a href="https://github.com/Slevinski/SuttonSignWriting/">repo</a>.</p>
 
-<p>root, group, route, parameter, method, request, response, header, line, code, and body.</p>
+<p>SignPuddle 3 is a two-part project: the front-end for the average user and the back-end for the developer and power user.</p>
 
-<h2 id="filesystem">Filesystem</h2>
+<p>The ApiTxt Project uses automated scripts to build both the front-end and the back-end of SignPuddle 3.</p>
 
-<pre><code>    README.md
-    docs
-      | - Project Documentation as HTML, Markdown, JSON Objects, and ApiTxt format
-    source
-      | - Documents in sections of ApiTxt format
-    tools
-      | - Python scripts
-      | - template
-      | - output
-            | - various files with extensions txt, json, md, and html
-    website
-      | - Slim Framework v2
-      | - PHP Server generated from ApiTxt Format
+<p>The ApiTxt Format is a custom text markup used to define a RESTful API.</p>
+
+    </div>
+  </div>
+  
+
+  <div class="ui horizontal divider" id="status">
+    Status
+  </div>
+  <div class="ui header aligned">
+    <div class="ui sub header">
+      <p>SignPuddle 3 is currently in alpha release.  It is under active development with rudimentary structures, basic outlines, and various functionality.  Some of the details will change.  This project is currently recommended for developers and power users.</p>
+
+<p>The <a href="front">front-end</a> is available for preview, with some structure to demo.  The front-end includes <a href="front/doc">developer documentation</a> and <a href="front/api">basic tools</a> for accessing the back-end API.</p>
+
+<p>The <a href="back">back-end</a> is available for use, with <a href="front/doc">some functionality</a>.  Standard GET requests can be typed in any browser URL, such as <a href="http://signpuddle.com/back/fsw/svg/S10000">http://signpuddle.com/back/fsw/svg/S10000</a>.  The server can be accessed using JavaScript with the HTTP methods of GET, POST, PUT, and DELETE.  Additionally, the front-end <a href="front/api">API pages</a> provide total access and full details of live server requests.</p>
+
+<pre><code>The ApiTxt Project is divided into four sections:
+
+  front
+    | - HTML, CSS, and JavaScript
+  back
+    | - PHP Server or Apache
+  source
+    | - ApiTxt Format
+  tools
+    | - Python scripts and shell scripts 
+
+The tools use the source to create the front and back.
 </code></pre>
 
-<h3 id="source-directory">Source Directory</h3>
+    </div>
+  </div>
+  
 
-<p>Documents are written in the <strong>source/</strong> directory.  Every document file is written using a name without spaces or dashes (-).  The document section that contains the root element is written as <strong>document-root.txt</strong>.  Additional sections use an additional name that describes the contents of the section, such as <strong>document-elements.txt</strong> or <strong>document-test.txt</strong>.</p>
+  <div class="ui horizontal divider" id="front">
+    Front
+  </div>
+  <div class="ui header aligned">
+    <div class="ui sub header">
+      <p>Most users will access SignPuddle 3 with the front section: a combination of HTML, CSS, and JavaScript.  The front section presents information graphically.</p>
 
-<h2 id="tools-directory">Tools Directory</h2>
+<p>The front section can be used online or downloaded as part of the ApiTxt project.  The front section can be opened using the file system and any standard browser.</p>
 
-<p>Python programs and shell scripts are used to read and write a variety of data formats including plain text, JSON data, API Blueprint, HTML and PHP scripts.</p>
+<h3 id="application">Application</h3>
 
 <ul>
-<li><p>txt2json.py - From ApiTxt format to an array of JSON objects.</p></li>
+<li><p><a href="front">front</a></p></li>
 
-<li><p>json2txt.py - From an array of JSON objects back to ApiTxt format.</p></li>
+<li><p><a href="https://signpuddle.com/front">https://SignPuddle.com/front</a></p></li>
+</ul>
+
+<h3 id="resources">Resources</h3>
+
+<ul>
+<li><p>Source: <a href="front/src/index.txt">ApiTxt format</a> and <a href="front/src/index.json">JSON objects</a></p></li>
+
+<li><p>Documents: <a href="front/doc/index.md">API Blueprint</a> and <a href="front/doc/index.htm">Stand Alone HTML</a></p></li>
+
+<li><p>Live Page: <a href="front/api/index.html">API Interface</a> and <a href="front/api/index.js">JavaScript</a></p></li>
+</ul>
+
+    </div>
+  </div>
+  
+
+  <div class="ui horizontal divider" id="back">
+    Back
+  </div>
+  <div class="ui header aligned">
+    <div class="ui sub header">
+      <p>The back section is a functional RESTful API written in PHP using the Slim Framework v2.  To install, download the ApiTxt Project and unzip the <strong>back/Slim.zip</strong> file.</p>
+
+<p>The back section requires an Apache webserver that can use rewrite rules.  The rules are written in the <strong>back/.htaccess</strong> file.</p>
+
+<p>Alternatively, the back section can use the built-in PHP webserver.  To start both the front and the back, use the <strong>start_server.sh</strong> file on Mac and Linux or use the <strong>start_server.bat</strong> file on Windows.  The rewrite rules are written in the <strong>rewrite.php</strong> file.</p>
+
+<h3 id="application">Application</h3>
+
+<ul>
+<li><p><a href="back">back</a></p></li>
+
+<li><p><a href="https://signpuddle.com/back">https://SignPuddle.com/back</a></p></li>
+</ul>
+
+    </div>
+  </div>
+  
+
+  <div class="ui horizontal divider" id="source">
+    Source
+  </div>
+  <div class="ui header aligned">
+    <div class="ui sub header">
+      <p>Document segments are written in the <a href="source">source</a> directory using <a href="front/doc/apitxt.htm">ApiTxt Format</a>: a highly structured plain text markup that fully defines a RESTful API. Each line in an ApiTxt document is a self-contained element which starts with a name and is followed by &lt;TAB&gt; separated fields.</p>
+
+<p>ApiTxt Format uses eleven types of element to define an RESTful API: root, group, route, parameter, method, request, response, header, line, code, and body.</p>
+
+    </div>
+  </div>
+  
+
+  <div class="ui horizontal divider" id="tools">
+    Tools
+  </div>
+  <div class="ui header aligned">
+    <div class="ui sub header">
+      <p>Python programs and shell scripts are used to read and write a variety of data formats including ApiTxt Format, JSON data, API Blueprint, HTML, JavaScript, and PHP scripts.</p>
+
+<ul>
+<li><p>txt2json.py - From ApiTxt Format to an array of JSON objects.</p></li>
+
+<li><p>json2txt.py - From an array of JSON objects back to ApiTxt Format.</p></li>
 
 <li><p>json2md.py - From an array of JSON objects to API Blueprint written in markdown.</p></li>
 
-<li><p>json2php.py - From an array of JSON ojects to a functional PHP server using the Slim Framework v2.</p></li>
+<li><p>json2php.py - From an array of JSON objects to a functional PHP server using the Slim Framework v2.</p></li>
+
+<li><p>json2html.py - From an array of JSON objects to API Interface.</p></li>
+
+<li><p>json2js.py - From an array of JSON objects to JavaScript.</p></li>
 </ul>
 
-<p>All of the tools use command line arguements.  Use -h for help.</p>
+<p>All of the tools use command line arguments.  Use -h for help.</p>
 
 <pre><code>python txt2json.py -h
 usage: txt2json.py [-h] [-i INPUT] [-o OUTPUT] [-e]
@@ -188,168 +325,15 @@ optional arguments:
   -e, --errors          check for errors and report
 </code></pre>
 
-<h3 id="full-mocking">Full Mocking</h3>
+<h3 id="make-and-build">Make and Build</h3>
 
-<p>The full mocking script uses the previous tools, shell commands, and multiple calls to <a href="https://github.com/bukalapak/snowboard/">bukalapak/snowboard</a>.</p>
+<p>The <strong>tools/make.sh</strong> file is used to create the build script.</p>
 
-<ul>
-<li>txt2mock.py - From ApiTxt format to two mock servers.</li>
-</ul>
+<p>The <strong>tools/build.sh</strong> file is used to create the front and back sections.</p>
 
-<p>Running the full mocking script without any command line arguements will analyze the <strong>source/</strong> directory and return options.</p>
+<h3 id="snowboard-bukalapaksnowboardhttpsgithubcombukalapaksnowboard">Snowboard (<a href="https://github.com/bukalapak/snowboard/">bukalapak/snowboard</a>)</h3>
 
-<pre><code>&gt;&gt; python txt2mock.py 
-
-Please specify a document from ../source/
-    python txt2mock.py -d apitxt
-    python txt2mock.py -d apitxt -r -s &quot;elements test&quot;
-</code></pre>
-
-<p>Running the full mocking script with the appropriate arguements will test and build the web api.</p>
-
-<pre><code>&gt;&gt; python txt2mock.py -d apitxt -r -s &quot;elements files&quot; -w -p -m
-ApiTxt Format
-OK
-
-Nicely formatted!
-
-Snowboard Lint
-OK
-
-Mock server is ready. Use 127.0.0.1:8087
-Available Routes:
-GET&amp;#9;200&amp;#9;/root
-GET&amp;#9;200&amp;#9;/group
-GET&amp;#9;200&amp;#9;/route
-GET&amp;#9;200&amp;#9;/parameter
-GET&amp;#9;200&amp;#9;/method
-GET&amp;#9;200&amp;#9;/request
-GET&amp;#9;200&amp;#9;/response
-GET&amp;#9;200&amp;#9;/header
-GET&amp;#9;200&amp;#9;/line
-GET&amp;#9;200&amp;#9;/code
-</code></pre>
-
-<p>With the <strong>-w</strong> option, the HTML, Markdown, JSON Objects, and ApiTxt format files are copied to the <strong>website</strong> directory.</p>
-
-<p>With the <strong>-p</strong> option, the PHP server is built and placed in the <strong>website</strong> directory.</p>
-
-<p>With the <strong>-m</strong> option, the Snowboard mock server is called last.  The server can be accessed using a URL such as &ldquo;127.0.0.1.8087/root&rdquo; or using one of the other listed routes.</p>
-
-<h3 id="website-directory">Website Directory</h3>
-
-<p>The website is built with a fully functional web API in PHP using the Slim Framework v2.  Make sure to unzip the <strong>Slim.zip</strong> file to use the PHP Server.</p>
-
-<p>The PHP Server requires an Apache webserver that can use rewrite rules written in the <strong>.htaccess</strong> file.</p>
-
-<p>Alternatively, you can start the built-in PHP webserver using the <strong>website/start_server.sh</strong> shell script which uses the rewrite rules contained in the <strong>website/include/rewrite.php</strong> file.</p>
-
-    </div>
-  </div>
-  
-
-  <div class="ui horizontal divider" id="resources">
-    Resources
-  </div>
-  <div class="ui header aligned">
-    <div class="ui sub header">
-      <ul>
-<li><p><a href="website/src/apitxt.txt">txt</a> - ApiTxt format</p></li>
-
-<li><p><a href="website/src/apitxt.json">json</a> - array of JSON objects</p></li>
-
-<li><p><a href="website/api/apitxt.html">html</a> - HTML API Interface</p></li>
-
-<li><p><a href="website/doc/apitxt.md">md</a> - API Blueprint</p></li>
-
-<li><p><a href="website/doc/apitxt.htm">htm</a> - Stand Alone HTML</p></li>
-</ul>
-
-<p>ApiTxt is the build environment to create the SignPuddle 3 API for SignWriting Text.
-ApiTxt format is a highly structured plain text format that defines multiple facets of a website api.</p>
-
-<p>A variety of python programs and shell scripts are used to transform the source ApiTxt format into a fully functional and documented website.</p>
-
-<h2 id="input-and-output-formats">Input and Output Formats</h2>
-
-<p>The various formats are used to define the structure and function of a website API.
-The original source is written in ApiTxt format and transformed into an array of JSON objects.
-The JSON objects are used to write other formats, including API Blueprint.
-API Blueprint has an extensive toolkit of additional transformations.</p>
-
-<h3 id="apitxt-format-txt">ApiTxt Format (txt)</h3>
-
-<p>ApiTxt defines a highly structured plain text format used to define multiple facets of a website api.
-Each line in an ApiTxt document is a self-contained element which starts with a name and is followed by &lt;TAB&gt; separated fields.
-Writing ApiTxt documents is easier when tabs and spaces appear different, so use a plain text editor and turn on the invisible characters option.</p>
-
-<h3 id="array-of-json-objects-json">Array of JSON Objects (json)</h3>
-
-<p>Each line of ApiTxt format is converted into a JSON object or added to an existing object.
-The various objects are stored as an ordered array.
-The JSON array of objects can be reduced to the root object by appropriately structuring the groups, routes, and methods.</p>
-
-<pre><code>    root
-      | - routes
-            | - methods
-      | - groups
-            | - routes
-                  | - methods
-</code></pre>
-
-<h3 id="api-blueprint-md">API Blueprint (md)</h3>
-
-<p><a href="https://apiblueprint.org/">API Blueprint</a> is a high-level API description language for web APIs. API Blueprint is widely supported with various tooling available.</p>
-
-<h3 id="standalone-htm-documentation-htm">Stand-Alone HTM Documentation (htm)</h3>
-
-<p>Stand-alone HTM document created from the API Blueprint using a template and the snowboard tool.</p>
-
-<h3 id="interactive-html-api-html">Interactive HTML API (html)</h3>
-
-<p>Interactive HTML documentation is generated from the JSON elements.</p>
-
-<h3 id="php-server-php">PHP Server (php)</h3>
-
-<p>The PHP server is written for the PHP project <a href="https://docs.slimframework.com/">Slim Framework v2</a> to create the functional web API.
-The website directory contains an .htaccess file for an Apache server with PHP support.
-Alternatively, the server can be started with a shell script (start_server.sh) using PHP&rsquo;s built in web server and a custom rewrite.php file.</p>
-
-<h2 id="transformations">Transformations</h2>
-
-<p>Python programs and shell scripts are used to read and write a variety of data formats including plain text, JSON data, API Blueprint, HTML and PHP scripts.</p>
-
-<h3 id="plain-text-to-json-objects-txt2json">Plain Text to JSON Objects (txt2json)</h3>
-
-<p>The primary transformation is from the plain text format to an array of JSON objects.</p>
-
-<h3 id="json-objects-back-to-plain-text-json2txt">JSON Objects back to Plain Text (json2txt)</h3>
-
-<p>The transformation can be reversed, resulting in a document that is properly structured with standardized indenting.</p>
-
-<h3 id="json-objects-to-api-blueprint-json2md">JSON Objects to API Blueprint (json2md)</h3>
-
-<p>The API Blueprint document is created from an array of JSON objects.
-Each object is written as a section of the API Blueprint document using a markdown syntax.</p>
-
-<h3 id="json-objects-to-php-server-json2php">JSON Objects to PHP Server (json2php)</h3>
-
-<p>A functional PHP server is built from the JSON objects for the Slim Framework v2.
-The server responses can be based on prewritten responses or functional PHP code using URL parameters and query parameters.</p>
-
-<h3 id="json-objects-to-interactive-html-page-json2html">JSON Objects to Interactive HTML Page (json2html)</h3>
-
-<p>A functional reference guide with live calls to the server.
-Detailed reports for requests and responses.</p>
-
-<h3 id="json-objects-to-javascript-json2js">JSON Objects to Javascript (json2js)</h3>
-
-<p>The interactive Javascript for the user interface and the server calls.
-Detailed reports for requests and responses.</p>
-
-<h3 id="snowboard-transformations-bukalapaksnowboardhttpsgithubcombukalapaksnowboard">Snowboard Transformations (<a href="https://github.com/bukalapak/snowboard/">bukalapak/snowboard</a>)</h3>
-
-<p>Part of the API Blueprint toolkit, snowboard offers three different transformations: lint, html, and mock.
+<p>Used in the build script, snowboard can parse API Blueprint documents.  Snowboard offers three different transformations: lint, html, and mock.
 Snowboard lint will check the structure of the markdown text and report errors.
 Snowboard html will create a stand-alone html document using a template.
 Snowboard mock will analyze the responses of the markdown document and serve static responses over HTTP.</p>
@@ -363,12 +347,10 @@ Snowboard mock will analyze the responses of the markdown document and serve sta
   </div>
   <div class="ui header aligned">
     <div class="ui sub header">
-      <h2 id="author">Author</h2>
-
-<p>Stephen E Slevinski Jr<br>
-slevin@signpuddle.net<br>
-<a href="http://slevinski.github.io">http://slevinski.github.io</a><br>
-<a href="http://www.slideshare.net/StephenSlevinski/presentations">http://www.slideshare.net/StephenSlevinski/presentations</a></p>
+      <blockquote>
+<p>AUTHOR: <a href="https://SteveSlevinski.me">https://SteveSlevinski.me</a><br>
+SUPPORT: <a href="https://www.patreon.com/signwriting">https://www.patreon.com/signwriting</a></p>
+</blockquote>
 
 <h2 id="epilogue">Epilogue</h2>
 
@@ -381,17 +363,23 @@ slevin@signpuddle.net<br>
 <h2 id="to-do">To Do</h2>
 
 <ul>
-<li><p>additional transformations</p></li>
+<li><p>Searching for SignWriting in Unicode (SWU) with SQLite</p></li>
 
-<li><ul>
-<li>json2curl.py - from an array of JSON objects to a shell script using curl to make requests and curl-trace-parser to reformat the curl output</li>
-</ul></li>
+<li><p>Editing the various languages for the user interface</p></li>
+
+<li><p>Convert PDF printing to the SignPuddle 3 databases</p></li>
+
+<li><p>Editing dictionaries and individual signs</p></li>
+
+<li><p>Writing and editing literature</p></li>
 </ul>
 
 <h2 id="version-history">Version History</h2>
 
 <ul>
-<li>1.0.0 - Sept 28th, 2017: v1.0 initial release</li>
+<li><p>v3.0.0-alpha - Sept 14th, 2018: first release on SignPuddle.com</p></li>
+
+<li><p>v1.0.0 - Sept 28th, 2017: initial release</p></li>
 </ul>
 
     </div>

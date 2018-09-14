@@ -1,12 +1,9 @@
 root	fsw	Formal SignWriting in ASCII (FSW)	https://signpuddle.com/back
-	line	> SignPuddle v3.0.0
-	line	
-	line	+ [txt](../src/fsw.txt) - ApiTxt format
-	line	+ [json](../src/fsw.json) - array of JSON objects
-	line	+ [html](../api/fsw.html) - HTML API Interface
-	line	+ [md](../doc/fsw.md) - API Blueprint
-	line	+ [htm](../doc/fsw.htm) - Stand Alone HTML
+	line	> v3.0.0
 group	FSW	Resources related to Formal SignWriting in ASCII (FSW)
+	line	+ Source: [ApiTxt format](../src/fsw.txt) and [JSON objects](../src/fsw.json)
+	line	+ Documents: [API Blueprint](../doc/fsw.md) and [Stand Alone HTML](../doc/fsw.htm)
+	line	+ Live Page: [API Interface](../api/fsw.html) and [JavaScript](../api/fsw.js)
 	route	/fsw{?text,style}	FSW Word
 		parameter	text	AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520	string	The name of sign
 		parameter	style	true	boolean,optional	Flag to include styling string

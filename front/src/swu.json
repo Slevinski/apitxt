@@ -1,20 +1,19 @@
 [
   {
     "lines": [
-      "> v3.0.0", 
-      "", 
-      "+ [txt](../src/swu.txt) - ApiTxt format", 
-      "+ [json](../src/swu.json) - array of JSON objects", 
-      "+ [html](../api/swu.html) - HTML API Interface", 
-      "+ [md](../doc/swu.md) - API Blueprint", 
-      "+ [htm](../doc/swu.htm) - Stand Alone HTML"
+      "> v3.0.0"
     ], 
     "host": "https://signpuddle.com/back", 
     "meta": "Generated from ApiTxt format (output/swu.txt) using txt2json.py", 
-    "root": "swu", 
+    "root": "SWU", 
     "title": "SignPuddle 3 SWU API"
   }, 
   {
+    "lines": [
+      "+ Source: [ApiTxt format](../src/swu.txt) and [JSON objects](../src/swu.json)", 
+      "+ Documents: [API Blueprint](../doc/swu.md) and [Stand Alone HTML](../doc/swu.htm)", 
+      "+ Live Page: [API Interface](../api/swu.html) and [JavaScript](../api/swu.js)"
+    ], 
     "group": "swu", 
     "description": "Resources related to Formal SignWriting in ASCII (SWU)"
   }, 

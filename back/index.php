@@ -96,7 +96,7 @@ function echoFile($file){
 /**********/
 // ## Group main
 $app->get('', function () use ($app) {
-  $app->redirect('/');
+  $app->redirect('');
 });
 $app->options('/', function (){});
 $app->get('/', function () use ($app) {
@@ -116,7 +116,7 @@ $app->get('/', function () use ($app) {
 // ## Group tools
 // Resources related to tools
 $app->get('/tools', function () use ($app) {
-  $app->redirect('/tools/');
+  $app->redirect('tools/');
 });
 $app->options('/tools/', function (){});
 $app->get('/tools/', function () use ($app) {
@@ -133,19 +133,6 @@ $app->get('/tools/', function () use ($app) {
   echo '/tools/encode{?text,slash}' . "\n";
   echo '/tools/decode{?text}' . "\n";
   echo '/tools/utf8{?text}' . "\n";
-});
-
-$app->options('/tools/test', function (){});
-$app->get('/tools/test', function () use ($app) {
-  $text = $app->request()->get('text');
-  $timein = microtime(true);
-  $app->contentType('text/plain');
-  $timein = microtime(true);
-  $app->contentType('text/plain;charset=utf-8');
-  $test = SignWriting\test($text);
-  $searchTime = searchtime($timein);
-  header("Search-Time: " . $searchTime);
-  echo $test;
 });
 
 $app->options('/tools/define', function (){});
@@ -251,10 +238,23 @@ $app->get('/tools/utf8', function () use ($app) {
   echo $encode;
 });
 
+$app->options('/tools/test', function (){});
+$app->get('/tools/test', function () use ($app) {
+  $text = $app->request()->get('text');
+  $timein = microtime(true);
+  $app->contentType('text/plain');
+  $timein = microtime(true);
+  $app->contentType('text/plain;charset=utf-8');
+  $test = SignWriting\test($text);
+  $searchTime = searchtime($timein);
+  header("Search-Time: " . $searchTime);
+  echo $test;
+});
+
 /**********/
 // ## Group toolsfiles
 $app->get('/tools', function () use ($app) {
-  $app->redirect('/tools/');
+  $app->redirect('tools/');
 });
 $app->options('/tools/', function (){});
 $app->get('/tools/', function () use ($app) {
@@ -336,7 +336,7 @@ $app->get('/fsw/svg/font/:text', function ($text) use ($app) {
 /**********/
 // ## Group fswfiles
 $app->get('/fsw', function () use ($app) {
-  $app->redirect('/fsw/');
+  $app->redirect('fsw/');
 });
 $app->options('/fsw/', function (){});
 $app->get('/fsw/', function () use ($app) {
@@ -418,7 +418,7 @@ $app->get('/swu/svg/font/:text', function ($text) use ($app) {
 /**********/
 // ## Group swufiles
 $app->get('/swu', function () use ($app) {
-  $app->redirect('/swu/');
+  $app->redirect('swu/');
 });
 $app->options('/swu/', function (){});
 $app->get('/swu/', function () use ($app) {
@@ -431,7 +431,7 @@ $app->get('/swu/', function () use ($app) {
 // ## Group user
 // SignPuddle 3 collections are organized by country and language codes
 $app->get('/user/who', function () use ($app) {
-  $app->redirect('/user/who/');
+  $app->redirect('user/who/');
 });
 $app->options('/user/who/', function (){});
 $app->get('/user/who/', function () use ($app) {
@@ -467,7 +467,7 @@ $app->post('/user/login', function () use ($app) {
 /**********/
 // ## Group userfiles
 $app->get('/user', function () use ($app) {
-  $app->redirect('/user/');
+  $app->redirect('user/');
 });
 $app->options('/user/', function (){});
 $app->get('/user/', function () use ($app) {
@@ -582,7 +582,7 @@ $app->delete('/collection/:name/md5', function ($name) use ($app) {
 /**********/
 // ## Group collectionfiles
 $app->get('/collection', function () use ($app) {
-  $app->redirect('/collection/');
+  $app->redirect('collection/');
 });
 $app->options('/collection/', function (){});
 $app->get('/collection/', function () use ($app) {
@@ -932,7 +932,7 @@ $app->get('/apitxt/code', function () use ($app) {
 /**********/
 // ## Group apitxtfiles
 $app->get('/apitxt', function () use ($app) {
-  $app->redirect('/apitxt/');
+  $app->redirect('apitxt/');
 });
 $app->options('/apitxt/', function (){});
 $app->get('/apitxt/', function () use ($app) {

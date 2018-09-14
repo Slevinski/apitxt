@@ -2,16 +2,14 @@ FORMAT: X-1A
 HOST: https://signpuddle.com/back
 
 # Formal SignWriting in ASCII (FSW)
-> SignPuddle v3.0.0
-
-+ [txt](../src/fsw.txt) - ApiTxt format
-+ [json](../src/fsw.json) - array of JSON objects
-+ [html](../api/fsw.html) - HTML API Interface
-+ [md](../doc/fsw.md) - API Blueprint
-+ [htm](../doc/fsw.htm) - Stand Alone HTML
+> v3.0.0
 
 ## Group FSW
 Resources related to Formal SignWriting in ASCII (FSW)
+
++ Source: [ApiTxt format](../src/fsw.txt) and [JSON objects](../src/fsw.json)
++ Documents: [API Blueprint](../doc/fsw.md) and [Stand Alone HTML](../doc/fsw.htm)
++ Live Page: [API Interface](../api/fsw.html) and [JavaScript](../api/fsw.js)
 
 ### FSW Word [/fsw{?text,style}]
 

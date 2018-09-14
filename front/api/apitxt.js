@@ -1,18 +1,12 @@
 var spVersion = "3";
 var host = "https://signpuddle.com/back";
-host = "http://192.168.254.6:8888";
+host = "http://signpuddle.com/back";
 var spLogo = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 382.39499 393.798"><g transform="translate(-153.728 -166.677)">  <path fill="#000" d="M348.22 266.68v259.504h-7V266.68"/></g><g transform="translate(-153.728 -166.677)">  <path fill="#000" d="M348.22 166.677v32.32h-7v-32.32"/></g><g transform="translate(-153.728 -166.677)">  <linearGradient id="c" gradientUnits="userSpaceOnUse" x1="138.098" y1="180.746" x2="536.098" y2="375.746">  <stop offset="0" stop-color="#ff0700"/>  <stop offset="1" stop-color="#b40000"/>  </linearGradient>  <path d="M198.26 300.806c18.388 0 35.327 6.168 48.89 16.532 13.56-10.364 30.5-16.532 48.887-16.532s35.326 6.168 48.888 16.532c13.562-10.364 30.5-16.532 48.888-16.532 18.387 0 35.326 6.168 48.89 16.532 13.56-10.364 30.5-16.532 48.888-16.532 16.467 0 31.773 4.948 44.533 13.423-27.962-78.602-103-134.882-191.197-134.882-88.196 0-163.236 56.28-191.198 134.88 12.76-8.475 28.066-13.422 44.533-13.422z" fill="url(#c)"/></g></svg>';
 
 var data = {
   "title": "ApiTxt", 
   "lines": [
-    "> ApiTxt v2.0.0", 
-    "", 
-    "+ [txt](../src/apitxt.txt) - ApiTxt format", 
-    "+ [json](../src/apitxt.json) - array of JSON objects", 
-    "+ [html](../api/apitxt.html) - HTML API Interface", 
-    "+ [md](../doc/apitxt.md) - API Blueprint", 
-    "+ [htm](../doc/apitxt.htm) - Stand Alone HTML", 
+    "> v2.0.0", 
     "", 
     "ApiTxt is the build environment to create the SignPuddle 3 API for SignWriting Text.", 
     "ApiTxt format is a highly structured plain text format that defines multiple facets of a website api.", 
@@ -58,40 +52,9 @@ var data = {
     "The PHP server is written for the PHP project [Slim Framework v2](https://docs.slimframework.com/) to create the functional web API.", 
     "The website directory contains an .htaccess file for an Apache server with PHP support.", 
     "Alternatively, the server can be started with a shell script (start_server.sh) using PHP's built in web server and a custom rewrite.php file.", 
-    "", 
-    "## Transformations", 
-    "Python programs and shell scripts are used to read and write a variety of data formats including plain text, JSON data, API Blueprint, HTML and PHP scripts.", 
-    "", 
-    "### Plain Text to JSON Objects (txt2json)", 
-    "The primary transformation is from the plain text format to an array of JSON objects.", 
-    "", 
-    "### JSON Objects back to Plain Text (json2txt)", 
-    "The transformation can be reversed, resulting in a document that is properly structured with standardized indenting.", 
-    "", 
-    "### JSON Objects to API Blueprint (json2md)", 
-    "The API Blueprint document is created from an array of JSON objects.", 
-    "Each object is written as a section of the API Blueprint document using a markdown syntax.", 
-    "", 
-    "### JSON Objects to PHP Server (json2php)", 
-    "A functional PHP server is built from the JSON objects for the Slim Framework v2.", 
-    "The server responses can be based on prewritten responses or functional PHP code using URL parameters and query parameters.", 
-    "", 
-    "### JSON Objects to Interactive HTML Page (json2html)", 
-    "A functional reference guide with live calls to the server.", 
-    "Detailed reports for requests and responses.", 
-    "", 
-    "### JSON Objects to Javascript (json2js)", 
-    "The interactive Javascript for the user interface and the server calls.", 
-    "Detailed reports for requests and responses.", 
-    "", 
-    "### Snowboard Transformations ([bukalapak/snowboard](https://github.com/bukalapak/snowboard/))", 
-    "Part of the API Blueprint toolkit, snowboard offers three different transformations: lint, html, and mock.", 
-    "Snowboard lint will check the structure of the markdown text and report errors.", 
-    "Snowboard html will create a stand-alone html document using a template.", 
-    "Snowboard mock will analyze the responses of the markdown document and serve static responses over HTTP.", 
     ""
   ], 
-  "html": "<blockquote>\n<p>ApiTxt v2.0.0</p>\n</blockquote>\n<ul>\n<li><a href=\"../src/apitxt.txt\">txt</a> - ApiTxt format</li>\n<li><a href=\"../src/apitxt.json\">json</a> - array of JSON objects</li>\n<li><a href=\"../api/apitxt.html\">html</a> - HTML API Interface</li>\n<li><a href=\"../doc/apitxt.md\">md</a> - API Blueprint</li>\n<li><a href=\"../doc/apitxt.htm\">htm</a> - Stand Alone HTML</li>\n</ul>\n<p>ApiTxt is the build environment to create the SignPuddle 3 API for SignWriting Text.\nApiTxt format is a highly structured plain text format that defines multiple facets of a website api.</p>\n<p>A variety of python programs and shell scripts are used to transform the source ApiTxt format into a fully functional and documented website.</p>\n<h2>Input and Output Formats</h2>\n<p>The various formats are used to define the structure and function of a website API.\nThe original source is written in ApiTxt format and transformed into an array of JSON objects.\nThe JSON objects are used to write other formats, including API Blueprint.\nAPI Blueprint has an extensive toolkit of additional transformations.</p>\n<h3>ApiTxt Format (txt)</h3>\n<p>ApiTxt defines a highly structured plain text format used to define multiple facets of a website api.\nEach line in an ApiTxt document is a self-contained element which starts with a name and is followed by &lt;TAB&gt; separated fields.\nWriting ApiTxt documents is easier when tabs and spaces appear different, so use a plain text editor and turn on the invisible characters option.</p>\n<h3>Array of JSON Objects (json)</h3>\n<p>Each line of ApiTxt format is converted into a JSON object or added to an existing object.\nThe various objects are stored as an ordered array.\nThe JSON array of objects can be reduced to the root object by appropriately structuring the groups, routes, and methods.</p>\n<p><pre><code>root\n      | - routes\n            | - methods\n      | - groups\n            | - routes\n                  | - methods</code></pre></p>\n<h3>API Blueprint (md)</h3>\n<p><a href=\"https://apiblueprint.org/\">API Blueprint</a> is a high-level API description language for web APIs. API Blueprint is widely supported with various tooling available.</p>\n<h3>Stand-Alone HTM Documentation (htm)</h3>\n<p>Stand-alone HTM document created from the API Blueprint using a template and the snowboard tool.</p>\n<h3>Interactive HTML API (html)</h3>\n<p>Interactive HTML documentation is generated from the JSON elements.</p>\n<h3>PHP Server (php)</h3>\n<p>The PHP server is written for the PHP project <a href=\"https://docs.slimframework.com/\">Slim Framework v2</a> to create the functional web API.\nThe website directory contains an .htaccess file for an Apache server with PHP support.\nAlternatively, the server can be started with a shell script (start_server.sh) using PHP's built in web server and a custom rewrite.php file.</p>\n<h2>Transformations</h2>\n<p>Python programs and shell scripts are used to read and write a variety of data formats including plain text, JSON data, API Blueprint, HTML and PHP scripts.</p>\n<h3>Plain Text to JSON Objects (txt2json)</h3>\n<p>The primary transformation is from the plain text format to an array of JSON objects.</p>\n<h3>JSON Objects back to Plain Text (json2txt)</h3>\n<p>The transformation can be reversed, resulting in a document that is properly structured with standardized indenting.</p>\n<h3>JSON Objects to API Blueprint (json2md)</h3>\n<p>The API Blueprint document is created from an array of JSON objects.\nEach object is written as a section of the API Blueprint document using a markdown syntax.</p>\n<h3>JSON Objects to PHP Server (json2php)</h3>\n<p>A functional PHP server is built from the JSON objects for the Slim Framework v2.\nThe server responses can be based on prewritten responses or functional PHP code using URL parameters and query parameters.</p>\n<h3>JSON Objects to Interactive HTML Page (json2html)</h3>\n<p>A functional reference guide with live calls to the server.\nDetailed reports for requests and responses.</p>\n<h3>JSON Objects to Javascript (json2js)</h3>\n<p>The interactive Javascript for the user interface and the server calls.\nDetailed reports for requests and responses.</p>\n<h3>Snowboard Transformations (<a href=\"https://github.com/bukalapak/snowboard/\">bukalapak/snowboard</a>)</h3>\n<p>Part of the API Blueprint toolkit, snowboard offers three different transformations: lint, html, and mock.\nSnowboard lint will check the structure of the markdown text and report errors.\nSnowboard html will create a stand-alone html document using a template.\nSnowboard mock will analyze the responses of the markdown document and serve static responses over HTTP.</p>", 
+  "html": "<blockquote>\n<p>v2.0.0</p>\n</blockquote>\n<p>ApiTxt is the build environment to create the SignPuddle 3 API for SignWriting Text.\nApiTxt format is a highly structured plain text format that defines multiple facets of a website api.</p>\n<p>A variety of python programs and shell scripts are used to transform the source ApiTxt format into a fully functional and documented website.</p>\n<h2>Input and Output Formats</h2>\n<p>The various formats are used to define the structure and function of a website API.\nThe original source is written in ApiTxt format and transformed into an array of JSON objects.\nThe JSON objects are used to write other formats, including API Blueprint.\nAPI Blueprint has an extensive toolkit of additional transformations.</p>\n<h3>ApiTxt Format (txt)</h3>\n<p>ApiTxt defines a highly structured plain text format used to define multiple facets of a website api.\nEach line in an ApiTxt document is a self-contained element which starts with a name and is followed by &lt;TAB&gt; separated fields.\nWriting ApiTxt documents is easier when tabs and spaces appear different, so use a plain text editor and turn on the invisible characters option.</p>\n<h3>Array of JSON Objects (json)</h3>\n<p>Each line of ApiTxt format is converted into a JSON object or added to an existing object.\nThe various objects are stored as an ordered array.\nThe JSON array of objects can be reduced to the root object by appropriately structuring the groups, routes, and methods.</p>\n<p><pre><code>root\n      | - routes\n            | - methods\n      | - groups\n            | - routes\n                  | - methods</code></pre></p>\n<h3>API Blueprint (md)</h3>\n<p><a href=\"https://apiblueprint.org/\">API Blueprint</a> is a high-level API description language for web APIs. API Blueprint is widely supported with various tooling available.</p>\n<h3>Stand-Alone HTM Documentation (htm)</h3>\n<p>Stand-alone HTM document created from the API Blueprint using a template and the snowboard tool.</p>\n<h3>Interactive HTML API (html)</h3>\n<p>Interactive HTML documentation is generated from the JSON elements.</p>\n<h3>PHP Server (php)</h3>\n<p>The PHP server is written for the PHP project <a href=\"https://docs.slimframework.com/\">Slim Framework v2</a> to create the functional web API.\nThe website directory contains an .htaccess file for an Apache server with PHP support.\nAlternatively, the server can be started with a shell script (start_server.sh) using PHP's built in web server and a custom rewrite.php file.</p>", 
   "host": "https://signpuddle.com/back", 
   "meta": "Generated from ApiTxt format (output/apitxt.txt) using txt2json.py", 
   "groups": [
@@ -1007,10 +970,13 @@ var data = {
         }
       ], 
       "group": "apitxt", 
-      "html": "<p>root, group, route, parameter, method, request, response, header, line, code, and body.</p>", 
+      "html": "<p>root, group, route, parameter, method, request, response, header, line, code, and body.</p>\n<ul>\n<li>Source: <a href=\"../src/apitxt.txt\">ApiTxt format</a> and <a href=\"../src/apitxt.json\">JSON objects</a></li>\n<li>Documents: <a href=\"../doc/apitxt.md\">API Blueprint</a> and <a href=\"../doc/apitxt.htm\">Stand Alone HTML</a></li>\n<li>Live Page: <a href=\"../api/apitxt.html\">API Interface</a> and <a href=\"../api/apitxt.js\">JavaScript</a></li>\n</ul>", 
       "lines": [
         "root, group, route, parameter, method, request, response, header, line, code, and body.", 
-        ""
+        "", 
+        "+ Source: [ApiTxt format](../src/apitxt.txt) and [JSON objects](../src/apitxt.json)", 
+        "+ Documents: [API Blueprint](../doc/apitxt.md) and [Stand Alone HTML](../doc/apitxt.htm)", 
+        "+ Live Page: [API Interface](../api/apitxt.html) and [JavaScript](../api/apitxt.js)"
       ], 
       "description": "ApiTxt uses eleven types of element to define an API."
     }

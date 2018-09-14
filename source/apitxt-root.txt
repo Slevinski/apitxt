@@ -1,11 +1,5 @@
 root	apitxt	ApiTxt	https://signpuddle.com/back
-	line	> ApiTxt v2.0.0
-	line	
-	line	+ [txt](../src/apitxt.txt) - ApiTxt format
-	line	+ [json](../src/apitxt.json) - array of JSON objects
-	line	+ [html](../api/apitxt.html) - HTML API Interface
-	line	+ [md](../doc/apitxt.md) - API Blueprint
-	line	+ [htm](../doc/apitxt.htm) - Stand Alone HTML
+	line	> v2.0.0
 	line	
 	line	ApiTxt is the build environment to create the SignPuddle 3 API for SignWriting Text.
 	line	ApiTxt format is a highly structured plain text format that defines multiple facets of a website api.
@@ -51,35 +45,4 @@ root	apitxt	ApiTxt	https://signpuddle.com/back
 	line	The PHP server is written for the PHP project [Slim Framework v2](https://docs.slimframework.com/) to create the functional web API.
 	line	The website directory contains an .htaccess file for an Apache server with PHP support.
 	line	Alternatively, the server can be started with a shell script (start_server.sh) using PHP's built in web server and a custom rewrite.php file.
-	line	
-	line	## Transformations
-	line	Python programs and shell scripts are used to read and write a variety of data formats including plain text, JSON data, API Blueprint, HTML and PHP scripts.
-	line	
-	line	### Plain Text to JSON Objects (txt2json)
-	line	The primary transformation is from the plain text format to an array of JSON objects.
-	line	
-	line	### JSON Objects back to Plain Text (json2txt)
-	line	The transformation can be reversed, resulting in a document that is properly structured with standardized indenting.
-	line	
-	line	### JSON Objects to API Blueprint (json2md)
-	line	The API Blueprint document is created from an array of JSON objects.
-	line	Each object is written as a section of the API Blueprint document using a markdown syntax.
-	line	
-	line	### JSON Objects to PHP Server (json2php)
-	line	A functional PHP server is built from the JSON objects for the Slim Framework v2.
-	line	The server responses can be based on prewritten responses or functional PHP code using URL parameters and query parameters.
-	line	
-	line	### JSON Objects to Interactive HTML Page (json2html)
-	line	A functional reference guide with live calls to the server.
-	line	Detailed reports for requests and responses.
-	line	
-	line	### JSON Objects to Javascript (json2js)
-	line	The interactive Javascript for the user interface and the server calls.
-	line	Detailed reports for requests and responses.
-	line	
-	line	### Snowboard Transformations ([bukalapak/snowboard](https://github.com/bukalapak/snowboard/))
-	line	Part of the API Blueprint toolkit, snowboard offers three different transformations: lint, html, and mock.
-	line	Snowboard lint will check the structure of the markdown text and report errors.
-	line	Snowboard html will create a stand-alone html document using a template.
-	line	Snowboard mock will analyze the responses of the markdown document and serve static responses over HTTP.
 	line	

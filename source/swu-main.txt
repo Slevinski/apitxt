@@ -1,4 +1,7 @@
 group	swu	Resources related to Formal SignWriting in ASCII (SWU)
+	line	+ Source: [ApiTxt format](../src/swu.txt) and [JSON objects](../src/swu.json)
+	line	+ Documents: [API Blueprint](../doc/swu.md) and [Stand Alone HTML](../doc/swu.htm)
+	line	+ Live Page: [API Interface](../api/swu.html) and [JavaScript](../api/swu.js)
 	route	/swu{?text,style}	SWU Word
 		parameter	text	AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520	string	The name of sign
 		parameter	style	1	number	Flag to include styling string

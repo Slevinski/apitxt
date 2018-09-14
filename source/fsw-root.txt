@@ -1,8 +1,2 @@
 root	fsw	Formal SignWriting in ASCII (FSW)	https://signpuddle.com/back
-	line	> SignPuddle v3.0.0
-	line	
-	line	+ [txt](../src/fsw.txt) - ApiTxt format
-	line	+ [json](../src/fsw.json) - array of JSON objects
-	line	+ [html](../api/fsw.html) - HTML API Interface
-	line	+ [md](../doc/fsw.md) - API Blueprint
-	line	+ [htm](../doc/fsw.htm) - Stand Alone HTML
+	line	> v3.0.0

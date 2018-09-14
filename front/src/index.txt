@@ -1,12 +1,13 @@
 root	index	SignPuddle 3 API	https://signpuddle.com/back
 	line	> v3.0.0
 	line	
-	line	+ [txt](../src/index.txt) - ApiTxt format
-	line	+ [json](../src/index.json) - array of JSON objects
-	line	+ [html](../api/index.html) - HTML API Interface
-	line	+ [md](../doc/index.md) - API Blueprint
-	line	+ [htm](../doc/index.htm) - Stand Alone HTML
+	line	+ Source: [ApiTxt format](../src/index.txt) and [JSON objects](../src/index.json)
+	line	+ Documents: [API Blueprint](../doc/index.md) and [Stand Alone HTML](../doc/index.htm)
+	line	+ Live Page: [API Interface](../api/index.html) and [JavaScript](../api/index.js)
 group	tools	Resources related to tools
+	line	+ Source: [ApiTxt format](../src/tools.txt) and [JSON objects](../src/tools.json)
+	line	+ Documents: [API Blueprint](../doc/tools.md) and [Stand Alone HTML](../doc/tools.htm)
+	line	+ Live Page: [API Interface](../api/tools.html) and [JavaScript](../api/tools.js)
 	route	/tools/	tools index
 		method	GET	Get the tools index
 			response	200	text/plain
@@ -21,18 +22,6 @@ group	tools	Resources related to tools
 				body	/tools/encode{?text,slash}
 				body	/tools/decode{?text}
 				body	/tools/utf8{?text}
-	route	/tools/test{?text}	Test with input
-		line	A general purpose function for testing
-		parameter	text	S10000	string	Input for testing
-		method	GET	Get test results
-			code	$timein = microtime(true);
-			code	$app->contentType('text/plain;charset=utf-8');
-			code	$test = SignWriting\test($text);
-			code	$searchTime = searchtime($timein);
-			code	header("Search-Time: " . $searchTime);
-			code	echo $test;
-			response	200	text/plain
-				body	test output
 	route	/tools/define	Character definition tree
 		line	The definition tree for character mapping
 		method	GET	Get main define
@@ -150,7 +139,22 @@ group	tools	Resources related to tools
 			code	echo $encode;
 			response	200	text/plain
 				body	%F0%9D%A0%80
+	route	/tools/test{?text}	Test with input
+		line	A general purpose function for testing
+		parameter	text	S10000	string	Input for testing
+		method	GET	Get test results
+			code	$timein = microtime(true);
+			code	$app->contentType('text/plain;charset=utf-8');
+			code	$test = SignWriting\test($text);
+			code	$searchTime = searchtime($timein);
+			code	header("Search-Time: " . $searchTime);
+			code	echo $test;
+			response	200	text/plain
+				body	test output
 group	FSW	Resources related to Formal SignWriting in ASCII (FSW)
+	line	+ Source: [ApiTxt format](../src/fsw.txt) and [JSON objects](../src/fsw.json)
+	line	+ Documents: [API Blueprint](../doc/fsw.md) and [Stand Alone HTML](../doc/fsw.htm)
+	line	+ Live Page: [API Interface](../api/fsw.html) and [JavaScript](../api/fsw.js)
 	route	/fsw{?text,style}	FSW Word
 		parameter	text	AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520	string	The name of sign
 		parameter	style	true	boolean,optional	Flag to include styling string
@@ -231,6 +235,9 @@ group	FSW	Resources related to Formal SignWriting in ASCII (FSW)
 					body	  <g transform="translate(476,475)"><text class="sym-fill" style="pointer-events:none;font-family:'SuttonSignWritingFill';font-size:30px;fill:white;">􀀚</text><text class="sym-line" style="pointer-events:none;font-family:'SuttonSignWritingLine';font-size:30px;fill:black;">󰀚</text></g>
 					body	</svg>
 group	swu	Resources related to Formal SignWriting in ASCII (SWU)
+	line	+ Source: [ApiTxt format](../src/swu.txt) and [JSON objects](../src/swu.json)
+	line	+ Documents: [API Blueprint](../doc/swu.md) and [Stand Alone HTML](../doc/swu.htm)
+	line	+ Live Page: [API Interface](../api/swu.html) and [JavaScript](../api/swu.js)
 	route	/swu{?text,style}	SWU Word
 		parameter	text	AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520	string	The name of sign
 		parameter	style	1	number	Flag to include styling string
@@ -309,6 +316,9 @@ group	swu	Resources related to Formal SignWriting in ASCII (SWU)
 					body	  <g transform="translate(476,475)"><text class="sym-fill" style="pointer-events:none;font-family:'SuttonSignWritingFill';font-size:30px;fill:white;">􀀚</text><text class="sym-line" style="pointer-events:none;font-family:'SuttonSignWritingLine';font-size:30px;fill:black;">󰀚</text></g>
 					body	</svg>
 group	user	SignPuddle 3 collections are organized by country and language codes
+	line	+ Source: [ApiTxt format](../src/user.txt) and [JSON objects](../src/user.json)
+	line	+ Documents: [API Blueprint](../doc/user.md) and [Stand Alone HTML](../doc/user.htm)
+	line	+ Live Page: [API Interface](../api/user.html) and [JavaScript](../api/user.js)
 	line	
 	line	### Country code
 	line	The country codes are from ISO-3166.
@@ -350,6 +360,9 @@ group	user	SignPuddle 3 collections are organized by country and language codes
 					line	response text here
 					body	{"user-profile":""}
 group	collection	Resources related to making collections
+	line	+ Source: [ApiTxt format](../src/collection.txt) and [JSON objects](../src/collection.json)
+	line	+ Documents: [API Blueprint](../doc/collection.md) and [Stand Alone HTML](../doc/collection.htm)
+	line	+ Live Page: [API Interface](../api/collection.html) and [JavaScript](../api/collection.js)
 	route	/collection	Available collections
 		method	GET	Get available languages
 			code	  echo "en\nase";
@@ -447,6 +460,9 @@ group	collection	Resources related to making collections
 group	apitxt	ApiTxt uses eleven types of element to define an API.
 	line	root, group, route, parameter, method, request, response, header, line, code, and body.
 	line	
+	line	+ Source: [ApiTxt format](../src/apitxt.txt) and [JSON objects](../src/apitxt.json)
+	line	+ Documents: [API Blueprint](../doc/apitxt.md) and [Stand Alone HTML](../doc/apitxt.htm)
+	line	+ Live Page: [API Interface](../api/apitxt.html) and [JavaScript](../api/apitxt.js)
 	route	/apitxt/root	root
 		line	Every document should start with a root element.
 		line	After the root, the other elements are used to quickly create complex website APIs.

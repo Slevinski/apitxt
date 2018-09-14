@@ -1,20 +1,14 @@
 var spVersion = "3";
 var host = "https://signpuddle.com/back";
-host = "http://192.168.254.6:8888";
+host = "http://signpuddle.com/back";
 var spLogo = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 382.39499 393.798"><g transform="translate(-153.728 -166.677)">  <path fill="#000" d="M348.22 266.68v259.504h-7V266.68"/></g><g transform="translate(-153.728 -166.677)">  <path fill="#000" d="M348.22 166.677v32.32h-7v-32.32"/></g><g transform="translate(-153.728 -166.677)">  <linearGradient id="c" gradientUnits="userSpaceOnUse" x1="138.098" y1="180.746" x2="536.098" y2="375.746">  <stop offset="0" stop-color="#ff0700"/>  <stop offset="1" stop-color="#b40000"/>  </linearGradient>  <path d="M198.26 300.806c18.388 0 35.327 6.168 48.89 16.532 13.56-10.364 30.5-16.532 48.887-16.532s35.326 6.168 48.888 16.532c13.562-10.364 30.5-16.532 48.888-16.532 18.387 0 35.326 6.168 48.89 16.532 13.56-10.364 30.5-16.532 48.888-16.532 16.467 0 31.773 4.948 44.533 13.423-27.962-78.602-103-134.882-191.197-134.882-88.196 0-163.236 56.28-191.198 134.88 12.76-8.475 28.066-13.422 44.533-13.422z" fill="url(#c)"/></g></svg>';
 
 var data = {
   "title": "SignPuddle 3 Tools API", 
   "lines": [
-    "> v3.0.0", 
-    "", 
-    "+ [txt](../src/tools.txt) - ApiTxt format", 
-    "+ [json](../src/tools.json) - array of JSON objects", 
-    "+ [html](../api/tools.html) - HTML API Interface", 
-    "+ [md](../doc/tools.md) - API Blueprint", 
-    "+ [htm](../doc/tools.htm) - Stand Alone HTML"
+    "> v3.0.0"
   ], 
-  "html": "<blockquote>\n<p>v3.0.0</p>\n</blockquote>\n<ul>\n<li><a href=\"../src/tools.txt\">txt</a> - ApiTxt format</li>\n<li><a href=\"../src/tools.json\">json</a> - array of JSON objects</li>\n<li><a href=\"../api/tools.html\">html</a> - HTML API Interface</li>\n<li><a href=\"../doc/tools.md\">md</a> - API Blueprint</li>\n<li><a href=\"../doc/tools.htm\">htm</a> - Stand Alone HTML</li>\n</ul>", 
+  "html": "<blockquote>\n<p>v3.0.0</p>\n</blockquote>", 
   "host": "https://signpuddle.com/back", 
   "meta": "Generated from ApiTxt format (output/tools.txt) using txt2json.py", 
   "groups": [
@@ -50,49 +44,6 @@ var data = {
                 }
               ], 
               "name": "Get the tools index"
-            }
-          ]
-        }, 
-        {
-          "name": "Test with input", 
-          "parameters": [
-            {
-              "example": "S10000", 
-              "type": "string", 
-              "description": "Input for testing", 
-              "name": "text"
-            }
-          ], 
-          "route": "/tools/test{?text}", 
-          "lines": [
-            "A general purpose function for testing"
-          ], 
-          "html": "<p>A general purpose function for testing</p>", 
-          "methods": [
-            {
-              "code": [
-                "$timein = microtime(true);", 
-                "$app->contentType('text/plain;charset=utf-8');", 
-                "$test = SignWriting\\test($text);", 
-                "$searchTime = searchtime($timein);", 
-                "header(\"Search-Time: \" . $searchTime);", 
-                "echo $test;"
-              ], 
-              "method": "GET", 
-              "dialog": [
-                {
-                  "responses": [
-                    {
-                      "status": 200, 
-                      "body": [
-                        "test output"
-                      ], 
-                      "type": "text/plain"
-                    }
-                  ]
-                }
-              ], 
-              "name": "Get test results"
             }
           ]
         }, 
@@ -434,9 +385,58 @@ var data = {
               "name": "Get utf-8 encoded query string"
             }
           ]
+        }, 
+        {
+          "name": "Test with input", 
+          "parameters": [
+            {
+              "example": "S10000", 
+              "type": "string", 
+              "description": "Input for testing", 
+              "name": "text"
+            }
+          ], 
+          "route": "/tools/test{?text}", 
+          "lines": [
+            "A general purpose function for testing"
+          ], 
+          "html": "<p>A general purpose function for testing</p>", 
+          "methods": [
+            {
+              "code": [
+                "$timein = microtime(true);", 
+                "$app->contentType('text/plain;charset=utf-8');", 
+                "$test = SignWriting\\test($text);", 
+                "$searchTime = searchtime($timein);", 
+                "header(\"Search-Time: \" . $searchTime);", 
+                "echo $test;"
+              ], 
+              "method": "GET", 
+              "dialog": [
+                {
+                  "responses": [
+                    {
+                      "status": 200, 
+                      "body": [
+                        "test output"
+                      ], 
+                      "type": "text/plain"
+                    }
+                  ]
+                }
+              ], 
+              "name": "Get test results"
+            }
+          ]
         }
       ], 
       "group": "tools", 
+      "html": "<ul>\n<li>Source: <a href=\"../src/tools.txt\">ApiTxt format</a> and <a href=\"../src/tools.json\">JSON objects</a></li>\n<li>Documents: <a href=\"../doc/tools.md\">API Blueprint</a> and <a href=\"../doc/tools.htm\">Stand Alone HTML</a></li>\n<li>Live Page: <a href=\"../api/tools.html\">API Interface</a> and <a href=\"../api/tools.js\">JavaScript</a></li>\n</ul>", 
+      "lines": [
+        "+ Source: [ApiTxt format](../src/tools.txt) and [JSON objects](../src/tools.json)", 
+        "+ Documents: [API Blueprint](../doc/tools.md) and [Stand Alone HTML](../doc/tools.htm)", 
+        "+ Live Page: [API Interface](../api/tools.html) and [JavaScript](../api/tools.js)"
+      ], 
       "description": "Resources related to tools"
     }
   ], 

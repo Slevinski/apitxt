@@ -21,9 +21,9 @@ var statefn = {
     //state also has salt, username, profile, editing, and deleting attributes
     state = {
       "messages": [],
-//      "server": "https://signpuddle.net/v3",
+//      "server": "http://192.168.254.6:8888/back",
+      "server": "https://signpuddle.com/back",
       "status": "state.status.initial",
-      "server": "http://192.168.254.5:8888",
       "connection": {},
       "country": "",
       "language": "",
@@ -1074,9 +1074,11 @@ var SettingsPages = {
       return [ 
         m("form", [
           s('country')?m("img",{border:1,src:"data/flags/" + s('country').toLowerCase() + ".png"}):
-            m("i.icon",m.trust(
+            m("button.pseudo",{onclick: function(){
+              state.country_temp = '';
+            }},m("i.icon",m.trust(
               '<svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">' + icons['globe'] + '</svg>'
-            ))
+            )))
           ,
           m("input#country_temp[type=text]",{"class":country_class,"value":(country_temp===undefined)?country:country_temp,autocomplete:"off",oninput: function(e){
             var val = e.target.value;

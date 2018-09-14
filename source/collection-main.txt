@@ -1,4 +1,7 @@
 group	collection	Resources related to making collections
+	line	+ Source: [ApiTxt format](../src/collection.txt) and [JSON objects](../src/collection.json)
+	line	+ Documents: [API Blueprint](../doc/collection.md) and [Stand Alone HTML](../doc/collection.htm)
+	line	+ Live Page: [API Interface](../api/collection.html) and [JavaScript](../api/collection.js)
 	route	/collection	Available collections
 		method	GET	Get available languages
 			code	  echo "en\nase";

@@ -13,6 +13,10 @@ HOST: https://signpuddle.com/back
 ## Group collection
 Resources related to making collections
 
++ Source: [ApiTxt format](../src/collection.txt) and [JSON objects](../src/collection.json)
++ Documents: [API Blueprint](../doc/collection.md) and [Stand Alone HTML](../doc/collection.htm)
++ Live Page: [API Interface](../api/collection.html) and [JavaScript](../api/collection.js)
+
 ### Available collections [/collection]
 
 #### Get available languages [GET]

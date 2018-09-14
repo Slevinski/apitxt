@@ -181,7 +181,7 @@ for segment in data:
 
 		if (routing[-1]=="/"):
 			print "$app->get('" + routing[0:-1] + "', function (" + vars + ") use ($app) {"
-			print "  $app->redirect('" + routing + "');"
+			print "  $app->redirect('" + routing[1:] + "');"
 			print "});"
 		print "$app->options('" + routing + "', function (){});"
 		print "$app->" + segment['method'].lower() + "('" + routing + "', function (" + vars + ") use ($app) {"

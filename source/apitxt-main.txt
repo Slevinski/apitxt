@@ -1,6 +1,9 @@
 group	apitxt	ApiTxt uses eleven types of element to define an API.
 	line	root, group, route, parameter, method, request, response, header, line, code, and body.
 	line	
+	line	+ Source: [ApiTxt format](../src/apitxt.txt) and [JSON objects](../src/apitxt.json)
+	line	+ Documents: [API Blueprint](../doc/apitxt.md) and [Stand Alone HTML](../doc/apitxt.htm)
+	line	+ Live Page: [API Interface](../api/apitxt.html) and [JavaScript](../api/apitxt.js)
 	route	/apitxt/root	root
 		line	Every document should start with a root element.
 		line	After the root, the other elements are used to quickly create complex website APIs.

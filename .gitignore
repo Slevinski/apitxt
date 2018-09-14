@@ -2,6 +2,4 @@
 .vscode
 *.code-workspace
 tools/output
-website/Slim/*
-website/data/flags/*
-standalone
+back/Slim/*

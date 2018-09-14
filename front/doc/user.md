@@ -4,15 +4,12 @@ HOST: https://signpuddle.com/back
 # SignPuddle 3 User API
 > v3.0.0
 
-+ [txt](../src/user.txt) - ApiTxt format
-+ [json](../src/user.json) - array of JSON objects
-+ [html](../api/user.html) - HTML API Interface
-+ [md](../doc/user.md) - API Blueprint
-+ [htm](../doc/user.htm) - Stand Alone HTML
-
 ## Group user
 SignPuddle 3 collections are organized by country and language codes
 
++ Source: [ApiTxt format](../src/user.txt) and [JSON objects](../src/user.json)
++ Documents: [API Blueprint](../doc/user.md) and [Stand Alone HTML](../doc/user.htm)
++ Live Page: [API Interface](../api/user.html) and [JavaScript](../api/user.js)
 
 ### Country code
 The country codes are from ISO-3166.

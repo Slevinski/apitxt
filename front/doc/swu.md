@@ -4,14 +4,12 @@ HOST: https://signpuddle.com/back
 # SignPuddle 3 SWU API
 > v3.0.0
 
-+ [txt](../src/swu.txt) - ApiTxt format
-+ [json](../src/swu.json) - array of JSON objects
-+ [html](../api/swu.html) - HTML API Interface
-+ [md](../doc/swu.md) - API Blueprint
-+ [htm](../doc/swu.htm) - Stand Alone HTML
-
 ## Group swu
 Resources related to Formal SignWriting in ASCII (SWU)
+
++ Source: [ApiTxt format](../src/swu.txt) and [JSON objects](../src/swu.json)
++ Documents: [API Blueprint](../doc/swu.md) and [Stand Alone HTML](../doc/swu.htm)
++ Live Page: [API Interface](../api/swu.html) and [JavaScript](../api/swu.js)
 
 ### SWU Word [/swu{?text,style}]
 

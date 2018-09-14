@@ -1,13 +1,7 @@
 [
   {
     "lines": [
-      "> v3.0.0", 
-      "", 
-      "+ [txt](../src/tools.txt) - ApiTxt format", 
-      "+ [json](../src/tools.json) - array of JSON objects", 
-      "+ [html](../api/tools.html) - HTML API Interface", 
-      "+ [md](../doc/tools.md) - API Blueprint", 
-      "+ [htm](../doc/tools.htm) - Stand Alone HTML"
+      "> v3.0.0"
     ], 
     "host": "https://signpuddle.com/back", 
     "meta": "Generated from ApiTxt format (output/tools.txt) using txt2json.py", 
@@ -15,6 +9,11 @@
     "title": "SignPuddle 3 Tools API"
   }, 
   {
+    "lines": [
+      "+ Source: [ApiTxt format](../src/tools.txt) and [JSON objects](../src/tools.json)", 
+      "+ Documents: [API Blueprint](../doc/tools.md) and [Stand Alone HTML](../doc/tools.htm)", 
+      "+ Live Page: [API Interface](../api/tools.html) and [JavaScript](../api/tools.js)"
+    ], 
     "group": "tools", 
     "description": "Resources related to tools"
   }, 
@@ -48,46 +47,6 @@
       }
     ], 
     "name": "Get the tools index"
-  }, 
-  {
-    "route": "/tools/test{?text}", 
-    "lines": [
-      "A general purpose function for testing"
-    ], 
-    "name": "Test with input", 
-    "parameters": [
-      {
-        "description": "Input for testing", 
-        "type": "string", 
-        "name": "text", 
-        "example": "S10000"
-      }
-    ]
-  }, 
-  {
-    "code": [
-      "$timein = microtime(true);", 
-      "$app->contentType('text/plain;charset=utf-8');", 
-      "$test = SignWriting\\test($text);", 
-      "$searchTime = searchtime($timein);", 
-      "header(\"Search-Time: \" . $searchTime);", 
-      "echo $test;"
-    ], 
-    "method": "GET", 
-    "dialog": [
-      {
-        "responses": [
-          {
-            "status": 200, 
-            "body": [
-              "test output"
-            ], 
-            "type": "text/plain"
-          }
-        ]
-      }
-    ], 
-    "name": "Get test results"
   }, 
   {
     "route": "/tools/define", 
@@ -407,5 +366,45 @@
       }
     ], 
     "name": "Get utf-8 encoded query string"
+  }, 
+  {
+    "route": "/tools/test{?text}", 
+    "lines": [
+      "A general purpose function for testing"
+    ], 
+    "name": "Test with input", 
+    "parameters": [
+      {
+        "description": "Input for testing", 
+        "type": "string", 
+        "name": "text", 
+        "example": "S10000"
+      }
+    ]
+  }, 
+  {
+    "code": [
+      "$timein = microtime(true);", 
+      "$app->contentType('text/plain;charset=utf-8');", 
+      "$test = SignWriting\\test($text);", 
+      "$searchTime = searchtime($timein);", 
+      "header(\"Search-Time: \" . $searchTime);", 
+      "echo $test;"
+    ], 
+    "method": "GET", 
+    "dialog": [
+      {
+        "responses": [
+          {
+            "status": 200, 
+            "body": [
+              "test output"
+            ], 
+            "type": "text/plain"
+          }
+        ]
+      }
+    ], 
+    "name": "Get test results"
   }
 ]

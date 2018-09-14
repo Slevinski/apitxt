@@ -71,7 +71,7 @@ st = "\t\t\tresponse\t"
 bt = "\t\t\t\tbody\t"
 
 if args.output:
-	sys.stdout = open(args.output + '/index-routes.txt','w')
+	sys.stdout = open(args.output + '/routes-index.txt','w')
 
 if not args.section:
 	print rt + "/\tRoute index"
@@ -85,7 +85,7 @@ if not args.section:
 
 for section in sections:
 	if args.output:
-		sys.stdout = open(args.output + '/' + section + '-routes.txt','w')
+		sys.stdout = open(args.output + '/routes-' + section + '.txt','w')
 	print rt + "/" + section + "/\t" + section + " index"
 	print mt + "Get the " + section + " index"
 	print st + "200\ttext/plain"

@@ -35,8 +35,8 @@ if not args.output:
 	args.output = "output/"
 
 if not args.template:
-        #args.template = "template/beta.html"
-        args.template = "template/alpha.html"
+        args.template = "template/beta.html"
+        #args.template = "template/alpha.html"
 
 if not args.document:
 	files = glob.glob(args.input + "*txt")

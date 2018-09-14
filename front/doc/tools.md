@@ -4,14 +4,12 @@ HOST: https://signpuddle.com/back
 # SignPuddle 3 Tools API
 > v3.0.0
 
-+ [txt](../src/tools.txt) - ApiTxt format
-+ [json](../src/tools.json) - array of JSON objects
-+ [html](../api/tools.html) - HTML API Interface
-+ [md](../doc/tools.md) - API Blueprint
-+ [htm](../doc/tools.htm) - Stand Alone HTML
-
 ## Group tools
 Resources related to tools
+
++ Source: [ApiTxt format](../src/tools.txt) and [JSON objects](../src/tools.json)
++ Documents: [API Blueprint](../doc/tools.md) and [Stand Alone HTML](../doc/tools.htm)
++ Live Page: [API Interface](../api/tools.html) and [JavaScript](../api/tools.js)
 
 ### tools index [/tools/]
 
@@ -32,23 +30,6 @@ Resources related to tools
             /tools/encode{?text,slash}
             /tools/decode{?text}
             /tools/utf8{?text}
-
-
-### Test with input [/tools/test{?text}]
-
-A general purpose function for testing
-
-+ Parameters
-
-     + text: S10000 (string) - Input for testing
-
-#### Get test results [GET]
-
-+ Response 200 (text/plain)
-
-     + Body
-
-            test output
 
 
 ### Character definition tree [/tools/define]
@@ -184,5 +165,22 @@ A function to decode SignWriting in Unicode (SWU) from UTF-16
      + Body
 
             %F0%9D%A0%80
+
+
+### Test with input [/tools/test{?text}]
+
+A general purpose function for testing
+
++ Parameters
+
+     + text: S10000 (string) - Input for testing
+
+#### Get test results [GET]
+
++ Response 200 (text/plain)
+
+     + Body
+
+            test output
 
 

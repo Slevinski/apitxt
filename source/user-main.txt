@@ -1,4 +1,7 @@
 group	user	SignPuddle 3 collections are organized by country and language codes
+	line	+ Source: [ApiTxt format](../src/user.txt) and [JSON objects](../src/user.json)
+	line	+ Documents: [API Blueprint](../doc/user.md) and [Stand Alone HTML](../doc/user.htm)
+	line	+ Live Page: [API Interface](../api/user.html) and [JavaScript](../api/user.js)
 	line	
 	line	### Country code
 	line	The country codes are from ISO-3166.

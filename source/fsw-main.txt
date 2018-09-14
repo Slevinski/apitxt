@@ -1,4 +1,7 @@
 group	FSW	Resources related to Formal SignWriting in ASCII (FSW)
+	line	+ Source: [ApiTxt format](../src/fsw.txt) and [JSON objects](../src/fsw.json)
+	line	+ Documents: [API Blueprint](../doc/fsw.md) and [Stand Alone HTML](../doc/fsw.htm)
+	line	+ Live Page: [API Interface](../api/fsw.html) and [JavaScript](../api/fsw.js)
 	route	/fsw{?text,style}	FSW Word
 		parameter	text	AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520	string	The name of sign
 		parameter	style	true	boolean,optional	Flag to include styling string

@@ -3,11 +3,9 @@
     "lines": [
       "> v3.0.0", 
       "", 
-      "+ [txt](../src/index.txt) - ApiTxt format", 
-      "+ [json](../src/index.json) - array of JSON objects", 
-      "+ [html](../api/index.html) - HTML API Interface", 
-      "+ [md](../doc/index.md) - API Blueprint", 
-      "+ [htm](../doc/index.htm) - Stand Alone HTML"
+      "+ Source: [ApiTxt format](../src/index.txt) and [JSON objects](../src/index.json)", 
+      "+ Documents: [API Blueprint](../doc/index.md) and [Stand Alone HTML](../doc/index.htm)", 
+      "+ Live Page: [API Interface](../api/index.html) and [JavaScript](../api/index.js)"
     ], 
     "host": "https://signpuddle.com/back", 
     "meta": "Generated from ApiTxt format (output/index.txt) using txt2json.py", 
@@ -15,6 +13,11 @@
     "title": "SignPuddle 3 API"
   }, 
   {
+    "lines": [
+      "+ Source: [ApiTxt format](../src/tools.txt) and [JSON objects](../src/tools.json)", 
+      "+ Documents: [API Blueprint](../doc/tools.md) and [Stand Alone HTML](../doc/tools.htm)", 
+      "+ Live Page: [API Interface](../api/tools.html) and [JavaScript](../api/tools.js)"
+    ], 
     "group": "tools", 
     "description": "Resources related to tools"
   }, 
@@ -48,46 +51,6 @@
       }
     ], 
     "name": "Get the tools index"
-  }, 
-  {
-    "route": "/tools/test{?text}", 
-    "lines": [
-      "A general purpose function for testing"
-    ], 
-    "name": "Test with input", 
-    "parameters": [
-      {
-        "description": "Input for testing", 
-        "type": "string", 
-        "name": "text", 
-        "example": "S10000"
-      }
-    ]
-  }, 
-  {
-    "code": [
-      "$timein = microtime(true);", 
-      "$app->contentType('text/plain;charset=utf-8');", 
-      "$test = SignWriting\\test($text);", 
-      "$searchTime = searchtime($timein);", 
-      "header(\"Search-Time: \" . $searchTime);", 
-      "echo $test;"
-    ], 
-    "method": "GET", 
-    "dialog": [
-      {
-        "responses": [
-          {
-            "status": 200, 
-            "body": [
-              "test output"
-            ], 
-            "type": "text/plain"
-          }
-        ]
-      }
-    ], 
-    "name": "Get test results"
   }, 
   {
     "route": "/tools/define", 
@@ -409,6 +372,51 @@
     "name": "Get utf-8 encoded query string"
   }, 
   {
+    "route": "/tools/test{?text}", 
+    "lines": [
+      "A general purpose function for testing"
+    ], 
+    "name": "Test with input", 
+    "parameters": [
+      {
+        "description": "Input for testing", 
+        "type": "string", 
+        "name": "text", 
+        "example": "S10000"
+      }
+    ]
+  }, 
+  {
+    "code": [
+      "$timein = microtime(true);", 
+      "$app->contentType('text/plain;charset=utf-8');", 
+      "$test = SignWriting\\test($text);", 
+      "$searchTime = searchtime($timein);", 
+      "header(\"Search-Time: \" . $searchTime);", 
+      "echo $test;"
+    ], 
+    "method": "GET", 
+    "dialog": [
+      {
+        "responses": [
+          {
+            "status": 200, 
+            "body": [
+              "test output"
+            ], 
+            "type": "text/plain"
+          }
+        ]
+      }
+    ], 
+    "name": "Get test results"
+  }, 
+  {
+    "lines": [
+      "+ Source: [ApiTxt format](../src/fsw.txt) and [JSON objects](../src/fsw.json)", 
+      "+ Documents: [API Blueprint](../doc/fsw.md) and [Stand Alone HTML](../doc/fsw.htm)", 
+      "+ Live Page: [API Interface](../api/fsw.html) and [JavaScript](../api/fsw.js)"
+    ], 
     "group": "FSW", 
     "description": "Resources related to Formal SignWriting in ASCII (FSW)"
   }, 
@@ -650,6 +658,11 @@
     "name": "Retrieve SVG with font"
   }, 
   {
+    "lines": [
+      "+ Source: [ApiTxt format](../src/swu.txt) and [JSON objects](../src/swu.json)", 
+      "+ Documents: [API Blueprint](../doc/swu.md) and [Stand Alone HTML](../doc/swu.htm)", 
+      "+ Live Page: [API Interface](../api/swu.html) and [JavaScript](../api/swu.js)"
+    ], 
     "group": "swu", 
     "description": "Resources related to Formal SignWriting in ASCII (SWU)"
   }, 
@@ -886,6 +899,9 @@
   }, 
   {
     "lines": [
+      "+ Source: [ApiTxt format](../src/user.txt) and [JSON objects](../src/user.json)", 
+      "+ Documents: [API Blueprint](../doc/user.md) and [Stand Alone HTML](../doc/user.htm)", 
+      "+ Live Page: [API Interface](../api/user.html) and [JavaScript](../api/user.js)", 
       "", 
       "### Country code", 
       "The country codes are from ISO-3166.", 
@@ -1003,6 +1019,11 @@
     "name": "Process log in to server"
   }, 
   {
+    "lines": [
+      "+ Source: [ApiTxt format](../src/collection.txt) and [JSON objects](../src/collection.json)", 
+      "+ Documents: [API Blueprint](../doc/collection.md) and [Stand Alone HTML](../doc/collection.htm)", 
+      "+ Live Page: [API Interface](../api/collection.html) and [JavaScript](../api/collection.js)"
+    ], 
     "group": "collection", 
     "description": "Resources related to making collections"
   }, 
@@ -1236,7 +1257,10 @@
   {
     "lines": [
       "root, group, route, parameter, method, request, response, header, line, code, and body.", 
-      ""
+      "", 
+      "+ Source: [ApiTxt format](../src/apitxt.txt) and [JSON objects](../src/apitxt.json)", 
+      "+ Documents: [API Blueprint](../doc/apitxt.md) and [Stand Alone HTML](../doc/apitxt.htm)", 
+      "+ Live Page: [API Interface](../api/apitxt.html) and [JavaScript](../api/apitxt.js)"
     ], 
     "group": "apitxt", 
     "description": "ApiTxt uses eleven types of element to define an API."

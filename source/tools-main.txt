@@ -1,4 +1,7 @@
 group	tools	Resources related to tools
+	line	+ Source: [ApiTxt format](../src/tools.txt) and [JSON objects](../src/tools.json)
+	line	+ Documents: [API Blueprint](../doc/tools.md) and [Stand Alone HTML](../doc/tools.htm)
+	line	+ Live Page: [API Interface](../api/tools.html) and [JavaScript](../api/tools.js)
 	route	/tools/	tools index
 		method	GET	Get the tools index
 			response	200	text/plain
@@ -13,18 +16,6 @@ group	tools	Resources related to tools
 				body	/tools/encode{?text,slash}
 				body	/tools/decode{?text}
 				body	/tools/utf8{?text}
-	route	/tools/test{?text}	Test with input
-		line	A general purpose function for testing
-		parameter	text	S10000	string	Input for testing
-		method	GET	Get test results
-			code	$timein = microtime(true);
-			code	$app->contentType('text/plain;charset=utf-8');
-			code	$test = SignWriting\test($text);
-			code	$searchTime = searchtime($timein);
-			code	header("Search-Time: " . $searchTime);
-			code	echo $test;
-			response	200	text/plain
-				body	test output
 	route	/tools/define	Character definition tree
 		line	The definition tree for character mapping
 		method	GET	Get main define
@@ -142,3 +133,15 @@ group	tools	Resources related to tools
 			code	echo $encode;
 			response	200	text/plain
 				body	%F0%9D%A0%80
+	route	/tools/test{?text}	Test with input
+		line	A general purpose function for testing
+		parameter	text	S10000	string	Input for testing
+		method	GET	Get test results
+			code	$timein = microtime(true);
+			code	$app->contentType('text/plain;charset=utf-8');
+			code	$test = SignWriting\test($text);
+			code	$searchTime = searchtime($timein);
+			code	header("Search-Time: " . $searchTime);
+			code	echo $test;
+			response	200	text/plain
+				body	test output

@@ -1,60 +1,20 @@
-# SignPuddle 3: client and server
+# SignPuddle Development
 
 + [README.md](README.md) - Markdown version
 + [index.html](index.html) - HTML version
 
-Welcome to the SignPuddle 3 alpha release.  
+Welcome to the top page of the ApiTxt Project: a custom build environment for the development of SignPuddle 3 and other RESTful APIs.  
 
-> v3.0.0-alpha  
+> ApiTxt Project: v3.0.0-alpha  
 >
 > ONLINE: https://signpuddle.com  
-
-
+> DOWNLOAD: https://github.com/Slevinski/apitxt/archive/master.zip  
 > REPO: https://github.com/slevinski/apitxt
-
-
+>
 > AUTHOR: https://SteveSlevinski.me  
 > SUPPORT: https://www.patreon.com/signwriting
 
-## Setup
-
-### Static Download
-The latest source code for SignPuddle 3 is always available for download.
-This download is a snapshot and can not be automatically updated.
-> DOWNLOAD: https://github.com/Slevinski/apitxt/archive/master.zip  
-
-### Dynamic Command
-The best way to install SignPuddle 3 is with a command-line tool.  Either the Windows Command Line (cmd) or a Terminal window for Mac or Linux.
-
-To install:
-
-```` shell
-cd Desktop  
-git clone https://github.com/slevinski/apitxt SignPuddle3
-````
-
-To update:
-> cd SignPuddle3  
-> git pull
-
-
-To prepare server:
-> cd SignPuddle3/server  
-> unzip Slim.zip
-
-To configure client:
-> cd SignPuddle3/client  
-> edit host.js
-
-To start the system:
-> cd SignPuddle3/system  
->  
-> # Windows  
-> start_system.bat  
->  
-> # Mac or Linux  
-> ./start_system.sh  
-
+## Background
 
 A [general introduction](https://slevinski.github.io/SuttonSignWriting/guide.html) to the foundational technologies of SignWriting is available in the Sutton SignWriting Project: [online](https://slevinski.github.io/SuttonSignWriting), [download](https://github.com/Slevinski/SuttonSignWriting/archive/master.zip), and [repo](https://github.com/Slevinski/SuttonSignWriting/).
 

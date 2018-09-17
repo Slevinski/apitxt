@@ -131,7 +131,7 @@ else:
 	os.system('python json2md.py -i ' + args.output + args.document + '.json -o ' + args.output + args.document + '.md')
 
 	if args.php:
-		os.system('python json2php.py -i ' + args.output + args.document + '.json -o ../back/index.php')
+		os.system('python json2php.py -i ' + args.output + args.document + '.json -o ../server/index.php')
 
 	if args.htm:
 		#os.system('python json2htm.py -i ' + args.output + args.document + '.json -o ' + args.output + args.document + '.htm')

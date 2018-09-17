@@ -1,4 +1,4 @@
-root	index	SignPuddle 3 API	https://signpuddle.com/back
+root	index	SignPuddle 3 API	https://signpuddle.com/server
 	line	> v3.0.0
 	line	
 	line	+ Source: [ApiTxt format](../src/index.txt) and [JSON objects](../src/index.json)

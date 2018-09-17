@@ -1,0 +1,410 @@
+[
+  {
+    "lines": [
+      "> v3.0.0"
+    ], 
+    "host": "https://signpuddle.com/server", 
+    "meta": "Generated from ApiTxt format (output/tools.txt) using txt2json.py", 
+    "root": "tools", 
+    "title": "SignPuddle 3 Tools API"
+  }, 
+  {
+    "lines": [
+      "+ Source: [ApiTxt format](../src/tools.txt) and [JSON objects](../src/tools.json)", 
+      "+ Documents: [API Blueprint](../doc/tools.md) and [Stand Alone HTML](../doc/tools.htm)", 
+      "+ Live Page: [API Interface](../api/tools.html) and [JavaScript](../api/tools.js)"
+    ], 
+    "group": "tools", 
+    "description": "Resources related to tools"
+  }, 
+  {
+    "route": "/tools/", 
+    "name": "tools index"
+  }, 
+  {
+    "method": "GET", 
+    "dialog": [
+      {
+        "responses": [
+          {
+            "status": 200, 
+            "body": [
+              "Available routes:", 
+              "", 
+              "/tools/", 
+              "/tools/test{?text}", 
+              "/tools/define", 
+              "/tools/define/{section}", 
+              "/tools/define/{section}/{part}", 
+              "/tools/parse{?text,utf}", 
+              "/tools/encode{?text,slash}", 
+              "/tools/decode{?text}", 
+              "/tools/utf8{?text}"
+            ], 
+            "type": "text/plain"
+          }
+        ]
+      }
+    ], 
+    "name": "Get the tools index"
+  }, 
+  {
+    "route": "/tools/define", 
+    "lines": [
+      "The definition tree for character mapping"
+    ], 
+    "name": "Character definition tree"
+  }, 
+  {
+    "code": [
+      "$timein = microtime(true);", 
+      "$app->contentType('text/plain;charset=utf-8');", 
+      "$define = SignWriting\\define();", 
+      "$searchTime = searchtime($timein);", 
+      "header(\"Search-Time: \" . $searchTime);", 
+      "echo json_pretty($define);"
+    ], 
+    "method": "GET", 
+    "dialog": [
+      {
+        "responses": [
+          {
+            "status": 200, 
+            "body": [
+              "{", 
+              "  \"utf-8\": {},", 
+              "  \"utf-16\": {},", 
+              "  \"utf-32\": {},", 
+              "  \"fsw\": {},", 
+              "  \"swu\": {},", 
+              "  \"style\": {}", 
+              "}"
+            ], 
+            "type": "text/plain"
+          }
+        ]
+      }
+    ], 
+    "name": "Get main define"
+  }, 
+  {
+    "route": "/tools/define/{section}", 
+    "lines": [
+      "A section of the definition tree"
+    ], 
+    "name": "Section definition", 
+    "parameters": [
+      {
+        "description": "The name of section", 
+        "type": "string", 
+        "name": "section", 
+        "example": "fsw"
+      }
+    ]
+  }, 
+  {
+    "code": [
+      "global $regex_define;", 
+      "if ($section == \"regex\"){", 
+      "  return $regex_define();", 
+      "}", 
+      "global $sample_define;", 
+      "if ($section == \"sample\"){", 
+      "  return $sample_define();", 
+      "}", 
+      "$timein = microtime(true);", 
+      "$app->contentType('text/plain;charset=utf-8');", 
+      "$define = SignWriting\\define($section);", 
+      "$searchTime = searchtime($timein);", 
+      "header(\"Search-Time: \" . $searchTime);", 
+      "echo json_pretty($define);"
+    ], 
+    "method": "GET", 
+    "dialog": [
+      {
+        "responses": [
+          {
+            "status": 200, 
+            "body": [
+              "{", 
+              "  \"sign\": [],", 
+              "  \"spatial\": [],", 
+              "  \"symbol\": [],", 
+              "  \"coord\": [],", 
+              "  \"prefix\": [],", 
+              "  \"box\": [],", 
+              "  \"query\": []", 
+              "}"
+            ], 
+            "type": "text/plain"
+          }
+        ]
+      }
+    ], 
+    "name": "Get section define"
+  }, 
+  {
+    "route": "/tools/define/{section}/{part}", 
+    "lines": [
+      "A part of the section definition"
+    ], 
+    "name": "Part definition", 
+    "parameters": [
+      {
+        "description": "The name of section", 
+        "type": "string", 
+        "name": "section", 
+        "example": "swu"
+      }, 
+      {
+        "description": "The part of the definition", 
+        "type": "string", 
+        "name": "part", 
+        "example": "symbol"
+      }
+    ]
+  }, 
+  {
+    "code": [
+      "$timein = microtime(true);", 
+      "$app->contentType('text/plain;charset=utf-8');", 
+      "$define = SignWriting\\define($section,$part);", 
+      "$searchTime = searchtime($timein);", 
+      "header(\"Search-Time: \" . $searchTime);", 
+      "echo json_pretty($define);"
+    ], 
+    "method": "GET", 
+    "dialog": [
+      {
+        "responses": [
+          {
+            "status": 200, 
+            "body": [
+              "[", 
+              "  \"individual symbol\",", 
+              "  \"S10000\",", 
+              "  \"[\\\\x{40000}-\\\\x{4F428}]\"", 
+              "]"
+            ], 
+            "type": "text/plain"
+          }
+        ]
+      }
+    ], 
+    "name": "Get part define"
+  }, 
+  {
+    "route": "/tools/parse{?text,utf}", 
+    "lines": [
+      "A function to analyze text and parse it into individual components"
+    ], 
+    "name": "Parse text", 
+    "parameters": [
+      {
+        "description": "The text to parse", 
+        "type": "string", 
+        "name": "text", 
+        "example": "S10000"
+      }, 
+      {
+        "description": "The UTF number of 8, 16, 32 or 'x'", 
+        "type": "string", 
+        "name": "utf", 
+        "example": "32"
+      }
+    ]
+  }, 
+  {
+    "code": [
+      "$timein = microtime(true);", 
+      "if (!in_array($utf,[8,16,32,'x'])){", 
+      "  $utf = 16;", 
+      "}", 
+      "$app->contentType('text/plain;charset=utf-8');", 
+      "$parse = SignWriting\\parse($text);", 
+      "$searchTime = searchtime($timein);", 
+      "header(\"Search-Time: \" . $searchTime);", 
+      "$json = json_pretty($parse);", 
+      "echo SignWriting\\cast($json,$utf);"
+    ], 
+    "method": "GET", 
+    "dialog": [
+      {
+        "responses": [
+          {
+            "status": 200, 
+            "body": [
+              "parse results of text"
+            ], 
+            "type": "text/plain"
+          }
+        ]
+      }
+    ], 
+    "name": "Get parse results"
+  }, 
+  {
+    "route": "/tools/encode{?text,slash}", 
+    "lines": [
+      "A function to encode SignWriting in Unicode (SWU) as UTF-16"
+    ], 
+    "name": "Encode text", 
+    "parameters": [
+      {
+        "description": "The text to encode", 
+        "type": "string", 
+        "name": "text", 
+        "example": "\\x{1D800}"
+      }, 
+      {
+        "description": "The number of slashes for escaping", 
+        "type": "number", 
+        "name": "slash", 
+        "example": "1"
+      }
+    ]
+  }, 
+  {
+    "code": [
+      "$timein = microtime(true);", 
+      "$app->contentType('text/plain;charset=utf-8');", 
+      "$encode = SignWriting\\encode($text,$slash);", 
+      "$searchTime = searchtime($timein);", 
+      "header(\"Search-Time: \" . $searchTime);", 
+      "echo $encode;"
+    ], 
+    "method": "GET", 
+    "dialog": [
+      {
+        "responses": [
+          {
+            "status": 200, 
+            "body": [
+              "\\uD836\\uDC00"
+            ], 
+            "type": "text/plain"
+          }
+        ]
+      }
+    ], 
+    "name": "Get encoded query string"
+  }, 
+  {
+    "route": "/tools/decode{?text}", 
+    "lines": [
+      "A function to decode SignWriting in Unicode (SWU) from UTF-16"
+    ], 
+    "name": "Decode text", 
+    "parameters": [
+      {
+        "description": "The text to decode", 
+        "type": "string", 
+        "name": "text", 
+        "example": "\\\\uD836\\\\uDC00"
+      }
+    ]
+  }, 
+  {
+    "code": [
+      "$timein = microtime(true);", 
+      "$app->contentType('text/plain;charset=utf-8');", 
+      "$decode = SignWriting\\decode($text);", 
+      "$searchTime = searchtime($timein);", 
+      "header(\"Search-Time: \" . $searchTime);", 
+      "echo $decode;"
+    ], 
+    "method": "GET", 
+    "dialog": [
+      {
+        "responses": [
+          {
+            "status": 200, 
+            "body": [
+              "\\x{1D800}"
+            ], 
+            "type": "text/plain"
+          }
+        ]
+      }
+    ], 
+    "name": "Get decoded query string"
+  }, 
+  {
+    "route": "/tools/utf8{?text}", 
+    "name": "UTF-8 encode text", 
+    "parameters": [
+      {
+        "description": "The text to encode", 
+        "type": "string", 
+        "name": "text", 
+        "example": "\\x{1D800}"
+      }
+    ]
+  }, 
+  {
+    "code": [
+      "$timein = microtime(true);", 
+      "$app->contentType('text/plain;charset=utf-8');", 
+      "", 
+      "$encode = SignWriting\\utf8($text);", 
+      "$searchTime = searchtime($timein);", 
+      "header(\"Search-Time: \" . $searchTime);", 
+      "echo $encode;"
+    ], 
+    "method": "GET", 
+    "dialog": [
+      {
+        "responses": [
+          {
+            "status": 200, 
+            "body": [
+              "%F0%9D%A0%80"
+            ], 
+            "type": "text/plain"
+          }
+        ]
+      }
+    ], 
+    "name": "Get utf-8 encoded query string"
+  }, 
+  {
+    "route": "/tools/test{?text}", 
+    "lines": [
+      "A general purpose function for testing"
+    ], 
+    "name": "Test with input", 
+    "parameters": [
+      {
+        "description": "Input for testing", 
+        "type": "string", 
+        "name": "text", 
+        "example": "S10000"
+      }
+    ]
+  }, 
+  {
+    "code": [
+      "$timein = microtime(true);", 
+      "$app->contentType('text/plain;charset=utf-8');", 
+      "$test = SignWriting\\test($text);", 
+      "$searchTime = searchtime($timein);", 
+      "header(\"Search-Time: \" . $searchTime);", 
+      "echo $test;"
+    ], 
+    "method": "GET", 
+    "dialog": [
+      {
+        "responses": [
+          {
+            "status": 200, 
+            "body": [
+              "test output"
+            ], 
+            "type": "text/plain"
+          }
+        ]
+      }
+    ], 
+    "name": "Get test results"
+  }
+]

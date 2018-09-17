@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>SignPuddle 3: client and server</title>
+    <title>SignPuddle 3 Tools API</title>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
@@ -76,60 +76,204 @@ code[class*=language-],pre[class*=language-]{color:#f8f8f2;background:0 0;text-s
   <a href="#introduction">Introduction</a>
 </div>
 <div class="ui fluid secondary vertical menu">
-  <a class="item" href="#introduction">SignPuddle 3: client and server</a>
+  <a class="item" href="#introduction">SignPuddle 3 Tools API</a>
 </div>
 
 
 <div class="ui horizontal divider">
-  <a href="#system">System</a>
+  <a href="#tools">tools</a>
 </div>
 
 <div class="ui accordion fluid">
   
-</div>
-
-
-<div class="ui horizontal divider">
-  <a href="#client">Client</a>
-</div>
-
-<div class="ui accordion fluid">
+    
+    <div class="title">
+      <i class="dropdown icon"></i>
+      
+        <strong>tools index</strong>
+      
+    </div>
+    <div class="content">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#tools-tools-index-get-the-tools-index">
+          <i class="ui green empty circular label"></i>
+          
+            <span>Get the tools index</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
   
-</div>
-
-
-<div class="ui horizontal divider">
-  <a href="#server">Server</a>
-</div>
-
-<div class="ui accordion fluid">
+    
+    <div class="title">
+      <i class="dropdown icon"></i>
+      
+        <strong>Character definition tree</strong>
+      
+    </div>
+    <div class="content">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#tools-character-definition-tree-get-main-define">
+          <i class="ui green empty circular label"></i>
+          
+            <span>Get main define</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
   
-</div>
-
-
-<div class="ui horizontal divider">
-  <a href="#source">Source</a>
-</div>
-
-<div class="ui accordion fluid">
+    
+    <div class="title">
+      <i class="dropdown icon"></i>
+      
+        <strong>Section definition</strong>
+      
+    </div>
+    <div class="content">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#tools-section-definition-get-section-define">
+          <i class="ui green empty circular label"></i>
+          
+            <span>Get section define</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
   
-</div>
-
-
-<div class="ui horizontal divider">
-  <a href="#tools">Tools</a>
-</div>
-
-<div class="ui accordion fluid">
+    
+    <div class="title">
+      <i class="dropdown icon"></i>
+      
+        <strong>Part definition</strong>
+      
+    </div>
+    <div class="content">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#tools-part-definition-get-part-define">
+          <i class="ui green empty circular label"></i>
+          
+            <span>Get part define</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
   
-</div>
-
-
-<div class="ui horizontal divider">
-  <a href="#about">About</a>
-</div>
-
-<div class="ui accordion fluid">
+    
+    <div class="title">
+      <i class="dropdown icon"></i>
+      
+        <strong>Parse text</strong>
+      
+    </div>
+    <div class="content">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#tools-parse-text-get-parse-results">
+          <i class="ui green empty circular label"></i>
+          
+            <span>Get parse results</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+    
+    <div class="title">
+      <i class="dropdown icon"></i>
+      
+        <strong>Encode text</strong>
+      
+    </div>
+    <div class="content">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#tools-encode-text-get-encoded-query-string">
+          <i class="ui green empty circular label"></i>
+          
+            <span>Get encoded query string</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+    
+    <div class="title">
+      <i class="dropdown icon"></i>
+      
+        <strong>Decode text</strong>
+      
+    </div>
+    <div class="content">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#tools-decode-text-get-decoded-query-string">
+          <i class="ui green empty circular label"></i>
+          
+            <span>Get decoded query string</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+    
+    <div class="title">
+      <i class="dropdown icon"></i>
+      
+        <strong>UTF-8 encode text</strong>
+      
+    </div>
+    <div class="content">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#tools-utf-8-encode-text-get-utf-8-encoded-query-string">
+          <i class="ui green empty circular label"></i>
+          
+            <span>Get utf-8 encoded query string</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+    
+    <div class="title">
+      <i class="dropdown icon"></i>
+      
+        <strong>Test with input</strong>
+      
+    </div>
+    <div class="content">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#tools-test-with-input-get-test-results">
+          <i class="ui green empty circular label"></i>
+          
+            <span>Get test results</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
   
 </div>
 
@@ -139,291 +283,1151 @@ code[class*=language-],pre[class*=language-]{color:#f8f8f2;background:0 0;text-s
       <div class="eleven wide computer ten wide tablet sixteen wide mobile column">
         
 <div class="ui hidden divider header"></div>
-<h1 class="ui huge header" id="introduction">SignPuddle 3: client and server</h1>
+<h1 class="ui huge header" id="introduction">SignPuddle 3 Tools API</h1>
 <hr class="ui divider">
 <div class="description">
-  <ul>
-<li><p><a href="README.md">README.md</a> - Markdown version</p></li>
-
-<li><p><a href="index.html">index.html</a> - HTML version</p></li>
-</ul>
-
-<p>Welcome to the SignPuddle 3 alpha release.</p>
-
-<blockquote>
-<p>v3.0.0-alpha</p>
-
-<p>ONLINE: <a href="https://signpuddle.com">https://signpuddle.com</a></p>
-
-<p>REPO: <a href="https://github.com/slevinski/apitxt">https://github.com/slevinski/apitxt</a></p>
-
-<p>AUTHOR: <a href="https://SteveSlevinski.me">https://SteveSlevinski.me</a><br>
-SUPPORT: <a href="https://www.patreon.com/signwriting">https://www.patreon.com/signwriting</a></p>
+  <blockquote>
+<p>v3.0.0</p>
 </blockquote>
-
-<h2 id="setup">Setup</h2>
-
-<h3 id="static-download">Static Download</h3>
-
-<p>The latest source code for SignPuddle 3 is always available for download.
-This download is a snapshot and can not be automatically updated.</p>
-
-<blockquote>
-<p>DOWNLOAD: <a href="https://github.com/Slevinski/apitxt/archive/master.zip">https://github.com/Slevinski/apitxt/archive/master.zip</a></p>
-</blockquote>
-
-<h3 id="dynamic-command">Dynamic Command</h3>
-
-<p>The best way to install SignPuddle 3 is with a command-line tool.  Either the Windows Command Line (cmd) or a Terminal window for Mac or Linux.</p>
-
-<p>To install:</p>
-
-<pre><code class="language-shell">cd Desktop  
-git clone https://github.com/slevinski/apitxt SignPuddle3
-</code></pre>
-
-<p>To update:</p>
-
-<blockquote>
-<p>cd SignPuddle3<br>
-git pull</p>
-</blockquote>
-
-<p>To prepare server:</p>
-
-<blockquote>
-<p>cd SignPuddle3/server<br>
-unzip Slim.zip</p>
-</blockquote>
-
-<p>To configure client:</p>
-
-<blockquote>
-<p>cd SignPuddle3/client<br>
-edit host.js</p>
-</blockquote>
-
-<p>To start the system:</p>
-
-<blockquote>
-<p>cd SignPuddle3/system</p>
-
-<h1 id="windows">Windows</h1>
-
-<p>start_system.bat</p>
-
-<h1 id="mac-or-linux">Mac or Linux</h1>
-
-<p>./start_system.sh</p>
-</blockquote>
-
-<p>A <a href="https://slevinski.github.io/SuttonSignWriting/guide.html">general introduction</a> to the foundational technologies of SignWriting is available in the Sutton SignWriting Project: <a href="https://slevinski.github.io/SuttonSignWriting">online</a>, <a href="https://github.com/Slevinski/SuttonSignWriting/archive/master.zip">download</a>, and <a href="https://github.com/Slevinski/SuttonSignWriting/">repo</a>.</p>
-
-<p>SignPuddle 3 is a two-part project: the client-end for the average user and the server-end for the developer and power user.</p>
-
-<p>The ApiTxt Project uses automated scripts to build both the client-end and the server-end of SignPuddle 3.</p>
-
-<p>The ApiTxt Format is a custom text markup used to define a RESTful API.</p>
-
-<h2 id="status">Status</h2>
-
-<p>SignPuddle 3 is currently in alpha release.  It is under active development with rudimentary structures, basic outlines, and various functionality.  Some of the details will change.  This project is currently recommended for developers and power users.</p>
-
-<p>The <a href="client">client-end</a> is available for preview, with some structure to demo.  The client-end includes <a href="client/doc">developer documentation</a> and <a href="client/api">basic tools</a> for accessing the server-end API.</p>
-
-<p>The <a href="server">server-end</a> is available for use, with <a href="client/doc">some functionality</a>.  Standard GET requests can be typed in any browser URL, such as <a href="http://signpuddle.com/server/fsw/svg/S10000">http://signpuddle.com/server/fsw/svg/S10000</a>.  The server can be accessed using JavaScript with the HTTP methods of GET, POST, PUT, and DELETE.  Additionally, the client-end <a href="client/api">API pages</a> provide total access and full details of live server requests.</p>
 
 </div>
 
         <div class="ui hidden divider"></div>
         
 
-  <div class="ui horizontal divider" id="system">
-    System
-  </div>
-  <div class="ui header aligned">
-    <div class="ui sub header">
-      <pre><code>The ApiTxt Project is divided into four sections:
-
-  client
-    | - HTML, CSS, and JavaScript
-  server
-    | - PHP Server or Apache
-  source
-    | - ApiTxt Format
-  tools
-    | - Python scripts and shell scripts 
-
-The tools use the source to create the client and server.
-</code></pre>
-
-    </div>
-  </div>
-  
-
-  <div class="ui horizontal divider" id="client">
-    Client
-  </div>
-  <div class="ui header aligned">
-    <div class="ui sub header">
-      <p>Most users will access SignPuddle 3 with the client section: a combination of HTML, CSS, and JavaScript.  The client section presents information graphically.</p>
-
-<p>The client section can be used online or downloaded as part of the ApiTxt project.  The client section can be opened using the file system and any standard browser.</p>
-
-<h3 id="application">Application</h3>
-
-<ul>
-<li><p><a href="client">client</a></p></li>
-
-<li><p><a href="https://signpuddle.com/client">https://SignPuddle.com/client</a></p></li>
-</ul>
-
-<h3 id="resources">Resources</h3>
-
-<ul>
-<li><p>Source: <a href="client/src/index.txt">ApiTxt format</a> and <a href="client/src/index.json">JSON objects</a></p></li>
-
-<li><p>Documents: <a href="client/doc/index.md">API Blueprint</a> and <a href="client/doc/index.htm">Stand Alone HTML</a></p></li>
-
-<li><p>Live Page: <a href="client/api/index.html">API Interface</a> and <a href="client/api/index.js">JavaScript</a></p></li>
-</ul>
-
-    </div>
-  </div>
-  
-
-  <div class="ui horizontal divider" id="server">
-    Server
-  </div>
-  <div class="ui header aligned">
-    <div class="ui sub header">
-      <p>The server section is a functional RESTful API written in PHP using the Slim Framework v2.  To install, download the ApiTxt Project and unzip the <strong>server/Slim.zip</strong> file.</p>
-
-<p>The server section requires an Apache webserver that can use rewrite rules.  The rules are written in the <strong>server/.htaccess</strong> file.</p>
-
-<p>Alternatively, the server section can use the built-in PHP webserver.  To start both the client and the server, use the <strong>start_server.sh</strong> file on Mac and Linux or use the <strong>start_server.bat</strong> file on Windows.  The rewrite rules are written in the <strong>rewrite.php</strong> file.</p>
-
-<h3 id="application">Application</h3>
-
-<ul>
-<li><p><a href="server">server</a></p></li>
-
-<li><p><a href="https://signpuddle.com/server">https://SignPuddle.com/server</a></p></li>
-</ul>
-
-    </div>
-  </div>
-  
-
-  <div class="ui horizontal divider" id="source">
-    Source
-  </div>
-  <div class="ui header aligned">
-    <div class="ui sub header">
-      <p>Document segments are written in the <a href="source">source</a> directory using <a href="client/doc/apitxt.htm">ApiTxt Format</a>: a highly structured plain text markup that fully defines a RESTful API. Each line in an ApiTxt document is a self-contained element which starts with a name and is followed by &lt;TAB&gt; separated fields.</p>
-
-<p>ApiTxt Format uses eleven types of element to define an RESTful API: root, group, route, parameter, method, request, response, header, line, code, and body.</p>
-
-    </div>
-  </div>
-  
-
   <div class="ui horizontal divider" id="tools">
-    Tools
+    tools
   </div>
   <div class="ui header aligned">
     <div class="ui sub header">
-      <p>Python programs and shell scripts are used to read and write a variety of data formats including ApiTxt Format, JSON data, API Blueprint, HTML, JavaScript, and PHP scripts.</p>
+      <p>Resources related to tools</p>
 
 <ul>
-<li><p>txt2json.py - From ApiTxt Format to an array of JSON objects.</p></li>
+<li><p>Source: <a href="../src/tools.txt">ApiTxt format</a> and <a href="../src/tools.json">JSON objects</a></p></li>
 
-<li><p>json2txt.py - From an array of JSON objects back to ApiTxt Format.</p></li>
+<li><p>Documents: <a href="../doc/tools.md">API Blueprint</a> and <a href="../doc/tools.htm">Stand Alone HTML</a></p></li>
 
-<li><p>json2md.py - From an array of JSON objects to API Blueprint written in markdown.</p></li>
-
-<li><p>json2php.py - From an array of JSON objects to a functional PHP server using the Slim Framework v2.</p></li>
-
-<li><p>json2html.py - From an array of JSON objects to API Interface.</p></li>
-
-<li><p>json2js.py - From an array of JSON objects to JavaScript.</p></li>
+<li><p>Live Page: <a href="../api/tools.html">API Interface</a> and <a href="../api/tools.js">JavaScript</a></p></li>
 </ul>
-
-<p>All of the tools use command line arguments.  Use -h for help.</p>
-
-<pre><code>python txt2json.py -h
-usage: txt2json.py [-h] [-i INPUT] [-o OUTPUT] [-e]
-
-Conversion of plain text lines to an array of JSON objects
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -i INPUT, --input INPUT
-                        name of input file
-  -o OUTPUT, --output OUTPUT
-                        write to output file
-  -e, --errors          check for errors and report
-</code></pre>
-
-<h3 id="make-and-build">Make and Build</h3>
-
-<p>The <strong>tools/make.sh</strong> file is used to create the build script.</p>
-
-<p>The <strong>tools/build.sh</strong> file is used to create the client and server sections.</p>
-
-<h3 id="snowboard-bukalapaksnowboardhttpsgithubcombukalapaksnowboard">Snowboard (<a href="https://github.com/bukalapak/snowboard/">bukalapak/snowboard</a>)</h3>
-
-<p>Used in the build script, snowboard can parse API Blueprint documents.  Snowboard offers three different transformations: lint, html, and mock.
-Snowboard lint will check the structure of the markdown text and report errors.
-Snowboard html will create a stand-alone html document using a template.
-Snowboard mock will analyze the responses of the markdown document and serve static responses over HTTP.</p>
 
     </div>
   </div>
   
+    
+      <div class="ui stacked segments">
+        <div class="ui basic segment resource">
+          <div class="ui purple huge ribbon label">
+            tools index
+          </div>
+          <div class="ui header">
+            <div class="ui sub header">
+              
+            </div>
+          </div>
+        </div>
 
-  <div class="ui horizontal divider" id="about">
-    About
-  </div>
-  <div class="ui header aligned">
-    <div class="ui sub header">
-      <blockquote>
-<p>AUTHOR: <a href="https://SteveSlevinski.me">https://SteveSlevinski.me</a><br>
-SUPPORT: <a href="https://www.patreon.com/signwriting">https://www.patreon.com/signwriting</a></p>
-</blockquote>
+        
+          
+<div class="ui grey horizontal small divider header">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui pink micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
 
-<h2 id="epilogue">Epilogue</h2>
+          <div class="ui basic segment">
+            <h3 class="ui block aligned header" id="tools-tools-index-get-the-tools-index">
+              Get the tools index
+            </h3>
+            <div class="description"></div>
 
-<p>This is a work in progress. Feedback, bug reports, and patches are welcomed.</p>
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid green label">
+                  <code>https://signpuddle.com/server/tools/</code>
+                </a>
+              </div>
+              
+              
+              
 
-<h2 id="license">License</h2>
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>text/plain</code></td>
+    </tr>
+  
+  </tbody>
+</table>
 
-<p>MIT</p>
+              <div class="ui stacked blue segment">
+                <div class="ui fluid transaction accordion">
+                  <div class="title center aligned">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>text/plain</code>
+                  </div>
+                  <div class="content tabbed">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-">Available routes:
 
-<h2 id="to-do">To Do</h2>
+/tools/
+/tools/test{?text}
+/tools/define
+/tools/define/{section}
+/tools/define/{section}/{part}
+/tools/parse{?text,utf}
+/tools/encode{?text,slash}
+/tools/decode{?text}
+/tools/utf8{?text}
+</code>
+                      </pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui stacked segments">
+        <div class="ui basic segment resource">
+          <div class="ui purple huge ribbon label">
+            Character definition tree
+          </div>
+          <div class="ui header">
+            <div class="ui sub header">
+              <p>The definition tree for character mapping</p>
 
-<ul>
-<li><p>Searching for SignWriting in Unicode (SWU) with SQLite</p></li>
+            </div>
+          </div>
+        </div>
 
-<li><p>Editing the various languages for the user interface</p></li>
+        
+          
+<div class="ui grey horizontal small divider header">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui pink micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
 
-<li><p>Convert PDF printing to the SignPuddle 3 databases</p></li>
+          <div class="ui basic segment">
+            <h3 class="ui block aligned header" id="tools-character-definition-tree-get-main-define">
+              Get main define
+            </h3>
+            <div class="description"></div>
 
-<li><p>Editing dictionaries and individual signs</p></li>
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid green label">
+                  <code>https://signpuddle.com/server/tools/define</code>
+                </a>
+              </div>
+              
+              
+              
 
-<li><p>Writing and editing literature</p></li>
-</ul>
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>text/plain</code></td>
+    </tr>
+  
+  </tbody>
+</table>
 
-<h2 id="version-history">Version History</h2>
+              <div class="ui stacked blue segment">
+                <div class="ui fluid transaction accordion">
+                  <div class="title center aligned">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>text/plain</code>
+                  </div>
+                  <div class="content tabbed">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-">{
+  &#34;utf-8&#34;: {},
+  &#34;utf-16&#34;: {},
+  &#34;utf-32&#34;: {},
+  &#34;fsw&#34;: {},
+  &#34;swu&#34;: {},
+  &#34;style&#34;: {}
+}
+</code>
+                      </pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui stacked segments">
+        <div class="ui basic segment resource">
+          <div class="ui purple huge ribbon label">
+            Section definition
+          </div>
+          <div class="ui header">
+            <div class="ui sub header">
+              <p>A section of the definition tree</p>
 
-<ul>
-<li><p>v3.0.0-alpha - Sept 14th, 2018: first release on SignPuddle.com</p></li>
+            </div>
+          </div>
+        </div>
 
-<li><p>v1.0.0 - Sept 28th, 2017: initial release</p></li>
-</ul>
+        
+          
+<div class="ui grey horizontal small divider header">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui pink micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
 
-    </div>
-  </div>
+          <div class="ui basic segment">
+            <h3 class="ui block aligned header" id="tools-section-definition-get-section-define">
+              Get section define
+            </h3>
+            <div class="description"></div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid green label">
+                  <code>https://signpuddle.com/server/tools/define/{section}</code>
+                </a>
+              </div>
+              
+                
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="4">Parameters</th>
+    </tr>
+  <thead>
+  <tbody>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>section</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">fsw</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>The name of section</p>
+
+        
+      </td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              
+              
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>text/plain</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui stacked blue segment">
+                <div class="ui fluid transaction accordion">
+                  <div class="title center aligned">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>text/plain</code>
+                  </div>
+                  <div class="content tabbed">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-">{
+  &#34;sign&#34;: [],
+  &#34;spatial&#34;: [],
+  &#34;symbol&#34;: [],
+  &#34;coord&#34;: [],
+  &#34;prefix&#34;: [],
+  &#34;box&#34;: [],
+  &#34;query&#34;: []
+}
+</code>
+                      </pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui stacked segments">
+        <div class="ui basic segment resource">
+          <div class="ui purple huge ribbon label">
+            Part definition
+          </div>
+          <div class="ui header">
+            <div class="ui sub header">
+              <p>A part of the section definition</p>
+
+            </div>
+          </div>
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui pink micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block aligned header" id="tools-part-definition-get-part-define">
+              Get part define
+            </h3>
+            <div class="description"></div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid green label">
+                  <code>https://signpuddle.com/server/tools/define/{section}/{part}</code>
+                </a>
+              </div>
+              
+                
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="4">Parameters</th>
+    </tr>
+  <thead>
+  <tbody>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>section</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">swu</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>The name of section</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>part</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">symbol</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>The part of the definition</p>
+
+        
+      </td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              
+              
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>text/plain</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui stacked blue segment">
+                <div class="ui fluid transaction accordion">
+                  <div class="title center aligned">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>text/plain</code>
+                  </div>
+                  <div class="content tabbed">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-">[
+  &#34;individual symbol&#34;,
+  &#34;S10000&#34;,
+  &#34;[\\x{40000}-\\x{4F428}]&#34;
+]
+</code>
+                      </pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui stacked segments">
+        <div class="ui basic segment resource">
+          <div class="ui purple huge ribbon label">
+            Parse text
+          </div>
+          <div class="ui header">
+            <div class="ui sub header">
+              <p>A function to analyze text and parse it into individual components</p>
+
+            </div>
+          </div>
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui pink micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block aligned header" id="tools-parse-text-get-parse-results">
+              Get parse results
+            </h3>
+            <div class="description"></div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid green label">
+                  <code>https://signpuddle.com/server/tools/parse{?text,utf}</code>
+                </a>
+              </div>
+              
+                
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="4">Parameters</th>
+    </tr>
+  <thead>
+  <tbody>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>text</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">S10000</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>The text to parse</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>utf</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">32</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>The UTF number of 8, 16, 32 or &lsquo;x&rsquo;</p>
+
+        
+      </td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              
+              
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>text/plain</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui stacked blue segment">
+                <div class="ui fluid transaction accordion">
+                  <div class="title center aligned">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>text/plain</code>
+                  </div>
+                  <div class="content tabbed">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-">parse results of text
+</code>
+                      </pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui stacked segments">
+        <div class="ui basic segment resource">
+          <div class="ui purple huge ribbon label">
+            Encode text
+          </div>
+          <div class="ui header">
+            <div class="ui sub header">
+              <p>A function to encode SignWriting in Unicode (SWU) as UTF-16</p>
+
+            </div>
+          </div>
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui pink micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block aligned header" id="tools-encode-text-get-encoded-query-string">
+              Get encoded query string
+            </h3>
+            <div class="description"></div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid green label">
+                  <code>https://signpuddle.com/server/tools/encode{?text,slash}</code>
+                </a>
+              </div>
+              
+                
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="4">Parameters</th>
+    </tr>
+  <thead>
+  <tbody>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>text</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">\x{1D800}</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>The text to encode</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>slash</code></td>
+      <td class="center aligned">
+        <code>number</code>
+        <code class="ui label">1</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>The number of slashes for escaping</p>
+
+        
+      </td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              
+              
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>text/plain</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui stacked blue segment">
+                <div class="ui fluid transaction accordion">
+                  <div class="title center aligned">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>text/plain</code>
+                  </div>
+                  <div class="content tabbed">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-">\uD836\uDC00
+</code>
+                      </pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui stacked segments">
+        <div class="ui basic segment resource">
+          <div class="ui purple huge ribbon label">
+            Decode text
+          </div>
+          <div class="ui header">
+            <div class="ui sub header">
+              <p>A function to decode SignWriting in Unicode (SWU) from UTF-16</p>
+
+            </div>
+          </div>
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui pink micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block aligned header" id="tools-decode-text-get-decoded-query-string">
+              Get decoded query string
+            </h3>
+            <div class="description"></div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid green label">
+                  <code>https://signpuddle.com/server/tools/decode{?text}</code>
+                </a>
+              </div>
+              
+                
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="4">Parameters</th>
+    </tr>
+  <thead>
+  <tbody>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>text</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">\uD836\uDC00</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>The text to decode</p>
+
+        
+      </td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              
+              
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>text/plain</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui stacked blue segment">
+                <div class="ui fluid transaction accordion">
+                  <div class="title center aligned">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>text/plain</code>
+                  </div>
+                  <div class="content tabbed">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-">\x{1D800}
+</code>
+                      </pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui stacked segments">
+        <div class="ui basic segment resource">
+          <div class="ui purple huge ribbon label">
+            UTF-8 encode text
+          </div>
+          <div class="ui header">
+            <div class="ui sub header">
+              
+            </div>
+          </div>
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui pink micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block aligned header" id="tools-utf-8-encode-text-get-utf-8-encoded-query-string">
+              Get utf-8 encoded query string
+            </h3>
+            <div class="description"></div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid green label">
+                  <code>https://signpuddle.com/server/tools/utf8{?text}</code>
+                </a>
+              </div>
+              
+                
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="4">Parameters</th>
+    </tr>
+  <thead>
+  <tbody>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>text</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">\x{1D800}</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>The text to encode</p>
+
+        
+      </td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              
+              
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>text/plain</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui stacked blue segment">
+                <div class="ui fluid transaction accordion">
+                  <div class="title center aligned">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>text/plain</code>
+                  </div>
+                  <div class="content tabbed">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-">%F0%9D%A0%80
+</code>
+                      </pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui stacked segments">
+        <div class="ui basic segment resource">
+          <div class="ui purple huge ribbon label">
+            Test with input
+          </div>
+          <div class="ui header">
+            <div class="ui sub header">
+              <p>A general purpose function for testing</p>
+
+            </div>
+          </div>
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui pink micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block aligned header" id="tools-test-with-input-get-test-results">
+              Get test results
+            </h3>
+            <div class="description"></div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid green label">
+                  <code>https://signpuddle.com/server/tools/test{?text}</code>
+                </a>
+              </div>
+              
+                
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="4">Parameters</th>
+    </tr>
+  <thead>
+  <tbody>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>text</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">S10000</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>Input for testing</p>
+
+        
+      </td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              
+              
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>text/plain</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui stacked blue segment">
+                <div class="ui fluid transaction accordion">
+                  <div class="title center aligned">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>text/plain</code>
+                  </div>
+                  <div class="content tabbed">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-">test output
+</code>
+                      </pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
   
 
 

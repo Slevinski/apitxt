@@ -1,2 +1,2 @@
-root	fsw	Formal SignWriting in ASCII (FSW)	https://signpuddle.com/back
+root	fsw	Formal SignWriting in ASCII (FSW)	https://signpuddle.com/server
 	line	> v3.0.0

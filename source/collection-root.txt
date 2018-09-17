@@ -1,4 +1,4 @@
-root	collection	SignPuddle 3 Collection API	https://signpuddle.com/back
+root	collection	SignPuddle 3 Collection API	https://signpuddle.com/server
 	line	> v3.0.0
 	line	
 	line	+ [txt](../src/collection.txt) - ApiTxt format

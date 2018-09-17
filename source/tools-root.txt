@@ -1,2 +1,2 @@
-root	tools	SignPuddle 3 Tools API	https://signpuddle.com/back
+root	tools	SignPuddle 3 Tools API	https://signpuddle.com/server
 	line	> v3.0.0

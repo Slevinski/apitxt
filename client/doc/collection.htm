@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>SignPuddle 3: client and server</title>
+    <title>SignPuddle 3 Collection API</title>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
@@ -76,60 +76,99 @@ code[class*=language-],pre[class*=language-]{color:#f8f8f2;background:0 0;text-s
   <a href="#introduction">Introduction</a>
 </div>
 <div class="ui fluid secondary vertical menu">
-  <a class="item" href="#introduction">SignPuddle 3: client and server</a>
+  <a class="item" href="#introduction">SignPuddle 3 Collection API</a>
 </div>
 
 
 <div class="ui horizontal divider">
-  <a href="#system">System</a>
+  <a href="#collection">collection</a>
 </div>
 
 <div class="ui accordion fluid">
   
-</div>
-
-
-<div class="ui horizontal divider">
-  <a href="#client">Client</a>
-</div>
-
-<div class="ui accordion fluid">
+    
+    <div class="title">
+      <i class="dropdown icon"></i>
+      
+        <strong>Available collections</strong>
+      
+    </div>
+    <div class="content">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#collection-available-collections-get-available-languages">
+          <i class="ui green empty circular label"></i>
+          
+            <span>Get available languages</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
   
-</div>
-
-
-<div class="ui horizontal divider">
-  <a href="#server">Server</a>
-</div>
-
-<div class="ui accordion fluid">
+    
+    <div class="title">
+      <i class="dropdown icon"></i>
+      
+        <strong>Collection resource</strong>
+      
+    </div>
+    <div class="content">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#collection-collection-resource-retrieve-collection-or-available-collections">
+          <i class="ui green empty circular label"></i>
+          
+            <span>retrieve collection or available collections</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
   
-</div>
-
-
-<div class="ui horizontal divider">
-  <a href="#source">Source</a>
-</div>
-
-<div class="ui accordion fluid">
-  
-</div>
-
-
-<div class="ui horizontal divider">
-  <a href="#tools">Tools</a>
-</div>
-
-<div class="ui accordion fluid">
-  
-</div>
-
-
-<div class="ui horizontal divider">
-  <a href="#about">About</a>
-</div>
-
-<div class="ui accordion fluid">
+    
+    <div class="title">
+      <i class="dropdown icon"></i>
+      
+        <strong>Collection resource md5 hash</strong>
+      
+    </div>
+    <div class="content">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#collection-collection-resource-md5-hash-retrieve-collection-md5-hash">
+          <i class="ui green empty circular label"></i>
+          
+            <span>retrieve collection md5 hash</span>
+          
+        </a>
+      
+        <a class="item blue" href="#collection-collection-resource-md5-hash-retrieve-collection-md5-hash">
+          <i class="ui blue empty circular label"></i>
+          
+            <span>retrieve collection md5 hash</span>
+          
+        </a>
+      
+        <a class="item teal" href="#collection-collection-resource-md5-hash-retrieve-collection-md5-hash">
+          <i class="ui teal empty circular label"></i>
+          
+            <span>retrieve collection md5 hash</span>
+          
+        </a>
+      
+        <a class="item red" href="#collection-collection-resource-md5-hash-retrieve-collection-md5-hash">
+          <i class="ui red empty circular label"></i>
+          
+            <span>retrieve collection md5 hash</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
   
 </div>
 
@@ -139,291 +178,859 @@ code[class*=language-],pre[class*=language-]{color:#f8f8f2;background:0 0;text-s
       <div class="eleven wide computer ten wide tablet sixteen wide mobile column">
         
 <div class="ui hidden divider header"></div>
-<h1 class="ui huge header" id="introduction">SignPuddle 3: client and server</h1>
+<h1 class="ui huge header" id="introduction">SignPuddle 3 Collection API</h1>
 <hr class="ui divider">
 <div class="description">
-  <ul>
-<li><p><a href="README.md">README.md</a> - Markdown version</p></li>
+  <blockquote>
+<p>v3.0.0</p>
+</blockquote>
 
-<li><p><a href="index.html">index.html</a> - HTML version</p></li>
+<ul>
+<li><p><a href="../src/collection.txt">txt</a> - ApiTxt format</p></li>
+
+<li><p><a href="../src/collection.json">json</a> - array of JSON objects</p></li>
+
+<li><p><a href="../api/collection.html">html</a> - HTML API Interface</p></li>
+
+<li><p><a href="../doc/collection.md">md</a> - API Blueprint</p></li>
+
+<li><p><a href="../doc/collection.htm">htm</a> - Stand Alone HTML</p></li>
 </ul>
-
-<p>Welcome to the SignPuddle 3 alpha release.</p>
-
-<blockquote>
-<p>v3.0.0-alpha</p>
-
-<p>ONLINE: <a href="https://signpuddle.com">https://signpuddle.com</a></p>
-
-<p>REPO: <a href="https://github.com/slevinski/apitxt">https://github.com/slevinski/apitxt</a></p>
-
-<p>AUTHOR: <a href="https://SteveSlevinski.me">https://SteveSlevinski.me</a><br>
-SUPPORT: <a href="https://www.patreon.com/signwriting">https://www.patreon.com/signwriting</a></p>
-</blockquote>
-
-<h2 id="setup">Setup</h2>
-
-<h3 id="static-download">Static Download</h3>
-
-<p>The latest source code for SignPuddle 3 is always available for download.
-This download is a snapshot and can not be automatically updated.</p>
-
-<blockquote>
-<p>DOWNLOAD: <a href="https://github.com/Slevinski/apitxt/archive/master.zip">https://github.com/Slevinski/apitxt/archive/master.zip</a></p>
-</blockquote>
-
-<h3 id="dynamic-command">Dynamic Command</h3>
-
-<p>The best way to install SignPuddle 3 is with a command-line tool.  Either the Windows Command Line (cmd) or a Terminal window for Mac or Linux.</p>
-
-<p>To install:</p>
-
-<pre><code class="language-shell">cd Desktop  
-git clone https://github.com/slevinski/apitxt SignPuddle3
-</code></pre>
-
-<p>To update:</p>
-
-<blockquote>
-<p>cd SignPuddle3<br>
-git pull</p>
-</blockquote>
-
-<p>To prepare server:</p>
-
-<blockquote>
-<p>cd SignPuddle3/server<br>
-unzip Slim.zip</p>
-</blockquote>
-
-<p>To configure client:</p>
-
-<blockquote>
-<p>cd SignPuddle3/client<br>
-edit host.js</p>
-</blockquote>
-
-<p>To start the system:</p>
-
-<blockquote>
-<p>cd SignPuddle3/system</p>
-
-<h1 id="windows">Windows</h1>
-
-<p>start_system.bat</p>
-
-<h1 id="mac-or-linux">Mac or Linux</h1>
-
-<p>./start_system.sh</p>
-</blockquote>
-
-<p>A <a href="https://slevinski.github.io/SuttonSignWriting/guide.html">general introduction</a> to the foundational technologies of SignWriting is available in the Sutton SignWriting Project: <a href="https://slevinski.github.io/SuttonSignWriting">online</a>, <a href="https://github.com/Slevinski/SuttonSignWriting/archive/master.zip">download</a>, and <a href="https://github.com/Slevinski/SuttonSignWriting/">repo</a>.</p>
-
-<p>SignPuddle 3 is a two-part project: the client-end for the average user and the server-end for the developer and power user.</p>
-
-<p>The ApiTxt Project uses automated scripts to build both the client-end and the server-end of SignPuddle 3.</p>
-
-<p>The ApiTxt Format is a custom text markup used to define a RESTful API.</p>
-
-<h2 id="status">Status</h2>
-
-<p>SignPuddle 3 is currently in alpha release.  It is under active development with rudimentary structures, basic outlines, and various functionality.  Some of the details will change.  This project is currently recommended for developers and power users.</p>
-
-<p>The <a href="client">client-end</a> is available for preview, with some structure to demo.  The client-end includes <a href="client/doc">developer documentation</a> and <a href="client/api">basic tools</a> for accessing the server-end API.</p>
-
-<p>The <a href="server">server-end</a> is available for use, with <a href="client/doc">some functionality</a>.  Standard GET requests can be typed in any browser URL, such as <a href="http://signpuddle.com/server/fsw/svg/S10000">http://signpuddle.com/server/fsw/svg/S10000</a>.  The server can be accessed using JavaScript with the HTTP methods of GET, POST, PUT, and DELETE.  Additionally, the client-end <a href="client/api">API pages</a> provide total access and full details of live server requests.</p>
 
 </div>
 
         <div class="ui hidden divider"></div>
         
 
-  <div class="ui horizontal divider" id="system">
-    System
+  <div class="ui horizontal divider" id="collection">
+    collection
   </div>
   <div class="ui header aligned">
     <div class="ui sub header">
-      <pre><code>The ApiTxt Project is divided into four sections:
-
-  client
-    | - HTML, CSS, and JavaScript
-  server
-    | - PHP Server or Apache
-  source
-    | - ApiTxt Format
-  tools
-    | - Python scripts and shell scripts 
-
-The tools use the source to create the client and server.
-</code></pre>
-
-    </div>
-  </div>
-  
-
-  <div class="ui horizontal divider" id="client">
-    Client
-  </div>
-  <div class="ui header aligned">
-    <div class="ui sub header">
-      <p>Most users will access SignPuddle 3 with the client section: a combination of HTML, CSS, and JavaScript.  The client section presents information graphically.</p>
-
-<p>The client section can be used online or downloaded as part of the ApiTxt project.  The client section can be opened using the file system and any standard browser.</p>
-
-<h3 id="application">Application</h3>
+      <p>Resources related to making collections</p>
 
 <ul>
-<li><p><a href="client">client</a></p></li>
+<li><p>Source: <a href="../src/collection.txt">ApiTxt format</a> and <a href="../src/collection.json">JSON objects</a></p></li>
 
-<li><p><a href="https://signpuddle.com/client">https://SignPuddle.com/client</a></p></li>
-</ul>
+<li><p>Documents: <a href="../doc/collection.md">API Blueprint</a> and <a href="../doc/collection.htm">Stand Alone HTML</a></p></li>
 
-<h3 id="resources">Resources</h3>
-
-<ul>
-<li><p>Source: <a href="client/src/index.txt">ApiTxt format</a> and <a href="client/src/index.json">JSON objects</a></p></li>
-
-<li><p>Documents: <a href="client/doc/index.md">API Blueprint</a> and <a href="client/doc/index.htm">Stand Alone HTML</a></p></li>
-
-<li><p>Live Page: <a href="client/api/index.html">API Interface</a> and <a href="client/api/index.js">JavaScript</a></p></li>
+<li><p>Live Page: <a href="../api/collection.html">API Interface</a> and <a href="../api/collection.js">JavaScript</a></p></li>
 </ul>
 
     </div>
   </div>
   
+    
+      <div class="ui stacked segments">
+        <div class="ui basic segment resource">
+          <div class="ui purple huge ribbon label">
+            Available collections
+          </div>
+          <div class="ui header">
+            <div class="ui sub header">
+              
+            </div>
+          </div>
+        </div>
 
-  <div class="ui horizontal divider" id="server">
-    Server
-  </div>
-  <div class="ui header aligned">
-    <div class="ui sub header">
-      <p>The server section is a functional RESTful API written in PHP using the Slim Framework v2.  To install, download the ApiTxt Project and unzip the <strong>server/Slim.zip</strong> file.</p>
+        
+          
+<div class="ui grey horizontal small divider header">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui pink micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
 
-<p>The server section requires an Apache webserver that can use rewrite rules.  The rules are written in the <strong>server/.htaccess</strong> file.</p>
+          <div class="ui basic segment">
+            <h3 class="ui block aligned header" id="collection-available-collections-get-available-languages">
+              Get available languages
+            </h3>
+            <div class="description"></div>
 
-<p>Alternatively, the server section can use the built-in PHP webserver.  To start both the client and the server, use the <strong>start_server.sh</strong> file on Mac and Linux or use the <strong>start_server.bat</strong> file on Windows.  The rewrite rules are written in the <strong>rewrite.php</strong> file.</p>
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid green label">
+                  <code>https://signpuddle.com/server/collection</code>
+                </a>
+              </div>
+              
+              
+              
 
-<h3 id="application">Application</h3>
-
-<ul>
-<li><p><a href="server">server</a></p></li>
-
-<li><p><a href="https://signpuddle.com/server">https://SignPuddle.com/server</a></p></li>
-</ul>
-
-    </div>
-  </div>
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
   
-
-  <div class="ui horizontal divider" id="source">
-    Source
-  </div>
-  <div class="ui header aligned">
-    <div class="ui sub header">
-      <p>Document segments are written in the <a href="source">source</a> directory using <a href="client/doc/apitxt.htm">ApiTxt Format</a>: a highly structured plain text markup that fully defines a RESTful API. Each line in an ApiTxt document is a self-contained element which starts with a name and is followed by &lt;TAB&gt; separated fields.</p>
-
-<p>ApiTxt Format uses eleven types of element to define an RESTful API: root, group, route, parameter, method, request, response, header, line, code, and body.</p>
-
-    </div>
-  </div>
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>text/plain</code></td>
+    </tr>
   
+  </tbody>
+</table>
 
-  <div class="ui horizontal divider" id="tools">
-    Tools
-  </div>
-  <div class="ui header aligned">
-    <div class="ui sub header">
-      <p>Python programs and shell scripts are used to read and write a variety of data formats including ApiTxt Format, JSON data, API Blueprint, HTML, JavaScript, and PHP scripts.</p>
-
-<ul>
-<li><p>txt2json.py - From ApiTxt Format to an array of JSON objects.</p></li>
-
-<li><p>json2txt.py - From an array of JSON objects back to ApiTxt Format.</p></li>
-
-<li><p>json2md.py - From an array of JSON objects to API Blueprint written in markdown.</p></li>
-
-<li><p>json2php.py - From an array of JSON objects to a functional PHP server using the Slim Framework v2.</p></li>
-
-<li><p>json2html.py - From an array of JSON objects to API Interface.</p></li>
-
-<li><p>json2js.py - From an array of JSON objects to JavaScript.</p></li>
-</ul>
-
-<p>All of the tools use command line arguments.  Use -h for help.</p>
-
-<pre><code>python txt2json.py -h
-usage: txt2json.py [-h] [-i INPUT] [-o OUTPUT] [-e]
-
-Conversion of plain text lines to an array of JSON objects
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -i INPUT, --input INPUT
-                        name of input file
-  -o OUTPUT, --output OUTPUT
-                        write to output file
-  -e, --errors          check for errors and report
-</code></pre>
-
-<h3 id="make-and-build">Make and Build</h3>
-
-<p>The <strong>tools/make.sh</strong> file is used to create the build script.</p>
-
-<p>The <strong>tools/build.sh</strong> file is used to create the client and server sections.</p>
-
-<h3 id="snowboard-bukalapaksnowboardhttpsgithubcombukalapaksnowboard">Snowboard (<a href="https://github.com/bukalapak/snowboard/">bukalapak/snowboard</a>)</h3>
-
-<p>Used in the build script, snowboard can parse API Blueprint documents.  Snowboard offers three different transformations: lint, html, and mock.
-Snowboard lint will check the structure of the markdown text and report errors.
-Snowboard html will create a stand-alone html document using a template.
-Snowboard mock will analyze the responses of the markdown document and serve static responses over HTTP.</p>
-
-    </div>
-  </div>
+              <div class="ui stacked blue segment">
+                <div class="ui fluid transaction accordion">
+                  <div class="title center aligned">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>text/plain</code>
+                  </div>
+                  <div class="content tabbed">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-">en
+ase
+</code>
+                      </pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
   
+    
+      <div class="ui stacked segments">
+        <div class="ui basic segment resource">
+          <div class="ui purple huge ribbon label">
+            Collection resource
+          </div>
+          <div class="ui header">
+            <div class="ui sub header">
+              <p>Access to available collections</p>
 
-  <div class="ui horizontal divider" id="about">
-    About
-  </div>
-  <div class="ui header aligned">
-    <div class="ui sub header">
-      <blockquote>
-<p>AUTHOR: <a href="https://SteveSlevinski.me">https://SteveSlevinski.me</a><br>
-SUPPORT: <a href="https://www.patreon.com/signwriting">https://www.patreon.com/signwriting</a></p>
-</blockquote>
+            </div>
+          </div>
+        </div>
 
-<h2 id="epilogue">Epilogue</h2>
+        
+          
+<div class="ui grey horizontal small divider header">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui pink micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
 
-<p>This is a work in progress. Feedback, bug reports, and patches are welcomed.</p>
+          <div class="ui basic segment">
+            <h3 class="ui block aligned header" id="collection-collection-resource-retrieve-collection-or-available-collections">
+              retrieve collection or available collections
+            </h3>
+            <div class="description"></div>
 
-<h2 id="license">License</h2>
+            
+              <h4 class="ui horizontal divider">
+                REQUEST collection text
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid green label">
+                  <code>https://signpuddle.com/server/collection/{name}</code>
+                </a>
+              </div>
+              
+                
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="4">Parameters</th>
+    </tr>
+  <thead>
+  <tbody>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>name</code></td>
+      <td class="center aligned">
+        <code></code>
+        <code class="ui label">en</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>US-interface-sp3 (string) - The name of a collection</p>
 
-<p>MIT</p>
+        
+      </td>
+    </tr>
+  
+  </tbody>
+</table>
 
-<h2 id="to-do">To Do</h2>
+              
+              
+              
+                <div class="ui stacked segment">
+                  <div class="ui fluid transaction accordion">
+                    <div class="title">
+                      <code></code>
+                    </div>
+                    <div class="content tabbed">
+                      <div class="ui top attached tabular menu">
+                        <a data-tab="body" class="active item">BODY</a>
+                      </div>
+                      <div class="ui bottom attached active tab segment" data-tab="body">
+                        <pre style="white-space: inherit">
+                          <code class="language-">null
+</code>
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              
 
-<ul>
-<li><p>Searching for SignWriting in Unicode (SWU) with SQLite</p></li>
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>text/plain</code></td>
+    </tr>
+  
+  </tbody>
+</table>
 
-<li><p>Editing the various languages for the user interface</p></li>
+              <div class="ui stacked blue segment">
+                <div class="ui fluid transaction accordion">
+                  <div class="title center aligned">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>text/plain</code>
+                  </div>
+                  <div class="content tabbed">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-">print.buttons.main   message   description   icon
+</code>
+                      </pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui stacked segments">
+        <div class="ui basic segment resource">
+          <div class="ui purple huge ribbon label">
+            Collection resource md5 hash
+          </div>
+          <div class="ui header">
+            <div class="ui sub header">
+              <p>MD5 hash of collection</p>
 
-<li><p>Convert PDF printing to the SignPuddle 3 databases</p></li>
+            </div>
+          </div>
+        </div>
 
-<li><p>Editing dictionaries and individual signs</p></li>
+        
+          
+<div class="ui grey horizontal small divider header">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui pink micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
 
-<li><p>Writing and editing literature</p></li>
-</ul>
+          <div class="ui basic segment">
+            <h3 class="ui block aligned header" id="collection-collection-resource-md5-hash-retrieve-collection-md5-hash">
+              retrieve collection md5 hash
+            </h3>
+            <div class="description"></div>
 
-<h2 id="version-history">Version History</h2>
+            
+              <h4 class="ui horizontal divider">
+                REQUEST the md5 hash of a collection
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid green label">
+                  <code>https://signpuddle.com/server/collection/{name}/md5</code>
+                </a>
+              </div>
+              
+                
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="4">Parameters</th>
+    </tr>
+  <thead>
+  <tbody>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>name</code></td>
+      <td class="center aligned">
+        <code></code>
+        <code class="ui label">en</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>US-interface-sp3 (string) - The name of a collection</p>
 
-<ul>
-<li><p>v3.0.0-alpha - Sept 14th, 2018: first release on SignPuddle.com</p></li>
+        
+      </td>
+    </tr>
+  
+  </tbody>
+</table>
 
-<li><p>v1.0.0 - Sept 28th, 2017: initial release</p></li>
-</ul>
+              
+              
+                
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">If-None-Match</td>
+      <td><code>af779785a5c3ffd166bc95e6dd530889</code></td>
+    </tr>
+  
+  </tbody>
+</table>
 
-    </div>
-  </div>
+              
+              
+                <div class="ui stacked segment">
+                  <div class="ui fluid transaction accordion">
+                    <div class="title">
+                      <code></code>
+                    </div>
+                    <div class="content tabbed">
+                      <div class="ui top attached tabular menu">
+                        <a data-tab="body" class="active item">BODY</a>
+                      </div>
+                      <div class="ui bottom attached active tab segment" data-tab="body">
+                        <pre style="white-space: inherit">
+                          <code class="language-">null
+</code>
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>text/plain</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui stacked blue segment">
+                <div class="ui fluid transaction accordion">
+                  <div class="title center aligned">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>text/plain</code>
+                  </div>
+                  <div class="content tabbed">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-">9785a5c3ffd166bc95e6dd5308894691
+</code>
+                      </pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            
+          </div>
+        
+          
+<div class="ui grey horizontal small divider header">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui pink micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block aligned header" id="collection-collection-resource-md5-hash-retrieve-collection-md5-hash">
+              retrieve collection md5 hash
+            </h3>
+            <div class="description"></div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST the md5 hash of a collection
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui blue large button">
+                  <h3>POST</h3>
+                </div>
+                <a class="ui basic fluid blue label">
+                  <code>https://signpuddle.com/server/collection/{name}/md5</code>
+                </a>
+              </div>
+              
+                
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="4">Parameters</th>
+    </tr>
+  <thead>
+  <tbody>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>name</code></td>
+      <td class="center aligned">
+        <code></code>
+        <code class="ui label">en</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>US-interface-sp3 (string) - The name of a collection</p>
+
+        
+      </td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              
+              
+                
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">If-None-Match</td>
+      <td><code>af779785a5c3ffd166bc95e6dd530889</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              
+              
+                <div class="ui stacked segment">
+                  <div class="ui fluid transaction accordion">
+                    <div class="title">
+                      <code></code>
+                    </div>
+                    <div class="content tabbed">
+                      <div class="ui top attached tabular menu">
+                        <a data-tab="body" class="active item">BODY</a>
+                      </div>
+                      <div class="ui bottom attached active tab segment" data-tab="body">
+                        <pre style="white-space: inherit">
+                          <code class="language-">null
+</code>
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>text/plain</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui stacked blue segment">
+                <div class="ui fluid transaction accordion">
+                  <div class="title center aligned">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>text/plain</code>
+                  </div>
+                  <div class="content tabbed">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-">9785a5c3ffd166bc95e6dd5308894691
+</code>
+                      </pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            
+          </div>
+        
+          
+<div class="ui grey horizontal small divider header">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui pink micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block aligned header" id="collection-collection-resource-md5-hash-retrieve-collection-md5-hash">
+              retrieve collection md5 hash
+            </h3>
+            <div class="description"></div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST the md5 hash of a collection
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui teal large button">
+                  <h3>PUT</h3>
+                </div>
+                <a class="ui basic fluid teal label">
+                  <code>https://signpuddle.com/server/collection/{name}/md5</code>
+                </a>
+              </div>
+              
+                
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="4">Parameters</th>
+    </tr>
+  <thead>
+  <tbody>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>name</code></td>
+      <td class="center aligned">
+        <code></code>
+        <code class="ui label">en</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>US-interface-sp3 (string) - The name of a collection</p>
+
+        
+      </td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              
+              
+                
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">If-None-Match</td>
+      <td><code>af779785a5c3ffd166bc95e6dd530889</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              
+              
+                <div class="ui stacked segment">
+                  <div class="ui fluid transaction accordion">
+                    <div class="title">
+                      <code></code>
+                    </div>
+                    <div class="content tabbed">
+                      <div class="ui top attached tabular menu">
+                        <a data-tab="body" class="active item">BODY</a>
+                      </div>
+                      <div class="ui bottom attached active tab segment" data-tab="body">
+                        <pre style="white-space: inherit">
+                          <code class="language-">null
+</code>
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>text/plain</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui stacked blue segment">
+                <div class="ui fluid transaction accordion">
+                  <div class="title center aligned">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>text/plain</code>
+                  </div>
+                  <div class="content tabbed">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-">9785a5c3ffd166bc95e6dd5308894691
+</code>
+                      </pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            
+          </div>
+        
+          
+<div class="ui grey horizontal small divider header">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui pink micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block aligned header" id="collection-collection-resource-md5-hash-retrieve-collection-md5-hash">
+              retrieve collection md5 hash
+            </h3>
+            <div class="description"></div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST the md5 hash of a collection
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui red large button">
+                  <h3>DELETE</h3>
+                </div>
+                <a class="ui basic fluid red label">
+                  <code>https://signpuddle.com/server/collection/{name}/md5</code>
+                </a>
+              </div>
+              
+                
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="4">Parameters</th>
+    </tr>
+  <thead>
+  <tbody>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>name</code></td>
+      <td class="center aligned">
+        <code></code>
+        <code class="ui label">en</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>US-interface-sp3 (string) - The name of a collection</p>
+
+        
+      </td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              
+              
+                
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">If-None-Match</td>
+      <td><code>af779785a5c3ffd166bc95e6dd530889</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              
+              
+                <div class="ui stacked segment">
+                  <div class="ui fluid transaction accordion">
+                    <div class="title">
+                      <code></code>
+                    </div>
+                    <div class="content tabbed">
+                      <div class="ui top attached tabular menu">
+                        <a data-tab="body" class="active item">BODY</a>
+                      </div>
+                      <div class="ui bottom attached active tab segment" data-tab="body">
+                        <pre style="white-space: inherit">
+                          <code class="language-">null
+</code>
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>text/plain</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui stacked blue segment">
+                <div class="ui fluid transaction accordion">
+                  <div class="title center aligned">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>text/plain</code>
+                  </div>
+                  <div class="content tabbed">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-">9785a5c3ffd166bc95e6dd5308894691
+</code>
+                      </pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
   
 
 

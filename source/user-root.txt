@@ -1,2 +1,2 @@
-root	user	SignPuddle 3 User API	https://signpuddle.com/back
+root	user	SignPuddle 3 User API	https://signpuddle.com/server
 	line	> v3.0.0

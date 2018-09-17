@@ -45,10 +45,10 @@ print "header('Access-Control-Allow-Headers: Content-Type, ETag, If-None-Match')
 print "header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');"
 print "header('X-Powered-By: SignPuddle 3');"
 print ""
-files = glob.glob('../back/include/*php')
+files = glob.glob('../server/include/*php')
 if len(files):
 	for file in files:
-		file = file.replace('../back/','')
+		file = file.replace('../server/','')
 		if file != 'include/rewrite.php':
 			print 'require "' + file + '";'
 print ""

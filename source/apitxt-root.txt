@@ -1,4 +1,4 @@
-root	apitxt	ApiTxt	https://signpuddle.com/back
+root	apitxt	ApiTxt	https://signpuddle.com/server
 	line	> v2.0.0
 	line	
 	line	ApiTxt is the build environment to create the SignPuddle 3 API for SignWriting Text.

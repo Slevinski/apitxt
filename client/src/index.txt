@@ -1,0 +1,1106 @@
+root	index	SignPuddle 3 API	https://signpuddle.com/server
+	line	> v3.0.0
+	line	
+	line	+ Source: [ApiTxt format](../src/index.txt) and [JSON objects](../src/index.json)
+	line	+ Documents: [API Blueprint](../doc/index.md) and [Stand Alone HTML](../doc/index.htm)
+	line	+ Live Page: [API Interface](../api/index.html) and [JavaScript](../api/index.js)
+group	tools	Resources related to tools
+	line	+ Source: [ApiTxt format](../src/tools.txt) and [JSON objects](../src/tools.json)
+	line	+ Documents: [API Blueprint](../doc/tools.md) and [Stand Alone HTML](../doc/tools.htm)
+	line	+ Live Page: [API Interface](../api/tools.html) and [JavaScript](../api/tools.js)
+	route	/tools/	tools index
+		method	GET	Get the tools index
+			response	200	text/plain
+				body	Available routes:
+				body	
+				body	/tools/
+				body	/tools/test{?text}
+				body	/tools/define
+				body	/tools/define/{section}
+				body	/tools/define/{section}/{part}
+				body	/tools/parse{?text,utf}
+				body	/tools/encode{?text,slash}
+				body	/tools/decode{?text}
+				body	/tools/utf8{?text}
+	route	/tools/define	Character definition tree
+		line	The definition tree for character mapping
+		method	GET	Get main define
+			code	$timein = microtime(true);
+			code	$app->contentType('text/plain;charset=utf-8');
+			code	$define = SignWriting\define();
+			code	$searchTime = searchtime($timein);
+			code	header("Search-Time: " . $searchTime);
+			code	echo json_pretty($define);
+			response	200	text/plain
+				body	{
+				body	  "utf-8": {},
+				body	  "utf-16": {},
+				body	  "utf-32": {},
+				body	  "fsw": {},
+				body	  "swu": {},
+				body	  "style": {}
+				body	}
+	route	/tools/define/{section}	Section definition
+		line	A section of the definition tree
+		parameter	section	fsw	string	The name of section
+		method	GET	Get section define
+			code	global $regex_define;
+			code	if ($section == "regex"){
+			code	  return $regex_define();
+			code	}
+			code	global $sample_define;
+			code	if ($section == "sample"){
+			code	  return $sample_define();
+			code	}
+			code	$timein = microtime(true);
+			code	$app->contentType('text/plain;charset=utf-8');
+			code	$define = SignWriting\define($section);
+			code	$searchTime = searchtime($timein);
+			code	header("Search-Time: " . $searchTime);
+			code	echo json_pretty($define);
+			response	200	text/plain
+				body	{
+				body	  "sign": [],
+				body	  "spatial": [],
+				body	  "symbol": [],
+				body	  "coord": [],
+				body	  "prefix": [],
+				body	  "box": [],
+				body	  "query": []
+				body	}
+	route	/tools/define/{section}/{part}	Part definition
+		line	A part of the section definition
+		parameter	section	swu	string	The name of section
+		parameter	part	symbol	string	The part of the definition
+		method	GET	Get part define
+			code	$timein = microtime(true);
+			code	$app->contentType('text/plain;charset=utf-8');
+			code	$define = SignWriting\define($section,$part);
+			code	$searchTime = searchtime($timein);
+			code	header("Search-Time: " . $searchTime);
+			code	echo json_pretty($define);
+			response	200	text/plain
+				body	[
+				body	  "individual symbol",
+				body	  "S10000",
+				body	  "[\\x{40000}-\\x{4F428}]"
+				body	]
+	route	/tools/parse{?text,utf}	Parse text
+		line	A function to analyze text and parse it into individual components
+		parameter	text	S10000	string	The text to parse
+		parameter	utf	32	string	The UTF number of 8, 16, 32 or 'x'
+		method	GET	Get parse results
+			code	$timein = microtime(true);
+			code	if (!in_array($utf,[8,16,32,'x'])){
+			code	  $utf = 16;
+			code	}
+			code	$app->contentType('text/plain;charset=utf-8');
+			code	$parse = SignWriting\parse($text);
+			code	$searchTime = searchtime($timein);
+			code	header("Search-Time: " . $searchTime);
+			code	$json = json_pretty($parse);
+			code	echo SignWriting\cast($json,$utf);
+			response	200	text/plain
+				body	parse results of text
+	route	/tools/encode{?text,slash}	Encode text
+		line	A function to encode SignWriting in Unicode (SWU) as UTF-16
+		parameter	text	\x{1D800}	string	The text to encode
+		parameter	slash	1	number	The number of slashes for escaping
+		method	GET	Get encoded query string
+			code	$timein = microtime(true);
+			code	$app->contentType('text/plain;charset=utf-8');
+			code	$encode = SignWriting\encode($text,$slash);
+			code	$searchTime = searchtime($timein);
+			code	header("Search-Time: " . $searchTime);
+			code	echo $encode;
+			response	200	text/plain
+				body	\uD836\uDC00
+	route	/tools/decode{?text}	Decode text
+		line	A function to decode SignWriting in Unicode (SWU) from UTF-16
+		parameter	text	\\uD836\\uDC00	string	The text to decode
+		method	GET	Get decoded query string
+			code	$timein = microtime(true);
+			code	$app->contentType('text/plain;charset=utf-8');
+			code	$decode = SignWriting\decode($text);
+			code	$searchTime = searchtime($timein);
+			code	header("Search-Time: " . $searchTime);
+			code	echo $decode;
+			response	200	text/plain
+				body	\x{1D800}
+	route	/tools/utf8{?text}	UTF-8 encode text
+		parameter	text	\x{1D800}	string	The text to encode
+		method	GET	Get utf-8 encoded query string
+			code	$timein = microtime(true);
+			code	$app->contentType('text/plain;charset=utf-8');
+			code	
+			code	$encode = SignWriting\utf8($text);
+			code	$searchTime = searchtime($timein);
+			code	header("Search-Time: " . $searchTime);
+			code	echo $encode;
+			response	200	text/plain
+				body	%F0%9D%A0%80
+	route	/tools/test{?text}	Test with input
+		line	A general purpose function for testing
+		parameter	text	S10000	string	Input for testing
+		method	GET	Get test results
+			code	$timein = microtime(true);
+			code	$app->contentType('text/plain;charset=utf-8');
+			code	$test = SignWriting\test($text);
+			code	$searchTime = searchtime($timein);
+			code	header("Search-Time: " . $searchTime);
+			code	echo $test;
+			response	200	text/plain
+				body	test output
+group	FSW	Resources related to Formal SignWriting in ASCII (FSW)
+	line	+ Source: [ApiTxt format](../src/fsw.txt) and [JSON objects](../src/fsw.json)
+	line	+ Documents: [API Blueprint](../doc/fsw.md) and [Stand Alone HTML](../doc/fsw.htm)
+	line	+ Live Page: [API Interface](../api/fsw.html) and [JavaScript](../api/fsw.js)
+	route	/fsw{?text,style}	FSW Word
+		parameter	text	AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520	string	The name of sign
+		parameter	style	true	boolean,optional	Flag to include styling string
+		method	GET	First FSW string
+			code	$timein = microtime(true);
+			code	$fsw = SignWriting\fsw($text,$style);
+			code	$searchTime = searchtime($timein);
+			code	header("Search-Time: " . $searchTime);
+			code	echo $fsw;
+			request	one Formal SignWriting in ASCII string
+				response	200	text/plain;charset=utf-8
+					body	AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520
+	route	/fsw/all{?text,style}	FSW Text
+		parameter	text	AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520	string	The name of sign
+		parameter	style	1	number	Flag to include styling string
+		method	GET	All FSW strings
+			code	$timein = microtime(true);
+			code	$fsw = SignWriting\fswAll($text,$style);
+			code	$searchTime = searchtime($timein);
+			code	header("Search-Time: " . $searchTime);
+			code	echo $fsw;
+			request	many Formal SignWriting in ASCII string
+				response	200	text/plain;charset=utf-8
+					body	AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520
+	route	/fsw/swu{?text}	FSW to SWU
+		parameter	text	AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520	string	The name of sign
+		method	GET	Text with FSW strings
+			code	$timein = microtime(true);
+			code	$swu = SignWriting\fsw2swu($text);
+			code	$app->contentType('text/plain;charset=utf-8');
+			code	$searchTime = searchtime($timein);
+			code	header("Search-Time: " . $searchTime);
+			code	echo $swu;
+			request	SWU conversion of FSW string
+				line	transformation from ASCII to Unicode characters.
+				response	200	text/plain;charset=utf-8
+					line	requires font SuttonSignWritingOneD
+					body	𝠀񆄱񈠣񍉡𝠃𝤛𝤵񍉡𝣴𝣵񆄱𝤌𝤆񈠣𝤉𝤚
+	route	/fsw/svg/{text}	SVG image
+		line	Create a stand-alone SVG image using Formal SignWriting in ASCII (FSW)
+		parameter	text	AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520	string	The name of sign
+		method	GET	Retrieve stand alone SVG image
+			code	$timein = microtime(true);
+			code	$req = $app->request();
+			code	if ($req->get('throwStatus')=='500') {haltNoDatabase();}
+			code	$app->contentType('image/svg+xml;charset=utf-8');
+			code	$svg = SignWriting\svg($text);
+			code	$searchTime = searchtime($timein);
+			code	header("Search-Time: " . $searchTime);
+			code	echo $svg;
+			request	collection text
+				response	200	image/svg+xml;charset=utf-8
+					body	<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="39" height="64" viewBox="482 483 39 64">
+					body	  <text style="font-size:0%;">AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520</text>
+					body	  <svg x='482' y='483'><g transform="translate(0.149874875465,34.7500790925) scale(0.00988906872676,-0.00988956850125)"><path class="sym-line" fill="black" d="M1528 3484 c-592 -92 -1088 -447 -1348 -963 -125 -249 -180 -485 -180 -771 0 -480 183 -911 529 -1242 350 -336 780 -508 1271 -508 451 0 864 150 1193 434 326 281 517 620 591 1051 21 121 21 409 0 530 -43 252 -114 444 -237 639 -282 453 -741 750 -1284 831 -127 19 -413 18 -535 -1z m607 -173 c583 -126 1038 -523 1224 -1069 59 -173 75 -277 75 -492 0 -165 -3 -211 -22 -300 -71 -327 -228 -611 -458 -829 -186 -177 -381 -295 -614 -374 -176 -60 -282 -78 -490 -84 -247 -7 -416 19 -628 97 -549 201 -944 674 -1043 1250 -17 97 -17 383 0 480 99 576 495 1050 1043 1250 105 38 177 58 303 81 143 26 467 21 610 -10z M1720 1800 l0 -600 80 0 80 0 0 600 0 600 -80 0 -80 0 0 -600z"/></g></svg>
+					body	  <svg x='506' y='500'><g transform="translate(0.0,15.0) scale(0.01,-0.01)"><path class="sym-fill" fill="white" d="M200 750 l0 -550 300 0 300 0 0 550 0 550 -300 0 -300 0 0 -550z"/><path class="sym-line" fill="black" d="M0 750 l0 -750 750 0 750 0 0 750 0 750 -750 0 -750 0 0 -750z m800 0 l0 -550 -300 0 -300 0 0 550 0 550 300 0 300 0 0 -550z"/></g></svg>
+					body	  <svg x='503' y='520'><g transform="translate(0.196840829729,26.6999810561) scale(0.00975214136907,-0.00983390502079)"><path class="sym-line" fill="black" d="M345 2350 l-350 -350 325 -325 325 -325 -325 -325 -325 -325 353 -353 352 -352 0 303 0 302 350 0 350 0 0 100 0 100 -350 0 -350 0 0 550 0 550 350 0 350 0 0 100 0 100 -350 0 -350 0 -2 300 -3 300 -350 -350z M1600 1350 l0 -1350 100 0 100 0 0 1350 0 1350 -100 0 -100 0 0 -1350z"/></g></svg>
+					body	</svg>
+	route	/fsw/svg/font/{text}	SVG with font
+		line	Create an SVG with font using Formal SignWriting in ASCII (FSW)
+		parameter	text	AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520	string	The name of sign
+		method	GET	Retrieve SVG with font
+			code	$timein = microtime(true);
+			code	$req = $app->request();
+			code	if ($req->get('throwStatus')=='500') {haltNoDatabase();}
+			code	$app->contentType('image/svg+xml;charset=utf-8');
+			code	$svg = SignWriting\svg($text,true);
+			code	$searchTime = searchtime($timein);
+			code	header("Search-Time: " . $searchTime);
+			code	echo $svg;
+			request	collection text
+				response	200	image/svg+xml;charset=utf-8
+					body	<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="49" height="69" viewBox="476 466 49 69">
+					body	  <text font-size="0">AS10011S10019S2e704S2e748M525x535S2e748483x510S10011501x466S2e704510x500S10019476x475</text>
+					body	  <g transform="translate(483,510)"><text class="sym-fill" style="pointer-events:none;font-family:'SuttonSignWritingFill';font-size:30px;fill:white;">􋛩</text><text class="sym-line" style="pointer-events:none;font-family:'SuttonSignWritingLine';font-size:30px;fill:black;">󻛩</text></g>
+					body	  <g transform="translate(501,466)"><text class="sym-fill" style="pointer-events:none;font-family:'SuttonSignWritingFill';font-size:30px;fill:white;">􀀒</text><text class="sym-line" style="pointer-events:none;font-family:'SuttonSignWritingLine';font-size:30px;fill:black;">󰀒</text></g>
+					body	  <g transform="translate(510,500)"><text class="sym-fill" style="pointer-events:none;font-family:'SuttonSignWritingFill';font-size:30px;fill:white;">􋚥</text><text class="sym-line" style="pointer-events:none;font-family:'SuttonSignWritingLine';font-size:30px;fill:black;">󻚥</text></g>
+					body	  <g transform="translate(476,475)"><text class="sym-fill" style="pointer-events:none;font-family:'SuttonSignWritingFill';font-size:30px;fill:white;">􀀚</text><text class="sym-line" style="pointer-events:none;font-family:'SuttonSignWritingLine';font-size:30px;fill:black;">󰀚</text></g>
+					body	</svg>
+group	swu	Resources related to Formal SignWriting in ASCII (SWU)
+	line	+ Source: [ApiTxt format](../src/swu.txt) and [JSON objects](../src/swu.json)
+	line	+ Documents: [API Blueprint](../doc/swu.md) and [Stand Alone HTML](../doc/swu.htm)
+	line	+ Live Page: [API Interface](../api/swu.html) and [JavaScript](../api/swu.js)
+	route	/swu{?text,style}	SWU Word
+		parameter	text	AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520	string	The name of sign
+		parameter	style	1	number	Flag to include styling string
+		method	GET	first SWU string
+			code	$timein = microtime(true);
+			code	$swu = SignWriting\swu($text,$style);
+			code	$searchTime = searchtime($timein);
+			code	header("Search-Time: " . $searchTime);
+			code	echo $swu;
+			request	one Formal SignWriting in ASCII string
+				response	200	text/plain;charset=utf-8
+					body	AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520
+	route	/swu/all{?text,style}	SWU Text
+		parameter	text	AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520	string	The name of sign
+		parameter	style	1	number	Flag to include styling string
+		method	GET	all SWU strings
+			code	$timein = microtime(true);
+			code	$swu = SignWriting\swuAll($text,$style);
+			code	$searchTime = searchtime($timein);
+			code	header("Search-Time: " . $searchTime);
+			code	echo $swu;
+			request	many Formal SignWriting in ASCII string
+				response	200	text/plain;charset=utf-8
+					body	AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520
+	route	/swu/fsw{?text}	SWU to FSW
+		parameter	text	AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520	string	The name of sign
+		method	GET	text with SWU strings
+			code	$timein = microtime(true);
+			code	$fsw = SignWriting\swu2fsw($text);
+			code	$app->contentType('text/plain;charset=utf-8');
+			code	$searchTime = searchtime($timein);
+			code	header("Search-Time: " . $searchTime);
+			code	echo $fsw;
+			request	original text with Formal SignWriting in ASCII inside
+				response	200	text/plain;charset=utf-8
+					body	AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520
+	route	/swu/svg/{text}	SVG image
+		line	Create a stand-alone SVG image using Formal SignWriting in ASCII (SWU)
+		parameter	text	AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520	string	The name of sign
+		method	GET	retrieve stand-alone SVG image
+			code	$timein = microtime(true);
+			code	$req = $app->request();
+			code	if ($req->get('throwStatus')=='500') {haltNoDatabase();}
+			code	$app->contentType('image/svg+xml;charset=utf-8');
+			code	$svg = SignWriting\svg($text);
+			code	$searchTime = searchtime($timein);
+			code	header("Search-Time: " . $searchTime);
+			code	echo $svg;
+			request	collection text
+				response	200	image/svg+xml;charset=utf-8
+					body	<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="39" height="64" viewBox="482 483 39 64">
+					body	  <text style="font-size:0%;">AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520</text>
+					body	  <svg x='482' y='483'><g transform="translate(0.149874875465,34.7500790925) scale(0.00988906872676,-0.00988956850125)"><path class="sym-line" fill="black" d="M1528 3484 c-592 -92 -1088 -447 -1348 -963 -125 -249 -180 -485 -180 -771 0 -480 183 -911 529 -1242 350 -336 780 -508 1271 -508 451 0 864 150 1193 434 326 281 517 620 591 1051 21 121 21 409 0 530 -43 252 -114 444 -237 639 -282 453 -741 750 -1284 831 -127 19 -413 18 -535 -1z m607 -173 c583 -126 1038 -523 1224 -1069 59 -173 75 -277 75 -492 0 -165 -3 -211 -22 -300 -71 -327 -228 -611 -458 -829 -186 -177 -381 -295 -614 -374 -176 -60 -282 -78 -490 -84 -247 -7 -416 19 -628 97 -549 201 -944 674 -1043 1250 -17 97 -17 383 0 480 99 576 495 1050 1043 1250 105 38 177 58 303 81 143 26 467 21 610 -10z M1720 1800 l0 -600 80 0 80 0 0 600 0 600 -80 0 -80 0 0 -600z"/></g></svg>
+					body	  <svg x='506' y='500'><g transform="translate(0.0,15.0) scale(0.01,-0.01)"><path class="sym-fill" fill="white" d="M200 750 l0 -550 300 0 300 0 0 550 0 550 -300 0 -300 0 0 -550z"/><path class="sym-line" fill="black" d="M0 750 l0 -750 750 0 750 0 0 750 0 750 -750 0 -750 0 0 -750z m800 0 l0 -550 -300 0 -300 0 0 550 0 550 300 0 300 0 0 -550z"/></g></svg>
+					body	  <svg x='503' y='520'><g transform="translate(0.196840829729,26.6999810561) scale(0.00975214136907,-0.00983390502079)"><path class="sym-line" fill="black" d="M345 2350 l-350 -350 325 -325 325 -325 -325 -325 -325 -325 353 -353 352 -352 0 303 0 302 350 0 350 0 0 100 0 100 -350 0 -350 0 0 550 0 550 350 0 350 0 0 100 0 100 -350 0 -350 0 -2 300 -3 300 -350 -350z M1600 1350 l0 -1350 100 0 100 0 0 1350 0 1350 -100 0 -100 0 0 -1350z"/></g></svg>
+					body	</svg>
+	route	/swu/svg/font/{text}	SVG with font
+		line	Create an SVG with font using Formal SignWriting in ASCII (SWU)
+		parameter	text	AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520	string	The name of sign
+		method	GET	retrieve SVG with font
+			code	$timein = microtime(true);
+			code	$req = $app->request();
+			code	if ($req->get('throwStatus')=='500') {haltNoDatabase();}
+			code	$app->contentType('image/svg+xml;charset=utf-8');
+			code	$svg = SignWriting\svg($text,true);
+			code	$searchTime = searchtime($timein);
+			code	header("Search-Time: " . $searchTime);
+			code	echo $svg;
+			request	collection text
+				response	200	image/svg+xml;charset=utf-8
+					body	<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="49" height="69" viewBox="476 466 49 69">
+					body	  <text font-size="0">AS10011S10019S2e704S2e748M525x535S2e748483x510S10011501x466S2e704510x500S10019476x475</text>
+					body	  <g transform="translate(483,510)"><text class="sym-fill" style="pointer-events:none;font-family:'SuttonSignWritingFill';font-size:30px;fill:white;">􋛩</text><text class="sym-line" style="pointer-events:none;font-family:'SuttonSignWritingLine';font-size:30px;fill:black;">󻛩</text></g>
+					body	  <g transform="translate(501,466)"><text class="sym-fill" style="pointer-events:none;font-family:'SuttonSignWritingFill';font-size:30px;fill:white;">􀀒</text><text class="sym-line" style="pointer-events:none;font-family:'SuttonSignWritingLine';font-size:30px;fill:black;">󰀒</text></g>
+					body	  <g transform="translate(510,500)"><text class="sym-fill" style="pointer-events:none;font-family:'SuttonSignWritingFill';font-size:30px;fill:white;">􋚥</text><text class="sym-line" style="pointer-events:none;font-family:'SuttonSignWritingLine';font-size:30px;fill:black;">󻚥</text></g>
+					body	  <g transform="translate(476,475)"><text class="sym-fill" style="pointer-events:none;font-family:'SuttonSignWritingFill';font-size:30px;fill:white;">􀀚</text><text class="sym-line" style="pointer-events:none;font-family:'SuttonSignWritingLine';font-size:30px;fill:black;">󰀚</text></g>
+					body	</svg>
+group	user	SignPuddle 3 collections are organized by country and language codes
+	line	+ Source: [ApiTxt format](../src/user.txt) and [JSON objects](../src/user.json)
+	line	+ Documents: [API Blueprint](../doc/user.md) and [Stand Alone HTML](../doc/user.htm)
+	line	+ Live Page: [API Interface](../api/user.html) and [JavaScript](../api/user.js)
+	line	
+	line	### Country code
+	line	The country codes are from ISO-3166.
+	line	Each country is coded with two uppercase letters.
+	line	
+	line	### Language code
+	line	The language codes are from ISO-639-1 for spoken languages and ISO-639-3 for sign languages.
+	line	Each spoken language is coded with two lowercase letters.
+	line	Each sign language is coded with three lowercase letters.
+	route	/user/who/	Who uses SignWriting?	List of countries with size and activity.
+		method	GET	Retrieve country list	The available countries where signs are available.
+			request	user-who
+				response	200	text/plain
+					body	BR
+					body	US
+	route	/user/salt	Salt is used for request validations	A string for accounting and validation
+		method	GET	String for accounting and validation
+			code	  echo userSalt();
+			request	user salt
+				response	200	text/plain
+					body	e3bedc9e9f83cb9dd7ae61250b9e6921
+	route	/user/login	User login	Validation of user with salted password
+		method	POST	Process log in to server
+			code	  $data = $app->request->getbody();
+			code	  $data = json_decode($data,true);
+			code	  $results = userVerify($data['username'],$data['salt'],$data['salted']);
+			code	  $return = array();
+			code	  $return['meta']=array();
+			code	  $return['results']=$results;
+			code	  $return['meta']['method']='POST';
+			code	  $return['meta']['location']='/user/login';
+			code	  $return['meta']['searchTime'] = searchtime($timein);
+			code	  echo json_pretty($return);
+			request	verify user	application/json
+				line	+ Even a list
+				line	+ name `Name` of the metaproperty, should be alphanumeric only. Uneditable.
+				body	{"username":"anonymous","salt":"af77...","salted":"2793f..."}
+				response	200	application/json
+					line	response text here
+					body	{"user-profile":""}
+group	collection	Resources related to making collections
+	line	+ Source: [ApiTxt format](../src/collection.txt) and [JSON objects](../src/collection.json)
+	line	+ Documents: [API Blueprint](../doc/collection.md) and [Stand Alone HTML](../doc/collection.htm)
+	line	+ Live Page: [API Interface](../api/collection.html) and [JavaScript](../api/collection.js)
+	route	/collection	Available collections
+		method	GET	Get available languages
+			code	  echo "en\nase";
+			response	200	text/plain
+				body	en
+				body	ase
+	route	/collection/{name}	Collection resource	Access to available collections
+		parameter	name	en-US-interface-sp3	string	The name of a collection
+		method	GET	retrieve collection or available collections
+			code	$check = $app->request->headers->get('If-None-Match');
+			code	$dir = 'data/txt/';
+			code	$ext = '.txt';
+			code	$file = $dir . $name . $ext;
+			code	$err = invalidName($name);
+			code	if ($err){
+			code	  haltBadRequest($err);
+			code	}
+			code	if(file_exists($file)) {
+			code	  $md5 = md5_file($file);
+			code	  $app->response->headers->set('ETag', $md5);
+			code	  if ($md5 == $check){
+			code	    haltNotModified();
+			code	  }
+			code	  getFile($file);
+			code	} else {
+			code	  $out = [];
+			code	  foreach (glob($file) as $filename) {
+			code	    $out[] = str_replace($ext,'',str_replace($dir,'',$filename));
+			code	  }
+			code	  if (count($out)){
+			code	    haltMultipleChoices(implode($out,"\n"));
+			code	  } else {
+			code	    haltNoContent();
+			code	  }
+			code	}
+			request	collection text
+				response	200	text/plain
+					body	print.buttons.main<TAB>message<TAB>description<TAB>icon
+	route	/collection/{name}/md5	Collection resource md5 hash	MD5 hash of collection
+		parameter	name	en-US-interface-sp3	string	The name of a collection
+		method	GET	retrieve collection md5 hash
+			code	$dir = 'data/txt/';
+			code	$ext = '.txt';
+			code	$file = $dir . $name . $ext;
+			code	if (strpos($name,"*")!==false) {
+			code	  $err = invalidNameWild($name);
+			code	  if($err){
+			code	    haltBadRequest($err);
+			code	  }
+			code	  $out = [];
+			code	  foreach (glob($file) as $filename) {
+			code	    $out[] = str_replace($ext,'',str_replace($dir,'',$filename));
+			code	  }
+			code	  if (count($out)){
+			code	    if (count($out)==1) {
+			code	      $app->request->headers->set('Location','/location/' . $out[0] . '/md5');
+			code	      haltSeeOther($out[0]);
+			code	    } else {
+			code	      haltMultipleChoices(implode($out,"\n"));
+			code	    }
+			code	  } else {
+			code	    haltBadRequest("No choices available");
+			code	  }
+			code	} else {
+			code	  $err = invalidName($name);
+			code	  if ($err){
+			code	    haltBadRequest($err);
+			code	  }
+			code	  if(file_exists($file)) {
+			code	    $md5 = md5_file($file);
+			code	    echo $md5;
+			code	  } else {
+			code	    halting(202, md5($name));
+			code	  }
+			code	}
+			request	the md5 hash of a collection
+				header	If-None-Match	af779785a5c3ffd166bc95e6dd530889
+				response	200	text/plain
+					body	9785a5c3ffd166bc95e6dd5308894691
+		method	POST	retrieve collection md5 hash
+			request	the md5 hash of a collection
+				header	If-None-Match	af779785a5c3ffd166bc95e6dd530889
+				response	200	text/plain
+					body	9785a5c3ffd166bc95e6dd5308894691
+		method	PUT	retrieve collection md5 hash
+			request	the md5 hash of a collection
+				header	If-None-Match	af779785a5c3ffd166bc95e6dd530889
+				response	200	text/plain
+					body	9785a5c3ffd166bc95e6dd5308894691
+		method	DELETE	retrieve collection md5 hash
+			request	the md5 hash of a collection
+				header	If-None-Match	af779785a5c3ffd166bc95e6dd530889
+				response	200	text/plain
+					body	9785a5c3ffd166bc95e6dd5308894691
+group	apitxt	ApiTxt uses eleven types of element to define an API.
+	line	root, group, route, parameter, method, request, response, header, line, code, and body.
+	line	
+	line	+ Source: [ApiTxt format](../src/apitxt.txt) and [JSON objects](../src/apitxt.json)
+	line	+ Documents: [API Blueprint](../doc/apitxt.md) and [Stand Alone HTML](../doc/apitxt.htm)
+	line	+ Live Page: [API Interface](../api/apitxt.html) and [JavaScript](../api/apitxt.js)
+	route	/apitxt/root	root
+		line	Every document should start with a root element.
+		line	After the root, the other elements are used to quickly create complex website APIs.
+		line	The order of the lines matters and will effect the structure of the JSON objects.
+		line	
+		line	There are two groups of elements, the frame elements and the detail elements.
+		line	The frame elements structure a website api and the detail elements attach to a previous frame element.
+		line	
+		line	### Frame elements
+		line	There are six frame elements: root, group, route, method, request, and response.
+		line	The lines are written in a specific order to create an array of JSON objects.
+		line	
+		line	**route organization**
+		line	
+		line	An ApiTxt document starts with a root, or an assumed root.
+		line	Any route that occur before a group element, will be associated with the root.
+		line	Groups are always associated with the root.
+		line	Group elements can contain routes.
+		line	
+		line	```
+		line	    root
+		line	      | - routes
+		line	      | - groups
+		line	            | - routes
+		line	```
+		line	
+		line	**route structure**
+		line	
+		line	A route can be associated with a variety of HTTP methods.
+		line	Each method can have several requests and responses.
+		line	Any response before a request will assume a generic request.
+		line	Any response after a request will be associated with that request.
+		line	
+		line	```
+		line	    route
+		line	      | - methods
+		line	        | - responses
+		line	        | - requests
+		line	              | - responses
+		line	```
+		line	
+		line	## Detail elements
+		line	There are five detail elements: line, parameter, code, header, and body.  The detail lines attach to a previous frame element if correctly structured.
+		line	
+		line	**single line elements**
+		line	
+		line	+ lines for all frame elements
+		line	+ parameters for route
+		line	+ code for method
+		line	+ body for request and response
+		line	+ headers for request and response
+		line	
+		method	GET	Get root definition
+			line	Every document should start with a root element.
+			line	
+			line	**root line**
+			line	
+			line	root &lt;TAB> name &lt;TAB> title &lt;TAB> host
+			line	
+			line	+ field 1 - name - uniquely identifies a document
+			line	+ field 2 - title - name of the document
+			line	+ field 3 - host - website URL
+			line	
+			line	**root example**
+			line	
+			line	root &lt;TAB> apitxt &lt;TAB> ApiTxt &lt;TAB> https://signpuddle.com/apitxt
+			line	
+			line	
+			line	**root line relationships**
+			line	
+			line	```
+			line	    root
+			line	     | - lines
+			line	     | - routes
+			line	     | - groups
+			line	```
+			line	
+			line	**root object**
+			line	
+			line	```json
+			line	{"root":
+			line	  "root" : field[1],
+			line	  "title" : field[2],
+			line	  "host" : field[3],
+			line	  "lines" : []
+			line	}
+			line	```
+			line	
+			request	the root definition
+				response	200	text/plain
+					body	Every document should start with a root element.
+					body	
+					body	**root line**
+					body	
+					body	root<TAB>name<TAB>title<TAB>host
+					body	
+					body	+ field 1 - name - uniquely identifies a document
+					body	+ field 2 - title - name of the document
+					body	+ field 3 - host - website URL
+					body	
+					body	**example**
+					body	
+					body	root<TAB>apitxt<TAB>ApiTxt<TAB>https://signpuddle.com/apitxt
+					body	
+					body	
+					body	**root line relationships**
+					body	
+					body	```
+					body	    root
+					body	     | - lines
+					body	     | - routes
+					body	     | - groups
+					body	```
+					body	
+					body	**root object**
+					body	
+					body	```json
+					body	{"root":
+					body	  "root" : field[1],
+					body	  "title" : field[2],
+					body	  "host" : field[3],
+					body	  "lines" : []
+					body	}
+					body	```
+	route	/apitxt/group	group
+		method	GET	Get group definition
+			line	The group organizes resources into sections
+			line	
+			line	**group line**
+			line	
+			line	group &lt;TAB> name &lt;TAB> description
+			line	
+			line	+ field 1 - name - the short name used for sections
+			line	+ field 2 - description - information about the group
+			line	
+			line	**group example**
+			line	
+			line	group &lt;TAB> Section name &lt;TAB> an example section
+			line	
+			line	**group line relationships**
+			line	
+			line	```
+			line	    group
+			line	     | - lines
+			line	     | - routes
+			line	```
+			line	
+			line	**group object**
+			line	
+			line	```json
+			line	{"group":
+			line	  "group" : field[1],
+			line	  "description" : field[2],
+			line	  "lines": []
+			line	}
+			line	```
+			line	
+			request	the group definition
+				response	200	text/plain
+					body	The group organizes resources into sections
+					body	
+					body	**group line**
+					body	
+					body	group<TAB>name<TAB>description
+					body	
+					body	+ field 1 - name - the short name used for sections
+					body	+ field 2 - description - information about the group
+					body	
+					body	**group example**
+					body	
+					body	group<TAB>Section name<TAB>an example section
+					body	
+					body	**group line relationships**
+					body	
+					body	```
+					body	    group
+					body	     | - lines
+					body	     | - routes
+					body	```
+					body	
+					body	**group object**
+					body	
+					body	```json
+					body	{"group":
+					body	  "group" : field[1],
+					body	  "description" : field[2],
+					body	  "lines": []
+					body	}
+					body	```
+	route	/apitxt/route	route
+		method	GET	Get route definition
+			line	The route element allows access to a resource
+			line	
+			line	**route line**
+			line	
+			line	route &lt;TAB> URI template &lt;TAB> name &lt;TAB> description
+			line	
+			line	+ field 1 - URI template - a resource pattern with parameters
+			line	+ field 2 - name - the route name must be unique
+			line	+ field 3 - description - information about the resource
+			line	
+			line	**route example**
+			line	
+			line	route &lt;TAB> /example &lt;TAB> an example route &lt;TAB> a description of the route
+			line	
+			line	**route line relationships**
+			line	
+			line	```
+			line	    route
+			line	     | - lines
+			line	     | - parameters
+			line	     | - methods
+			line	```
+			line	
+			line	**route object**
+			line	
+			line	```json
+			line	{"route":
+			line	  "route" : field[1],
+			line	  "name" : field[2],
+			line	  "description" : field[3],
+			line	  "lines": [],
+			line	  "parameters": []
+			line	}
+			line	```
+			line	
+			request	the route definition
+				response	200	text/plain
+					body	The route element allows access to a resource
+					body	
+					body	**route line**
+					body	
+					body	route<TAB>URI template<TAB>name<TAB>description
+					body	
+					body	+ field 1 - URI template - a resource pattern with parameters
+					body	+ field 2 - name - the route name must be unique
+					body	+ field 3 - description - information about the resource
+					body	
+					body	**route example**
+					body	
+					body	route<TAB>/example<TAB>an example route<TAB>a description of the route
+					body	
+					body	**route line relationships**
+					body	
+					body	```
+					body	    route
+					body	     | - lines
+					body	     | - parameters
+					body	     | - methods
+					body	```
+					body	
+					body	**route object**
+					body	
+					body	```json
+					body	{"route":
+					body	  "route" : field[1],
+					body	  "name" : field[2],
+					body	  "description" : field[3],
+					body	  "lines": [],
+					body	  "parameters": []
+					body	}
+					body	```
+	route	/apitxt/parameter	parameter
+		method	GET	Get parameter definition
+			line	The parameter element is applied to the previous route
+			line	
+			line	**parameter line**
+			line	
+			line	parameter &lt;TAB> name &lt;TAB> example &lt;TAB> type &lt;TAB> description
+			line	
+			line	+ field 1 - name - the name of a parameter for a route
+			line	+ field 2 - example - an example value for the parameter
+			line	+ field 3 - type - the parameter type, such as "string", "number", "boolean", "string, optional", "string, required"
+			line	+ field 4 - description - information about the parameter
+			line	
+			line	**parameter example**
+			line	
+			line	parameter &lt;TAB> country_code &lt;TAB> US &lt;TAB> string &lt;TAB> the country code of interest
+			line	
+			line	**parameter line relationships**
+			line	
+			line	parameter lines are added to a parameters array
+			line	
+			line	**parameters array**
+			line	
+			line	```json
+			line	{"parameters":
+			line	  [
+			line	    {
+			line	      "name" : " field[1],
+			line	      "example" : field[2],
+			line	      "type" : field[3],
+			line	      "description" : field[4]
+			line	    }
+			line	  ]
+			line	}
+			line	```
+			line	
+			request	the parameter definition
+				response	200	text/plain
+					body	The parameter element is applied to the previous route
+					body	
+					body	**parameter line**
+					body	
+					body	parameter<TAB>name<TAB>example<TAB>type<TAB>description
+					body	
+					body	+ field 1 - name - the name of a parameter for a route
+					body	+ field 2 - example - an example value for the parameter
+					body	+ field 3 - type - the parameter type, such as "string", "number", "boolean", "string, optional", "string, required"
+					body	+ field 4 - description - information about the parameter
+					body	
+					body	**parameter example**
+					body	
+					body	parameter<TAB>country_code<TAB>US<TAB>string<TAB>the country code of interest
+					body	
+					body	**parameter line relationships**
+					body	
+					body	parameter lines are added to a parameters array
+					body	
+					body	**parameters array**
+					body	
+					body	```json
+					body	{"parameters":
+					body	  [
+					body	    {
+					body	      "name" : " field[1],
+					body	      "example" : field[2],
+					body	      "type" : field[3],
+					body	      "description" : field[4]
+					body	    }
+					body	  ]
+					body	}
+					body	```
+	route	/apitxt/method	method
+		method	GET	Get method definition
+			line	The method element represents an action that can be performed on a route
+			line	
+			line	**method line**
+			line	
+			line	method &lt;TAB> HTTP method &lt;TAB> name &lt;TAB> description
+			line	
+			line	+ field 1 - HTTP method - the type of action to perform: GET, POST, PUT, DELETE
+			line	+ field 2 - name - the name of the action
+			line	+ field 3 - description - information about the method
+			line	
+			line	**method example**
+			line	
+			line	method &lt;TAB> GET &lt;TAB> Get an example &lt;TAB> This method retrieves an example document
+			line	
+			line	**method line relationships**
+			line	
+			line	```
+			line	    method
+			line	     | - lines
+			line	     | - code
+			line	     | - requests
+			line	     | - responses
+			line	```
+			line	
+			line	**method object**
+			line	
+			line	```json
+			line	{
+			line	  "method" : field[1],
+			line	  "name" : field[2],
+			line	  "description" : field[3],
+			line	  "lines" : [],
+			line	  "code" : [],
+			line	  "dialog" : [
+			line	    {
+			line	      "request" : {},
+			line	      "responses" : []
+			line	    }
+			line	  ]
+			line	}
+			line	```
+			line	
+			request	the method definition
+				response	200	text/plain
+					body	The method element represents an action that can be performed on a route
+					body	
+					body	**method line**
+					body	
+					body	method<TAB>HTTP method<TAB>name<TAB>description
+					body	
+					body	+ field 1 - HTTP method - the type of action to perform: GET, POST, PUT, DELETE
+					body	+ field 2 - name - the name of the action
+					body	+ field 3 - description - information about the method
+					body	
+					body	**method example**
+					body	
+					body	method<TAB>GET<TAB>Get an example<TAB>This method retrieves an example document
+					body	
+					body	**method line relationships**
+					body	
+					body	```
+					body	    method
+					body	     | - lines
+					body	     | - code
+					body	     | - requests
+					body	     | - responses
+					body	```
+					body	
+					body	**method object**
+					body	
+					body	```json
+					body	{
+					body	  "method" : field[1],
+					body	  "name" : field[2],
+					body	  "description" : field[3],
+					body	  "lines" : [],
+					body	  "code" : [],
+					body	  "dialog" : [
+					body	    {
+					body	      "request" : {},
+					body	      "responses" : []
+					body	    }
+					body	  ]
+					body	}
+					body	```
+	route	/apitxt/request	request
+		method	GET	Get request definition
+			line	The request element is associated with a specific method and can be paired with multiple responses.
+			line	
+			line	**request line**
+			line	
+			line	request &lt;TAB> name &lt;TAB> type
+			line	
+			line	+ field 1 - name - uniquely identifies a request
+			line	+ field 2 - type - the content type of the request body
+			line	
+			line	**request example**
+			line	
+			line	request &lt;TAB> matching text within request body &lt;TAB> plain/text
+			line	
+			line	**request line relationships**
+			line	
+			line	```
+			line	    request
+			line	     | - lines
+			line	     | - headers
+			line	     | - body
+			line	```
+			line	
+			line	**request object**
+			line	
+			line	```json
+			line	{
+			line	  "name" : field[1],
+			line	  "type" : field[2],
+			line	  "lines" : [],
+			line	  "headers" : {},
+			line	  "body" : []
+			line	}
+			line	```
+			line	
+			request	the request definition
+				response	200	text/plain
+					body	The request element is associated with a specific method and can be paired with multiple responses.
+					body	
+					body	**request line**
+					body	
+					body	request<TAB>name<TAB>type
+					body	
+					body	+ field 1 - name - uniquely identifies a request
+					body	+ field 2 - type - the content type of the request body
+					body	
+					body	**request example**
+					body	
+					body	request<TAB>matching text within request body<TAB>plain/text
+					body	
+					body	**request line relationships**
+					body	
+					body	```
+					body	    request
+					body	     | - lines
+					body	     | - headers
+					body	     | - body
+					body	```
+					body	
+					body	**request object**
+					body	
+					body	```json
+					body	{
+					body	  "name" : field[1],
+					body	  "type" : field[2],
+					body	  "lines" : [],
+					body	  "headers" : {},
+					body	  "body" : []
+					body	}
+					body	```
+	route	/apitxt/response	response
+		method	GET	Get response definition
+			line	The response element is associated with a specific request, or associated with a specific method with an assumed generic request.
+			line	
+			line	**response line**
+			line	
+			line	response &lt;TAB> status &lt;TAB> type
+			line	
+			line	+ field 1 - status - an HTTP response code indicating the status of the request
+			line	+ field 2 - type - the content type of the response body
+			line	
+			line	**response example**
+			line	
+			line	response &lt;TAB> 200 &lt;TAB> plain/text
+			line	
+			line	**response line relationships**
+			line	
+			line	```
+			line	    response
+			line	     | - lines
+			line	     | - headers
+			line	     | - body
+			line	```
+			line	
+			line	**response object**
+			line	
+			line	```json
+			line	{
+			line	  "status" : field[1],
+			line	  "type" : field[2],
+			line	  "lines" : [],
+			line	  "headers" : {},
+			line	  "body" : []
+			line	}
+			line	```
+			line	
+			request	the response definition
+				response	200	text/plain
+					body	The response element is associated with a specific request, or associated with a specific method with an assumed generic request.
+					body	
+					body	**response line**
+					body	
+					body	response<TAB>status<TAB>type
+					body	
+					body	+ field 1 - status - an HTTP response code indicating the status of the request
+					body	+ field 2 - type - the content type of the response body
+					body	
+					body	**response example**
+					body	
+					body	response<TAB>200<TAB>plain/text
+					body	
+					body	**response line relationships**
+					body	
+					body	```
+					body	    response
+					body	     | - lines
+					body	     | - headers
+					body	     | - body
+					body	```
+					body	
+					body	**response object**
+					body	
+					body	```json
+					body	{
+					body	  "status" : field[1],
+					body	  "type" : field[2],
+					body	  "lines" : [],
+					body	  "headers" : {},
+					body	  "body" : []
+					body	}
+					body	```
+	route	/apitxt/header	header
+		method	GET	Get header definition
+			line	The header element is applied to a preceding route
+			line	
+			line	**header line**
+			line	
+			line	header &lt;TAB> name &lt;TAB> value
+			line	
+			line	+ field 1 - name - the header variable name
+			line	+ field 2 - value - the header variable value
+			line	
+			line	**header example**
+			line	
+			line	header &lt;TAB> X-Powered-By &lt;TAB> ApiTxt
+			line	
+			line	**header object**
+			line	
+			line	```json
+			line	{ field[1] : field[2] }
+			line	```
+			line	
+			request	the header definition
+				response	200	text/plain
+					body	The header element is applied to a preceding request or response
+					body	
+					body	**header line**
+					body	
+					body	header<TAB>name<TAB>value
+					body	
+					body	+ field 1 - name - the header variable name
+					body	+ field 2 - value - the header variable value
+					body	
+					body	**header example**
+					body	
+					body	header<TAB>X-Powered-By<TAB>ApiTxt
+					body	
+					body	**header object**
+					body	
+					body	```json
+					body	{ field[1] : field[2] }
+					body	```
+	route	/apitxt/body	body
+		method	GET	Get body definition
+			line	The body element adds contents to a preceding request or response.
+			line	
+			line	The text of the body is everything after the string "body &lt;TAB>".
+			request	the body definition
+				response	200	text/plain
+					body	The body element adds contents to a preceding request or response.
+					body	
+					body	The text of the body is everything after the string "body <tab>"
+	route	/apitxt/line	line
+		method	GET	Get line definition
+			line	The line element adds additional text to frame elements.
+			line	
+			line	For the root, group, route, method, request, and response, the lines add details to an element.
+			line	
+			line	The text of the line is everything after the string "line &lt;TAB>".
+			request	the line definition
+				response	200	text/plain
+					body	The line element adds additional text to frame elements.
+					body	
+					body	For the root, group, route, method, request, and response, the lines add details to an element.
+					body	
+					body	The text of the line is everything after the string "line <tab>".
+	route	/apitxt/code	code
+		method	GET	Get code definition
+			line	The code element adds functionality to the method element.
+			line	
+			line	The code element contains programming text.  ApiTxt comes integrated with the PHP project the Slim Framework v2.  The conversion to working PHP adds boilerplate details for routes and method, with named parameters and query parameters available as functional variables.
+			line	
+			line	The text of the code is everything after the string "code &lt;TAB>".
+			request	the code definition
+				response	200	text/plain
+					body	The code element adds functionality to the method element.
+					body	
+					body	The code element contains programming text.  ApiTxt comes integrated with the PHP project the Slim Framework v2.  The conversion to working PHP adds boilerplate details for routes and method, with named parameters and query parameters available as functional variables.
+					body	
+					body	The text of the code is everything after the string "code <tab>".

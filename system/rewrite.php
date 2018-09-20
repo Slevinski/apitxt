@@ -22,6 +22,18 @@ if ($dir == "/server") {
   die();
 }
 
+if ($_SERVER['REQUEST_URI'] =='/source') {
+  header("Location:/source/");
+  die();
+}
+if ($_SERVER['REQUEST_URI'] =='/tools') {
+  header("Location:/tools/");
+  die();
+}
+if ($_SERVER['REQUEST_URI'] =='/system') {
+  header("Location:/system/");
+  die();
+}
 if ($_SERVER['REQUEST_URI'] =='/client') {
   header("Location:/client/");
   die();

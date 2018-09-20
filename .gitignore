@@ -2,4 +2,4 @@
 .vscode
 *.code-workspace
 tools/output
-back/Slim/*
+server/Slim/*

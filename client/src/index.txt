@@ -543,7 +543,7 @@ group	apitxt	ApiTxt uses eleven types of element to define an API.
 			line	**root object**
 			line	
 			line	```json
-			line	{"root":
+			line	{
 			line	  "root" : field[1],
 			line	  "title" : field[2],
 			line	  "host" : field[3],
@@ -580,7 +580,7 @@ group	apitxt	ApiTxt uses eleven types of element to define an API.
 					body	**root object**
 					body	
 					body	```json
-					body	{"root":
+					body	{
 					body	  "root" : field[1],
 					body	  "title" : field[2],
 					body	  "host" : field[3],
@@ -613,7 +613,7 @@ group	apitxt	ApiTxt uses eleven types of element to define an API.
 			line	**group object**
 			line	
 			line	```json
-			line	{"group":
+			line	{
 			line	  "group" : field[1],
 			line	  "description" : field[2],
 			line	  "lines": []
@@ -646,7 +646,7 @@ group	apitxt	ApiTxt uses eleven types of element to define an API.
 					body	**group object**
 					body	
 					body	```json
-					body	{"group":
+					body	{
 					body	  "group" : field[1],
 					body	  "description" : field[2],
 					body	  "lines": []
@@ -680,7 +680,7 @@ group	apitxt	ApiTxt uses eleven types of element to define an API.
 			line	**route object**
 			line	
 			line	```json
-			line	{"route":
+			line	{
 			line	  "route" : field[1],
 			line	  "name" : field[2],
 			line	  "description" : field[3],
@@ -717,7 +717,7 @@ group	apitxt	ApiTxt uses eleven types of element to define an API.
 					body	**route object**
 					body	
 					body	```json
-					body	{"route":
+					body	{
 					body	  "route" : field[1],
 					body	  "name" : field[2],
 					body	  "description" : field[3],

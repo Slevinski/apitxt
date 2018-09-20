@@ -141,7 +141,7 @@ root &lt;TAB> apitxt &lt;TAB> ApiTxt &lt;TAB> https://signpuddle.com/apitxt
 **root object**
 
 ```json
-{"root":
+{
   "root" : field[1],
   "title" : field[2],
   "host" : field[3],
@@ -187,7 +187,7 @@ root &lt;TAB> apitxt &lt;TAB> ApiTxt &lt;TAB> https://signpuddle.com/apitxt
             **root object**
             
             ```json
-            {"root":
+            {
               "root" : field[1],
               "title" : field[2],
               "host" : field[3],
@@ -223,7 +223,7 @@ group &lt;TAB> Section name &lt;TAB> an example section
 **group object**
 
 ```json
-{"group":
+{
   "group" : field[1],
   "description" : field[2],
   "lines": []
@@ -265,7 +265,7 @@ group &lt;TAB> Section name &lt;TAB> an example section
             **group object**
             
             ```json
-            {"group":
+            {
               "group" : field[1],
               "description" : field[2],
               "lines": []
@@ -302,7 +302,7 @@ route &lt;TAB> /example &lt;TAB> an example route &lt;TAB> a description of the 
 **route object**
 
 ```json
-{"route":
+{
   "route" : field[1],
   "name" : field[2],
   "description" : field[3],
@@ -348,7 +348,7 @@ route &lt;TAB> /example &lt;TAB> an example route &lt;TAB> a description of the 
             **route object**
             
             ```json
-            {"route":
+            {
               "route" : field[1],
               "name" : field[2],
               "description" : field[3],

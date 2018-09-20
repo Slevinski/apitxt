@@ -625,7 +625,7 @@ $app->get('/apitxt/root', function () use ($app) {
   echo '**root object**' . "\n";
   echo '' . "\n";
   echo '```json' . "\n";
-  echo '{"root":' . "\n";
+  echo '{' . "\n";
   echo '  "root" : field[1],' . "\n";
   echo '  "title" : field[2],' . "\n";
   echo '  "host" : field[3],' . "\n";
@@ -662,7 +662,7 @@ $app->get('/apitxt/group', function () use ($app) {
   echo '**group object**' . "\n";
   echo '' . "\n";
   echo '```json' . "\n";
-  echo '{"group":' . "\n";
+  echo '{' . "\n";
   echo '  "group" : field[1],' . "\n";
   echo '  "description" : field[2],' . "\n";
   echo '  "lines": []' . "\n";
@@ -700,7 +700,7 @@ $app->get('/apitxt/route', function () use ($app) {
   echo '**route object**' . "\n";
   echo '' . "\n";
   echo '```json' . "\n";
-  echo '{"route":' . "\n";
+  echo '{' . "\n";
   echo '  "route" : field[1],' . "\n";
   echo '  "name" : field[2],' . "\n";
   echo '  "description" : field[3],' . "\n";

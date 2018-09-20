@@ -118,7 +118,7 @@ var data = {
           "name": "root", 
           "methods": [
             {
-              "html": "<p>Every document should start with a root element.</p>\n<p><strong>root line</strong></p>\n<p>root &lt;TAB&gt; name &lt;TAB&gt; title &lt;TAB&gt; host</p>\n<ul>\n<li>field 1 - name - uniquely identifies a document</li>\n<li>field 2 - title - name of the document</li>\n<li>field 3 - host - website URL</li>\n</ul>\n<p><strong>root example</strong></p>\n<p>root &lt;TAB&gt; apitxt &lt;TAB&gt; ApiTxt &lt;TAB&gt; https://signpuddle.com/apitxt</p>\n<p><strong>root line relationships</strong></p>\n<p><pre><code>root\n     | - lines\n     | - routes\n     | - groups</code></pre></p>\n<p><strong>root object</strong></p>\n<p><pre><code>json\n{\"root\":\n  \"root\" : field[1],\n  \"title\" : field[2],\n  \"host\" : field[3],\n  \"lines\" : []\n}</code></pre></p>", 
+              "html": "<p>Every document should start with a root element.</p>\n<p><strong>root line</strong></p>\n<p>root &lt;TAB&gt; name &lt;TAB&gt; title &lt;TAB&gt; host</p>\n<ul>\n<li>field 1 - name - uniquely identifies a document</li>\n<li>field 2 - title - name of the document</li>\n<li>field 3 - host - website URL</li>\n</ul>\n<p><strong>root example</strong></p>\n<p>root &lt;TAB&gt; apitxt &lt;TAB&gt; ApiTxt &lt;TAB&gt; https://signpuddle.com/apitxt</p>\n<p><strong>root line relationships</strong></p>\n<p><pre><code>root\n     | - lines\n     | - routes\n     | - groups</code></pre></p>\n<p><strong>root object</strong></p>\n<p><pre><code>json\n{\n  \"root\" : field[1],\n  \"title\" : field[2],\n  \"host\" : field[3],\n  \"lines\" : []\n}</code></pre></p>", 
               "lines": [
                 "Every document should start with a root element.", 
                 "", 
@@ -147,7 +147,7 @@ var data = {
                 "**root object**", 
                 "", 
                 "```json", 
-                "{\"root\":", 
+                "{", 
                 "  \"root\" : field[1],", 
                 "  \"title\" : field[2],", 
                 "  \"host\" : field[3],", 
@@ -193,7 +193,7 @@ var data = {
                         "**root object**", 
                         "", 
                         "```json", 
-                        "{\"root\":", 
+                        "{", 
                         "  \"root\" : field[1],", 
                         "  \"title\" : field[2],", 
                         "  \"host\" : field[3],", 
@@ -215,7 +215,7 @@ var data = {
           "name": "group", 
           "methods": [
             {
-              "html": "<p>The group organizes resources into sections</p>\n<p><strong>group line</strong></p>\n<p>group &lt;TAB&gt; name &lt;TAB&gt; description</p>\n<ul>\n<li>field 1 - name - the short name used for sections</li>\n<li>field 2 - description - information about the group</li>\n</ul>\n<p><strong>group example</strong></p>\n<p>group &lt;TAB&gt; Section name &lt;TAB&gt; an example section</p>\n<p><strong>group line relationships</strong></p>\n<p><pre><code>group\n     | - lines\n     | - routes</code></pre></p>\n<p><strong>group object</strong></p>\n<p><pre><code>json\n{\"group\":\n  \"group\" : field[1],\n  \"description\" : field[2],\n  \"lines\": []\n}</code></pre></p>", 
+              "html": "<p>The group organizes resources into sections</p>\n<p><strong>group line</strong></p>\n<p>group &lt;TAB&gt; name &lt;TAB&gt; description</p>\n<ul>\n<li>field 1 - name - the short name used for sections</li>\n<li>field 2 - description - information about the group</li>\n</ul>\n<p><strong>group example</strong></p>\n<p>group &lt;TAB&gt; Section name &lt;TAB&gt; an example section</p>\n<p><strong>group line relationships</strong></p>\n<p><pre><code>group\n     | - lines\n     | - routes</code></pre></p>\n<p><strong>group object</strong></p>\n<p><pre><code>json\n{\n  \"group\" : field[1],\n  \"description\" : field[2],\n  \"lines\": []\n}</code></pre></p>", 
               "lines": [
                 "The group organizes resources into sections", 
                 "", 
@@ -241,7 +241,7 @@ var data = {
                 "**group object**", 
                 "", 
                 "```json", 
-                "{\"group\":", 
+                "{", 
                 "  \"group\" : field[1],", 
                 "  \"description\" : field[2],", 
                 "  \"lines\": []", 
@@ -283,7 +283,7 @@ var data = {
                         "**group object**", 
                         "", 
                         "```json", 
-                        "{\"group\":", 
+                        "{", 
                         "  \"group\" : field[1],", 
                         "  \"description\" : field[2],", 
                         "  \"lines\": []", 
@@ -304,7 +304,7 @@ var data = {
           "name": "route", 
           "methods": [
             {
-              "html": "<p>The route element allows access to a resource</p>\n<p><strong>route line</strong></p>\n<p>route &lt;TAB&gt; URI template &lt;TAB&gt; name &lt;TAB&gt; description</p>\n<ul>\n<li>field 1 - URI template - a resource pattern with parameters</li>\n<li>field 2 - name - the route name must be unique</li>\n<li>field 3 - description - information about the resource</li>\n</ul>\n<p><strong>route example</strong></p>\n<p>route &lt;TAB&gt; /example &lt;TAB&gt; an example route &lt;TAB&gt; a description of the route</p>\n<p><strong>route line relationships</strong></p>\n<p><pre><code>route\n     | - lines\n     | - parameters\n     | - methods</code></pre></p>\n<p><strong>route object</strong></p>\n<p><pre><code>json\n{\"route\":\n  \"route\" : field[1],\n  \"name\" : field[2],\n  \"description\" : field[3],\n  \"lines\": [],\n  \"parameters\": []\n}</code></pre></p>", 
+              "html": "<p>The route element allows access to a resource</p>\n<p><strong>route line</strong></p>\n<p>route &lt;TAB&gt; URI template &lt;TAB&gt; name &lt;TAB&gt; description</p>\n<ul>\n<li>field 1 - URI template - a resource pattern with parameters</li>\n<li>field 2 - name - the route name must be unique</li>\n<li>field 3 - description - information about the resource</li>\n</ul>\n<p><strong>route example</strong></p>\n<p>route &lt;TAB&gt; /example &lt;TAB&gt; an example route &lt;TAB&gt; a description of the route</p>\n<p><strong>route line relationships</strong></p>\n<p><pre><code>route\n     | - lines\n     | - parameters\n     | - methods</code></pre></p>\n<p><strong>route object</strong></p>\n<p><pre><code>json\n{\n  \"route\" : field[1],\n  \"name\" : field[2],\n  \"description\" : field[3],\n  \"lines\": [],\n  \"parameters\": []\n}</code></pre></p>", 
               "lines": [
                 "The route element allows access to a resource", 
                 "", 
@@ -332,7 +332,7 @@ var data = {
                 "**route object**", 
                 "", 
                 "```json", 
-                "{\"route\":", 
+                "{", 
                 "  \"route\" : field[1],", 
                 "  \"name\" : field[2],", 
                 "  \"description\" : field[3],", 
@@ -378,7 +378,7 @@ var data = {
                         "**route object**", 
                         "", 
                         "```json", 
-                        "{\"route\":", 
+                        "{", 
                         "  \"route\" : field[1],", 
                         "  \"name\" : field[2],", 
                         "  \"description\" : field[3],", 

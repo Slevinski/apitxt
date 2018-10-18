@@ -1,13 +1,20 @@
+var spVersion = "3";
+var spLogo = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 382.39499 393.798"><g transform="translate(-153.728 -166.677)">  <path fill="#000" d="M348.22 266.68v259.504h-7V266.68"/></g><g transform="translate(-153.728 -166.677)">  <path fill="#000" d="M348.22 166.677v32.32h-7v-32.32"/></g><g transform="translate(-153.728 -166.677)">  <linearGradient id="c" gradientUnits="userSpaceOnUse" x1="138.098" y1="180.746" x2="536.098" y2="375.746">  <stop offset="0" stop-color="#ff0700"/>  <stop offset="1" stop-color="#b40000"/>  </linearGradient>  <path d="M198.26 300.806c18.388 0 35.327 6.168 48.89 16.532 13.56-10.364 30.5-16.532 48.887-16.532s35.326 6.168 48.888 16.532c13.562-10.364 30.5-16.532 48.888-16.532 18.387 0 35.326 6.168 48.89 16.532 13.56-10.364 30.5-16.532 48.888-16.532 16.467 0 31.773 4.948 44.533 13.423-27.962-78.602-103-134.882-191.197-134.882-88.196 0-163.236 56.28-191.198 134.88 12.76-8.475 28.066-13.422 44.533-13.422z" fill="url(#c)"/></g></svg>';
+
+function loadJS(url, callback){
+  var scriptTag = document.createElement('script');
+  scriptTag.src = url;
+  scriptTag.onload = callback;
+  scriptTag.onreadystatechange = callback;
+  document.body.appendChild(scriptTag);
+};
+
 function downloadlink(href,download){
   var link = document.getElementById('downloadlink');
   link.href = href;
   link.download = download;
   link.click();
 }
-
-var spVersion = "3";
-
-var spLogo = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 382.39499 393.798"><g transform="translate(-153.728 -166.677)">  <path fill="#000" d="M348.22 266.68v259.504h-7V266.68"/></g><g transform="translate(-153.728 -166.677)">  <path fill="#000" d="M348.22 166.677v32.32h-7v-32.32"/></g><g transform="translate(-153.728 -166.677)">  <linearGradient id="c" gradientUnits="userSpaceOnUse" x1="138.098" y1="180.746" x2="536.098" y2="375.746">  <stop offset="0" stop-color="#ff0700"/>  <stop offset="1" stop-color="#b40000"/>  </linearGradient>  <path d="M198.26 300.806c18.388 0 35.327 6.168 48.89 16.532 13.56-10.364 30.5-16.532 48.887-16.532s35.326 6.168 48.888 16.532c13.562-10.364 30.5-16.532 48.888-16.532 18.387 0 35.326 6.168 48.89 16.532 13.56-10.364 30.5-16.532 48.888-16.532 16.467 0 31.773 4.948 44.533 13.423-27.962-78.602-103-134.882-191.197-134.882-88.196 0-163.236 56.28-191.198 134.88 12.76-8.475 28.066-13.422 44.533-13.422z" fill="url(#c)"/></g></svg>';
 
 var iconset = {};
 function iconsused (){
@@ -18,22 +25,9 @@ var state = {};
 
 var statefn = {
   "initial": function (){
-    //state also has salt, username, profile, editing, and deleting attributes
-    state = {
-      "messages": [],
-      "server": host,
-      "status": "state.status.initial",
-      "connection": {},
-      "country": "",
-      "language": "",
-      "interface": "",
-      "dictionary": "",
-      "literature": "",
-      "alphabet": "",
-      "fingerspell": "",
-      "keyboard": "",
-      "specials": ['icons','buttons','style','test','canvas'],
-    }
+    state = config.state;
+    loadJS("config/interface-sp3.js",m.redraw)
+    //state also has pass, username, profile, editing, and deleting attributes
   },
   "save": function(){
     delete state['dirty'];
@@ -186,22 +180,15 @@ s = statefn.get;
 statefn.restore();
 
 
-var messages = {};
-var interface = {};
 var interfacefn = {
-  "default": function(){
-    var keys = Object.keys(interfaces['default']);
-    var loaded = keys.map(function(key){
-      messages[key] = interfaces['default'][key];
-      return key;
-    })
-    return loaded.join(' ');
-
-  },
   "text": function(subname,key){
+    var messages = s('interface')[subname];
+    if (!messages){
+      return "";
+    }
     var msg="";
     try {
-      msg = messages[subname][key].message;
+      msg = messages[key].message;
     } catch(err) {
       msg = key;
       if (arguments.length>2){
@@ -426,7 +413,6 @@ var InterfacePages = {
 }
 
 t = interfacefn.text;
-interfacefn.default();
 
 // m(CommonPages["button"],{class: "tight pseudo onLeft", disabled: routes.index<1,onclick: function(){routesfn.index(routes.index-1);},icon:"arrow-left"}),
 // m(CommonPages["button"],{class: "tight pseudo onLeft", disabled: routes.index>=routes.list.length-1,onclick: function(){routesfn.index(routes.index+1);},icon:"arrow-right"})
@@ -496,7 +482,6 @@ var routesfn = {
   },
   "log": function(){
     console.log("<-routes->");
-    console.log(routes.list);
   },
   "query": function(){
     var params = [];
@@ -539,11 +524,11 @@ var serverfn = {
   "connect": function(){
     var server = s("server");
     var connection = s("connection")
-    var route = server + "/user/salt";
-    var method = "GET";
-    if (connection.salt  || connection.salting || connection.error) return;
+    var route = server + "/user/pass";
+    var method = "POST";
+    if (connection.pass  || connection.requesting || connection.error) return;
     if (!server) return;
-    connection.salting = true;
+    connection.requesting = true;
     statefn.update("connection",connection);
 
     m.request({
@@ -556,8 +541,8 @@ var serverfn = {
       var connection = s("connection")
       var msg = serverfn.parseMessage("success","system.server.success",method,route,response);
       statefn.message(msg);
-      delete connection['salting'];
-      connection.salt=response.body;
+      delete connection['requesting'];
+      connection.pass=response.body;
       statefn.update("connection",connection);
       m.redraw();
     })
@@ -567,7 +552,7 @@ var serverfn = {
       response = error;
       var err = serverfn.parseMessage("danger","system.server.problem",method,route,response);
       statefn.message(err);
-      delete connection['salting'];
+      delete connection['requesting'];
       connection.error = err;
       statefn.update("connection",connection);
       m.redraw();
@@ -599,46 +584,43 @@ var serverfn = {
   "register": function(){},
   "resetPassword": function(){},
   "login": function(){
-    var index = s('server');
-    var server = s("servers",index);
-    var route = server['url'] + "/user/login";
-    var method = "POST";
+    var server = s("server");
+    var pass = s('connection').pass;
+    var route = server + "/user/login";
+    var method = "PUT";
     var username = document.getElementById("username").value;
     var password = document.getElementById("password").value;
-
     m.request({
       method: method,
       url: route,
       type: 'application/json',
-      data: {username: username, salt: s('user'), salted: md5(md5(password)+s('user'))},
+      data: {username: username, pass: pass, validated: md5(md5(password)+pass)},
       extract: function(xhr) {return {status: xhr.status, body: xhr.responseText}}
     })
     .then (function(response) {
-      var results = response.body;
+      var results = JSON.parse(response.body).results;
       var msg = serverfn.parseMessage("success","system.server.success",method,route,response);
-      statefn.addItem2("servers",s('server'),"messages",msg);
-      index = statefn.reindex("servers",index,server,"url");
-      server['profile'] = response;
-      s('user') = username;
-      statefn.update("servers",index,server);
+      statefn.add("messages",msg);
+      statefn.update('profile', results);
       m.route.set("/user/profile");
     })
     .catch (function(response) {
+      console.log(response);
       var results = response.body;
       var err = serverfn.parseMessage("warning", "system.server.problem",method,route,response);
-      statefn.addItem2("servers",s('server'),"messages",err);
+      statefn.add("messages",err);
       m.redraw();
 //      server['error'] = err;
 //      statefn.update("servers",index,server);
     });
+  },
+  "logout": function(){
+    statefn.update('profile',config.state.profile);
+    statefn.update('connection',{});
+    routesfn.set('/user/login');
   }
 }
 
-var countryfn = {
-  "set": function(cc){
-
-  }
-}
 var collectionfn = {
   "parseName": function(name){
     try {
@@ -767,8 +749,7 @@ var collectionfn = {
       statefn.addItem2("servers",index,"messages",err);
       m.redraw();
     });
-  },
-  
+  }
 }
 
 var CollectionPages = {
@@ -797,11 +778,11 @@ var CollectionPages = {
 var MessageParts = {
   "list": {
     view: function(vnode) {
-      return s.apply(null,vnode.attrs['location']).map(function(message,i){
+      return s(vnode.attrs['location']).map(function(message,i){
         var location = Array.apply(null, vnode.attrs['location']);
         location.push(i);
         return m(MessageParts['item'],{"location":location});
-      });
+      }).reverse();
     }
   },
   "item": {
@@ -867,14 +848,17 @@ var CommonPages = {
   "header": {
     view: function() {
       var settings = routes.list[routes.index].indexOf("/settings")>-1;
-      var server = s("server");
-      var username = s("username");
+      var userpage = routes.list[routes.index].indexOf("/user/")>-1;
+      var profile = s("profile");
       var title =  t("sp3","system.signpuddle3.title",spVersion);
       var titleShort =  t("sp3","system.signpuddle3.short",spVersion);
       return [
         m("header.main",[
-          m("button", {class: "pseudo", onclick: function(){routesfn.set("/")}},
-            s('country')?m("img",{border:"1",src:"include/flags/" + s('country').toLowerCase() + ".png"}):
+          m("button", {class: "pseudo", onclick: function(){
+                routesfn.set("/country/" + state.profile.country);
+              }
+            },
+            state.profile.country?m("img",{border:"1",src:"include/flags/" + state.profile.country.toLowerCase() + ".png"}):
               m("i.icon",m.trust(
                 '<svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">' + icons['globe'] + '</svg>'
               ))
@@ -890,22 +874,117 @@ var CommonPages = {
           m("span", [
             m(CommonPages["button"],{class: "long " + (settings?"primary":"outline") , icon:"cog",text: t("sp3","settings.main.title"), onclick: function(){routesfn.set("/settings")}}),
             m(CommonPages["button"],{class: "short " + (settings?"primary":"outline") , icon:"cog", onclick: function(){routesfn.set("/settings")}}),
-            username?
-              [m(CommonPages["button"],{class: "long " + (!settings?"primary":"outline"), icon:"user",text:username, onclick: function(){routesfn.set("/user/profile")}}),
-              m(CommonPages["button"],{class: "short " + (!settings?"primary":"outline"), icon:"user",onclick: function(){routesfn.set("/user/profile")}})]
-              :[m(CommonPages["button"],{class: "long " + (!settings?"primary":"outline"), icon:"user",text:t("sp3","user.login.button"), onclick: function(){routesfn.set("/user/login")}}),
-              m(CommonPages["button"],{class: "short " + (!settings?"primary":"outline"), icon:"user", onclick: function(){routesfn.set("/user/login")}})]
+            profile.name?
+              [m(CommonPages["button"],{class: "long " + (userpage?"primary":"outline"), icon:"user",text:profile.name, onclick: function(){routesfn.set("/user/profile")}}),
+              m(CommonPages["button"],{class: "short " + (userpage?"primary":"outline"), icon:"user",onclick: function(){routesfn.set("/user/profile")}})]
+              :[m(CommonPages["button"],{class: "long " + (userpage?"primary":"outline"), icon:"user",text:t("sp3","user.login.button"), onclick: function(){routesfn.set("/user/login")}}),
+              m(CommonPages["button"],{class: "short " + (userpage?"primary":"outline"), icon:"user", onclick: function(){routesfn.set("/user/login")}})]
           ])
         ]),
         m("a#downloadlink", {style:"display: none", type:"button", charset:"utf-8"},"Download")
       ];
     }
   },
+  "flags": {
+    view: function(vnode){
+      return Object.keys(world.country).map(function(val,i){
+        return m(CommonPages["button"],{class: "card", text:val, img:"include/flags/" + val.toLowerCase() + ".png",onclick: function(){
+          statefn.update("country",val);
+          routesfn.set("/country/" + val);
+        }})
+      })
+    }
+  },
+  "flagsX": {
+    view: function(vnode) {
+      var country = state.profile.country;
+      var country_temp = state.profile.country_temp;
+      var buttons = [];
+      var country_class;
+      var flag_list = [];
+      if (country_temp === undefined  || country==country_temp){
+        if (country){
+          country_class="success";
+        } else {
+          country_class="primary";
+        }
+        buttons = [
+          m(CommonPages["button"],{class: "primary", text:t("sp3",'system.buttons.viewall'), onclick: function(){
+              state.profile.country_temp = '';
+          }})
+        ];
+        if (country==country_temp) {
+          flag_list = Object.keys(world.country);
+        }
+      } else {
+        var valid = world.country[country_temp] || (country_temp=="");
+        if (world.country[country_temp]){
+          flag_list = [country_temp];
+        } else {
+          var len = country_temp.length;
+          if (len==1){
+            flag_list = Object.keys(world.country).filter(function(val,i){
+              return val[0] == country_temp;
+            })
+          } else {
+            flag_list = Object.keys(world.country);
+          }
+        }
+        buttons = [
+          m(CommonPages["button"],{type:"submit",disabled:!valid, class: "success", text:t("sp3",'system.buttons.save'), onclick: function(){
+            if (valid){
+              statefn.remove("country_temp");
+              statefn.update("country",country_temp);}}
+            }
+          ),
+          m(CommonPages["button"],{class: "warning", text:t("sp3",'system.buttons.cancel'), onclick: function(){
+            statefn.remove("country_temp");
+          }})
+        ];
+        if (valid){
+          country_class="primary";
+        } else {
+          country_class="warning";
+        }
+      }
+      return [ 
+        m("form", [
+          state.profile.country?m("img",{border:1,src:"include/flags/" + state.profile.country.toLowerCase() + ".png"}):
+            m("button.pseudo",{onclick: function(){
+              state.profile.country_temp = '';
+            }},m("i.icon",m.trust(
+              '<svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">' + icons['globe'] + '</svg>'
+            )))
+          ,
+          m("input#country_temp[type=text]",{"class":country_class,"value":(country_temp===undefined)?country:country_temp,autocomplete:"off",oninput: function(e){
+            var val = e.target.value;
+            var match = val.match(/[a-zA-Z]{1,2}/);
+            val = match?match[0].toUpperCase():'';
+            if (val){
+              state.profile.country_temp = val;
+            } else {
+              state.profile.country_temp = '';
+            }
+          }}),
+          m("label"),
+          m("div.wide",buttons)
+        ]),
+        flag_list.map(function(val,i){
+          return m(CommonPages["button"],{class: "outline", text:val, img:"include/flags/" + val.toLowerCase() + ".png",onclick: function(){
+            statefn.remove("country_temp");
+            statefn.update("country",val);
+          }})
+        })
+      ]
+    }
+  },
   "main" : {
     view: function(vnode) {
       return [
         m(CommonPages['header']),
-        m(SpecialPages['nav'])
+        m("section.boxed.cards",
+          m(CommonPages['flags'])
+        )
       ];
     }
   }
@@ -920,9 +999,6 @@ var SettingsPages = {
         m("section.boxed", [
           m("h1",t("sp3",'settings.main.title')),
           m("hr"),
-          m("h2",t("sp3",'settings.state.title')),
-          m(SettingsPages['state']),
-          m("hr"),
           m("h2",t("sp3",'settings.server.title')),
           m(SettingsPages['server']),
           m("hr"),
@@ -932,6 +1008,10 @@ var SettingsPages = {
           m("h2",t("sp3",'settings.language.title')),
           m(SettingsPages['language'])
         ]),
+        m("section.boxed",
+          m("h2",t("sp3",'settings.state.title')),
+          m(SettingsPages['state']),
+        ),
         s('messages').length?m("section.boxed",m("h2",t("sp3",'settings.system.messages')),m(MessageParts['list'],{"location":["messages"]})):''
       ];
     }
@@ -991,13 +1071,13 @@ var SettingsPages = {
         buttons = [
           m(CommonPages["button"],{class: "warning", text:t("sp3",'settings.server.reset'), onclick: function(){serverfn.reset();serverfn.connect();}})
         ]
-      } else if (connection.salt){
+      } else if (connection.pass){
         server_class="success";
         buttons = [
           m(CommonPages["button"],{class: "outline disabled", text:t("sp3",'settings.server.connect'), onclick: function(){serverfn.connect();}}),
           m(CommonPages["button"],{class: "warning", text:t("sp3",'settings.server.disconnect'), onclick: function(){serverfn.reset();}})
         ]
-      } else if (connection.salting){
+      } else if (connection.requesting){
         server_class="warning";
         buttons = [];
       } else {
@@ -1019,9 +1099,8 @@ var SettingsPages = {
   },
   "country": {
     view: function(vnode) {
-      var country = s('country');
-      var country_temp = s('country_temp');
-      var connection = s('connection');
+      var country = state.profile.country;
+      var country_temp = state.profile.country_temp;
       var buttons = [];
       var country_class;
       var flag_list = [];
@@ -1033,7 +1112,8 @@ var SettingsPages = {
         }
         buttons = [
           m(CommonPages["button"],{class: "primary", text:t("sp3",'system.buttons.viewall'), onclick: function(){
-              state.country_temp = '';
+              state.profile.country_temp = '';
+              return false;
           }})
         ];
         if (country==country_temp) {
@@ -1056,12 +1136,12 @@ var SettingsPages = {
         buttons = [
           m(CommonPages["button"],{type:"submit",disabled:!valid, class: "success", text:t("sp3",'system.buttons.save'), onclick: function(){
             if (valid){
-              statefn.remove("country_temp");
-              statefn.update("country",country_temp);}}
+              statefn.remove("profile","country_temp");
+              statefn.update("profile","country",country_temp);}}
             }
           ),
           m(CommonPages["button"],{class: "warning", text:t("sp3",'system.buttons.cancel'), onclick: function(){
-            statefn.remove("country_temp");
+            statefn.remove("profile","country_temp");
           }})
         ];
         if (valid){
@@ -1072,9 +1152,9 @@ var SettingsPages = {
       }
       return [ 
         m("form", [
-          s('country')?m("img",{border:1,src:"include/flags/" + s('country').toLowerCase() + ".png"}):
+          state.profile.country?m("img",{border:1,src:"include/flags/" +state.profile.country.toLowerCase() + ".png"}):
             m("button.pseudo",{onclick: function(){
-              state.country_temp = '';
+              state.profile.country_temp = '';
             }},m("i.icon",m.trust(
               '<svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">' + icons['globe'] + '</svg>'
             )))
@@ -1084,9 +1164,9 @@ var SettingsPages = {
             var match = val.match(/[a-zA-Z]{1,2}/);
             val = match?match[0].toUpperCase():'';
             if (val){
-              state.country_temp = val;
+              state.profile.country_temp = val;
             } else {
-              state.country_temp = '';
+              state.profile.country_temp = '';
             }
           }}),
           m("label"),
@@ -1094,8 +1174,8 @@ var SettingsPages = {
         ]),
         flag_list.map(function(val,i){
           return m(CommonPages["button"],{class: "outline", text:val, img:"include/flags/" + val.toLowerCase() + ".png",onclick: function(){
-            statefn.remove("country_temp");
-            statefn.update("country",val);
+            statefn.remove("profile","country_temp");
+            statefn.update("profile","country",val);
           }})
         })
       ]
@@ -1155,7 +1235,7 @@ var SettingsPages = {
       }
       return [ 
         m("form", [
-          s('country')?world.country[s('country')].language.map( function (key,i){
+          state.profile.country?world.country[state.profile.country].language.map( function (key,i){
             if (world.language[key].sign){
               return [
                 m("label[for=language]",key),
@@ -1166,7 +1246,7 @@ var SettingsPages = {
             }
 
           }):'',
-          s('country')?world.country[s('country')].language.map( function (key,i){
+          state.profile.country?world.country[state.profile.country].language.map( function (key,i){
 
           }):'',
           s('language')?m("p",world.language[language].name):"",
@@ -1254,7 +1334,7 @@ var UserPages = {
           m("h2", t("sp3","user.login.title")),
           m("form", [
             m("label[for=username]",t("sp3",'user.profile.username')),
-            m("input#username[type=text]", {value: s('user')}),
+            m("input#username[type=text]"),
             m("label[for=password]",t("sp3",'user.profile.password')),
             m("input#password[type=password]"),
             m("label"),
@@ -1265,35 +1345,35 @@ var UserPages = {
                   m(CommonPages["button"],{class: "warning", text:t("sp3",'settings.server.reset'), onclick: function(){ serverfn.reset(s('server'));}})
                 ]
                 :[
-                  m(CommonPages["button"],{class: "primary", disabled: !s('user'), onclick: serverfn.login, text:t("sp3",'user.login.button')}),
-                  m(CommonPages["button"],{class: "warning", disabled: !s('user'), onclick: function(){routesfn.set("/user/reset");}, text:t("sp3",'user.reset.button')}),
-                  m(CommonPages["button"],{class: "outline", disabled: !s('user'), onclick: function(){routesfn.set("/user/register");}, text:t("sp3",'user.register.button')}),
+                  m(CommonPages["button"],{class: "primary", onclick: serverfn.login, text:t("sp3",'user.login.button')}),
+                  m(CommonPages["button"],{class: "warning", onclick: function(){routesfn.set("/user/reset");}, text:t("sp3",'user.reset.button')}),
+                  m(CommonPages["button"],{class: "outline", onclick: function(){routesfn.set("/user/register");}, text:t("sp3",'user.register.button')}),
                 ]
             ),
           ])
-        )
+        ),
+        s('messages').length?m("section.boxed",m("h2",t("sp3",'settings.system.messages')),m(MessageParts['list'],{"location":["messages"]})):''
       ];
     }
   },
   "register": {
     view: function(vnode) {
-      var server = s("servers",s('server'));
-      serverfn.salt(s('server'));
+      serverfn.connect();
       return [
         m(CommonPages['header']),
         m("section.boxed",
           m("h2", t("sp3","user.register.title")),
           m("form", [
-            m("label[for=server]",server['name']),
-            m("input#server" + i + "[type=text]", {"class":i!=s('server')?'info':(s('user')?'primary':(s('user')?"success":"warning")), "readonly":1,"value": server['url']}),
             m("label[for=username]",t("sp3",'user.profile.username')),
-            m("input#username[type=text]", {value: s('user')}),
+            m("input#username[type=text]"),
+            m("label[for=display]",t("sp3",'user.profile.display')),
+            m("input#display[type=text]"),
             m("label[for=email]",t("sp3",'user.profile.email')),
-            m("input#email[type=text]", {value: server['email']}),
+            m("input#email[type=text]"),
             m("label[for=password]",t("sp3",'user.profile.password')),
             m("input#password[type=password]"),
             m("label"),
-            m(CommonPages["button"],{class: "primary", disabled: !s('user'), onclick: registerServer, text:t("sp3",'user.register.button')})
+            m(CommonPages["button"],{class: "primary", onclick: serverfn.register, text:t("sp3",'user.register.button')})
           ])
         )
       ];
@@ -1301,9 +1381,8 @@ var UserPages = {
   },
   "reset": {
     view: function(vnode) {
-      var server = s("servers",s('server'));
-      serverfn.salt(s('server'));
-      return [
+      var server = s('server');
+      serverfn.connect();      return [
         m(CommonPages['header']),
         m("section.boxed",
           m("h2", t("sp3","user.reset.title")),
@@ -1313,7 +1392,28 @@ var UserPages = {
             m("label[for=email]",t("sp3",'user.profile.email')),
             m("input#email[type=text]"),
             m("label"),
-            m(CommonPages["button"],{class: "primary", disabled: !s('user'), onclick: resetPasswordServer, text:t("sp3",'user.reset.button')})
+            m(CommonPages["button"],{class: "primary", disabled: !s('user'), onclick: serverfn.resetPassword, text:t("sp3",'user.reset.button')})
+          ])
+        )
+      ];
+    }
+  },
+  "password": {
+    view: function(vnode) {
+      serverfn.connect();
+      return [
+        m(CommonPages['header']),
+        m("section.boxed",
+          m("h2", t("sp3","user.password.title")),
+          m("form", [
+            m("label[for=username]",t("sp3",'user.password.old')),
+            m("input#oldpassword[type=password]"),
+            m("label[for=display]",t("sp3",'user.password.new')),
+            m("input#newpassword[type=password]"),
+            m("label[for=password]",t("sp3",'user.password.confirm')),
+            m("input#confirmpassword[type=password]"),
+            m("label"),
+            m(CommonPages["button"],{class: "primary", onclick: serverfn.register, text:t("sp3",'user.password.update')})
           ])
         )
       ];
@@ -1321,18 +1421,119 @@ var UserPages = {
   },
   "profile": {
     view: function(vnode) {
-      return [
-        m(CommonPages['header']),
-        m("section.boxed",
-          m("h2", t("sp3","user.profile.title")),
-          m("form", [
-            m("label[for=username]",t("sp3",'user.profile.username')),
-            m("input#username[type=text]", {value: s('user')}),
-            m("label"),
-            m(CommonPages["button"],{class: "primary", onclick: function(){}, text:t("sp3",'user.profile.button')}),
-          ])
-        )
-      ];
+      var profile = s('profile');
+      if (profile.name){
+        return [
+          m(CommonPages['header']),
+          m("section.boxed",
+            m("h2", t("sp3","user.profile.title")),
+            m("form", [
+              m("label[for=username]",t("sp3",'user.profile.username')),
+              m("input#username[type=text]", {value: profile.name,disabled:true}),
+              m("label[for=display]",t("sp3",'user.profile.display')),
+              m("input#display[type=text]", {value: profile.display}),
+              m("label[for=email]",t("sp3",'user.profile.email')),
+              m("input#email[type=text]", {value: profile.email}),
+              m("label"),
+              m("hr"),
+              m(UserPages['country']),
+              m("hr"),
+              m("div.wide",
+              m(CommonPages["button"],{class: profile.dirty?"primary":"outline disabled", onclick: function(){}, text:t("sp3",'user.profile.button')}),
+              m(CommonPages["button"],{class: "primary", onclick: function(){routesfn.set("/user/password")}, text:t("sp3",'user.password.update')}),
+              m(CommonPages["button"],{class: "warning", onclick: serverfn.logout, text:t("sp3",'user.logout.button')})
+              )
+            ])
+          )
+        ];
+      } else {
+        routesfn.set("/user/login");
+      }
+    }
+  },
+  "country": {
+    view: function(vnode) {
+      var country = state.profile.country;
+      var country_temp = state.profile.country_temp;
+      var buttons = [];
+      var country_class;
+      var flag_list = [];
+      if (country_temp === undefined  || country==country_temp){
+        if (country){
+          country_class="success";
+        } else {
+          country_class="primary";
+        }
+        buttons = [
+          m(CommonPages["button"],{class: "primary", text:t("sp3",'system.buttons.viewall'), onclick: function(){
+              state.profile.country_temp = '';
+              return false;
+          }})
+        ];
+        if (country==country_temp) {
+          flag_list = Object.keys(world.country);
+        }
+      } else {
+        var valid = world.country[country_temp] || (country_temp=="");
+        if (world.country[country_temp]){
+          flag_list = [country_temp];
+        } else {
+          var len = country_temp.length;
+          if (len==1){
+            flag_list = Object.keys(world.country).filter(function(val,i){
+              return val[0] == country_temp;
+            })
+          } else {
+            flag_list = Object.keys(world.country);
+          }
+        }
+        buttons = [
+          m(CommonPages["button"],{type:"submit",disabled:!valid, class: "success", text:t("sp3",'system.buttons.save'), onclick: function(){
+            if (valid){
+              statefn.remove("profile","country_temp");
+              statefn.update("profile","country",country_temp);}}
+            }
+          ),
+          m(CommonPages["button"],{class: "warning", text:t("sp3",'system.buttons.cancel'), onclick: function(){
+            statefn.remove("profile","country_temp");
+          }})
+        ];
+        if (valid){
+          country_class="primary";
+        } else {
+          country_class="warning";
+        }
+      }
+      return [ 
+        m("form", [
+          m("label[for=country_temp]",t("sp3",'user.profile.country')),
+          m("input#country_temp[type=text]",{"class":country_class,"value":(country_temp===undefined)?country:country_temp,autocomplete:"off",oninput: function(e){
+            var val = e.target.value;
+            var match = val.match(/[a-zA-Z]{1,2}/);
+            val = match?match[0].toUpperCase():'';
+            if (val){
+              state.profile.country_temp = val;
+            } else {
+              state.profile.country_temp = '';
+            }
+          }}),
+          m("label"),
+          state.profile.country?m("img",{border:1,src:"include/flags/" + state.profile.country.toLowerCase() + ".png"}):
+            m("button.pseudo",{onclick: function(){
+              state.profile.country_temp = '';
+            }},m("i.icon",m.trust(
+              '<svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">' + icons['globe'] + '</svg>'
+            ))
+          ),
+          m("div.wide", buttons)
+        ]),
+        flag_list.map(function(val,i){
+          return m(CommonPages["button"],{class: "outline", text:val, img:"include/flags/" + val.toLowerCase() + ".png",onclick: function(){
+            statefn.remove("profile","country_temp");
+            statefn.update("profile","country",val);
+          }})
+        })
+      ]
     }
   }
 }
@@ -1375,6 +1576,7 @@ m.route(document.body, routes.default, {
   "/user/profile": UserPages['profile'],
   "/user/register": UserPages['register'],
   "/user/reset": UserPages['reset'],
+  "/user/password": UserPages['password'],
   "/country/:cc": CountryPages['country'],
   "/special": SpecialPages['main'],
   "/special/icons": SpecialPages['icons'],

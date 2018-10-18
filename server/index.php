@@ -441,27 +441,32 @@ $app->get('/user/who/', function () use ($app) {
   echo 'US' . "\n";
 });
 
-$app->options('/user/salt', function (){});
-$app->get('/user/salt', function () use ($app) {
+$app->options('/user/pass', function (){});
+$app->post('/user/pass', function () use ($app) {
   $timein = microtime(true);
   $app->contentType('text/plain');
-    echo userSalt();
+    echo userPass();
 });
 
 $app->options('/user/login', function (){});
-$app->post('/user/login', function () use ($app) {
+$app->put('/user/login', function () use ($app) {
   $timein = microtime(true);
   $app->contentType('application/json');
     $data = $app->request->getbody();
     $data = json_decode($data,true);
-    $results = userVerify($data['username'],$data['salt'],$data['salted']);
-    $return = array();
-    $return['meta']=array();
-    $return['results']=$results;
-    $return['meta']['method']='POST';
-    $return['meta']['location']='/user/login';
-    $return['meta']['searchTime'] = searchtime($timein);
-    echo json_pretty($return);
+    try {
+      $results = userVerify($data['username'],$data['pass'],$data['validated']);
+      $return = array();
+      $return['meta']=array();
+      $return['results']=$results;
+      $return['meta']['method']='POST';
+      $return['meta']['location']='/user/login';
+      $return['meta']['searchTime'] = searchtime($timein);
+      echo json_pretty($return);
+    } catch (Exception $e) {
+      //echo json_pretty($e);
+      haltValidation($e->getCode() . ' ' . $e->getMessage());
+    }
 });
 
 /**********/

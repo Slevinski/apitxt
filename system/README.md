@@ -35,9 +35,15 @@ git clone https://github.com/slevinski/apitxt .
 Software updates are also available through git.
 
 ```` shell
-# UPDATE
+# a basic update for an unmodified SignPuddle 3
 cd SignPuddle3  
 git pull
+
+# an update that keeps local changed
+cd SignPuddle3
+git stash
+git pull
+git stash pop
 ````
 
 ## Group Server Configure
@@ -89,4 +95,12 @@ In this example, SignPuddle 3 will be available with this URL.
 
 ## Group Client Configure
 
-By default, the client points to the main public server: [https://signpuddle.com/server](https://signpuddle.com/server).  This value is set in the **SignPuddle3/client/host.js** file.
+The client can be configured by editing the [config](../client/config) directory.
+
+* [config.js](../client/config/config.js) - main configuration with initial state
+* [world.js](../client/config/world.js) - information about countries and languages
+* [interface-sp3.js](../client/config/interface-sp3.js) - default user interface language
+* [dictionary.js](../client/config/dictionary.js) - default dictionary for writing
+* [alphabet.js](../client/config/alphabet.js) - default symbol set of the ISWA 2010
+* [keyboard.js](../client/config/keyboard.js) - default mappings for specific keyboard
+* [fingerspell.js](../client/config/fingerspell.js) - default mapping of letter to handshape(s)

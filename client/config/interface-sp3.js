@@ -1,5 +1,4 @@
-interfaces["default"] = interfaces["default"]?interfaces["default"]:{}
-interfaces["default"]["sp3"] = {
+state["interface"]["sp3"] = {
   "system.signpuddle3.title": {
     "message": "SignPuddle $1",
     "description": "Title of SignPuddle.",

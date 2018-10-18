@@ -486,12 +486,12 @@ The available countries where signs are available.
             US
 
 
-### Salt is used for request validations [/user/salt]
+### User pass [/user/pass]
 A string for accounting and validation
 
-#### String for accounting and validation [GET]
+#### String for accounting and validation [POST]
 
-+ Request user salt
++ Request user pass
 
      + Body
 
@@ -505,9 +505,9 @@ A string for accounting and validation
 
 
 ### User login [/user/login]
-Validation of user with salted password
+Validation of user with validated password
 
-#### Process log in to server [POST]
+#### Process log in to server [PUT]
 
 + Request verify user (application/json)
 
@@ -516,7 +516,7 @@ Validation of user with salted password
 
      + Body
 
-            {"username":"anonymous","salt":"af77...","salted":"2793f..."}
+            {"username":"anonymous","pass":"af77...","validated":"2793f..."}
 
 + Response 200 (application/json)
 

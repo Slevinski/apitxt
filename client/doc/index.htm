@@ -537,14 +537,14 @@ code[class*=language-],pre[class*=language-]{color:#f8f8f2;background:0 0;text-s
     <div class="title">
       <i class="dropdown icon"></i>
       
-        <strong>Salt is used for request validations</strong>
+        <strong>User pass</strong>
       
     </div>
     <div class="content">
       <div class="ui fluid secondary vertical menu">
       
-        <a class="item green" href="#user-salt-is-used-for-request-validations-string-for-accounting-and-validation">
-          <i class="ui green empty circular label"></i>
+        <a class="item blue" href="#user-user-pass-string-for-accounting-and-validation">
+          <i class="ui blue empty circular label"></i>
           
             <span>String for accounting and validation</span>
           
@@ -564,8 +564,8 @@ code[class*=language-],pre[class*=language-]{color:#f8f8f2;background:0 0;text-s
     <div class="content">
       <div class="ui fluid secondary vertical menu">
       
-        <a class="item blue" href="#user-user-login-process-log-in-to-server">
-          <i class="ui blue empty circular label"></i>
+        <a class="item teal" href="#user-user-login-process-log-in-to-server">
+          <i class="ui teal empty circular label"></i>
           
             <span>Process log in to server</span>
           
@@ -3751,7 +3751,7 @@ US
       <div class="ui stacked segments">
         <div class="ui basic segment resource">
           <div class="ui purple huge ribbon label">
-            Salt is used for request validations
+            User pass
           </div>
           <div class="ui header">
             <div class="ui sub header">
@@ -3770,22 +3770,22 @@ US
 </div>
 
           <div class="ui basic segment">
-            <h3 class="ui block aligned header" id="user-salt-is-used-for-request-validations-string-for-accounting-and-validation">
+            <h3 class="ui block aligned header" id="user-user-pass-string-for-accounting-and-validation">
               String for accounting and validation
             </h3>
             <div class="description"></div>
 
             
               <h4 class="ui horizontal divider">
-                REQUEST user salt
+                REQUEST user pass
               </h4>
               <div class="description"></div>
               <div class="fluid ui large labeled button">
-                <div class="ui green large button">
-                  <h3>GET</h3>
+                <div class="ui blue large button">
+                  <h3>POST</h3>
                 </div>
-                <a class="ui basic fluid green label">
-                  <code>https://signpuddle.com/server/user/salt</code>
+                <a class="ui basic fluid blue label">
+                  <code>https://signpuddle.com/server/user/pass</code>
                 </a>
               </div>
               
@@ -3866,7 +3866,7 @@ US
           </div>
           <div class="ui header">
             <div class="ui sub header">
-              <p>Validation of user with salted password</p>
+              <p>Validation of user with validated password</p>
 
             </div>
           </div>
@@ -3897,10 +3897,10 @@ US
 </ul>
 </div>
               <div class="fluid ui large labeled button">
-                <div class="ui blue large button">
-                  <h3>POST</h3>
+                <div class="ui teal large button">
+                  <h3>PUT</h3>
                 </div>
-                <a class="ui basic fluid blue label">
+                <a class="ui basic fluid teal label">
                   <code>https://signpuddle.com/server/user/login</code>
                 </a>
               </div>
@@ -3936,7 +3936,7 @@ US
                       </div>
                       <div class="ui bottom attached active tab segment" data-tab="body">
                         <pre style="white-space: inherit">
-                          <code class="language-json">{&#34;username&#34;:&#34;anonymous&#34;,&#34;salt&#34;:&#34;af77...&#34;,&#34;salted&#34;:&#34;2793f...&#34;}
+                          <code class="language-json">{&#34;username&#34;:&#34;anonymous&#34;,&#34;pass&#34;:&#34;af77...&#34;,&#34;validated&#34;:&#34;2793f...&#34;}
 </code>
                         </pre>
                       </div>

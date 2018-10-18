@@ -185,9 +185,15 @@ git clone https://github.com/slevinski/apitxt .
 
 <p>Software updates are also available through git.</p>
 
-<pre><code class="language-shell"># UPDATE
+<pre><code class="language-shell"># a basic update for an unmodified SignPuddle 3
 cd SignPuddle3  
 git pull
+
+# an update that keeps local changed
+cd SignPuddle3
+git stash
+git pull
+git stash pop
 </code></pre>
 
     </div>
@@ -260,7 +266,23 @@ Press Ctrl-C to quit.
   </div>
   <div class="ui header aligned">
     <div class="ui sub header">
-      <p>By default, the client points to the main public server: <a href="https://signpuddle.com/server">https://signpuddle.com/server</a>.  This value is set in the <strong>SignPuddle3/client/host.js</strong> file.</p>
+      <p>The client can be configured by editing the <a href="../client/config">config</a> directory.</p>
+
+<ul>
+<li><p><a href="../client/config/config.js">config.js</a> - main configuration with initial state</p></li>
+
+<li><p><a href="../client/config/world.js">world.js</a> - information about countries and languages</p></li>
+
+<li><p><a href="../client/config/interface-sp3.js">interface-sp3.js</a> - default user interface language</p></li>
+
+<li><p><a href="../client/config/dictionary.js">dictionary.js</a> - default dictionary for writing</p></li>
+
+<li><p><a href="../client/config/alphabet.js">alphabet.js</a> - default symbol set of the ISWA 2010</p></li>
+
+<li><p><a href="../client/config/keyboard.js">keyboard.js</a> - default mappings for specific keyboard</p></li>
+
+<li><p><a href="../client/config/fingerspell.js">fingerspell.js</a> - default mapping of letter to handshape(s)</p></li>
+</ul>
 
     </div>
   </div>

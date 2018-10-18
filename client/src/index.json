@@ -943,19 +943,19 @@
     "name": "Retrieve country list"
   }, 
   {
-    "route": "/user/salt", 
-    "name": "Salt is used for request validations", 
+    "route": "/user/pass", 
+    "name": "User pass", 
     "description": "A string for accounting and validation"
   }, 
   {
     "code": [
-      "  echo userSalt();"
+      "  echo userPass();"
     ], 
-    "method": "GET", 
+    "method": "POST", 
     "dialog": [
       {
         "request": {
-          "name": "user salt"
+          "name": "user pass"
         }, 
         "responses": [
           {
@@ -973,27 +973,32 @@
   {
     "route": "/user/login", 
     "name": "User login", 
-    "description": "Validation of user with salted password"
+    "description": "Validation of user with validated password"
   }, 
   {
     "code": [
       "  $data = $app->request->getbody();", 
       "  $data = json_decode($data,true);", 
-      "  $results = userVerify($data['username'],$data['salt'],$data['salted']);", 
-      "  $return = array();", 
-      "  $return['meta']=array();", 
-      "  $return['results']=$results;", 
-      "  $return['meta']['method']='POST';", 
-      "  $return['meta']['location']='/user/login';", 
-      "  $return['meta']['searchTime'] = searchtime($timein);", 
-      "  echo json_pretty($return);"
+      "  try {", 
+      "    $results = userVerify($data['username'],$data['pass'],$data['validated']);", 
+      "    $return = array();", 
+      "    $return['meta']=array();", 
+      "    $return['results']=$results;", 
+      "    $return['meta']['method']='POST';", 
+      "    $return['meta']['location']='/user/login';", 
+      "    $return['meta']['searchTime'] = searchtime($timein);", 
+      "    echo json_pretty($return);", 
+      "  } catch (Exception $e) {", 
+      "    //echo json_pretty($e);", 
+      "    haltValidation($e->getCode() . ' ' . $e->getMessage());", 
+      "  }"
     ], 
-    "method": "POST", 
+    "method": "PUT", 
     "dialog": [
       {
         "request": {
           "body": [
-            "{\"username\":\"anonymous\",\"salt\":\"af77...\",\"salted\":\"2793f...\"}"
+            "{\"username\":\"anonymous\",\"pass\":\"af77...\",\"validated\":\"2793f...\"}"
           ], 
           "lines": [
             "+ Even a list", 

@@ -1,6 +1,6 @@
 <?php
 
-$db_security = dirname(__FILE__) . '/../security.db';
+$db_security = dirname(__FILE__) . '/../data/security.db';
 if (file_exists($db_security)){
   $db0 = new PDO('sqlite:' . $db_security);
 } else {

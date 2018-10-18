@@ -19,28 +19,33 @@ group	user	SignPuddle 3 collections are organized by country and language codes
 				response	200	text/plain
 					body	BR
 					body	US
-	route	/user/salt	Salt is used for request validations	A string for accounting and validation
-		method	GET	String for accounting and validation
-			code	  echo userSalt();
-			request	user salt
+	route	/user/pass	User pass	A string for accounting and validation
+		method	POST	String for accounting and validation
+			code	  echo userPass();
+			request	user pass
 				response	200	text/plain
 					body	e3bedc9e9f83cb9dd7ae61250b9e6921
-	route	/user/login	User login	Validation of user with salted password
-		method	POST	Process log in to server
+	route	/user/login	User login	Validation of user with validated password
+		method	PUT	Process log in to server
 			code	  $data = $app->request->getbody();
 			code	  $data = json_decode($data,true);
-			code	  $results = userVerify($data['username'],$data['salt'],$data['salted']);
-			code	  $return = array();
-			code	  $return['meta']=array();
-			code	  $return['results']=$results;
-			code	  $return['meta']['method']='POST';
-			code	  $return['meta']['location']='/user/login';
-			code	  $return['meta']['searchTime'] = searchtime($timein);
-			code	  echo json_pretty($return);
+			code	  try {
+			code	    $results = userVerify($data['username'],$data['pass'],$data['validated']);
+			code	    $return = array();
+			code	    $return['meta']=array();
+			code	    $return['results']=$results;
+			code	    $return['meta']['method']='POST';
+			code	    $return['meta']['location']='/user/login';
+			code	    $return['meta']['searchTime'] = searchtime($timein);
+			code	    echo json_pretty($return);
+			code	  } catch (Exception $e) {
+			code	    //echo json_pretty($e);
+			code	    haltValidation($e->getCode() . ' ' . $e->getMessage());
+			code	  }
 			request	verify user	application/json
 				line	+ Even a list
 				line	+ name `Name` of the metaproperty, should be alphanumeric only. Uneditable.
-				body	{"username":"anonymous","salt":"af77...","salted":"2793f..."}
+				body	{"username":"anonymous","pass":"af77...","validated":"2793f..."}
 				response	200	application/json
 					line	response text here
 					body	{"user-profile":""}

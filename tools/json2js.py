@@ -73,7 +73,12 @@ for segment in data:
 						response['html'] = lines2html(response['lines'])
 
 print "var spVersion = \"3\";"
-print "host = host?host:\"" + root['host'] + "\";"
+print "var host = \"\";"
+print "try {"
+print "  host = config['state']['server'];"
+print "} catch (e){"
+print " host = \"" + root['host'] + "\""
+print "}"
 print "var spLogo = '<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 382.39499 393.798\"><g transform=\"translate(-153.728 -166.677)\">  <path fill=\"#000\" d=\"M348.22 266.68v259.504h-7V266.68\"/></g><g transform=\"translate(-153.728 -166.677)\">  <path fill=\"#000\" d=\"M348.22 166.677v32.32h-7v-32.32\"/></g><g transform=\"translate(-153.728 -166.677)\">  <linearGradient id=\"c\" gradientUnits=\"userSpaceOnUse\" x1=\"138.098\" y1=\"180.746\" x2=\"536.098\" y2=\"375.746\">  <stop offset=\"0\" stop-color=\"#ff0700\"/>  <stop offset=\"1\" stop-color=\"#b40000\"/>  </linearGradient>  <path d=\"M198.26 300.806c18.388 0 35.327 6.168 48.89 16.532 13.56-10.364 30.5-16.532 48.887-16.532s35.326 6.168 48.888 16.532c13.562-10.364 30.5-16.532 48.888-16.532 18.387 0 35.326 6.168 48.89 16.532 13.56-10.364 30.5-16.532 48.888-16.532 16.467 0 31.773 4.948 44.533 13.423-27.962-78.602-103-134.882-191.197-134.882-88.196 0-163.236 56.28-191.198 134.88 12.76-8.475 28.066-13.422 44.533-13.422z\" fill=\"url(#c)\"/></g></svg>';"
 print ""
 print "var data = " + json.dumps(root,indent=2)

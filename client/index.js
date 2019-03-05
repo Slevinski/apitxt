@@ -440,7 +440,7 @@ var InterfaceBack = {
       var server = s("connection","server");
       if (!server) return;
       var subkey = q1 + '.' + q2;
-      var route = server + "/interface/" + collection + "/entry/" + subkey + '.%';
+      var route = server + "/interface/" + collection + "/entry/" + subkey + '.%25';
       var method = "GET";
       var headers = {'Cache-Control': 'no-cache'};
       if (collection == InterfaceBack.name){

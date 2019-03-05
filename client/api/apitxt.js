@@ -1,7 +1,7 @@
 var spVersion = "3";
 var host = "";
 try {
-  host = config['state']['server'];
+  host = config['state']['connection']['server'];
 } catch (e){
  host = "https://signpuddle.com/server"
 }
@@ -1053,13 +1053,25 @@ var Group = {
           m.trust(route["html"]),
           route["methods"].map(function (method, iM){
             var id = method["name"].replace(/\s/g, '') + "_";
+            var headers = (((method["dialog"] || [])[0] || {})["request"] || {})["headers"] || [];
             return [
               m("form",
                 m("fieldset",[
                   m("h3",method["name"]),
                   m.trust(method["html"]),
                   m("input.large." + mclass[method["method"]], {"disabled": true, "value":route["route"]}),
+                  Object.keys(headers).map(function(key){
+                    if (key == "Location" || key == "Description" || key == "Content-type") return;
+                    return m("p",[
+                      m("label[for=" + id + key + "]", "HEADER " + key),
+                      m("input#" + id + key + "[type=text][name="+ key + "]",{
+                        "value":headers[key],
+                        onchange: function(e){data["groups"][iG]["routes"][iR]["methods"][iM]["dialog"][0]["request"]["headers"][key]=e.target.value;}
+                      })
+                    ]);
+                  }),
                   (route["parameters"] || []).map(function(param,iP){
+                    param["example"] = param["example"].replace(/`/g, "");
                     return m("p",[
                       m("label[for=" + id + param["name"] + "]",param["name"] + ": " + param["description"]+ " (" + param["type"] + ")"),
                       m("input#" + id + param["name"] + "[type=text][name="+ param["name"] + "]",{

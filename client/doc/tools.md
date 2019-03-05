@@ -31,7 +31,6 @@ Resources related to tools
             /tools/decode{?text}
             /tools/utf8{?text}
 
-
 ### Character definition tree [/tools/define]
 
 The definition tree for character mapping
@@ -50,7 +49,6 @@ The definition tree for character mapping
               "swu": {},
               "style": {}
             }
-
 
 ### Section definition [/tools/define/{section}]
 
@@ -76,7 +74,6 @@ A section of the definition tree
               "query": []
             }
 
-
 ### Part definition [/tools/define/{section}/{part}]
 
 A part of the section definition
@@ -98,7 +95,6 @@ A part of the section definition
               "[\\x{40000}-\\x{4F428}]"
             ]
 
-
 ### Parse text [/tools/parse{?text,utf}]
 
 A function to analyze text and parse it into individual components
@@ -115,7 +111,6 @@ A function to analyze text and parse it into individual components
      + Body
 
             parse results of text
-
 
 ### Encode text [/tools/encode{?text,slash}]
 
@@ -134,7 +129,6 @@ A function to encode SignWriting in Unicode (SWU) as UTF-16
 
             \uD836\uDC00
 
-
 ### Decode text [/tools/decode{?text}]
 
 A function to decode SignWriting in Unicode (SWU) from UTF-16
@@ -151,7 +145,6 @@ A function to decode SignWriting in Unicode (SWU) from UTF-16
 
             \x{1D800}
 
-
 ### UTF-8 encode text [/tools/utf8{?text}]
 
 + Parameters
@@ -165,7 +158,6 @@ A function to decode SignWriting in Unicode (SWU) from UTF-16
      + Body
 
             %F0%9D%A0%80
-
 
 ### Test with input [/tools/test{?text}]
 
@@ -182,5 +174,4 @@ A general purpose function for testing
      + Body
 
             test output
-
 

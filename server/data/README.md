@@ -6,7 +6,7 @@
 ## Group Collection
 
 SignPuddle 3 organizes six types of collections for SignWriting.
-Each collection is available as an SQLite database and as a plain text file.
+Each collection is available as an SQLite database, a plain text file, and a JSON data file.
 
 ```
 D
@@ -43,6 +43,8 @@ Collections have a standardized naming scheme.
             + ase-US-dictionary-public.db  
         + txt/
             + ase-US-dictionary-public.txt
+        + json/
+            + ase-US-dictionary-public.json
         + img/
             + md5 hash for image filename
         + archive/
@@ -58,6 +60,14 @@ Collections have a standardized naming scheme.
         + security/  
             + create_security.sh
             + security.sql
+            + collection.txt
+            + user.txt
+            + user_collections.txt
+            + security.db  
+        + tools/  
+            + create_security.sh
+            + security.sql
+            + collection.txt
             + user.txt
             + user_collections.txt
             + security.db  

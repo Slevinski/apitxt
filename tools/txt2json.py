@@ -155,7 +155,11 @@ for line in lines:
 			document.append(method)
 
 		try:
-			method = {"method":parts[1]}
+			if parts[1] in ["GET","PUT","POST","DELETE"]:
+				method = {"method":parts[1]}
+			else:
+				errors.append({"error":"Line " + str(num) + ": invalid method - " + parts[1],"line":line})
+				raise Exceptoin("default method")
 		except:
 			method = {"method":"GET"}
 

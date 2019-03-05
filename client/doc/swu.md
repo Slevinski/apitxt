@@ -32,7 +32,6 @@ Resources related to Formal SignWriting in ASCII (SWU)
 
             AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520
 
-
 ### SWU Text [/swu/all{?text,style}]
 
 + Parameters
@@ -54,7 +53,6 @@ Resources related to Formal SignWriting in ASCII (SWU)
 
             AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520
 
-
 ### SWU to FSW [/swu/fsw{?text}]
 
 + Parameters
@@ -74,7 +72,6 @@ Resources related to Formal SignWriting in ASCII (SWU)
      + Body
 
             AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520
-
 
 ### SVG image [/swu/svg/{text}]
 
@@ -103,7 +100,6 @@ Create a stand-alone SVG image using Formal SignWriting in ASCII (SWU)
               <svg x='503' y='520'><g transform="translate(0.196840829729,26.6999810561) scale(0.00975214136907,-0.00983390502079)"><path class="sym-line" fill="black" d="M345 2350 l-350 -350 325 -325 325 -325 -325 -325 -325 -325 353 -353 352 -352 0 303 0 302 350 0 350 0 0 100 0 100 -350 0 -350 0 0 550 0 550 350 0 350 0 0 100 0 100 -350 0 -350 0 -2 300 -3 300 -350 -350z M1600 1350 l0 -1350 100 0 100 0 0 1350 0 1350 -100 0 -100 0 0 -1350z"/></g></svg>
             </svg>
 
-
 ### SVG with font [/swu/svg/font/{text}]
 
 Create an SVG with font using Formal SignWriting in ASCII (SWU)
@@ -131,5 +127,4 @@ Create an SVG with font using Formal SignWriting in ASCII (SWU)
               <g transform="translate(510,500)"><text class="sym-fill" style="pointer-events:none;font-family:'SuttonSignWritingFill';font-size:30px;fill:white;">􋚥</text><text class="sym-line" style="pointer-events:none;font-family:'SuttonSignWritingLine';font-size:30px;fill:black;">󻚥</text></g>
               <g transform="translate(476,475)"><text class="sym-fill" style="pointer-events:none;font-family:'SuttonSignWritingFill';font-size:30px;fill:white;">􀀚</text><text class="sym-line" style="pointer-events:none;font-family:'SuttonSignWritingLine';font-size:30px;fill:black;">󰀚</text></g>
             </svg>
-
 

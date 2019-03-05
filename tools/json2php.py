@@ -41,7 +41,7 @@ print "* generated with tools/json2php.py from https://github.com/Slevinski/apit
 print "*/"
 print ""
 print "header('Access-Control-Allow-Origin: *');"
-print "header('Access-Control-Allow-Headers: Content-Type, ETag, If-None-Match');"
+print "header('Access-Control-Allow-Headers: Content-Type, If-Modified-Since');"
 print "header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');"
 print "header('X-Powered-By: SignPuddle 3');"
 print ""

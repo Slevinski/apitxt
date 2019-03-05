@@ -5,7 +5,7 @@
 */
 
 header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Headers: Content-Type, ETag, If-None-Match');
+header('Access-Control-Allow-Headers: Content-Type, If-Modified-Since');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 header('X-Powered-By: SignPuddle 3');
 
@@ -110,6 +110,547 @@ $app->get('/', function () use ($app) {
   echo '/user' . "\n";
   echo '/collection' . "\n";
   echo '/apitxt' . "\n";
+});
+
+/**********/
+// ## Group user
+// SignPuddle 3 collections are organized by country and language codes
+$app->options('/user/who', function (){});
+$app->get('/user/who', function () use ($app) {
+  $timein = microtime(true);
+  $app->contentType('text/plain');
+  echo 'BR' . "\n";
+  echo 'US' . "\n";
+});
+
+$app->options('/user/pass', function (){});
+$app->post('/user/pass', function () use ($app) {
+  $timein = microtime(true);
+  $app->contentType('text/plain');
+    echo json_pretty(userPass());
+});
+
+$app->options('/user/login', function (){});
+$app->put('/user/login', function () use ($app) {
+  $timein = microtime(true);
+  $app->contentType('application/json');
+    $data = $app->request->getbody();
+    $data = json_decode($data,true);
+    $results = userVerify($data['username'],$data['pass'],$data['validated']);
+    echo json_pretty($results);
+});
+
+$app->options('/user/:name', function (){});
+$app->put('/user/:name', function ($name) use ($app) {
+  $timein = microtime(true);
+  $headers = getHeaders();
+  $pass = isset($headers['Pass'])?$headers['Pass']:'';
+  $user = userVerified($pass);
+  if ($user!=$name) haltForbidden($user . " not " . $name);
+  $data = $app->request->getbody();
+  $data = json_decode($data,true);
+  userProfileUpdate($name,$data);
+  $app->response->setStatus(204);
+  return;
+});
+
+$app->options('/user/:name', function (){});
+$app->post('/user/:name', function ($name) use ($app) {
+  $timein = microtime(true);
+  $app->contentType('text/plain');
+  echo 'profile created and returned' . "\n";
+});
+
+$app->options('/user/:name/password', function (){});
+$app->post('/user/:name/password', function ($name) use ($app) {
+  $timein = microtime(true);
+  $headers = getHeaders();
+  $pass = isset($headers['Pass'])?$headers['Pass']:'';
+  $user = userVerified($pass,true);
+  if (!$user) haltForbidden();
+  $data = $app->request->getbody();
+  $data = json_decode($data,true);
+  $old = isset($data['old'])?$data['old']:'';
+  $new = isset($data['new'])?$data['new']:'';
+  if ($old && $new){
+    userPasswordUpdate($name,$old,$new);
+    $app->response->setStatus(204);
+    return;
+  } else {
+    haltBadRequest();
+  }
+});
+
+$app->options('/user/:name/password', function (){});
+$app->put('/user/:name/password', function ($name) use ($app) {
+  $timein = microtime(true);
+  $headers = getHeaders();
+  $pass = isset($headers['Pass'])?$headers['Pass']:'';
+  $user = userVerified($pass,true);
+  if (!$user) haltForbidden();
+  $data = $app->request->getbody();
+  $data = json_decode($data,true);
+  $user = isset($data['user'])?$data['user']:'';
+  if ($user){
+    userPasswordReset($user);
+    $app->response->setStatus(204);
+    return;
+  } else {
+    haltBadRequest();
+  }
+});
+
+$app->options('/user/email', function (){});
+$app->get('/user/email', function () use ($app) {
+  $timein = microtime(true);
+  $app->contentType('text/plain');
+  $headers = getHeaders();
+  $pass = isset($headers['Pass'])?$headers['Pass']:'';
+  rightscheck("",$pass,SP_ADMIN);
+  $users = userEmailRequests();
+  echo json_pretty($users);
+  return;
+});
+
+$app->options('/user/email/:email', function (){});
+$app->put('/user/email/:email', function ($email) use ($app) {
+  $timein = microtime(true);
+  $headers = getHeaders();
+  $pass = isset($headers['Pass'])?$headers['Pass']:'';
+  $user = userVerified($pass,true);
+  if (!$user) haltForbidden();
+  userNameLookup($email);
+  $app->response->setStatus(204);
+  return;
+});
+
+/**********/
+// ## Group userfiles
+$app->get('/user', function () use ($app) {
+  $app->redirect('user/');
+});
+$app->options('/user/', function (){});
+$app->get('/user/', function () use ($app) {
+  $timein = microtime(true);
+  $app->contentType('text/plain');
+  getFile('api/user.html');
+});
+
+/**********/
+// ## Group collection
+// Resources related to collections in general
+$app->options('/collection', function (){});
+$app->get('/collection', function () use ($app) {
+  $name = $app->request()->get('name');
+  $timein = microtime(true);
+  $app->contentType('text/plain');
+  $collections = collectionListing($name);
+  if (count($collections)){
+    echo json_pretty($collections);
+  } else {
+    $app->response->setStatus(204);
+  }
+  return;
+});
+
+$app->options('/collection/:name', function (){});
+$app->delete('/collection/:name', function ($name) use ($app) {
+  $timein = microtime(true);
+  $err = invalidName($name);
+  if ($err){
+    haltBadRequest($err);
+  }
+  $headers = getHeaders();
+  $pass = isset($headers['Pass'])?$headers['Pass']:'';
+  collectionDelete($name,$pass);
+  collectionSecurityDelete($name,$pass);
+  collectionManageDelete($name,$pass);
+  $app->response->setStatus(204);
+});
+
+$app->options('/collection/security', function (){});
+$app->get('/collection/security', function () use ($app) {
+  $timein = microtime(true);
+  $app->contentType('text/plain');
+  $headers = getHeaders();
+  $check = isset($headers['If-Modified-Since'])?$headers['If-Modified-Since']:'';
+  $lastModified = lastModifiedCollection();
+  if ($lastModified <= $check){
+    haltNotModified();
+  }
+  $app->response->headers->set('Last-Modified', $lastModified);
+  echo json_pretty(collectionsSecurity());
+});
+
+$app->options('/collection/:name/security', function (){});
+$app->get('/collection/:name/security', function ($name) use ($app) {
+  $timein = microtime(true);
+  $app->contentType('text/plain');
+  $err = invalidName($name);
+  if ($err){
+    haltBadRequest($err);
+  }
+  echo json_pretty(collectionSecurity($name));
+});
+
+$app->options('/collection/:name/security', function (){});
+$app->put('/collection/:name/security', function ($name) use ($app) {
+  $timein = microtime(true);
+  $err = invalidName($name);
+  if ($err){
+    haltBadRequest($err);
+  }
+  $headers = getHeaders();
+  $pass = isset($headers['Pass'])?$headers['Pass']:'';
+  $data = $app->request->getbody();
+  $data = json_decode($data,true);
+  collectionSecurityUpdate($name,$data,$pass);
+  $app->response->setStatus(204);
+  return;
+});
+
+$app->options('/collection/:name/security', function (){});
+$app->delete('/collection/:name/security', function ($name) use ($app) {
+  $timein = microtime(true);
+  $err = invalidName($name);
+  if ($err){
+    haltBadRequest($err);
+  }
+  $headers = getHeaders();
+  $pass = isset($headers['Pass'])?$headers['Pass']:'';
+  collectionSecurityDelete($name,$pass);
+  $app->response->setStatus(204);
+});
+
+$app->options('/collection/:name/users', function (){});
+$app->get('/collection/:name/users', function ($name) use ($app) {
+  $timein = microtime(true);
+  $app->contentType('text/plain');
+  $err = invalidName($name);
+  if ($err){
+    haltBadRequest($err);
+  }
+  echo json_pretty(collectionUsers($name));
+});
+
+$app->options('/collection/manage/unknown', function (){});
+$app->get('/collection/manage/unknown', function () use ($app) {
+  $timein = microtime(true);
+  $app->contentType('text/plain');
+  echo json_pretty(collectionManageUnknown());
+});
+
+$app->options('/collection/:name/manage', function (){});
+$app->get('/collection/:name/manage', function ($name) use ($app) {
+  $timein = microtime(true);
+  $app->contentType('text/plain');
+  $err = invalidName($name);
+  if ($err){
+    haltBadRequest($err);
+  }
+  $headers = getHeaders();
+  $pass = isset($headers['Pass'])?$headers['Pass']:'';
+  echo json_pretty(collectionUsersDetail($name,$pass));
+});
+
+$app->options('/collection/:name/manage', function (){});
+$app->put('/collection/:name/manage', function ($name) use ($app) {
+  $timein = microtime(true);
+  $err = invalidName($name);
+  if ($err){
+    haltBadRequest($err);
+  }
+  $headers = getHeaders();
+  $pass = isset($headers['Pass'])?$headers['Pass']:'';
+  $data = $app->request->getbody();
+  $data = json_decode($data,true);
+  collectionManageUpdate($name,$data,$pass);
+  $app->response->setStatus(204);
+  return;
+});
+
+$app->options('/collection/:name/manage', function (){});
+$app->delete('/collection/:name/manage', function ($name) use ($app) {
+  $timein = microtime(true);
+  $err = invalidName($name);
+  if ($err){
+    haltBadRequest($err);
+  }
+  $headers = getHeaders();
+  $pass = isset($headers['Pass'])?$headers['Pass']:'';
+  collectionManageDelete($name,$pass);
+  $app->response->setStatus(204);
+});
+
+$app->options('/collection/:name/manage/:user', function (){});
+$app->delete('/collection/:name/manage/:user', function ($name,$user) use ($app) {
+  $timein = microtime(true);
+  $err = invalidName($name);
+  if ($err){
+    haltBadRequest($err);
+  }
+  $headers = getHeaders();
+  $pass = isset($headers['Pass'])?$headers['Pass']:'';
+  collectionManageRemove($name,$user,$pass);
+  $app->response->setStatus(204);
+});
+
+$app->options('/collection/:name/request/:source', function (){});
+$app->post('/collection/:name/request/:source', function ($name,$source) use ($app) {
+  $timein = microtime(true);
+  $headers = getHeaders();
+  $pass = isset($headers['Pass'])?$headers['Pass']:'';
+  $user = userVerified($pass);
+  if (!$user) haltForbidden();
+  rightscheck($source,$pass,SP_VIEW);
+  $err = invalidName($source);
+  if ($err){
+    haltBadRequest($err);
+  }
+  $parts = explode("-",$source);
+  $err = invalidName($name,$parts[2]);
+  if ($err){
+    haltBadRequest($err);
+  }
+  $dir = 'data/db/';
+  $infile = $dir . $source . ".db";
+  $outfile = $dir . $name . ".db";
+  if (!file_exists($infile)) haltBadRequest('Source collection does not exist: ' . $source);
+  if (file_exists($outfile)) haltBadRequest('Collection already exists: ' . $name);
+  if (copy($infile,$outfile)){
+    $data = array();
+    $data["user"] = $user;
+    $data["security"] = SP_EDIT;
+    collectionManageUpdate($name,$data,$pass,true);
+  
+    $data = $app->request->getbody();
+    $data = json_decode($data,true);
+    $title = isset($data['title'])?$data['title']:'New Collection';
+    $data = array();
+    $data["title"] = $title;
+    $data["user"] = "admin";
+    $data["view_pass"] = 0;
+    $data["add_pass"] = 1;
+    $data["edit_pass"] = 1;
+    $data["register_level"] = 0;
+    $data["upload_level"] = 4;
+    collectionSecurityUpdate($name,$data,$pass,true);
+    $app->response->setStatus(204);
+    return;
+  } else {
+    haltForbidden();
+  }
+});
+
+/**********/
+// ## Group collectionfiles
+$app->get('/collection', function () use ($app) {
+  $app->redirect('collection/');
+});
+$app->options('/collection/', function (){});
+$app->get('/collection/', function () use ($app) {
+  $timein = microtime(true);
+  $app->contentType('text/plain');
+  getFile('api/collection.html');
+});
+
+/**********/
+// ## Group interface
+// Resources related to interface collections
+$app->options('/interface', function (){});
+$app->get('/interface', function () use ($app) {
+  $name = $app->request()->get('name');
+  $timein = microtime(true);
+  $app->contentType('text/plain');
+  $dir = 'data/db/';
+  $ext = '.db';
+  $out = [];
+  if ($name){
+    if (strpos($name,"interface")!==false){
+      $interfaces = $dir . '*' . $name . '*' . $ext;
+      $files = glob($interfaces);
+    } else {
+      $interfaces = $dir . '*interface*' . $name . '*' . $ext;
+      $files = glob($interfaces);
+      if (count($files)==0) {
+        $interfaces = $dir . '*' . $name . '*interface*' . $ext;
+        $files = glob($interfaces);
+      }
+    }
+  } else {
+    $interfaces = $dir . '*interface*' . $ext;
+    $files = glob($interfaces);
+  }
+  foreach ($files as $filename) {
+    $out[] = str_replace($ext,'',str_replace($dir,'',$filename));
+  }
+  if (count($out)){
+    echo json_pretty($out);
+  } else {
+    $app->response->setStatus(204);
+  }
+  return;
+});
+
+$app->options('/interface/:name', function (){});
+$app->get('/interface/:name', function ($name) use ($app) {
+  $update = $app->request()->get('update');
+  $timein = microtime(true);
+  $app->contentType('text/plain');
+  $headers = getHeaders();
+  $pass = isset($headers['Pass'])?$headers['Pass']:'';
+  rightscheck($name,$pass,SP_VIEW);
+  $check = isset($headers['If-Modified-Since'])?$headers['If-Modified-Since']:'';
+  if (strpos($name,'.')){
+    $parts = explode('.',$name);
+    $name = $parts[0];
+    $format = $parts[1];
+    if (!in_array($format,['db','txt','json'])){
+      haltNotFound();
+    }
+  } else {
+    $format = 'json';
+  }
+  $dir = 'data/' . $format . '/';
+  $ext = '.' . $format;
+  $file = $dir . $name . $ext;
+  $err = invalidName($name);
+  if ($err){
+    haltBadRequest($err);
+  }
+  $lastModified = lastModified($name);
+  if ($lastModified <= $check  && !$update){
+    haltNotModified();
+  }
+  if ($format=='json' && (!file_exists($file) || $update)) {
+    $json = interface2json($name);
+    file_put_contents($file,$json);
+  } else if ($format=='txt' && (!file_exists($file) || $update)) {
+    $txt = interface2txt($name);
+    file_put_contents($file,$txt);
+  }
+  if(file_exists($file)) {
+    $app->response->headers->set('Last-Modified', $lastModified);
+    getFile($file);
+  } else {
+    haltNotFound();
+  }
+});
+
+$app->options('/interface/:name/key', function (){});
+$app->get('/interface/:name/key', function ($name) use ($app) {
+  $timein = microtime(true);
+  $app->contentType('text/plain');
+  $headers = getHeaders();
+  $pass = isset($headers['Pass'])?$headers['Pass']:'';
+  $check = isset($headers['If-Modified-Since'])?$headers['If-Modified-Since']:'';
+  $err = invalidName($name);
+  if ($err){
+    haltBadRequest($err);
+  }
+  $lastModified = lastModified($name);
+  if ($lastModified <= $check){
+    haltNotModified();
+  }
+  $app->response->headers->set('Last-Modified', $lastModified);
+  echo json_pretty(interfaceKeys($name,$pass));
+});
+
+$app->options('/interface/:name/search/:text', function (){});
+$app->get('/interface/:name/search/:text', function ($name,$text) use ($app) {
+  $timein = microtime(true);
+  $app->contentType('text/plain');
+  $headers = getHeaders();
+  $pass = isset($headers['Pass'])?$headers['Pass']:'';
+  $err = invalidName($name);
+  if ($err){
+    haltBadRequest($err);
+  }
+  echo json_pretty(interfaceSearch($name,$text,$pass));
+});
+
+$app->options('/interface/:name/entry', function (){});
+$app->post('/interface/:name/entry', function ($name) use ($app) {
+  $timein = microtime(true);
+  $app->contentType('text/plain');
+  $headers = getHeaders();
+  $pass = isset($headers['Pass'])?$headers['Pass']:'';
+  if (!$pass){
+    haltForbidden();
+  }
+  $err = invalidName($name);
+  if ($err){
+    haltBadRequest($err);
+  }
+  $data = $app->request->getbody();
+  $data = json_decode($data,true);
+  interfaceKeyNew($name,$data,$pass);
+  $app->response->setStatus(201);
+  return;
+});
+
+$app->options('/interface/:name/entry/:key', function (){});
+$app->get('/interface/:name/entry/:key', function ($name,$key) use ($app) {
+  $timein = microtime(true);
+  $app->contentType('text/plain');
+  $headers = getHeaders();
+  $pass = isset($headers['Pass'])?$headers['Pass']:'';
+  $check = isset($headers['If-Modified-Since'])?$headers['If-Modified-Since']:'';
+  $err = invalidName($name);
+  if ($err){
+    haltBadRequest($err);
+  }
+  $entries = interfaceKeyEntry($name,$key,$pass);
+  if (!$entries){
+    haltNoContent();
+  }
+  $lastModified = max(array_map(function($o) {return $o->updated_at;},$entries));
+  if ($lastModified <= $check){
+    haltNotModified();
+  }
+  $app->response->headers->set('Last-Modified', $lastModified);
+  echo json_pretty($entries);
+});
+
+$app->options('/interface/:name/entry/:key', function (){});
+$app->put('/interface/:name/entry/:key', function ($name,$key) use ($app) {
+  $timein = microtime(true);
+  $err = invalidName($name);
+  if ($err){
+    haltBadRequest($err);
+  }
+  $headers = getHeaders();
+  $pass = isset($headers['Pass'])?$headers['Pass']:'';
+  $data = $app->request->getbody();
+  $data = json_decode($data,true);
+  interfaceKeyUpdate($name,$key,$data,$pass);
+  $app->response->setStatus(204);
+  return;
+});
+
+$app->options('/interface/:name/entry/:key', function (){});
+$app->delete('/interface/:name/entry/:key', function ($name,$key) use ($app) {
+  $timein = microtime(true);
+  $err = invalidName($name);
+  if ($err){
+    haltBadRequest($err);
+  }
+  $headers = getHeaders();
+  $pass = isset($headers['Pass'])?$headers['Pass']:'';
+  interfaceKeyDelete($name,$key,$pass);
+  $app->response->setStatus(204);
+});
+
+/**********/
+// ## Group interfacefiles
+$app->get('/interface', function () use ($app) {
+  $app->redirect('interface/');
+});
+$app->options('/interface/', function (){});
+$app->get('/interface/', function () use ($app) {
+  $timein = microtime(true);
+  $app->contentType('text/plain');
+  getFile('api/interface.html');
 });
 
 /**********/
@@ -425,175 +966,6 @@ $app->get('/swu/', function () use ($app) {
   $timein = microtime(true);
   $app->contentType('text/plain');
   getFile('api/swu.html');
-});
-
-/**********/
-// ## Group user
-// SignPuddle 3 collections are organized by country and language codes
-$app->get('/user/who', function () use ($app) {
-  $app->redirect('user/who/');
-});
-$app->options('/user/who/', function (){});
-$app->get('/user/who/', function () use ($app) {
-  $timein = microtime(true);
-  $app->contentType('text/plain');
-  echo 'BR' . "\n";
-  echo 'US' . "\n";
-});
-
-$app->options('/user/pass', function (){});
-$app->post('/user/pass', function () use ($app) {
-  $timein = microtime(true);
-  $app->contentType('text/plain');
-    echo userPass();
-});
-
-$app->options('/user/login', function (){});
-$app->put('/user/login', function () use ($app) {
-  $timein = microtime(true);
-  $app->contentType('application/json');
-    $data = $app->request->getbody();
-    $data = json_decode($data,true);
-    try {
-      $results = userVerify($data['username'],$data['pass'],$data['validated']);
-      $return = array();
-      $return['meta']=array();
-      $return['results']=$results;
-      $return['meta']['method']='POST';
-      $return['meta']['location']='/user/login';
-      $return['meta']['searchTime'] = searchtime($timein);
-      echo json_pretty($return);
-    } catch (Exception $e) {
-      //echo json_pretty($e);
-      haltValidation($e->getCode() . ' ' . $e->getMessage());
-    }
-});
-
-/**********/
-// ## Group userfiles
-$app->get('/user', function () use ($app) {
-  $app->redirect('user/');
-});
-$app->options('/user/', function (){});
-$app->get('/user/', function () use ($app) {
-  $timein = microtime(true);
-  $app->contentType('text/plain');
-  getFile('api/user.html');
-});
-
-/**********/
-// ## Group collection
-// Resources related to making collections
-$app->options('/collection', function (){});
-$app->get('/collection', function () use ($app) {
-  $timein = microtime(true);
-  $app->contentType('text/plain');
-    echo "en\nase";
-});
-
-$app->options('/collection/:name', function (){});
-$app->get('/collection/:name', function ($name) use ($app) {
-  $timein = microtime(true);
-  $app->contentType('text/plain');
-  $check = $app->request->headers->get('If-None-Match');
-  $dir = 'data/txt/';
-  $ext = '.txt';
-  $file = $dir . $name . $ext;
-  $err = invalidName($name);
-  if ($err){
-    haltBadRequest($err);
-  }
-  if(file_exists($file)) {
-    $md5 = md5_file($file);
-    $app->response->headers->set('ETag', $md5);
-    if ($md5 == $check){
-      haltNotModified();
-    }
-    getFile($file);
-  } else {
-    $out = [];
-    foreach (glob($file) as $filename) {
-      $out[] = str_replace($ext,'',str_replace($dir,'',$filename));
-    }
-    if (count($out)){
-      haltMultipleChoices(implode($out,"\n"));
-    } else {
-      haltNoContent();
-    }
-  }
-});
-
-$app->options('/collection/:name/md5', function (){});
-$app->get('/collection/:name/md5', function ($name) use ($app) {
-  $timein = microtime(true);
-  $app->contentType('text/plain');
-  $dir = 'data/txt/';
-  $ext = '.txt';
-  $file = $dir . $name . $ext;
-  if (strpos($name,"*")!==false) {
-    $err = invalidNameWild($name);
-    if($err){
-      haltBadRequest($err);
-    }
-    $out = [];
-    foreach (glob($file) as $filename) {
-      $out[] = str_replace($ext,'',str_replace($dir,'',$filename));
-    }
-    if (count($out)){
-      if (count($out)==1) {
-        $app->request->headers->set('Location','/location/' . $out[0] . '/md5');
-        haltSeeOther($out[0]);
-      } else {
-        haltMultipleChoices(implode($out,"\n"));
-      }
-    } else {
-      haltBadRequest("No choices available");
-    }
-  } else {
-    $err = invalidName($name);
-    if ($err){
-      haltBadRequest($err);
-    }
-    if(file_exists($file)) {
-      $md5 = md5_file($file);
-      echo $md5;
-    } else {
-      halting(202, md5($name));
-    }
-  }
-});
-
-$app->options('/collection/:name/md5', function (){});
-$app->post('/collection/:name/md5', function ($name) use ($app) {
-  $timein = microtime(true);
-  $app->contentType('text/plain');
-  echo '9785a5c3ffd166bc95e6dd5308894691' . "\n";
-});
-
-$app->options('/collection/:name/md5', function (){});
-$app->put('/collection/:name/md5', function ($name) use ($app) {
-  $timein = microtime(true);
-  $app->contentType('text/plain');
-  echo '9785a5c3ffd166bc95e6dd5308894691' . "\n";
-});
-
-$app->options('/collection/:name/md5', function (){});
-$app->delete('/collection/:name/md5', function ($name) use ($app) {
-  $timein = microtime(true);
-  $app->contentType('text/plain');
-  echo '9785a5c3ffd166bc95e6dd5308894691' . "\n";
-});
-
-/**********/
-// ## Group collectionfiles
-$app->get('/collection', function () use ($app) {
-  $app->redirect('collection/');
-});
-$app->options('/collection/', function (){});
-$app->get('/collection/', function () use ($app) {
-  $timein = microtime(true);
-  $app->contentType('text/plain');
-  getFile('api/collection.html');
 });
 
 /**********/

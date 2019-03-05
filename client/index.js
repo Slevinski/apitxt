@@ -7,7 +7,26 @@ function loadJS(url, callback){
   scriptTag.onload = callback;
   scriptTag.onreadystatechange = callback;
   document.body.appendChild(scriptTag);
-};
+}
+
+function loadJSON(file, headers, success, failure) {
+  var xhr = new XMLHttpRequest();
+      xhr.overrideMimeType("application/json");
+  xhr.open('GET', file, true);
+  Object.keys(headers).map(function(key){
+    xhr.setRequestHeader(key,headers[key]);
+  });
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState == 4) {
+      if (xhr.status == "200") {
+        success(xhr);
+      } else {
+        failure?failure(xhr):(xhr.status==304?console.log("Not Modified"):console.log(xhr));
+      }
+    }
+  };
+  xhr.send(null);  
+}
 
 function downloadlink(href,download){
   var link = document.getElementById('downloadlink');
@@ -16,6 +35,15 @@ function downloadlink(href,download){
   link.click();
 }
 
+function scrollIntoView(id){
+  var timer = setInterval(function(){
+    var elem = document.getElementById(id);
+    if (elem){
+      elem.scrollIntoView();
+      clearTimeout(timer);
+    }
+  }, 100);
+}
 var iconset = {};
 function iconsused (){
   return Object.keys(iconset);
@@ -25,8 +53,7 @@ var state = {};
 
 var statefn = {
   "initial": function (){
-    state = config.state;
-    loadJS("config/interface-sp3.js",m.redraw)
+    state = Object.assign({},config.state);
     //state also has pass, username, profile, editing, and deleting attributes
   },
   "save": function(){
@@ -93,7 +120,7 @@ var statefn = {
     statefn.change();
     return true;
   },
-  "update": function(){
+  "silent": function(){
     try {
       var prop = arguments[arguments.length-2];
       var item = arguments[arguments.length-1];
@@ -116,21 +143,18 @@ var statefn = {
       console.log(err);
       return false;
     }
-    statefn.change();
     return true;
   },
-  "updateMany": function (params){
-    for (param in params){
-      if (state.hasOwnProperty(param)){
-        if (state[param] == params[param]) {
-          console.log("<==== SAME ====>");
-          console.log(param,params[param])
-        } else {
-          state[param] = params[param];
-          statefn.change();
-        }
-      }
+  "update": function(){
+    var eval = statefn.silent.apply(null,arguments);
+    statefn.change();
+    return eval;
+  },
+  "updateMany": function (updates){
+    for ( var i = 0; i < updates.length; i++ ){
+      statefn.silent.apply(null,updates[i]);
     }
+    statefn.change();
   },
   "remove": function(){
     try {
@@ -156,15 +180,6 @@ var statefn = {
     }
     statefn.change();
     return true;
-
-  },
-  "message": function(msg){
-    var list = s('messages');
-    list.unshift(msg);
-    if (list.length>10){
-      list.pop();
-    }
-    statefn.update("messages",list);
   },
   "getItem": function(name){
     var collection = collectionfn.parseName(name);
@@ -179,10 +194,17 @@ var statefn = {
 s = statefn.get;
 statefn.restore();
 
-
-var interfacefn = {
-  "text": function(subname,key){
-    var messages = s('interface')[subname];
+var InterfaceFront = {
+  "init": function(){
+    loadJSON ("config/interface-sp3.json",{},function(xhr){
+      InterfaceFront.ui = JSON.parse(xhr.responseText);
+      m.redraw();
+    })
+  },
+  "ui": {"name":"","data":{}},
+  "text": function(key){
+    if (InterfaceFront.ui.name == "qqq") return key;
+    var messages = InterfaceFront.ui.data;
     if (!messages){
       return "";
     }
@@ -191,171 +213,483 @@ var interfacefn = {
       msg = messages[key].message;
     } catch(err) {
       msg = key;
-      if (arguments.length>2){
-        for (var i = 1; i <= arguments.length; i++) {
+      if (arguments.length>1){
+        for (var i = 1; i < arguments.length; i++) {
           msg += " $" + i;
         }
       }
     }
-    if (arguments.length>2) {
+    if (arguments.length>1) {
       for (var i = 1; i <= arguments.length; i++) {
-        msg = msg.replace("$" + (i),arguments[i+1]);
+        msg = msg.replace("$" + (i),arguments[i]);
       }
     }
     return msg;
   },
-  "q1s": {},
-  "q1set": function() {
-    var q1s = interfacefn['q1s'];
-    for (key in interfaces){
-      var parts = key.split('.');
-      q1s[parts[0]] = q1s[parts[0]] || {};
-      q1s[parts[0]][parts[1]] = q1s[parts[0]][parts[1]] || []; 
-      q1s[parts[0]][parts[1]].push(parts[2]);
+  "icon": function(key){
+    var messages = InterfaceFront.ui.data;
+    if (!messages){
+      return {};
+    }
+    try {
+      return messages[key].icon;
+    } catch(err){
+      return "";
     }
   },
-  "load": function(collection) {
-    var lines = localStorage.getItem(collection);
+  "country": function(cc){
+    var key = "world.country." + cc.toLowerCase();
+    var name = t(key);
+    if (key==name){
+      return world.country[cc].name || cc;
+    } else {
+      return name;
+    }
+  },
+  "language": function(lang){
+    var key = "world.language." + lang;
+    var name = t(key);
+    if (key==name){
+      return world.language[lang].name || lang;
+    } else {
+      return name;
+    }
+  },
+  "collection": function(collection){
+    return CollectionBack.security[collection]?CollectionBack.security[collection].title:collection;
+  },
+  "updated_last": function(){
+    var data = InterfaceFront.ui.data;
+    return Object.keys(data).map(function(key){return data[key].updated_at}).reduce(function(a,b){return a>b?a:b;});
+  },
+  "update": function(collection,force){
+    if (collection == "qqq"){
+      InterfaceFront.ui = {"name":"qqq",data:{}};
+      m.redraw();
+      return;
+    } 
+    var server = s("connection","server");
+    var current = InterfaceFront.ui.name;
+    collection = collection?collection:current;
+    var route = server + "/interface/" + collection + '.json';
+    if (force){
+      route = route + "?update=1";
+    }
+    var headers = {};
+    if (!force && collection == current){
+      headers["If-Modified-Since"] = InterfaceFront.updated_last();
+    }
+    loadJSON (route, headers, function(xhr){
+      InterfaceFront.ui = JSON.parse(xhr.responseText);
+      statefn.update("profile","interface",collection);
+      if (!force && serverfn.parseHeaders(xhr)['Last-Modified'] > InterfaceFront.updated_last()){
+        InterfaceFront.update(collection,1);
+      } else {
+        m.redraw();
+      }
+    });
   }
 };
-var InterfacePages = {
-  "nav": {
-    view: function(vnode) {
-      var q1 = vnode.attrs['q1'] || "";
-      var q2 = vnode.attrs['q2'] || "";
-      var post = q1?("/"+q1 + (q2?"/"+q2:'')):'';
-      return m("nav",
-        s("interfaces").concat([{"name":"defaults"}]).map(function(section,i){
-          if(localStorage.getItem(section.name + "-md5")){
-            return m(CommonPages["button"],{class: vnode.attrs['name']==section.name?'primary':'outline',text:section.name, onclick: function(){
-              routesfn.set("/settings/interface/" + section.name + post)}
-            });
+InterfaceFront.init();
+var t = InterfaceFront.text;
+
+var InterfaceBack = {
+  "name": "",
+  "search": function(search) {
+    var server = s("connection","server");
+    var interface_name = InterfaceFront.ui.name;
+    var route = server + "/interface?name=" + search;
+    var method = "GET";
+    if (!server) return;
+
+    m.request({
+      method: method,
+      url: route,
+      extract: serverfn.parseXHR
+    })
+    .then(function(response) {
+      if (response.status && response.status <= 204){
+        var msg = Messaging.parse("success","system.response.success",method,route,response);
+        Messaging.add("InterfaceBack",msg);
+        var results = [];
+        if (response.body){
+          results = JSON.parse(response.body).filter(function(val){return val != interface_name});
+        }
+        InterfaceFront.search = results;
+        m.redraw();
+      } else {
+        var err = Messaging.parse("danger","system.response.problem",method,route,response);
+        Messaging.add("InterfaceBack",err);
+        m.redraw();
+      }
+    });
+  },
+  "key": {
+    "get": function(collection) {
+      var server = s("connection","server");
+      if (!server) return;
+      var route = server + "/interface/" + collection + "/key";
+      var method = "GET";
+      var headers = {};
+      if (collection == InterfaceBack.name){
+        if (InterfaceBack.key.mod) {
+          headers['If-Modified-Since'] = InterfaceBack.key.mod;
+        }
+      }
+      m.request({
+        background:true,
+        method: method,
+        url: route,
+        headers: headers,
+        extract: serverfn.parseXHR
+      })
+      .then(function(response) {
+        if (response.status) {
+          if (response.status == 200){
+            if (response.body){
+              InterfaceBack.name = collection;
+              InterfaceBack.key.mod = response.headers['Last-Modified'];
+              InterfaceBack.key.data = JSON.parse(response.body);
+              InterfaceBack.key.parse();
+              m.redraw();
+            } else {
+              InterfaceBack.key.mod = "";
+              InterfaceBack.key.data = [];
+            }
+          } //304 not modified
+        }
+      });
+    },
+    "mod": "",
+    "data":[],
+    "parse": function(){
+      var o = {};
+      InterfaceBack.key.data.map(function(key){
+        p = key.split('.');
+        if (!(p[0] in o)) {
+          o[p[0]] = {};
+        }
+        if (!(p[1] in o[p[0]])) {
+          o[p[0]][p[1]] = [p[2]];
+        } else {
+          o[p[0]][p[1]].push(p[2]);
+        }
+      });
+      InterfaceBack.key.index = o;
+    },
+    "index": {},
+    "dump": function(){
+      var out = {};
+      Object.keys(InterfaceFront.ui.data).map(function(key){
+        var levels = key.split('.');
+        out[levels[0]] = out[levels[0]] || {};
+        out[levels[0]][levels[1]] = out[levels[0]][levels[1]] || {};
+        out[levels[0]][levels[1]][levels[2]] = InterfaceFront.ui.data[key].message;
+      })
+      console.log(JSON.stringify(out,null,2));
+    }
+  },
+  "entry":{
+    "search": {
+      "text": "",
+      "failed": "",
+      "fn": function(){
+        var server = s("connection","server");
+        if (!server) return;
+        var route = server + "/interface/" + InterfaceBack.name + "/search/" + InterfaceBack.entry.search.text;
+        var method = "GET";
+        m.request({
+          method: method,
+          url: route,
+          extract: serverfn.parseXHR
+        })
+        .then(function(response) {
+          if (response.status && response.status <= 200){
+            InterfaceBack.entry.search.results = JSON.parse(response.body);
+            if (InterfaceBack.entry.search.results.length){
+              InterfaceBack.entry.search.failed = "";
+            } else {
+              InterfaceBack.entry.search.failed = InterfaceBack.entry.search.text;
+            }
+//            m.redraw();
+          } else {
+            InterfaceBack.entry.search.results = [];
+            InterfaceBack.entry.search.failed = "";
+            //            m.redraw();
           }
-        })
-      );
+        });
+      },
+      "results":  []
+    },
+    "new": {
+      "key": "",
+      "message": "",
+      "description": "",
+      "icon": ""
+    },
+    "reset": function(){
+      Messaging.clear("interface_new");
+      InterfaceBack.entry.new = {
+        "key": "",
+        "message": "",
+        "description": "",
+        "icon": ""
+      };
+    },
+    "get": function(collection,q1,q2) {
+      var server = s("connection","server");
+      if (!server) return;
+      var subkey = q1 + '.' + q2;
+      var route = server + "/interface/" + collection + "/entry/" + subkey + '.%';
+      var method = "GET";
+      var headers = {'Cache-Control': 'no-cache'};
+      if (collection == InterfaceBack.name){
+        if (subkey in InterfaceBack.entry.data){
+          headers = {'If-Modified-Since': InterfaceBack.entry.data[subkey].mod};
+        }
+      }
+      m.request({
+        background: true,
+        method: method,
+        url: route,
+        headers: headers,
+        extract: serverfn.parseXHR
+      })
+      .then(function(response) {
+        if (response.status) {
+          if (response.status <= 200){
+            if (response.body){
+              InterfaceBack.entry.data[subkey] = {};
+              InterfaceBack.entry.data[subkey].mod = response.headers['Last-Modified'];
+              var data = JSON.parse(response.body);
+              InterfaceBack.entry.data[subkey].data = data.map(function(entry){entry.original = entry.key;return entry;})
+              m.redraw();
+            }
+          }  //304 not modified
+        }
+      });
+    },
+    "data":{},
+    "backup":{},
+    "input": function(subkey,i,field,value){
+      var key = InterfaceBack.entry.data[subkey].data[i].original;
+      if (!InterfaceBack.entry.data[subkey].data[i].dirty){
+        InterfaceBack.entry.backup[key] = Object.assign({},InterfaceBack.entry.data[subkey].data[i]);
+        InterfaceBack.entry.data[subkey].data[i].dirty = true;
+      }
+      InterfaceBack.entry.data[subkey].data[i][field] = value;
+    },
+    "cancel": function(subkey,i){
+      var key = InterfaceBack.entry.data[subkey].data[i].original;
+      Messaging.clear("interface_" + key);
+      InterfaceBack.entry.data[subkey].data[i] = Object.assign({},InterfaceBack.entry.backup[key]);
+      delete InterfaceBack.entry.backup[key];
+    },
+    "update": function(subkey,i){
+      var connection = s("connection");
+      var server = connection.server;
+      var pass = connection.pass;
+      var route = server + "/interface/" + InterfaceBack.name + "/entry/" + InterfaceBack.entry.data[subkey].data[i].original;
+      var method = "PUT";
+      m.request({
+        headers: {Pass: pass},
+        method: method,
+        url: route,
+        type: 'application/json',
+        data: InterfaceBack.entry.data[subkey].data[i],
+        extract: function(xhr) {return {status: xhr.status, body: xhr.responseText}}
+      })
+      .then (function(response) {
+        if (response.status && response.status == 204) {
+          var parts = InterfaceBack.entry.data[subkey].data[i].key.split('.');
+          Messaging.clear(InterfaceBack.entry.data[subkey].data[i].original);
+          delete InterfaceBack.entry.data[subkey];
+          routesfn.set("/interface/" + InterfaceBack.name + "/" + parts[0] + "/" + parts[1])
+          scrollIntoView("interface_" + parts.join('.'));
+        } else {
+          var err = Messaging.parse("warning", "system.response.problem",method,route,response);
+          Messaging.add("interface_" + InterfaceBack.entry.data[subkey].data[i].original,err);
+          m.redraw();
+        }
+      });
+    },
+    "delete": function(subkey,i){
+      var connection = s("connection");
+      var server = connection.server;
+      var pass = connection.pass;
+      var route = server + "/interface/" + InterfaceBack.name + "/entry/" + InterfaceBack.entry.data[subkey].data[i].original;
+      var method = "DELETE";
+      m.request({
+        headers: {Pass: pass},
+        method: method,
+        url: route,
+        extract: function(xhr) {return {status: xhr.status, body: xhr.responseText}}
+      })
+      .then (function(response) {
+        if (response.status && response.status == 204) {
+          InterfaceBack.key.mod="";
+          delete InterfaceBack.entry.data[subkey];
+          InterfaceBack.key.get(InterfaceBack.name);
+        } else {
+          var err = Messaging.parse("warning", "system.response.problem",method,route,response);
+          Messaging.add("interface_" + InterfaceBack.entry.data[subkey].data[i].original,err);
+          m.redraw();
+        }
+      });
+    },
+    "add": function(){
+      var connection = s("connection");
+      var server = connection.server;
+      var pass = connection.pass;
+      var route = server + "/interface/" + InterfaceBack.name + "/entry";
+      var method = "POST";
+      m.request({
+        headers: {Pass: pass},
+        method: method,
+        url: route,
+        type: 'application/json',
+        data: InterfaceBack.entry.new,
+        extract: function(xhr) {return {status: xhr.status, body: xhr.responseText}}
+      })
+      .then (function(response) {
+        if (response.status && response.status == 201) {
+          var parts = InterfaceBack.entry.new.key.split('.');
+          InterfaceBack.entry.reset();
+          Messaging.clear("interface_new");
+          routesfn.set("/interface/" + InterfaceBack.name + "/" + parts[0] + "/" + parts[1]);
+          scrollIntoView("interface_" + parts.join('.'));
+        } else {
+          var err = Messaging.parse("warning", "system.response.problem",method,route,response);
+          Messaging.add("interface_new",err);
+          m.redraw();
+        }
+      });
     }
-  },
-  "tab": {
+  }
+}
+
+var InterfacePages = {
+  "head": {
+    oninit: function(vnode){
+      serverfn.connect();
+    },
     view: function(vnode) {
-      var q1s = interfacefn['q1s'];
+      buttons = [
+        m(CommonPages["button"],{class: "primary", key:'system.buttons.search', onclick: function(e){e.preventDefault();InterfaceBack.entry.search.fn(); }}),
+        m(CommonPages["button"],{class: "primary", key:vnode.attrs.name==InterfaceFront.ui.name?'system.buttons.update':'system.buttons.select', onclick: function(e){e.preventDefault();
+          InterfaceFront.update(vnode.attrs.name);
+          return false;
+        }}),
+        m(CommonPages["button"],{class: "primary", key:'system.buttons.manage', onclick: function(e){e.preventDefault();
+          routesfn.set("/manage/" + vnode.attrs.name);
+          return false;
+        }})
+      ];
+
+      return [
+        m("h1", vnode.attrs.name),
+        m("input#search[type=text]",{"value":InterfaceBack.entry.search.text,oninput: function(e){
+          e.preventDefault();
+          InterfaceBack.entry.search.text=e.target.value;
+        }}),
+        m("label"),
+        m("div.wide",
+          buttons
+        ),
+        m("hr"),
+        m("nav",[
+          InterfaceBack.entry.search.results.map(function(entry){
+              var parts = entry.key.split('.');
+            return m(CommonPages["button"],{class: "info",text:entry.message, 
+              onclick: function(e){
+                e.redraw=false;
+                routesfn.set("/interface/" + vnode.attrs['name'] + "/" + parts[0] + "/" + parts[1]);
+                scrollIntoView("interface_" + parts.join('.'));
+              }});
+          }),
+          InterfaceBack.entry.search.failed?m(CommonPages["button"],{class:"warning",text:InterfaceBack.entry.search.failed,icon:"ban",onclick:function(e){
+            e.preventDefault();
+            InterfaceBack.entry.search.text="";
+            InterfaceBack.entry.search.failed="";
+          }}):""
+        ])
+      ]
+    }
+  },
+  "top": {
+    oninit: function(vnode){
+      InterfaceBack.key.get(vnode.attrs.name);
+    },
+    onupdate: function(vnode){
+      InterfacePages["top"].oninit(vnode);
+    },
+    view: function(vnode) {
+      var index = InterfaceBack.key.index;
       return m("nav",
-        Object.keys(q1s).map(function(q1){
-          return m(CommonPages["button"],{class: vnode.attrs['q1']==q1?'primary':'outline',text:q1, 
-            onclick: function(){routesfn.set("/settings/interface/" + vnode.attrs['name'] + "/" + q1)}});
+        Object.keys(index).map(function(q1){
+          return m(CommonPages["button"],{class: vnode.attrs['q1']==q1?'success':'outline',text:q1, 
+            onclick: function(e){e.preventDefault();e.redraw=false;routesfn.set("/interface/" + vnode.attrs['name'] + "/" + q1)}});
         })
       );
     }
   },
-  "sub": {
+  "mid": {
+    oninit: function(vnode){
+      var name = vnode.attrs['name'];
+      var q1 = vnode.attrs['q1'];
+      var q2 = vnode.attrs['q2'];
+      if (q1 && q2){
+        InterfaceBack.entry.get(name,q1,q2);
+      }
+      if (!InterfaceBack.entry.new.dirty){
+        InterfaceBack.entry.new.key = q1 + '.' + q2 + '.new';
+      }
+    },
+    onupdate: function(vnode){
+      InterfacePages["mid"].oninit(vnode);
+    },
     view: function(vnode) {
       var q1 = vnode.attrs['q1'];
-      var q2s = interfacefn['q1s'][q1];
+      var q2 = vnode.attrs['q2'];
+      var q2s = InterfaceBack.key.index[q1];
       if (!q2s) return "";
-      return m("nav",
-        Object.keys(q2s).map(function(q2){
+      return m("section.boxed",
+        m("nav",Object.keys(q2s).map(function(q2){
           return m(CommonPages["button"],{class: vnode.attrs['q2']==q2?'primary':'outline',text:q2, 
-            onclick: function(){routesfn.set("/settings/interface/" + vnode.attrs['name'] + "/" + q1 + "/" + q2)}});
-        })
-      );
+            onclick: function(e){e.preventDefault();e.redraw=false;routesfn.set("/interface/" + vnode.attrs['name'] + "/" + q1 + "/" + q2)}});
+        }))
+      )
     }
   },
-  "index": {
-    view: function() {
-      return [
-        m(CommonPages['header']),
-        m(SettingsTabs,{"section":"interfaces"}),
-        m("hr"),
-        m(InterfacePages['nav']),
-        m("section.boxed",
-          m(InterfacePages['list'])
+  "bottom": {
+    view: function(vnode) {
+      var q1 = vnode.attrs['q1'];
+      var q2 = vnode.attrs['q2'];
+      if (!InterfaceBack.key.index[q1]) return "";
+      if (!InterfaceBack.key.index[q1][q2]) return "";
+      return m("section.boxed",
+        m("nav", InterfaceBack.key.index[q1][q2].map(function(q3){
+          return m(CommonPages["button"],{class: 'outline',text:q3, 
+            onclick: function(e){e.preventDefault();scrollIntoView("interface_" + q1 + "." + q2 + '.' + q3);}});
+          })
         )
-      ]
-    }
-  },
-  "list": {
-    view: function() {
-      return [
-        statefn.array("interfaces").map(function(item,i){
-          item = s("interfaces",i);
-          var collection = collectionfn.parseName(item['name']);
-          if (!collection) return;
-          if (collection['category'] != "interface") return;
-          var interfacenum = "interface" + i;
-          var timestamp = localStorage.getItem(item['name'] + "-timestamp");
-          if (item['deleting']){
-            buttons = [
-              m(CommonPages["button"],{class: "warning", text:t("sp3",'system.buttons.cancel'), onclick: function(){ item['deleting'] = false; statefn.update("interfaces",i,item);}}),
-              m(CommonPages["button"],{class: "danger onRight", text:t("sp3",'system.buttons.remove'), onclick: function(e){ statefn.removeItem("interfaces",i);}})
-            ];
-          } else if (item['clearing']){
-            buttons = [
-              m(CommonPages["button"],{class: "warning", text:t("sp3",'system.buttons.cancel'), onclick: function(){ item['clearing'] = false; statefn.update("interfaces",i,item);}}),
-              m(CommonPages["button"],{class: "danger onRight", text:t("sp3",'system.buttons.clear'), onclick: function(e){ collectionfn["clear"](item['name']);delete item['clearing'];delete item['messages']; statefn.update("interfaces",i,item); }})
-            ];
-          } else if (item['download']){
-            buttons = [
-              m(CommonPages["button"],{class: "warning onRight", text:t("sp3",'system.buttons.clear'), onclick: function(){ delete item['download']; delete item['messages']; statefn.update("interfaces",i,item);}})
-            ];
-          } else if (item['editing']){
-            buttons = [
-              m(CommonPages["button"],{class: "warning onRight", text:t("sp3",'system.buttons.remove'), onclick: function(){ item['deleting'] = true; statefn.update("interfaces",i,item);}}),
-              m(CommonPages["button"],{class: "warning onRight", text:t("sp3",'system.buttons.clear'), onclick: function(){ item['clearing'] = true; statefn.update("interfaces",i,item);}})
-            ];
-            if (localStorage.getItem(item['name']+'-md5')){
-              buttons.push(
-                m(CommonPages["button"],{class: "primary", text:t("sp3",'system.buttons.open'), onclick: function(){ routesfn.set('/settings/interface/' + item['name']);}})
-              );
-            }
-          } else {
-            buttons = [
-              m(CommonPages["button"],{class: (!item['md5'])?'outline':(item['md5']==localStorage.getItem(item['name'] + "-md5"))?"success":(localStorage.getItem(item['name'] + "-md5")?"warning":"primary"), text:t("sp3",'system.buttons.check'), onclick:function(){statefn.clear("interfaces",i);collectionfn.getMD5(item['name']);}}),
-              (item['md5'] && localStorage.getItem(item['name'] + "-md5") && item['md5']!=localStorage.getItem(item['name'] + "-md5"))?m(CommonPages["button"],{class: "primary", text:t("sp3",'system.buttons.download'), onclick:function(){statefn.clear("interfaces",i);collectionfn.download(item['name']);}}):"",
-            ];
-            if (localStorage.getItem(item['name']+'-md5')){
-              buttons.push(
-                m(CommonPages["button"],{class: "primary", text:t("sp3",'system.buttons.open'), onclick: function(){ routesfn.set('/settings/interface/' + item['name']);}})
-              );
-            }
-          }
-          return [ 
-            m("hr"),
-            m("form", [
-              m("label[for=interface]",item['name']),
-              m("input#interface" + i + "[type=text]", {"class":"info","readonly":1,"value": timestamp?Date(timestamp):''}),
-              m("div.label",localStorage.getItem(item['name']+"-md5")?
-                m(CommonPages["button"],{class:(i!=s('interface'))?"outline":"primary",text: t("sp3","system.buttons.select" + ((i==s('interface'))?"ed":'')), onclick:function(e){interfacefn.set(i)}}):
-                ''
-              ),
-              m("div.wide",buttons)
-            ]),
-            m(MessageParts['list'],{'section':'interfaces','index':i})
-          ]
-        }),
-        [{"name":"qqq"},{"name":"defaults"}].map(function(item,i){
-            i = i -2;
-            return [ 
-              m("hr"),
-              m("form", [
-                m("label",item['name']),
-                m("div.wide",m("p", t("sp3","interface." + item['name'] + ".description"))),
-                m("div.label",m(CommonPages["button"],{class:(i!=s('interface'))?"outline":"primary",text: t("sp3","system.buttons.select" + ((i==s('interface'))?"ed":'')), onclick:function(e){interfacefn.set(i)}}))
-              ])
-            ]
-        }).reverse()
-      ]
+      )
     }
   },
   "main": {
+    oninit: function(vnode){
+      window.scrollTo(0,0);
+    },
     view: function(vnode) {
       return [
         m(CommonPages['header']),
-        m(SettingsTabs,{"section":"interfaces"}),
-        m("hr"),
-        m(InterfacePages['nav'],{"name":vnode.attrs['name']}),
-        m("hr"),
         m("section.boxed",
-          m(InterfacePages['tab'],{"name":vnode.attrs['name']})
-        )
+          m(InterfacePages['head'],{"name":vnode.attrs['name']})
+        ),
+        m("section.boxed",
+          m(InterfacePages["top"],{"name":vnode.attrs['name']})
+        ),
+        m(InterfacePages["new"],{"name":vnode.attrs.name})
       ]
     }
   },
@@ -364,16 +698,14 @@ var InterfacePages = {
       var q1 = vnode.attrs['q1'];
       return [
         m(CommonPages['header']),
-        m(SettingsTabs,{"section":"interfaces"}),
-        m("hr"),
-        m(InterfacePages['nav'],{"name":vnode.attrs['name'],"q1":q1}),
-        m("hr"),
         m("section.boxed",
-          m(InterfacePages['tab'],{"name":vnode.attrs['name'],"q1":q1})
+          m(InterfacePages['head'],{"name":vnode.attrs['name']})
         ),
         m("section.boxed",
-          m(InterfacePages['sub'],{"name":vnode.attrs['name'],"q1":q1})
-        )
+          m(InterfacePages["top"],{"name":vnode.attrs['name'],"q1":q1})
+        ),
+        m(InterfacePages["mid"],{"name":vnode.attrs['name'],"q1":q1}),
+        m(InterfacePages["new"],{"name":vnode.attrs.name})
       ]
     }
   },
@@ -381,53 +713,155 @@ var InterfacePages = {
     view: function(vnode) {
       var q1 = vnode.attrs['q1'];
       var q2 = vnode.attrs['q2'];
+      var subkey = q1 + '.' + q2;
       return [
         m(CommonPages['header']),
-        m(SettingsTabs,{"section":"interfaces"}),
-        m("hr"),
-        m(InterfacePages['nav'],{"name":vnode.attrs['name'],"q1":q1,"q2":q2}),
-        m("hr"),
         m("section.boxed",
-          m(InterfacePages['tab'],{"name":vnode.attrs['name'],"q1":q1})
+          m(InterfacePages['head'],{"name":vnode.attrs['name']})
         ),
         m("section.boxed",
-          m(InterfacePages['sub'],{"name":vnode.attrs['name'],"q1":q1,"q2":q2}),
-          (interfacefn.q1s[q1] && interfacefn.q1s[q1][q2])?interfacefn.q1s[q1][q2].map(function(q3,i){
-            return [ 
-              m("hr"),
-              m("form", [
-                m("label[for=interfaceitem" + i + "]",q1 + '.' + q2 + '.' + q3),
-                m("input#interfaceitem" + i + "[type=text]",{"value":q3}),
-                m("label"),
-                m("div.wide",[
-                  m(CommonPages["button"],{class: "success", text:t("sp3",'system.buttons.save'), onclick: function(){ server['name'] = document.getElementById(servernum + "name").value;var url = document.getElementById(servernum + "url").value;if (url!=server['url']) serverfn.reset(i);server['url'] = url; server['editing'] = false; statefn.update("servers",i,server);}}),
-                  m(CommonPages["button"],{class: "warning", text:t("sp3",'system.buttons.cancel'), onclick: function(){ server['editing'] = false; statefn.update("servers",i,server);}})
-                ])
-              ])
-            ]
-          }):""
-        )
+          m(InterfacePages["top"],{"name":vnode.attrs['name'],"q1":q1})
+        ),
+        m(InterfacePages["mid"],{"name":vnode.attrs['name'],"q1":q1,"q2":q2}),
+        m(InterfacePages["bottom"],{"name":vnode.attrs['name'],"q1":q1,"q2":q2}),
+        (subkey in InterfaceBack.entry.data)?InterfaceBack.entry.data[subkey].data.map(function(q3,i){
+          return m(InterfacePages["entry"],{"name":vnode.attrs.name,"subkey":subkey,"i":i});
+        }):"",
+        m(InterfacePages["new"],{"name":vnode.attrs.name})
       ]
+    }
+  },
+  "q3": {
+    view: function(vnode) {
+      var name = vnode.attrs['name'];
+      var q1 = vnode.attrs['q1'];
+      var q2 = vnode.attrs['q2'];
+      var q3 = vnode.attrs['q3'];
+      var subkey = q1 + '.' + q2;
+      var key = subkey + '.' + q3;
+      return [
+        m(CommonPages['header']),
+        m("section.boxed",
+          m(InterfacePages['head'],{"name":vnode.attrs['name']})
+        ),
+        (subkey in InterfaceBack.entry.data)?InterfaceBack.entry.data[subkey].data.map(function(q3,i){
+          return q3.original==key?m(InterfacePages["entry"],{"name":vnode.attrs.name,"subkey":subkey,"i":i}):"";
+        }):"",
+        m("section.boxed",
+          m(InterfacePages["top"],{"name":vnode.attrs['name'],"q1":q1})
+        ),
+        m(InterfacePages["mid"],{"name":vnode.attrs['name'],"q1":q1,"q2":q2}),
+        m(InterfacePages["bottom"],{"name":vnode.attrs['name'],"q1":q1,"q2":q2}),
+        m(InterfacePages["new"],{"name":vnode.attrs.name})
+      ]
+    }
+  },
+  "new": {
+    view: function(vnode){
+      if (!CollectionBack.rightsCheck(vnode.attrs.name,SP_ADD)) return '';
+      var key_valid = validKey(InterfaceBack.entry.new.key);
+      var buttons = [];
+      key_class = key_valid?"success":"danger";
+      buttons = [
+        m(CommonPages["button"],{class: key_valid?"success":"outline", disabled:!key_valid, key:'system.buttons.save', onclick: function(e){e.preventDefault();InterfaceBack.entry.add(); }}),
+        m(CommonPages["button"],{class: "warning", key:'system.buttons.cancel', onclick: function(e){e.preventDefault();InterfaceBack.entry.reset(); }})
+      ]
+      var fields = ["key","message","description",'icon'];
+      return m("section.boxed",[
+        m("h2",t("sections.collection.new")),
+        m("section.boxed", 
+          m("form", [
+            fields.map(function(field){
+              return [
+                m("label[for=" + field + "]",t("sections.collection." + field)),
+                m("input#" + field + "[type=text]",{"class":field=="key"?key_class:'',"value":InterfaceBack.entry.new[field],oninput: function(e){
+                  InterfaceBack.entry.new.dirty = true;
+                  if (field=="key"){e.target.value = e.target.value.toLowerCase().replace(/[^a-z.]/gi, '');}
+                  InterfaceBack.entry.new[field] = e.target.value;
+                }}),
+              ];
+            }),
+            m("label"),
+            m("div.wide",buttons)
+          ]),
+          m(Messaging.section,{"section":"interface_new"})
+        )
+      ])
+    }
+  },
+  "entry": {
+    view: function(vnode) {
+      var subkey = vnode.attrs.subkey;
+      var i = vnode.attrs.i;
+      if (subkey in InterfaceBack.entry.data){
+        var q3 = InterfaceBack.entry.data[subkey].data[i];
+        var editable = CollectionBack.rightsCheck(vnode.attrs.name,SP_EDIT,q3.user);
+        var manager = CollectionBack.rightsCheck(vnode.attrs.name,SP_MANAGE);
+        var key_valid = validKey(q3.key);
+        var key_class = "success";
+        var buttons = [];
+        if (editable){
+          if (q3.dirty){
+            key_class = (q3.key==q3.original)?"primary":(key_valid?"warning":"danger");
+            buttons = [
+              m(CommonPages["button"],{class: key_valid?"success":"outline", disabled:!key_valid, key:'system.buttons.save', onclick: function(e){e.preventDefault();InterfaceBack.entry.update(subkey,i); }}),
+              m(CommonPages["button"],{class: "warning", key:'system.buttons.cancel', onclick: function(e){e.preventDefault();InterfaceBack.entry.cancel(subkey,i); }})
+            ]
+          } else {
+            if (q3.deleting){
+              buttons = [
+                m(CommonPages["button"],{class: "warning", key:'system.buttons.cancel', onclick: function(e){e.preventDefault();
+                  delete InterfaceBack.entry.data[subkey].data[i].deleting;
+                }}),
+                m(CommonPages["button"],{class: "danger onRight", key:'system.buttons.delete', onclick: function(e){e.preventDefault();InterfaceBack.entry.delete(subkey,i); }})
+              ]
+            } else {
+              buttons = [
+                m(CommonPages["button"],{class: "warning", key:'system.buttons.delete', onclick: function(e){e.preventDefault();
+                  InterfaceBack.entry.data[subkey].data[i].deleting=true;
+                }})
+              ]
+            }
+          }
+        }
+        var fields = ["key","message","description",'icon'];
+        return m("section.boxed", 
+          m("form" ,{id:"interface_" + q3.original}, [
+            fields.map(function(field){
+              return [
+                m("label[for=" + field + i + "]",t("sections.collection." + field)),
+                m("input#" + field + i + "[type=text]",{"disabled":(InterfaceBack.entry.data[subkey].data[i].deleting || !editable) || (field=="key" && !manager),"class":field=="key"?key_class:'',"value":q3[field],oninput: function(e){
+                  if (field=="key"){e.target.value = e.target.value.toLowerCase().replace(/[^a-z.]/gi, '');}
+                  InterfaceBack.entry.input(subkey,i,field,e.target.value);
+                }}),
+              ];
+            }),
+            m("label"),
+            m("div.wide",buttons)
+          ]),
+          m(Messaging.section,{"section":"interface_" + q3.original})
+        )
+      }
     }
   }
 }
 
-t = interfacefn.text;
 
-// m(CommonPages["button"],{class: "tight pseudo onLeft", disabled: routes.index<1,onclick: function(){routesfn.index(routes.index-1);},icon:"arrow-left"}),
-// m(CommonPages["button"],{class: "tight pseudo onLeft", disabled: routes.index>=routes.list.length-1,onclick: function(){routesfn.index(routes.index+1);},icon:"arrow-right"})
+// m(CommonPages["button"],{class: "tight pseudo onLeft", disabled: routes.index<1,onclick: function(e){e.preventDefault();routesfn.index(routes.index-1);},icon:"arrow-left"}),
+// m(CommonPages["button"],{class: "tight pseudo onLeft", disabled: routes.index>=routes.list.length-1,onclick: function(e){e.preventDefault();routesfn.index(routes.index+1);},icon:"arrow-right"})
 var routes = {
   default: "/",
   items: {
-    "s": "server",
-    "c": "country",
-    "i": "interface",
-    "d": "dictionary",
-    "l": "literature",
-    "a": "alphabet",
-    "f": "fingerspell",
-    "k": "keyboard",
-    "u": "user"
+    "h": ["connection","server"],//host
+    "c": ["profile","country"],
+    "s": ["profile","signed"],
+    "v": ["profile","voiced"],
+    "i": InterfaceFront.update,
+    "d": ["profile","dictionary"],
+    "l": ["profile","literature"],
+    "a": ["profile","alphabet"],
+    "f": ["profile","fingerspell"],
+    "k": ["profile","keyboard"]
   },
   index: -1,
   list: [],
@@ -450,7 +884,6 @@ var routesfn = {
   },
   "add": function(route){
     route = route?route:routes.default;
-    var index = routes.index;
     var list = routes.list.slice(0,routes.index+1);
     list.push(route);
     routes.list = list;
@@ -466,15 +899,13 @@ var routesfn = {
     var query = '';
     if (window.location.href.indexOf('#')!==-1){
       route = window.location.href.slice(window.location.href.indexOf('#') +2);
-      var hash;
       var query = '';
-      var params;
+      var parsed;
       if (route.indexOf('?')!==-1){
         query = route.slice(route.indexOf('?') +1);
-        hash = route.slice(0,route.indexOf('?'));
         if (query) {
-          params = routesfn.queryParse(query);
-          statefn.updateMany(params);
+          parsed = routesfn.queryParse(query);
+          statefn.updateMany(parsed);
         }
       }
     }
@@ -496,25 +927,22 @@ var routesfn = {
   },
   "queryParse": function(query) {
     // remove any preceding url and split
-    var params = {}, pair;
+    var parsed = [], pair,initial,full,value,base;
     query = query.split('&');
     for (var i = query.length - 1; i >= 0; i--) {
       pair = query[i].split('=');
-      var initial = decodeURIComponent(pair[0]);
-      var key = routes.items[initial];
-      var val = decodeURIComponent(pair[1]) || '';
-      if (params.hasOwnProperty(key)) {
-        if (Array.isArray(params[key])) {
-            params[key].unshift(val);
-        } else {
-            params[key] = [params[key]];
-            params[key].unshift(val);
-        }
-      } else {
-        params[key] = val;
+      initial = decodeURIComponent(pair[0]);
+      value = decodeURIComponent(pair[1]) || '';
+      full = routes.items[initial];
+      if (Array.isArray(full)){
+        base = Array.apply(null, full);
+        base.push(value);
+        parsed.push(base);
+      } else if (typeof full === "function") {
+        full(value);
       }
     }
-    return params;
+    return parsed;
   }
 }
 routesfn.change();
@@ -522,40 +950,41 @@ window.onhashchange = routesfn.change;
 
 var serverfn = {
   "connect": function(){
-    var server = s("server");
-    var connection = s("connection")
-    var route = server + "/user/pass";
-    var method = "POST";
-    if (connection.pass  || connection.requesting || connection.error) return;
+    var connection = s("connection");
+    var server = connection.server;
     if (!server) return;
+    if (connection.pass  || connection.requesting || connection.error) return;
     connection.requesting = true;
     statefn.update("connection",connection);
+    var route = server + "/user/pass";
+    var method = "POST";
 
     m.request({
       method: method,
       url: route,
-      deserialize: function(value) {return value},
       extract: serverfn.parseXHR
     })
     .then(function(response) {
-      var connection = s("connection")
-      var msg = serverfn.parseMessage("success","system.server.success",method,route,response);
-      statefn.message(msg);
-      delete connection['requesting'];
-      connection.pass=response.body;
-      statefn.update("connection",connection);
-      m.redraw();
-    })
-    .catch(function(error) {
-      var server = s("server");
-      var connection = s("connection")
-      response = error;
-      var err = serverfn.parseMessage("danger","system.server.problem",method,route,response);
-      statefn.message(err);
-      delete connection['requesting'];
-      connection.error = err;
-      statefn.update("connection",connection);
-      m.redraw();
+      if (response.status && response.status == 200){
+        var connection = s("connection")
+        var msg = Messaging.parse("success","system.response.success",method,route,response);
+        Messaging.add("server",msg);
+        delete connection['requesting'];
+        var results = JSON.parse(response.body);
+        connection.pass=results.pass;
+        connection.ip = results.ip;
+        statefn.update("connection",connection);
+        m.redraw();
+        CollectionBack.getAllSecurity();
+      } else {
+        var connection = s("connection")
+        var err = Messaging.parse("danger","system.response.problem",method,route,response);
+        Messaging.add("server",err);
+        delete connection['requesting'];
+        connection.error = err;
+        statefn.update("connection",connection);
+        m.redraw();
+      }
     });
   },
   "parseXHR": function(xhr) {
@@ -563,29 +992,25 @@ var serverfn = {
       status: xhr.status || 0, 
       statusText: xhr.statusText || "No Response", 
       body: xhr.responseText || "", 
-      headers: xhr.getAllResponseHeaders().split("\n").filter(function(line) {return line}).map(function(line){
-        var head = (line.split(":"))[0];
-        var header = {};
-        header[head] = line.replace(head + ":","").trim();
-        return header;
-      })
+      headers: serverfn.parseHeaders(xhr)
     }
   },
-  "parseMessage": function(type,t,method,route,response){
-    var msg = {"type": type, "t": t, "method":method, "route": route, "status": response.status, "text": response.statusText, "response": response.body};
-    if (response.headers){
-      msg['headers'] = response.headers;
-    }
-    return msg;
+  "parseHeaders": function (xhr) {
+    return xhr.getAllResponseHeaders().split("\n").filter(function(line) {return line}).map(function(line){
+      var head = (line.split(":"))[0];
+      var header = {};
+      var traincase = head.toLowerCase().replace(/^(.)|\-(.)/g, function(l){return l.toUpperCase()});
+      header[traincase] = line.replace(head + ":","").trim();
+      return header;
+    }).reduce(function(a,b){return Object.assign(a,b);})
   },
   "reset": function(index){
-    statefn.update("connection",{});
+    statefn.update("connection",{"server":s("connection","server")});
   },
-  "register": function(){},
-  "resetPassword": function(){},
   "login": function(){
-    var server = s("server");
-    var pass = s('connection').pass;
+    var connection = s("connection");
+    var server = connection.server;
+    var pass = connection.pass;
     var route = server + "/user/login";
     var method = "PUT";
     var username = document.getElementById("username").value;
@@ -598,26 +1023,131 @@ var serverfn = {
       extract: function(xhr) {return {status: xhr.status, body: xhr.responseText}}
     })
     .then (function(response) {
-      var results = JSON.parse(response.body).results;
-      var msg = serverfn.parseMessage("success","system.server.success",method,route,response);
-      statefn.add("messages",msg);
-      statefn.update('profile', results);
-      m.route.set("/user/profile");
-    })
-    .catch (function(response) {
-      console.log(response);
-      var results = response.body;
-      var err = serverfn.parseMessage("warning", "system.server.problem",method,route,response);
-      statefn.add("messages",err);
-      m.redraw();
-//      server['error'] = err;
-//      statefn.update("servers",index,server);
+      if (response.status && response.status == 200) {
+        var results = JSON.parse(response.body);
+        var msg = Messaging.parse("success","system.response.success",method,route,response);
+        Messaging.add("server",msg);
+        statefn.update('profile', results);
+        m.route.set("/user/profile",{},{replace:true});
+      } else {
+        var err = Messaging.parse("warning", "system.response.problem",method,route,response);
+        Messaging.add("server",err);
+        m.redraw();
+      }
     });
   },
   "logout": function(){
     statefn.update('profile',config.state.profile);
-    statefn.update('connection',{});
+    serverfn.reset();
     routesfn.set('/user/login');
+  },
+  "register": function(){},
+  "resetPassword": function(user){
+    var connection = s("connection");
+    var server = connection.server;
+    var pass = connection.pass;
+    var route = server + "/user/" + user + "/password";
+    var method = "PUT";
+    m.request({
+      headers: {Pass: pass},
+      method: method,
+      url: route,
+      type: 'application/json',
+      data: {"user":user},
+      extract: function(xhr) {return {status: xhr.status, body: xhr.responseText}}
+    })
+    .then (function(response) {
+      if (response.status && response.status == 204) {
+        var msg = Messaging.parse("success", "system.response.success",method,route,response);
+        Messaging.add("server",msg);
+        routesfn.set("/user/reset/message");
+        m.redraw();
+      } else {
+        var err = Messaging.parse("warning", "system.response.problem",method,route,response);
+        Messaging.add("server",err);
+        m.redraw();
+      }
+    });
+  },
+  "resetUsername": function(email){
+    var connection = s("connection");
+    var server = connection.server;
+    var pass = connection.pass;
+    var route = server + "/user/email/" + email;
+    var method = "PUT";
+    m.request({
+      headers: {Pass: pass},
+      method: method,
+      url: route,
+      extract: function(xhr) {return {status: xhr.status, body: xhr.responseText}}
+    })
+    .then (function(response) {
+      if (response.status && response.status == 204) {
+        var msg = Messaging.parse("success", "system.response.success",method,route,response);
+        Messaging.add("server",msg);
+        routesfn.set("/user/reset/message");
+        m.redraw();
+      } else {
+        var err = Messaging.parse("warning", "system.response.problem",method,route,response);
+        Messaging.add("server",err);
+        m.redraw();
+      }
+    });
+  },
+  "updatePassword": function(username,oldPassword,newPassword){
+    var connection = s("connection");
+    var server = connection.server;
+    var pass = connection.pass;
+    var route = server + "/user/" + username + "/password";
+    var method = "POST";
+    m.request({
+      headers: {Pass: pass},
+      method: method,
+      url: route,
+      type: 'application/json',
+      data: {"old":oldPassword,"new":newPassword},
+      extract: function(xhr) {return {status: xhr.status, body: xhr.responseText}}
+    })
+    .then (function(response) {
+      if (response.status && response.status == 204) {
+        if (s("profile").name){
+          routesfn.set("/user/profile");
+        } else {
+          routesfn.set("/user/login");
+        }
+        m.redraw();
+      } else {
+        var err = Messaging.parse("warning", "system.response.problem",method,route,response);
+        Messaging.add("server",err);
+        m.redraw();
+      }
+    });
+  },
+  "updateProfile": function(){
+    var connection = s("connection");
+    var server = connection.server;
+    var pass = connection.pass;
+    var profile = s("profile");
+    var route = server + "/user/" + profile.name;
+    var method = "PUT";
+    m.request({
+      headers: {Pass: pass},
+      method: method,
+      url: route,
+      type: 'application/json',
+      data: profile,
+      extract: function(xhr) {return {status: xhr.status, body: xhr.responseText}}
+    })
+    .then (function(response) {
+      if (response.status && response.status == 204) {
+        statefn.remove("profile","dirty");
+        m.redraw();
+      } else {
+        var err = Messaging.parse("warning", "system.response.problem",method,route,response);
+        Messaging.add("server",err);
+        m.redraw();
+      }
+    });
   }
 }
 
@@ -638,121 +1168,602 @@ var collectionfn = {
       console.log(err);
       return false;
     }
-  },
-  "clear": function(name){
-    localStorage.setItem(name,"");
-    localStorage.setItem(name + "-md5","");
-    localStorage.setItem(name + "-timestamp","");
-  },
-  "md5": function(name){
-    return localStorage.getItem(name + "-md5");
-  },
-  "source": function(name){
-    return localStorage.getItem(name);
-  },
-  "getMD5": function(name){
-    var collection = collectionfn.parseName(name);
-    if (!collection) return false;
-    var section = collection['category'] + 's';
-    var item = statefn.getItem(name);
-
-    var index = s('server');
-    var server = s("servers",index);
-
-    var route = server['url'] + "/collection/" + name + "/md5";
-    var method = "GET";
-    statefn.update("servers",index,server);
-
-
-    m.request({
-      method: method,
-      url: route,
-      deserialize: function(value) {return value},
-      extract: serverfn.parseXHR
-    })
-    .then (function(response) {
-      index = statefn.reindex("servers",index,server,"url");
-      var msg = serverfn.parseMessage("success","system.server.success",method,route,response);
-      localStorage.setItem(name + "-md5",response.body);
-      statefn.addItem2("servers",index,"messages",msg);
-      item['md5'] = response.body;
-      item['messages'] = item['messages'] || [];
-      item['messages'].push(msg);
-      statefn.update(section,item['index'],item);
-      m.redraw();
-    })
-    .catch(function(err) {
-      var response = err;
-      index = statefn.reindex("servers",index,server,"url");
-      var err;
-      err = serverfn.parseMessage("warning","system.server.problem",method,route,response);
-      delete item['md5'];
-      item['messages'] = item['messages'] || [];
-      item['messages'].push(err);
-      statefn.update(section,item['index'],item);
-      delete item['download'];
-      statefn.addItem2("servers",index,"messages",err);
-      m.redraw();
-    });
-  },
-  "download": function (name){
-    var collection = collectionfn.parseName(name);
-    if (!collection) return false;
-    var section = collection['category'] + 's';
-    var item = statefn.getItem(name);
-    if (item['download']) return true;
-    item['download'] = true;
-    statefn.update(section,item['index'],item);
-    var index = s('server');
-    var server = s("servers",index);
-    var route = server['url'] + "/collection/" + name;
-    var method = "GET";
-    statefn.update("servers",index,server);
-    m.request({
-      method: method,
-      url: route,
-      headers: {
-        "If-None-Match":localStorage.getItem(name + "-md5")
-      },
-      extract: serverfn.parseXHR,
-      deserialize: function(value) {return value}
-    })
-    .then (function(response) {
-      var msg = serverfn.parseMessage("success","system.server.success",method,route,response);
-      item = statefn.getItem(name);
-      var hash;
-      if (response.status!=304){
-        hash = md5(response.body);
-        localStorage.setItem(name,response.body);
-        localStorage.setItem(name + "-timestamp",new Date().toISOString());
-        localStorage.setItem(name + "-md5",hash);
-      } else {
-        hash = localStorage.getItem(name + "-md5");
-      }
-      delete item['download'];
-      item['md5'] = hash;
-      item['messages'] = item['messages'] || [];
-      item['messages'].push(msg);
-      statefn.update(section,item['index'],item);
-      index = statefn.reindex("servers",index,server,"url");
-      statefn.addItem2("servers",index,"messages",msg);
-      m.redraw();
-    }).catch(function(err) {
-      var response = err;
-      var err = serverfn.parseMessage("danger","system.server.problem",method,route,response);
-      item = statefn.getItem(name);
-      delete item['download'];
-      item['messages'] = item['messages'] || [];
-      item['messages'].push(err);
-      statefn.update(section,item['index'],item);
-      index = statefn.reindex("servers",index,server,"url");
-      statefn.addItem2("servers",index,"messages",err);
-      m.redraw();
-    });
   }
 }
 
+var CollectionBack = {
+  "name": "",
+  "error": "",
+  "collections": [],
+  "getCollections": function(cc){
+    var method = "GET";  
+    var route = s("connection","server") + "/collection?name=-" + cc + "-";
+    m.request({
+      background:true,
+      method: method,
+      url: route,
+      extract: serverfn.parseXHR
+    })
+    .then(function(response) {
+      if (response.status == 200){
+        if (response.body){
+          CollectionBack.collections = JSON.parse(response.body);
+          m.redraw();
+        }
+      } else {
+        CollectionBack.collections = [];
+        var err = Messaging.parse("danger","system.response.problem",method,route,response);
+        Messaging.add("CollectionBack",err);
+        m.redraw();
+      }
+    });
+  },
+  "getAllCollections": function(){
+    var method = "GET";  
+    var route = s("connection","server") + "/collection";
+    m.request({
+      background:true,
+      method: method,
+      url: route,
+      extract: serverfn.parseXHR
+    })
+    .then(function(response) {
+      if (response.status == 200){
+        if (response.body){
+          CollectionBack.collections = JSON.parse(response.body);
+          m.redraw();
+        }
+      } else {
+        CollectionBack.collections = [];
+        var err = Messaging.parse("danger","system.response.problem",method,route,response);
+        Messaging.add("CollectionBack",err);
+        m.redraw();
+      }
+    });
+  },
+  "security": {},
+  "securityMod": function(){
+    try {
+      return Object.keys(CollectionBack.security).map(function(key){return CollectionBack.security[key].updated_at}).reduce(function(a,b){return a>b?a:b;});
+    } catch(e){
+      return '';
+    }
+  },
+  "getAllSecurity": function(){
+    var method = "GET";
+    var route = s("connection","server") + "/collection/security";
+    var headers = {};
+    var mod = CollectionBack.securityMod();
+    if (mod){
+      var headers = {'If-Modified-Since': mod};
+    }
+    m.request({
+      background:true,
+      method: method,
+      url: route,
+      headers: headers,
+      extract: serverfn.parseXHR
+    })
+    .then(function(response) {
+      if (response.status == 200){
+        if (response.body){
+          CollectionBack.security = {};
+          JSON.parse(response.body).map(function(collection){
+            CollectionBack.security[collection.name] = collection;
+          });
+          m.redraw();
+        }
+      } else if (response.status != 304) {
+        CollectionBack.security = {};
+        var err = Messaging.parse("danger","system.response.problem",method,route,response);
+        Messaging.add("CollectionBack",err);
+        m.redraw();
+      }
+    });
+  },
+  "getSecurity": function(collection){
+    var method = "GET";
+    var route = s("connection","server") + "/collection/" + collection + "/security";
+    m.request({
+      background:true,
+      method: method,
+      url: route,
+      extract: serverfn.parseXHR
+    })
+    .then(function(response) {
+      if (response.status == 200){
+        if (response.body){
+          CollectionBack.security[collection] = JSON.parse(response.body);
+          m.redraw();
+        }
+      } else {
+        CollectionBack.security = "";
+        var err = Messaging.parse("danger","system.response.problem",method,route,response);
+        Messaging.add("CollectionBack",err);
+        m.redraw();
+      }
+    });
+  },
+  "updateSecurity": function(collection){
+    var connection = s("connection");
+    var server = connection.server;
+    var pass = connection.pass;
+    var route = server + "/collection/" + collection + "/security";
+    var method = "PUT";
+    delete CollectionBack.security[collection].dirty;
+    m.request({
+      headers: {Pass: pass},
+      method: method,
+      url: route,
+      type: 'application/json',
+      data: CollectionBack.security[collection],
+      extract: function(xhr) {return {status: xhr.status, body: xhr.responseText}}
+    })
+    .then (function(response) {
+      if (response.status && response.status == 204) {
+      } else {
+        CollectionBack.security[collection].dirty = true;
+        var err = Messaging.parse("warning", "system.response.problem",method,route,response);
+        Messaging.add("collection_" + collection,err);
+        m.redraw();
+      }
+    });
+  },
+  "deleteSecurity": function(collection){
+    var connection = s("connection");
+    var server = connection.server;
+    var pass = connection.pass;
+    var route = server + "/collection/" + collection + "/security";
+    var method = "DELETE";
+    m.request({
+      headers: {Pass: pass},
+      method: method,
+      url: route,
+      extract: function(xhr) {return {status: xhr.status, body: xhr.responseText}}
+    })
+    .then (function(response) {
+      if (response.status && response.status == 204) {
+        delete CollectionBack.security[collection];
+      } else {
+        var err = Messaging.parse("warning", "system.response.problem",method,route,response);
+        Messaging.add("CollectionBack",err);
+        m.redraw();
+      }
+    });
+
+  },
+  "management": "",
+  "getManagement": function(collection){
+    var connection = s("connection");
+    var server = connection.server;
+    var pass = connection.pass;
+    var method = "GET";
+    var route = server + "/collection/" + collection + "/manage";
+    m.request({
+      headers: {Pass: pass},
+      background:true,
+      method: method,
+      url: route,
+      extract: serverfn.parseXHR
+    })
+    .then(function(response) {
+      if (response.status == 200){
+        if (response.body){
+          CollectionBack.error="";
+          CollectionBack.name = collection;
+          CollectionBack.management = JSON.parse(response.body);
+          m.redraw();
+        }
+      } else {
+        CollectionBack.error=collection;
+        CollectionBack.name = "";
+        CollectionBack.management = "";
+        var err = Messaging.parse("danger","system.response.problem",method,route,response);
+        Messaging.add("CollectionBack",err);
+        m.redraw();
+      }
+    });
+  },
+  "updateManagement": function(collection,user){
+    var connection = s("connection");
+    var server = connection.server;
+    var pass = connection.pass;
+    var route = server + "/collection/" + collection + "/manage";
+    var method = "PUT";
+    m.request({
+      headers: {Pass: pass},
+      method: method,
+      url: route,
+      type: 'application/json',
+      data: {user:user.name, security:user.newsecurity},
+      extract: function(xhr) {return {status: xhr.status, body: xhr.responseText}}
+    })
+    .then (function(response) {
+      if (response.status && response.status == 204) {
+        user.security = user.newsecurity;
+        delete user.newsecurity;
+      } else {
+        var err = Messaging.parse("warning", "system.response.problem",method,route,response);
+        Messaging.add("management",err);
+        m.redraw();
+      }
+    });
+  },
+  "removeManagement": function(collection,user){
+    var connection = s("connection");
+    var server = connection.server;
+    var pass = connection.pass;
+    var route = server + "/collection/" + collection + "/manage/" + user.name;
+    var method = "DELETE";
+    m.request({
+      headers: {Pass: pass},
+      method: method,
+      url: route,
+      extract: function(xhr) {return {status: xhr.status, body: xhr.responseText}}
+    })
+    .then (function(response) {
+      if (response.status && response.status == 204) {
+        delete user.removing;
+        user.security = null;
+      } else {
+        var err = Messaging.parse("warning", "system.response.problem",method,route,response);
+        Messaging.add("management",err);
+        m.redraw();
+      }
+    });
+  },
+  "deleteManagement": function(collection){
+    var connection = s("connection");
+    var server = connection.server;
+    var pass = connection.pass;
+    var route = server + "/collection/" + collection + "/manage";
+    var method = "DELETE";
+    m.request({
+      headers: {Pass: pass},
+      method: method,
+      url: route,
+      extract: function(xhr) {return {status: xhr.status, body: xhr.responseText}}
+    })
+    .then (function(response) {
+      if (response.status && response.status == 204) {
+        CollectionBack.unknown = CollectionBack.unknown.filter(function(item){if (item!=collection) return true;});
+      } else {
+        var err = Messaging.parse("warning", "system.response.problem",method,route,response);
+        Messaging.add("management",err);
+        m.redraw();
+      }
+    });
+  },
+  "unknown": [],
+  "getUnknown": function(){
+    var method = "GET";  
+    var route = s("connection","server") + "/collection/manage/unknown";
+    m.request({
+      background:true,
+      method: method,
+      url: route,
+      extract: serverfn.parseXHR
+    })
+    .then(function(response) {
+      if (response.status == 200){
+        if (response.body){
+          CollectionBack.unknown = JSON.parse(response.body);
+          m.redraw();
+        }
+      } else {
+        CollectionBack.unknown = [];
+        var err = Messaging.parse("danger","system.response.problem",method,route,response);
+        Messaging.add("CollectionBack",err);
+        m.redraw();
+      }
+    });
+  },
+  "request": function(collection,source,title){
+    var connection = s("connection");
+    var server = connection.server;
+    var pass = connection.pass;
+    var route = server + "/collection/" + collection + "/request/" + source;
+    var method = "POST";
+    m.request({
+      headers: {Pass: pass},
+      method: method,
+      url: route,
+      type: 'application/json',
+      data: {"title": title},
+      extract: function(xhr) {return {status: xhr.status, body: xhr.responseText}}
+    })
+    .then (function(response) {
+      if (response.status && response.status == 204) {
+        CollectionBack.getAllCollections();
+        CollectionBack.getAllSecurity();
+      } else {
+        var err = Messaging.parse("warning", "system.response.problem",method,route,response);
+        Messaging.add("CollectionBack",err);
+        m.redraw();
+      }
+    });
+  },
+  "trash": function(collection){
+    var connection = s("connection");
+    var server = connection.server;
+    var pass = connection.pass;
+    var route = server + "/collection/" + collection;
+    var method = "DELETE";
+    m.request({
+      headers: {Pass: pass},
+      method: method,
+      url: route,
+      extract: function(xhr) {return {status: xhr.status, body: xhr.responseText}}
+    })
+    .then (function(response) {
+      if (response.status && response.status == 204) {
+        CollectionBack.collections = CollectionBack.collections.filter(function(item){if (item!=collection) return true;})
+        delete CollectionBack.security[collection]
+        CollectionBack.deleting="";
+      } else {
+        var err = Messaging.parse("warning", "system.response.problem",method,route,response);
+        Messaging.add("CollectionBack",err);
+        m.redraw();
+      }
+    });
+  },
+  "rightsCheck": function(collection, right, user){
+    var profile = s("profile");
+    if (right == SP_EDIT && (profile.name || s("connection").ip) == user) {
+      return true;
+    }
+    if (right == SP_MANAGE && profile.name && profile.name == user) {
+      return true;
+    }
+    var adjusted = right;
+    if ((collection in CollectionBack.security)) {
+      try {
+        if (adjusted==SP_EDIT && !(CollectionBack.security[collection].edit_pass)) adjusted--;
+        if (adjusted==SP_ADD && !(CollectionBack.security[collection].add_pass)) adjusted--;
+        if (adjusted==SP_VIEW && !(CollectionBack.security[collection].view_pass)) adjusted--;
+      }  catch (err){
+        console.log(err);
+        return false;
+      }
+    }
+    var userrights = 0;
+    try {
+      userrights = Math.max(profile.security,profile.collections[collection]||0);
+    }  catch (err){
+      userrights = profile.security;
+    }
+    if (userrights >= adjusted) return true;
+
+    return false;
+  },
+  "deleting": ""
+}
+CollectionBack.getAllSecurity();
+
 var CollectionPages = {
+  "manage": {
+    oninit: function(vnode){
+      serverfn.connect();
+      CollectionBack.getSecurity(vnode.attrs.name);
+      CollectionBack.getManagement(vnode.attrs.name);
+    },
+    onupdate: function(vnode){
+      if(CollectionBack.error != vnode.attrs.name && vnode.attrs.name != CollectionBack.name) CollectionPages.manage.oninit(vnode); 
+    },
+    view: function(vnode) {
+      var okay = CollectionBack.rightsCheck(vnode.attrs.name,SP_MANAGE);
+      return (!(vnode.attrs.name in CollectionBack.security))?m(CommonPages['header']):
+      [
+        m(CommonPages['header']),
+        m("section.boxed",
+          m("h1", vnode.attrs.name),
+          m("section.boxed",
+            m("h2",t('sections.collection.title')),
+            m("input#title[type=text]",{disabled: !okay, value: CollectionBack.security[vnode.attrs.name].title,oninput: function(e){
+              CollectionBack.security[vnode.attrs.name].dirty=true;
+              CollectionBack.security[vnode.attrs.name].title=e.target.value
+            }})
+          ),
+          m("section.boxed",
+            m("h2",t("security.titles.required")),
+            ["view","add","edit"].map(function(right){
+              return m("label.control.control--checkbox",
+                t("security.rights." + right),
+                m("input[type=checkbox]", {
+                  disabled: !okay, 
+                  id: "check_" + right,
+                  checked: CollectionBack.security[vnode.attrs.name][right + '_pass'],
+                  onclick: function(e){CollectionBack.security[vnode.attrs.name].dirty=true;CollectionBack.security[vnode.attrs.name][right + '_pass'] = !CollectionBack.security[vnode.attrs.name][right + '_pass']}
+                }),
+                m("div.control__indicator")
+              )
+            })
+          ),
+          m("section.boxed",
+            m("h2",t("security.titles.register")),
+            ["none","view","add","edit","manage"].map(function(right,i){
+              return m("label.control.control--radio",
+                t("security.rights." + right),
+                m("input[type=radio]", {
+                  disabled: !okay, 
+                  id: "radio_" + right,
+                  checked: CollectionBack.security[vnode.attrs.name].register_level == i,
+                  onclick: function(e){CollectionBack.security[vnode.attrs.name].dirty=true;CollectionBack.security[vnode.attrs.name].register_level = i}
+                }),
+                m("div.control__indicator")
+              )
+            })
+          ),
+          m("section.boxed",
+            m("h2",t("security.titles.upload")),
+            ["add","edit","manage"].map(function(right,i){
+              return m("label.control.control--radio",
+                t("security.rights." + right),
+                m("input[type=radio]", {
+                  disabled: !okay, 
+                  id: "radio_" + right,
+                  checked: CollectionBack.security[vnode.attrs.name].upload_level == i+2,
+                  onclick: function(e){CollectionBack.security[vnode.attrs.name].dirty=true;CollectionBack.security[vnode.attrs.name].upload_level = i+2}
+                }),
+                m("div.control__indicator")
+              )
+            })
+          ),
+          !okay || !CollectionBack.security[vnode.attrs.name].dirty?"":
+          m("section.boxed",
+            m("div.wide",
+              m(CommonPages["button"],{class: "success", key:'system.buttons.save', onclick: function(e){
+                e.preventDefault();
+                CollectionBack.updateSecurity(vnode.attrs.name); 
+              }}),
+              m(CommonPages["button"],{class: "warning", key:'system.buttons.cancel', onclick: function(e){
+                e.preventDefault();
+                delete CollectionBack.security[vnode.attrs.name];
+                CollectionBack.getSecurity(vnode.attrs.name);
+              }})
+            )
+          )
+        ),
+        !okay?"":m("section.boxed",[
+          m("h2",t("security.titles.adduser")),
+          m("table.filteruser",
+            m("tr", [
+              m("th",t("user.profile.username")),
+              m("th",t("user.profile.display")),
+              m("th",t("user.profile.email"))
+            ]),
+            m("tr",[
+              m("td",m("input#searchName[type=text]",{oninput: m.redraw})),
+              m("td",m("input#searchDisplay[type=text]",{oninput: m.redraw})),
+              m("td",m("input#searchEmail[type=text]",{oninput: m.redraw}))
+            ])
+          ),
+          m("table.users",
+            (CollectionBack.management||[]).filter(function(user){
+              if (user.security) return false;
+              try {
+                var searchName = document.getElementById("searchName").value;
+                var searchDisplay = document.getElementById("searchDisplay").value;
+                var searchEmail = document.getElementById("searchEmail").value;
+                if (!searchName && !searchDisplay && !searchEmail) return false;
+                return (searchName?user.name.indexOf(searchName)>-1:true) && (searchDisplay?user.display.indexOf(searchDisplay)>-1:true) && (searchEmail?user.email.indexOf(searchEmail)>-1:true);
+              } catch(e) {
+                return false;
+              }
+            }).map(function(user){
+              var buttons = [];
+              if (user.newsecurity){
+                buttons = [
+                  m(CommonPages["button"],{class: "success", key:'system.buttons.save', onclick: function(e){
+                    e.preventDefault();
+                    CollectionBack.updateManagement(vnode.attrs.name,user);
+                  }})
+                ]
+              }
+              return [
+                m("tr", [
+                  m("th",user.name),
+                  m("td", {rowspan:2},[
+                    m("p",user.display),
+                    m("p",user.email),
+                    m("select", {onchange: function(e){
+                        user.newsecurity = e.target.options[e.target.selectedIndex].value; 
+                      }},
+                      m("option"),
+                      ["view","add","edit","manage"].map(function(right,i){
+                        return m("option",{value:i+1,selected: user.newsecurity?user.newsecurity==(i+1):user.security==(i+1)},t("security.rights." + right));
+                      })
+                    )
+                  ])
+                ]),
+                m("tr", m("th",
+                  m("div.wide", buttons)
+                ))
+              ]
+            })
+          )
+        ]),
+        !okay?"":m("section.boxed",[
+          m("h2",t("security.titles.users")),
+          m("table.users",
+            (CollectionBack.management||[]).filter(function(user){return user.security;}).map(function(user){
+              var buttons = [];
+              if (user.newsecurity){
+                buttons = [
+                  m(CommonPages["button"],{class: "success", key:'system.buttons.save', onclick: function(e){
+                    e.preventDefault();
+                    CollectionBack.updateManagement(vnode.attrs.name,user);
+                  }}),
+                  m(CommonPages["button"],{class: "warning", key:'system.buttons.cancel', onclick: function(e){
+                    e.preventDefault();
+                    delete user.newsecurity;
+                  }})
+                ]
+              } else if (user.removing){
+                buttons = [
+                  m(CommonPages["button"],{class: "warning", key:'system.buttons.cancel', onclick: function(e){
+                    e.preventDefault();
+                    delete user.removing;
+                  }}),
+                  m(CommonPages["button"],{class: "danger", key:'system.buttons.remove', onclick: function(e){
+                    e.preventDefault();
+                    CollectionBack.removeManagement(vnode.attrs.name,user);
+                  }})
+                ]
+              } else {
+                buttons = [
+                  m(CommonPages["button"],{class: "warning", key:'system.buttons.remove', onclick: function(e){
+                    e.preventDefault();
+                    user.removing=true;
+                  }})
+                ]
+              }
+              return [
+                m("tr", [
+                  m("th",user.name),
+                  m("td", {rowspan:2},[
+                    m("p",user.display),
+                    m("p",user.email),
+                    m("select", {onchange: function(e){
+                        user.newsecurity = e.target.options[e.target.selectedIndex].value; 
+                      }},
+                      ["view","add","edit","manage"].map(function(right,i){
+                        return m("option",{value:i+1,selected: user.newsecurity?user.newsecurity==(i+1):user.security==(i+1)},t("security.rights." + right));
+                      })
+                    )
+                  ])
+                ]),
+                m("tr", m("th",
+                  m("div.wide", buttons)
+                ))
+              ]
+            })
+          )
+        ])
+      ]
+    }
+  },
+
+//  <h1>Radio buttons</h1>
+//  <label class="control control--radio">First radio
+//    <input type="radio" name="radio" checked="checked"/>
+//    <div class="control__indicator"></div>
+//  </label>
+//  <label class="control control--radio">Second radio
+//    <input type="radio" name="radio"/>
+//    <div class="control__indicator"></div>
+//  </label>
+//  <label class="control control--radio">Disabled
+//    <input type="radio" name="radio2" disabled="disabled"/>
+//    <div class="control__indicator"></div>
+//  </label>
+//  <label class="control control--radio">Disabled & checked
+//    <input type="radio" name="radio2" disabled="disabled" checked="checked"/>
+//    <div class="control__indicator"></div>
+//  </label>  
+
+
+
   "txt": {
     view: function(vnode) {
       var col = collectionfn.parseName(vnode.attrs['collection']);
@@ -762,7 +1773,7 @@ var CollectionPages = {
           try {
             output = interfaces[col["language"] + '-' + col["country"]][col["subname"]]
           } catch(err){
-            output = interfaces["default"][col["subname"]]
+            output = InterfaceFront.ui.data;
           }
           return m("pre",Object.keys(output).map(function(val,i){
             return val + "\t" + (output[val]["message"]?output[val]["message"]:"") + "\t" + (output[val]["description"]?output[val]["description"]:"") + "\t" + (output[val]["icon"]?output[val]["icon"]:"") + "\t" + (output[val]["image"]?output[val]["image"]:"") + "\t" + (output[val]["gesture"]?output[val]["gesture"]:"") + "\n";
@@ -775,54 +1786,150 @@ var CollectionPages = {
   }
 }
 
-var MessageParts = {
+var Messaging = {
+  "statusText": function(code){
+    switch(code){
+      case 200: 
+        return "OK";
+      case 201: 
+        return "Created";
+      case 202: 
+        return "Accepted";
+      case 204: 
+        return "No Content";
+      case 300: 
+        return "Multiple Choices";
+      case 304: 
+        return "No Modified";
+      case 307: 
+        return "Temporary Redirect";
+      case 308: 
+        return "Permanent Redirect";
+      case 400: 
+        return "Bad Request";
+      case 403: 
+        return "Forbidden";
+      case 404: 
+        return "Not Found";
+      case 409: 
+        return "Conflict";
+      case 429: 
+        return "Too Many Requests";
+      case 500: 
+        return "Internal Server Error";
+      case 501: 
+        return "Not Implemented";
+      case 503: 
+        return "Service Unavailable";
+      default:
+        return "";
+    }
+  },
+  "sections": {},
+  "parse": function(type,t,method,route,response){
+    response.statusText = response.statusText || Messaging.statusText(response.status);
+    var msg = {"type": type, "t": t, "method":method, "route": route, "status": response.status, "text": response.statusText, "response": response.body};
+    if (response.headers){
+      msg['headers'] = response.headers;
+    }
+    return msg;
+  },
+  "add": function(section,msg){
+    Messaging.sections[section] = Messaging.sections[section] || [];
+    Messaging.sections[section].unshift(msg);
+    if (Messaging.sections[section].length>10){
+      Messaging.sections[section].pop();
+    }
+  },
+  "clear": function(section) {
+     delete Messaging.sections[section];
+  },
+  "section": {
+    view: function(vnode){
+      var section = vnode.attrs['section'];
+      if (!(section in Messaging.sections)){return "";}
+      var title = vnode.attrs['title'];
+      return title?m("section.boxed",m("h2",t(title)),m(Messaging.list,{"section":section})):m(Messaging.list,{"section":section});
+    }
+  },
   "list": {
     view: function(vnode) {
-      return s(vnode.attrs['location']).map(function(message,i){
-        var location = Array.apply(null, vnode.attrs['location']);
-        location.push(i);
-        return m(MessageParts['item'],{"location":location});
-      }).reverse();
+      var section = vnode.attrs['section'];
+      return (Messaging.sections[section]||[]).map(function(message,i){
+        return m(Messaging.item,{"section":section,"index":i});
+      });
     }
   },
   "item": {
     view: function(vnode) {
-      var msg = s.apply(null,vnode.attrs['location']);
+      var section = vnode.attrs['section'];
+      var index = vnode.attrs['index'];
+      var msg = Messaging.sections[section][index]
       var type = msg['type'];
       if (msg['open']){
         return m("section.boxed", [
-          m(MessageParts['close'], vnode.attrs),
-          m(MessageParts['button'], vnode.attrs),
+          m("div.wide", [
+            m(Messaging.title, vnode.attrs),
+            m(Messaging.close, vnode.attrs)
+          ]),
           m("h2",t(msg['t'])),
           m("p",msg['method'] + ' ' + msg['route']),
-          m("form",(msg['headers']||[]).map(function (header,i){
-            var key = Object.keys(header)[0];
-            return[ m("label[for=header" + i + "]",key),
-            m("input#header" + i + "[type=text]", {"class":"info", readonly:1,"value": header[key]})];
-          })),
+          ("headers" in msg)?m(Messaging.headers, vnode.attrs):"",
           msg['response']?m("pre",msg['response']):""
         ])
       } else {
-        return m("section.boxed",[m(MessageParts['close'], vnode.attrs), m(MessageParts['button'], vnode.attrs)]);
+        return m("section.boxed",m("div.wide",[m(Messaging.title, vnode.attrs), m(Messaging.close, vnode.attrs)]));
       }
     }
   },
-  "button": {
+  "title": {
     view: function(vnode) {
-      var msg = s.apply(null,(vnode.attrs['location']));
+      var section = vnode.attrs['section'];
+      var index = vnode.attrs['index'];
+      var msg = Messaging.sections[section][index];
       var type = msg['type'];
-      var text =  t("sp3","system.response.status") + " " + msg['status'] + (msg["text"]?" (" + msg['text'] + ")":"");
+      var text =  t("system.response.status") + " " + msg['status'] + (msg["text"]?" (" + msg['text'] + ")":"");
       return m(CommonPages["button"],{class: "message " + type, "icon": msg['open']?"compress":"expand","text":text, onclick: function(e){
+        e.preventDefault();
         msg['open'] = !msg['open'];
-        vnode.attrs['location'].push(msg);
-        statefn.update.apply(null,vnode.attrs['location']);
       }});
+    }
+  },
+  "headers": {
+    view: function(vnode) {
+      var section = vnode.attrs['section'];
+      var index = vnode.attrs['index'];
+      var msg = Messaging.sections[section][index];
+      if (msg['heading']){
+        return [
+          m("h3",{onclick: function(e){
+            e.preventDefault();
+            msg['heading'] = !msg['heading'];
+          }}, "- Headers"),
+          m("form",Object.keys(msg['headers']||{}).map(function (key){
+            return[ m("label[for=header" + key + "]",key),
+             m("input#header" + key + "[type=text]", {"class":"info", readonly:1,"value": msg['headers'][key]})];
+          }))
+        ];
+      } else {
+        return m("h3",{onclick: function(e){
+          e.preventDefault();
+          msg['heading'] = !msg['heading'];
+        }}, "+ Headers");
+      }
+
     }
   },
   "close": {
     view: function(vnode) {
-      return m(CommonPages["button"],{class: "danger onRight", icon: 'close', onclick: function(e){ 
-        statefn.remove.apply(null,vnode.attrs['location']);
+      var section = vnode.attrs['section'];
+      var index = vnode.attrs['index'];
+      return m(CommonPages["button"],{class: "danger onRight", icon: 'close', onclick: function(e){
+        e.preventDefault(); 
+        Messaging.sections[section] = Messaging.sections[section].filter(function(msg,i){return i!=index});
+        if (Messaging.sections[section].length == 0){
+          delete Messaging.sections[section];
+        }
       }});
     }
   }
@@ -835,6 +1942,11 @@ var CommonPages = {
       delete attrs['icon'];
       delete attrs['img'];
       delete attrs['text'];
+      delete attrs['key'];
+      if ("key" in vnode.attrs){
+        vnode.attrs.text = vnode.attrs.text?vnode.attrs.text:t(vnode.attrs.key);
+        vnode.attrs.icon = vnode.attrs.icon?vnode.attrs.icon:InterfaceFront.icon(vnode.attrs.key);
+      }
 //      attrs['class'] = attrs['class'] + ' sswOneD';
       return m("button", attrs,[
         vnode.attrs.icon?m("i.icon",m.trust(
@@ -847,14 +1959,15 @@ var CommonPages = {
   },
   "header": {
     view: function() {
-      var settings = routes.list[routes.index].indexOf("/settings")>-1;
-      var userpage = routes.list[routes.index].indexOf("/user/")>-1;
+      var settings = routes.list[routes.index].indexOf("/settings")==0;
+      var userpage = routes.list[routes.index].indexOf("/user/")==0;
+      var adminpage = routes.list[routes.index].indexOf("/admin")==0;
       var profile = s("profile");
-      var title =  t("sp3","system.signpuddle3.title",spVersion);
-      var titleShort =  t("sp3","system.signpuddle3.short",spVersion);
+      var title =  t("system.signpuddle.title",spVersion);
+      var titleShort =  t("system.signpuddle.short",spVersion);
       return [
         m("header.main",[
-          m("button", {class: "pseudo", onclick: function(){
+          m("button", {class: "pseudo", onclick: function(e){e.preventDefault();
                 routesfn.set("/country/" + state.profile.country);
               }
             },
@@ -863,23 +1976,30 @@ var CommonPages = {
                 '<svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">' + icons['globe'] + '</svg>'
               ))
             ),
-          m("button", {class: "large brand long pseudo",onclick: function(){routesfn.set("/")}}, [
+          m("button", {class: "large brand long pseudo",onclick: function(e){e.preventDefault();routesfn.set("/");return false;}}, [
             m("i.icon",m.trust(spLogo)),
             ssw.parse(title,"swu")?m.trust(ssw.svg(title)):m('span',title)
           ]),
-          m("button", {class: "brand short pseudo",onclick: function(){routesfn.set("/")}}, [
+          m("button", {class: "brand short pseudo",onclick: function(e){e.preventDefault();routesfn.set("/");return false;}}, [
             m("i.icon",m.trust(spLogo)),
             ssw.parse(titleShort,"swu")?m.trust(ssw.svg(titleShort)):m('span',titleShort)
           ]),
           m("span", [
-            m(CommonPages["button"],{class: "long " + (settings?"primary":"outline") , icon:"cog",text: t("sp3","settings.main.title"), onclick: function(){routesfn.set("/settings")}}),
-            m(CommonPages["button"],{class: "short " + (settings?"primary":"outline") , icon:"cog", onclick: function(){routesfn.set("/settings")}}),
+            !CollectionBack.rightsCheck("",SP_ADMIN)?"":[
+              m(CommonPages["button"],{class: "long " + (adminpage?"primary":"outline") , key:"system.buttons.admin", onclick: function(e){e.preventDefault();routesfn.set("/admin");return false;}}),
+              m(CommonPages["button"],{class: "short " + (adminpage?"primary":"outline") , icon:InterfaceFront.icon("system.buttons.admin")||"bolt", onclick: function(e){e.preventDefault();routesfn.set("/admin");return false;}}),
+            ],
+            m(CommonPages["button"],{class: "long " + (settings?"primary":"outline") , key:"sections.settings.title", onclick: function(e){e.preventDefault();routesfn.set("/settings");return false;}}),
+            m(CommonPages["button"],{class: "short " + (settings?"primary":"outline") , icon:InterfaceFront.icon("sections.settings.title")||"cog", onclick: function(e){e.preventDefault();routesfn.set("/settings");return false;}}),
             profile.name?
-              [m(CommonPages["button"],{class: "long " + (userpage?"primary":"outline"), icon:"user",text:profile.name, onclick: function(){routesfn.set("/user/profile")}}),
-              m(CommonPages["button"],{class: "short " + (userpage?"primary":"outline"), icon:"user",onclick: function(){routesfn.set("/user/profile")}})]
-              :[m(CommonPages["button"],{class: "long " + (userpage?"primary":"outline"), icon:"user",text:t("sp3","user.login.button"), onclick: function(){routesfn.set("/user/login")}}),
-              m(CommonPages["button"],{class: "short " + (userpage?"primary":"outline"), icon:"user", onclick: function(){routesfn.set("/user/login")}})]
-          ])
+              [
+                m(CommonPages["button"],{class: "long " + (userpage?"primary":"outline"), icon:InterfaceFront.icon("user.buttons.login")||"user",text:profile.name, onclick: function(e){e.preventDefault();routesfn.set("/user/profile");return false;}}),
+                m(CommonPages["button"],{class: "short " + (userpage?"primary":"outline"), icon:InterfaceFront.icon("user.buttons.login")||"user",onclick: function(e){e.preventDefault();routesfn.set("/user/profile");return false;}})]
+              :[
+                m(CommonPages["button"],{class: "long " + (userpage?"primary":"outline"), icon:InterfaceFront.icon("user.buttons.login")||"user", key:"user.buttons.login", onclick: function(e){e.preventDefault();routesfn.set("/user/login");return false;}}),
+                m(CommonPages["button"],{class: "short " + (userpage?"primary":"outline"), icon:InterfaceFront.icon("user.buttons.login")||"user", onclick: function(e){e.preventDefault();routesfn.set("/user/login");return false;}})
+              ]
+            ])
         ]),
         m("a#downloadlink", {style:"display: none", type:"button", charset:"utf-8"},"Download")
       ];
@@ -888,94 +2008,11 @@ var CommonPages = {
   "flags": {
     view: function(vnode){
       return Object.keys(world.country).map(function(val,i){
-        return m(CommonPages["button"],{class: "card", text:val, img:"include/flags/" + val.toLowerCase() + ".png",onclick: function(){
+        return m(CommonPages["button"],{class: "card", text:val, img:"include/flags/" + val.toLowerCase() + ".png",onclick: function(e){e.preventDefault();
           statefn.update("country",val);
           routesfn.set("/country/" + val);
         }})
       })
-    }
-  },
-  "flagsX": {
-    view: function(vnode) {
-      var country = state.profile.country;
-      var country_temp = state.profile.country_temp;
-      var buttons = [];
-      var country_class;
-      var flag_list = [];
-      if (country_temp === undefined  || country==country_temp){
-        if (country){
-          country_class="success";
-        } else {
-          country_class="primary";
-        }
-        buttons = [
-          m(CommonPages["button"],{class: "primary", text:t("sp3",'system.buttons.viewall'), onclick: function(){
-              state.profile.country_temp = '';
-          }})
-        ];
-        if (country==country_temp) {
-          flag_list = Object.keys(world.country);
-        }
-      } else {
-        var valid = world.country[country_temp] || (country_temp=="");
-        if (world.country[country_temp]){
-          flag_list = [country_temp];
-        } else {
-          var len = country_temp.length;
-          if (len==1){
-            flag_list = Object.keys(world.country).filter(function(val,i){
-              return val[0] == country_temp;
-            })
-          } else {
-            flag_list = Object.keys(world.country);
-          }
-        }
-        buttons = [
-          m(CommonPages["button"],{type:"submit",disabled:!valid, class: "success", text:t("sp3",'system.buttons.save'), onclick: function(){
-            if (valid){
-              statefn.remove("country_temp");
-              statefn.update("country",country_temp);}}
-            }
-          ),
-          m(CommonPages["button"],{class: "warning", text:t("sp3",'system.buttons.cancel'), onclick: function(){
-            statefn.remove("country_temp");
-          }})
-        ];
-        if (valid){
-          country_class="primary";
-        } else {
-          country_class="warning";
-        }
-      }
-      return [ 
-        m("form", [
-          state.profile.country?m("img",{border:1,src:"include/flags/" + state.profile.country.toLowerCase() + ".png"}):
-            m("button.pseudo",{onclick: function(){
-              state.profile.country_temp = '';
-            }},m("i.icon",m.trust(
-              '<svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">' + icons['globe'] + '</svg>'
-            )))
-          ,
-          m("input#country_temp[type=text]",{"class":country_class,"value":(country_temp===undefined)?country:country_temp,autocomplete:"off",oninput: function(e){
-            var val = e.target.value;
-            var match = val.match(/[a-zA-Z]{1,2}/);
-            val = match?match[0].toUpperCase():'';
-            if (val){
-              state.profile.country_temp = val;
-            } else {
-              state.profile.country_temp = '';
-            }
-          }}),
-          m("label"),
-          m("div.wide",buttons)
-        ]),
-        flag_list.map(function(val,i){
-          return m(CommonPages["button"],{class: "outline", text:val, img:"include/flags/" + val.toLowerCase() + ".png",onclick: function(){
-            statefn.remove("country_temp");
-            statefn.update("country",val);
-          }})
-        })
-      ]
     }
   },
   "main" : {
@@ -997,22 +2034,14 @@ var SettingsPages = {
       return [
         m(CommonPages['header']),
         m("section.boxed", [
-          m("h1",t("sp3",'settings.main.title')),
-          m("hr"),
-          m("h2",t("sp3",'settings.server.title')),
-          m(SettingsPages['server']),
-          m("hr"),
-          m("h2",t("sp3",'settings.country.title')),
-          m(SettingsPages['country']),
-          m("hr"),
-          m("h2",t("sp3",'settings.language.title')),
-          m(SettingsPages['language'])
+          m("h2",t('sections.server.title')),
+          m(SettingsPages['server'])
         ]),
-        m("section.boxed",
-          m("h2",t("sp3",'settings.state.title')),
+        m("section.boxed", [
+          m("h2",t('sections.state.title')),
           m(SettingsPages['state']),
-        ),
-        s('messages').length?m("section.boxed",m("h2",t("sp3",'settings.system.messages')),m(MessageParts['list'],{"location":["messages"]})):''
+        ]),
+        m(Messaging.section,{title:"settings.system.messages","section":"server"})
       ];
     }
   },
@@ -1036,15 +2065,15 @@ var SettingsPages = {
         restore_class = localStorage.getItem("sp3-state-stamp")==s("status")?"outline":"warning";
       }
       var buttons = [
-        m(CommonPages["button"],{class: initial_class, text:t("sp3",'system.buttons.initial'), onclick: function(){statefn.initial();}}),
-        m(CommonPages["button"],{class: save_class, text:t("sp3",'system.buttons.save'), onclick: function(){statefn.save();}}),
-        m(CommonPages["button"],{class: restore_class, text:t("sp3",'system.buttons.restore'), onclick: function(){statefn.restore();m.redraw();}}),
-        m(CommonPages["button"],{class: forget_class, text:t("sp3",'system.buttons.forget'), onclick: function(){statefn.forget();}})
+        m(CommonPages["button"],{class: initial_class, key:'sections.state.reset', onclick: function(e){e.preventDefault();statefn.initial();return false;}}),
+        m(CommonPages["button"],{class: save_class, key:'system.buttons.save', onclick: function(e){e.preventDefault();statefn.save();return false;}}),
+        m(CommonPages["button"],{class: restore_class, key:'sections.state.restore', onclick: function(e){e.preventDefault();statefn.restore();m.redraw();return false;}}),
+        m(CommonPages["button"],{class: forget_class, key:'sections.state.forget', onclick: function(e){e.preventDefault();statefn.forget();return false;}})
       ];
       
       return [ 
         m("form", [
-          m("label[for=state]",t("sp3",'settings.state.status')),
+          m("label[for=state]",t('sections.state.status')),
           m("input#state[type=text]",{"class":state_class,"value":s('status'),"disabled":true}),
           m("label"),
           m("div.wide",buttons)
@@ -1054,53 +2083,290 @@ var SettingsPages = {
   },
   "server": {
     view: function(vnode) {
-      var server = s('server');
-      var server_temp = s('server_temp');
-      var connection = s('connection');
+      var connection = s("connection");
+      var server = connection.server;
+      var server_temp = connection.server_temp;
       var buttons = [];
       var server_class;
       var temp=server_temp || server;
       if (server!=temp){
         server_class="primary";
         buttons = [
-          m(CommonPages["button"],{class: "warning", text:t("sp3",'system.buttons.cancel'), onclick: function(){statefn.remove("server_temp");}}),
-          m(CommonPages["button"],{class: "success", text:t("sp3",'system.buttons.save'), onclick: function(){serverfn.reset();statefn.update("server",temp);}})
+          m(CommonPages["button"],{class: "warning", key:'system.buttons.cancel', onclick: function(e){e.preventDefault();statefn.remove("connection","server_temp");return false;}}),
+          m(CommonPages["button"],{class: "success", key:'system.buttons.save', onclick: function(e){e.preventDefault();serverfn.reset();statefn.update("connection","server",temp);return false;}})
         ];
       } else if (connection.error){
         server_class="danger";
         buttons = [
-          m(CommonPages["button"],{class: "warning", text:t("sp3",'settings.server.reset'), onclick: function(){serverfn.reset();serverfn.connect();}})
+          m(CommonPages["button"],{class: "warning", key:'sections.server.reset', onclick: function(e){e.preventDefault();serverfn.reset();serverfn.connect();return false;}})
         ]
       } else if (connection.pass){
         server_class="success";
         buttons = [
-          m(CommonPages["button"],{class: "outline disabled", text:t("sp3",'settings.server.connect'), onclick: function(){serverfn.connect();}}),
-          m(CommonPages["button"],{class: "warning", text:t("sp3",'settings.server.disconnect'), onclick: function(){serverfn.reset();}})
+          m(CommonPages["button"],{class: "outline disabled", key:'sections.server.connect', onclick: function(e){e.preventDefault();serverfn.connect();return false;}}),
+          m(CommonPages["button"],{class: "warning", key:'sections.server.disconnect', onclick: function(e){e.preventDefault();serverfn.reset();return false;}})
         ]
       } else if (connection.requesting){
         server_class="warning";
-        buttons = [];
+        buttons = [
+          m(CommonPages["button"],{class: "outline disabled", key:'sections.server.requesting'})
+        ];
       } else {
         server_class="info";
         buttons.push(
-          m(CommonPages["button"],{class: "primary", text:t("sp3",'settings.server.connect'), onclick: function(){serverfn.connect();}}),
-          m(CommonPages["button"],{class: "outline disabled", text:t("sp3",'settings.server.disconnect'), onclick: function(){serverfn.reset();}})
+          m(CommonPages["button"],{class: "primary", key:'sections.server.connect', onclick: function(e){e.preventDefault();serverfn.connect();return false;}}),
+          m(CommonPages["button"],{class: "outline disabled", key:'sections.server.disconnect', onclick: function(e){e.preventDefault();serverfn.reset();return false;}})
         );
       }
       return [ 
         m("form", [
-          m("label[for=server]",t("sp3",'settings.server.url')),
-          m("input#server[type=text]",{"class":server_class,"value":temp,oninput: function(e){statefn.update("server_temp",e.target.value)}}),
+          m("label[for=server]",t('sections.server.url')),
+          m("input#server[type=text]",{"class":server_class,"value":temp,oninput: function(e){statefn.update("connection","server_temp",e.target.value)}}),
           m("label"),
           m("div.wide",buttons)
         ])
       ]
     }
+  }
+}  //<-END SettingsPages object
+
+
+var UserSections = {};
+var UserPages = {
+  "login": {
+    oninit: function(vnode){
+      serverfn.connect();
+    },
+    view: function(vnode) {
+      return [
+        m(CommonPages['header']),
+        m("section.boxed",
+          m("h2", t("user.titles.login")),
+          m("form", [
+            m("label[for=username]",t('user.profile.username')),
+            m("input#username[type=text]"),
+            m("label[for=password]",t('user.profile.password')),
+            m("input#password[type=password]"),
+            m("label"),
+            m("div.wide", 
+              s('error')?
+                [
+                  m(CommonPages["button"],{class: "danger", key:'system.buttons.error', onclick: function(e){e.preventDefault(); return false;}}),
+                  m(CommonPages["button"],{class: "warning", key:'sections.server.reset', onclick: function(e){e.preventDefault(); return false;}})
+                ]
+                :[
+                  m(CommonPages["button"],{class: "primary", onclick: function(e){e.preventDefault();serverfn.login();return false;}, key:'user.buttons.login'}),
+                  m(CommonPages["button"],{class: "warning", onclick: function(e){e.preventDefault();routesfn.set("/user/reset");return false;}, key:'user.buttons.reset'}),
+                  m(CommonPages["button"],{class: "outline", onclick: function(e){e.preventDefault();routesfn.set("/user/register");return false;}, key:'user.buttons.register'}),
+                ]
+            ),
+          ])
+        ),
+        m(Messaging.section,{title:"settings.system.messages","section":"server"})
+      ];
+    }
+  },
+  "register": {
+    oninit: function(vnode){
+      serverfn.connect();
+    },
+    view: function(vnode) {
+      serverfn.connect();
+      return [
+        m(CommonPages['header']),
+        m("section.boxed",
+          m("h2", t("user.titles.register")),
+          m("form", [
+            m("label[for=username]",t('user.profile.username')),
+            m("input#username[type=text]"),
+            m("label[for=display]",t('user.profile.display')),
+            m("input#display[type=text]"),
+            m("label[for=email]",t('user.profile.email')),
+            m("input#email[type=text]"),
+            m("label[for=password]",t('user.profile.password')),
+            m("input#password[type=password]"),
+            m("label"),
+            m(CommonPages["button"],{class: "primary", onclick: function(e){e.preventDefault();serverfn.register();}, key:'user.buttons.register'})
+          ])
+        )
+      ];
+    }
+  },
+  "reset": {
+    oninit: function(vnode){
+      serverfn.connect();
+    },
+    view: function(vnode) {
+      var username = (document.getElementById("username")||{}).value;
+      return [
+        m(CommonPages['header']),
+        m("section.boxed",
+          m("h2", t("user.titles.reset")),
+          m("form", [
+            m("label[for=username]",t('user.profile.username')),
+            m("input#username[type=text]",{oninput: function(e){m.redraw();}}),
+            m("label"),
+            m("div.wide", [
+              m(CommonPages["button"],{class: !username?"outline":"primary", disabled: !username, onclick: function(e){e.preventDefault();
+                serverfn.resetPassword(username);
+              }, key:'user.buttons.resetpassword'}),
+              m(CommonPages["button"],{class: "primary", onclick: function(e){e.preventDefault();
+                routesfn.set("/user/reset/username");
+              }, key:'user.buttons.forgotusername'}),
+              m(CommonPages["button"],{class: "primary", onclick: function(e){e.preventDefault();
+                routesfn.set("/user/reset/password");
+              }, key:'user.buttons.havetemp'})
+            ])
+          ])
+        ),
+        m(Messaging.section,{title:"settings.system.messages","section":"server"})
+      ];
+    }
+  },
+  "resetUsername": {
+    oninit: function(vnode){
+      serverfn.connect();
+    },
+    view: function(vnode) {
+      var email = (document.getElementById("email")||{}).value;
+      return [
+        m(CommonPages['header']),
+        m("section.boxed",
+          m("h2", t("user.titles.reset")),
+          m("form", [
+            m("label[for=email]",t('user.profile.email')),
+            m("input#email[type=text]",{oninput: function(e){m.redraw();}}),
+            m("label"),
+            m(CommonPages["button"],{class: !email?"outline":"primary", disabled: !email, onclick: function(e){e.preventDefault();
+              serverfn.resetUsername(email);
+            }, key:'user.buttons.forgotusername'})
+          ])
+        ),
+        m(Messaging.section,{title:"settings.system.messages","section":"server"})
+      ];
+    }
+  },
+  "resetPassword": {
+    oninit: function(vnode){
+      serverfn.connect();
+    },
+    view: function(vnode) {
+      var username = (document.getElementById("username")||{}).value;
+      var tempPass = (document.getElementById("tempPass")||{}).value;
+      var newPassword = (document.getElementById("newPassword")||{}).value;
+      var confirmPassword = (document.getElementById("confirmPassword")||{}).value;
+      return [
+        m(CommonPages['header']),
+        m("section.boxed",
+          m("h2", t("user.titles.password")),
+          m("form", [
+            m("label[for=username]",t('user.profile.username')),
+            m("input#username[type=text]",{oninput: function(e){m.redraw();}}),
+            m("label[for=tempPass]",t('user.profile.temp')),
+            m("input#tempPass[type=text]",{oninput: function(e){m.redraw();}}),
+            m("label[for=newPassword]",t('user.profile.new')),
+            m("input#newPassword[type=password]",{oninput: function(e){m.redraw();}}),
+            m("label[for=confirmPassword]",t('user.profile.confirm')),
+            m("input#confirmPassword[type=password]",{oninput: function(e){m.redraw();}}),
+            m("label"),
+            m(CommonPages["button"],{disabled: !(username && tempPass && newPassword && newPassword==confirmPassword), class: "primary", onclick: function(e){e.preventDefault();
+              serverfn.updatePassword(username,tempPass,md5(newPassword));
+            }, key:'user.buttons.password'})
+          ])
+        ),
+        m(Messaging.section,{title:"settings.system.messages","section":"server"})
+      ];
+    }
+  },
+  "resetMessage": {
+    oninit: function(vnode){
+      serverfn.connect();
+    },
+    view: function(vnode) {
+      return [
+        m(CommonPages['header']),
+        m("section.boxed",
+          m("h2", t("user.titles.reset")),
+          m("p", t("user.titles.resetmessage"))
+        ),
+        m(Messaging.section,{title:"settings.system.messages","section":"server"})
+      ];
+    }
+  },
+  "password": {
+    oninit: function(vnode){
+      serverfn.connect();
+    },
+    view: function(vnode) {
+      var profile = s('profile');
+      if (!profile.name){
+        routesfn.set("/user/login");
+      } else {
+        var oldPassword = (document.getElementById("oldPassword")||{}).value;
+        var newPassword = (document.getElementById("newPassword")||{}).value;
+        var confirmPassword = (document.getElementById("confirmPassword")||{}).value;
+        return [
+          m(CommonPages['header']),
+          m("section.boxed",
+            m("h2", t("user.titles.password")),
+            m("form", [
+              m("label[for=oldPassword]",t('user.profile.old')),
+              m("input#oldPassword[type=password]",{oninput: function(e){m.redraw();}}),
+              m("label[for=newPassword]",t('user.profile.new')),
+              m("input#newPassword[type=password]",{oninput: function(e){m.redraw();}}),
+              m("label[for=confirmPassword]",t('user.profile.confirm')),
+              m("input#confirmPassword[type=password]",{oninput: function(e){m.redraw();}}),
+              m("label"),
+              m(CommonPages["button"],{disabled: !(oldPassword && newPassword && newPassword==confirmPassword), class: "primary", onclick: function(e){e.preventDefault();
+                serverfn.updatePassword(profile.name,md5(oldPassword),md5(newPassword));
+              }, key:'user.buttons.password'})
+            ])
+          ),
+          m(Messaging.section,{title:"settings.system.messages","section":"server"})
+        ];
+      }
+    }
+  },
+  "profile": {
+    view: function(vnode) {
+      var profile = s('profile');
+      if (!profile.name){
+        routesfn.set("/user/login");
+      } else {
+        return [
+          m(CommonPages['header']),
+          m("section.boxed",
+            m("h2", t("user.profile.title")),
+            m("form", [
+              m("label[for=username]",t('user.profile.username')),
+              m("input#username[type=text]", {value: profile.name,disabled:true}),
+              m("label[for=display]",t('user.profile.display')),
+              m("input#display[type=text]", {value: profile.display,oninput:function(e){statefn.updateMany([["profile","display",e.target.value],["profile","dirty",true]])}}),
+              m("label[for=email]",t('user.profile.email')),
+              m("input#email[type=text]", {value: profile.email,oninput:function(e){statefn.updateMany([["profile","email",e.target.value],["profile","dirty",true]])}}),
+              m("label"),
+              m("hr"),
+              m(UserPages['country']),
+              m("hr"),
+              m("div.wide",
+              m(CommonPages["button"],{class: profile.dirty?"primary":"outline disabled", onclick: function(e){e.preventDefault();
+                serverfn.updateProfile();
+                return false;
+              }, key:'user.buttons.profile'}),
+              m(CommonPages["button"],{class: "primary", onclick: function(e){e.preventDefault();routesfn.set("/user/password");return false;}, key:'user.buttons.password'}),
+              m(CommonPages["button"],{class: "warning", onclick: function(e){e.preventDefault();serverfn.logout();return false;}, key:'user.buttons.logout'})
+              )
+            ])
+          )
+        ];
+      }
+    }
   },
   "country": {
     view: function(vnode) {
-      var country = state.profile.country;
-      var country_temp = state.profile.country_temp;
+      var profile = s("profile");
+      var country = profile.country;
+      var country_temp = profile.country_temp;
       var buttons = [];
       var country_class;
       var flag_list = [];
@@ -1110,12 +2376,23 @@ var SettingsPages = {
         } else {
           country_class="primary";
         }
-        buttons = [
-          m(CommonPages["button"],{class: "primary", text:t("sp3",'system.buttons.viewall'), onclick: function(){
-              state.profile.country_temp = '';
+        if (country != ""){
+          buttons.push(
+            m(CommonPages["button"],{class: "warning", key:'system.buttons.clear', onclick: function(e){e.preventDefault();
+              var profile = s("profile");
+              profile.country = "";
+              profile.dirty = true;
+              statefn.update("profile",profile);
               return false;
+            }})
+          )
+        }
+        buttons.push(
+          m(CommonPages["button"],{class: "primary", key:'system.buttons.viewall', onclick: function(e){e.preventDefault();
+            state.profile.country_temp = '';
+            return false;
           }})
-        ];
+        );
         if (country==country_temp) {
           flag_list = Object.keys(world.country);
         }
@@ -1134,14 +2411,20 @@ var SettingsPages = {
           }
         }
         buttons = [
-          m(CommonPages["button"],{type:"submit",disabled:!valid, class: "success", text:t("sp3",'system.buttons.save'), onclick: function(){
+          m(CommonPages["button"],{type:"submit",disabled:!valid, class: "primary", key:'system.buttons.okay', onclick: function(e){e.preventDefault();
             if (valid){
-              statefn.remove("profile","country_temp");
-              statefn.update("profile","country",country_temp);}}
+              var profile = s("profile");
+              delete profile.country_temp;
+              profile.country = country_temp;
+              profile.dirty = true;
+              statefn.update("profile",profile);
+              InterfaceBack.search(country_temp);
             }
-          ),
-          m(CommonPages["button"],{class: "warning", text:t("sp3",'system.buttons.cancel'), onclick: function(){
+            return false;
+          }}),
+          m(CommonPages["button"],{class: "warning", key:'system.buttons.cancel', onclick: function(e){e.preventDefault();
             statefn.remove("profile","country_temp");
+            return false;
           }})
         ];
         if (valid){
@@ -1152,9 +2435,11 @@ var SettingsPages = {
       }
       return [ 
         m("form", [
-          state.profile.country?m("img",{border:1,src:"include/flags/" +state.profile.country.toLowerCase() + ".png"}):
-            m("button.pseudo",{onclick: function(){
+          m("h2",country?InterfaceFront.country(country):t('sections.country.title')),
+          state.profile.country?m("img",{border:1,src:"include/flags/" + country.toLowerCase() + ".png"}):
+            m("button.pseudo",{onclick: function(e){e.preventDefault();
               state.profile.country_temp = '';
+              return false;
             }},m("i.icon",m.trust(
               '<svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">' + icons['globe'] + '</svg>'
             )))
@@ -1172,383 +2457,450 @@ var SettingsPages = {
           m("label"),
           m("div.wide",buttons)
         ]),
-        flag_list.map(function(val,i){
-          return m(CommonPages["button"],{class: "outline", text:val, img:"include/flags/" + val.toLowerCase() + ".png",onclick: function(){
-            statefn.remove("profile","country_temp");
-            statefn.update("profile","country",val);
+        m("div.cards",flag_list.map(function(val,i){
+          return m(CommonPages["button"],{class: "card", text:val, img:"include/flags/" + val.toLowerCase() + ".png",onclick: function(e){e.preventDefault();
+            var profile = s("profile");
+            delete profile.country_temp;
+            profile.country = val;
+            profile.dirty = true;
+            statefn.update("profile",profile);
+            InterfaceBack.search(val);
+            return false;
           }})
-        })
-      ]
-    }
-  },
-  "language": {
-    view: function(vnode) {
-      var language = s('language');
-      var language_temp = s('language_temp');
-      var buttons = [];
-      var language_class;
-      var language_list = [];
-      if (language_temp === undefined  || language==language_temp){
-        if (language){
-          language_class="success";
-        } else {
-          language_class="primary";
-        }
-        buttons = [
-          m(CommonPages["button"],{class: "primary", text:t("sp3",'system.buttons.viewall'), onclick: function(){
-              state.language_temp = '';
-          }})
-        ];
-        if (language==language_temp) {
-          language_list = Object.keys(world.language);
-        }
-      } else {
-        var valid = world.language[language_temp] || (language_temp=="");
-        if (world.language[language_temp]){
-          language_list = [language_temp];
-        } else {
-          var len = language_temp.length;
-          if (len==1){
-            language_list = Object.keys(world.language).filter(function(val,i){
-              return val[0] == language_temp;
-            })
-          } else {
-            language_list = Object.keys(world.language);
-          }
-        }
-        buttons = [
-          m(CommonPages["button"],{type:"submit",disabled:!valid, class: "success", text:t("sp3",'system.buttons.save'), onclick: function(){
-            if (valid){
-              statefn.remove("language_temp");
-              statefn.update("language",language_temp);}}
-            }
-          ),
-          m(CommonPages["button"],{class: "warning", text:t("sp3",'system.buttons.cancel'), onclick: function(){
-            statefn.remove("language_temp");
-          }})
-        ];
-        if (valid){
-          language_class="primary";
-        } else {
-          language_class="warning";
-        }
-      }
-      return [ 
-        m("form", [
-          state.profile.country?world.country[state.profile.country].language.map( function (key,i){
-            if (world.language[key].sign){
-              return [
-                m("label[for=language]",key),
-                m(CommonPages["button"],{class: s('language')==key?"primary":"outline", text:world.language[key].name,onclick: function(){
-                  statefn.update("language",key);
-                }})
-              ]
-            }
-
-          }):'',
-          state.profile.country?world.country[state.profile.country].language.map( function (key,i){
-
-          }):'',
-          s('language')?m("p",world.language[language].name):"",
-          m("input#language_temp[type=text]",{"class":language_class,"value":(language_temp===undefined)?language:language_temp,autocomplete:"off",oninput: function(e){
-            var val = e.target.value;
-//            var match = val.match(/[a-zA-Z]{1,2}/);
-//            val = match?match[0].toUpperCase():'';
-            if (val){
-              state.language_temp = val;
-            } else {
-              state.language_temp = '';
-            }
-          }}),
-          m("label"),
-          m("div.wide",buttons)
-        ]),
-        language_list.map(function(val,i){
-          return m(CommonPages["button"],{class: "outline", text:val, text:world.language[val].name,onclick: function(){
-            statefn.remove("language_temp");
-            statefn.update("language",val);
-          }})
-        })
+        }))
       ]
     }
   },
   "interface": {
     view: function(vnode) {
-      var interface = s('interface');
-      var interface_temp = s('interface_temp');
+      var interface = InterfaceFront.ui.name;
+      var interface_temp = InterfaceFront.temp;
+      var interface_search = InterfaceFront.search || [];
       var buttons = [];
       var interface_class;
       var temp=interface_temp || interface;
       if (interface!=temp){
         interface_class="primary";
         buttons = [
-          m(CommonPages["button"],{class: "warning", text:t("sp3",'system.buttons.cancel'), onclick: function(){statefn.remove("interface_temp");}}),
-          m(CommonPages["button"],{class: "success", text:t("sp3",'system.buttons.save'), onclick: function(){interfacefn.reset();statefn.update("interface",temp);}})
+          m(CommonPages["button"],{class: "warning", key:'system.buttons.cancel', onclick: function(e){e.preventDefault();delete InterfaceFront.temp;delete InterfaceFront.search;return false;}}),
+          m(CommonPages["button"],{class: "primary", key:'system.buttons.search', onclick: function(e){e.preventDefault();InterfaceBack.search(interface_temp);return false;}})
         ];
       } else {
         interface_class="info";
         buttons.push(
-          m(CommonPages["button"],{class: "primary", text:t("sp3",'settings.interface.connect'), onclick: function(){interfacefn.connect();}}),
+          m(CommonPages["button"],{class: "primary", key:'system.buttons.viewall', onclick: function(e){e.preventDefault();
+            InterfaceBack.search("interface-sp3");
+            return false;
+          }}),
+          m(CommonPages["button"],{class: "primary", key:'system.buttons.update', onclick: function(e){e.preventDefault();
+            InterfaceFront.update();
+            return false;
+          }}),
+          m(CommonPages["button"],{class: "primary", key:'system.buttons.edit', onclick: function(e){e.preventDefault();
+            routesfn.set("/interface/" + interface);
+            return false;
+          }})
         );
       }
       return [ 
         m("form", [
-          m("label[for=interface]",t("sp3",'settings.interface.title')),
-          m("input#interface[type=text]",{"class":interface_class,"value":temp,oninput: function(e){statefn.update("interface_temp",e.target.value)}}),
+          m("label[for=interface]",t('sections.interface.title')),
+          m("input#interface[type=text]",{"class":interface_class,"value":temp,oninput: function(e){InterfaceFront.temp = e.target.value}}),
           m("label"),
           m("div.wide",buttons)
-        ])
-      ]
-    }
-  }
-}  //<-END SettingsPages object
-
-/*
-      return m("nav", messages.map(function(message){var parts = message.split('.');  return parts[0];}))
-
-/*
-        m(InterfaceTabs,{"q1s":q1s}),
-        m("nav", Object.keys(q1s).map(function(part){return parts;}))
-
-/*
-      var q1s = {};
-      for (key in messages){
-        var parts = key.split('.');
-        if (q1s[parts[0]]){
-          q1s[parts[0]].push(parts[1]);
-        } else {
-          q1s[parts[0]] = [parts[1]];
-        }
-      }
-*/
-
-
-var UserSections = {};
-var UserPages = {
-  "login": {
-    view: function(vnode) {
-      serverfn.connect();
-      return [
-        m(CommonPages['header']),
-        m("section.boxed",
-          m("h2", t("sp3","user.login.title")),
-          m("form", [
-            m("label[for=username]",t("sp3",'user.profile.username')),
-            m("input#username[type=text]"),
-            m("label[for=password]",t("sp3",'user.profile.password')),
-            m("input#password[type=password]"),
-            m("label"),
-            m("div.wide", 
-              s('error')?
-                [
-                  m(CommonPages["button"],{class: "danger", text:t("sp3",'system.buttons.error'), onclick: function(){ statefn.addItem2("servers",s('server'),"messages",server['error']);}}),
-                  m(CommonPages["button"],{class: "warning", text:t("sp3",'settings.server.reset'), onclick: function(){ serverfn.reset(s('server'));}})
-                ]
-                :[
-                  m(CommonPages["button"],{class: "primary", onclick: serverfn.login, text:t("sp3",'user.login.button')}),
-                  m(CommonPages["button"],{class: "warning", onclick: function(){routesfn.set("/user/reset");}, text:t("sp3",'user.reset.button')}),
-                  m(CommonPages["button"],{class: "outline", onclick: function(){routesfn.set("/user/register");}, text:t("sp3",'user.register.button')}),
-                ]
-            ),
-          ])
-        ),
-        s('messages').length?m("section.boxed",m("h2",t("sp3",'settings.system.messages')),m(MessageParts['list'],{"location":["messages"]})):''
-      ];
-    }
-  },
-  "register": {
-    view: function(vnode) {
-      serverfn.connect();
-      return [
-        m(CommonPages['header']),
-        m("section.boxed",
-          m("h2", t("sp3","user.register.title")),
-          m("form", [
-            m("label[for=username]",t("sp3",'user.profile.username')),
-            m("input#username[type=text]"),
-            m("label[for=display]",t("sp3",'user.profile.display')),
-            m("input#display[type=text]"),
-            m("label[for=email]",t("sp3",'user.profile.email')),
-            m("input#email[type=text]"),
-            m("label[for=password]",t("sp3",'user.profile.password')),
-            m("input#password[type=password]"),
-            m("label"),
-            m(CommonPages["button"],{class: "primary", onclick: serverfn.register, text:t("sp3",'user.register.button')})
-          ])
-        )
-      ];
-    }
-  },
-  "reset": {
-    view: function(vnode) {
-      var server = s('server');
-      serverfn.connect();      return [
-        m(CommonPages['header']),
-        m("section.boxed",
-          m("h2", t("sp3","user.reset.title")),
-          m("form", [
-            m("label[for=username]",t("sp3",'user.profile.username')),
-            m("input#username[type=text]", { value: s('user')}),
-            m("label[for=email]",t("sp3",'user.profile.email')),
-            m("input#email[type=text]"),
-            m("label"),
-            m(CommonPages["button"],{class: "primary", disabled: !s('user'), onclick: serverfn.resetPassword, text:t("sp3",'user.reset.button')})
-          ])
-        )
-      ];
-    }
-  },
-  "password": {
-    view: function(vnode) {
-      serverfn.connect();
-      return [
-        m(CommonPages['header']),
-        m("section.boxed",
-          m("h2", t("sp3","user.password.title")),
-          m("form", [
-            m("label[for=username]",t("sp3",'user.password.old')),
-            m("input#oldpassword[type=password]"),
-            m("label[for=display]",t("sp3",'user.password.new')),
-            m("input#newpassword[type=password]"),
-            m("label[for=password]",t("sp3",'user.password.confirm')),
-            m("input#confirmpassword[type=password]"),
-            m("label"),
-            m(CommonPages["button"],{class: "primary", onclick: serverfn.register, text:t("sp3",'user.password.update')})
-          ])
-        )
-      ];
-    }
-  },
-  "profile": {
-    view: function(vnode) {
-      var profile = s('profile');
-      if (profile.name){
-        return [
-          m(CommonPages['header']),
-          m("section.boxed",
-            m("h2", t("sp3","user.profile.title")),
-            m("form", [
-              m("label[for=username]",t("sp3",'user.profile.username')),
-              m("input#username[type=text]", {value: profile.name,disabled:true}),
-              m("label[for=display]",t("sp3",'user.profile.display')),
-              m("input#display[type=text]", {value: profile.display}),
-              m("label[for=email]",t("sp3",'user.profile.email')),
-              m("input#email[type=text]", {value: profile.email}),
-              m("label"),
-              m("hr"),
-              m(UserPages['country']),
-              m("hr"),
-              m("div.wide",
-              m(CommonPages["button"],{class: profile.dirty?"primary":"outline disabled", onclick: function(){}, text:t("sp3",'user.profile.button')}),
-              m(CommonPages["button"],{class: "primary", onclick: function(){routesfn.set("/user/password")}, text:t("sp3",'user.password.update')}),
-              m(CommonPages["button"],{class: "warning", onclick: serverfn.logout, text:t("sp3",'user.logout.button')})
-              )
-            ])
-          )
-        ];
-      } else {
-        routesfn.set("/user/login");
-      }
-    }
-  },
-  "country": {
-    view: function(vnode) {
-      var country = state.profile.country;
-      var country_temp = state.profile.country_temp;
-      var buttons = [];
-      var country_class;
-      var flag_list = [];
-      if (country_temp === undefined  || country==country_temp){
-        if (country){
-          country_class="success";
-        } else {
-          country_class="primary";
-        }
-        buttons = [
-          m(CommonPages["button"],{class: "primary", text:t("sp3",'system.buttons.viewall'), onclick: function(){
-              state.profile.country_temp = '';
-              return false;
-          }})
-        ];
-        if (country==country_temp) {
-          flag_list = Object.keys(world.country);
-        }
-      } else {
-        var valid = world.country[country_temp] || (country_temp=="");
-        if (world.country[country_temp]){
-          flag_list = [country_temp];
-        } else {
-          var len = country_temp.length;
-          if (len==1){
-            flag_list = Object.keys(world.country).filter(function(val,i){
-              return val[0] == country_temp;
-            })
-          } else {
-            flag_list = Object.keys(world.country);
-          }
-        }
-        buttons = [
-          m(CommonPages["button"],{type:"submit",disabled:!valid, class: "success", text:t("sp3",'system.buttons.save'), onclick: function(){
-            if (valid){
-              statefn.remove("profile","country_temp");
-              statefn.update("profile","country",country_temp);}}
-            }
-          ),
-          m(CommonPages["button"],{class: "warning", text:t("sp3",'system.buttons.cancel'), onclick: function(){
-            statefn.remove("profile","country_temp");
-          }})
-        ];
-        if (valid){
-          country_class="primary";
-        } else {
-          country_class="warning";
-        }
-      }
-      return [ 
-        m("form", [
-          m("label[for=country_temp]",t("sp3",'user.profile.country')),
-          m("input#country_temp[type=text]",{"class":country_class,"value":(country_temp===undefined)?country:country_temp,autocomplete:"off",oninput: function(e){
-            var val = e.target.value;
-            var match = val.match(/[a-zA-Z]{1,2}/);
-            val = match?match[0].toUpperCase():'';
-            if (val){
-              state.profile.country_temp = val;
-            } else {
-              state.profile.country_temp = '';
-            }
-          }}),
-          m("label"),
-          state.profile.country?m("img",{border:1,src:"include/flags/" + state.profile.country.toLowerCase() + ".png"}):
-            m("button.pseudo",{onclick: function(){
-              state.profile.country_temp = '';
-            }},m("i.icon",m.trust(
-              '<svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">' + icons['globe'] + '</svg>'
-            ))
-          ),
-          m("div.wide", buttons)
         ]),
-        flag_list.map(function(val,i){
-          return m(CommonPages["button"],{class: "outline", text:val, img:"include/flags/" + val.toLowerCase() + ".png",onclick: function(){
-            statefn.remove("profile","country_temp");
-            statefn.update("profile","country",val);
+        m("div",interface_search.map(function(val,i){
+          return m(CommonPages["button"],{class: "card outline", text:val,onclick: function(e){e.preventDefault();
+            delete InterfaceFront.temp;
+            delete InterfaceFront.search;
+            InterfaceFront.update(val);
+            return false;
           }})
-        })
+        }))
       ]
     }
   }
 }
 
 var CountryPages = {
+  "head": {
+    oninit: function(vnode){
+      CollectionBack.getCollections(vnode.attrs.cc);
+    },
+    onupdate: function(vnode){
+//      CountryPages.head.oninit(vnode);
+    },
+    view: function(vnode) {
+      var cc = vnode.attrs.cc;
+      var home = s("profile","country");
+      return [
+        m(CommonPages['header']),
+        m("section.boxed",
+          m(CommonPages["button"],{class: "pseudo", text:cc, img:"include/flags/" + cc.toLowerCase() + ".png"}),
+          m("h1",InterfaceFront.country(cc)),
+          m(CommonPages["button"],{disabled: cc==home, class: cc==home?"outline":"primary", key:cc==home?"system.buttons.selected":"system.buttons.select",
+            onclick: function(e){e.preventDefault();
+            statefn.update("profile","country",cc);
+          }})
+        )
+      ];
+    }
+  },
   "country": {
     view: function(vnode) {
+      var cc = vnode.attrs.cc;
+      var user = s("profile","name");
       return [
-        m(CommonPages['header'])
+        m(CountryPages['head'],{cc:vnode.attrs.cc}),
+        m("section.boxed",
+          m("h2",t('sections.interface.available')),
+          CollectionBack.collections.filter(function(collection){return collection.indexOf("-interface-")>-1}).map(function(collection){
+            var selected = (collection==InterfaceFront.ui.name);
+            var interface_class = selected?"success":"primary";
+            var buttons = [
+              m(CommonPages["button"],{class: "primary", key:selected?'system.buttons.update':'system.buttons.select', onclick: function(e){e.preventDefault();
+                InterfaceFront.update(collection);
+                return false;
+              }}),
+              m(CommonPages["button"],{class: "primary", key:'system.buttons.edit', onclick: function(e){e.preventDefault();
+                routesfn.set("/interface/" + collection);
+                return false;
+              }}),
+              m(CommonPages["button"],{class: "primary", key:'system.buttons.manage', onclick: function(e){e.preventDefault();
+                routesfn.set("/manage/" + collection);
+                return false;
+              }})
+            ];
+            return m("form", [
+                m("label[for=interface]",collection),
+                m("input#interface[type=text]",{"disabled": true, "class":interface_class,"value":InterfaceFront.collection(collection)}),
+                m("label"),
+                m("div.wide",buttons)
+            ])
+          })
+        ),
+        !user?"":m("section.boxed",
+          m("h2",t('sections.interface.potential')),
+          world.country[vnode.attrs.cc].language.map(function(lang){
+            var buttons = [
+              m(CommonPages["button"],{class: "primary", key:'system.buttons.request', onclick: function(e){e.preventDefault();
+                CollectionBack.request(collection,"en-US-interface-sp3",document.getElementById("interface_" + collection).value);
+                return false;
+              }})
+            ];
+            var collection = lang + '-' + cc + '-interface-sp3';
+            if (CollectionBack.collections.indexOf(collection)>-1)  return;
+            return m("form", [
+              m("label[for=interface]",collection),
+              m("input#interface_" + collection + "[type=text]",{"class":"primary","value":InterfaceFront.language(lang) + " Interface"}),
+              m("label"),
+              m("div.wide",buttons)
+            ]);
+          })
+        )
       ];
     }
   }
 }
 
-          
+// ADMIN page
+// collection classifications
+//    unmanaged
+//    all
+//    missing
+//    
+// db without security
+// security without db
+// latest additions to security
+// move to trash
+// remove from trash
+
+// collection name filter on top
+
+var AdminPages = {
+  "filter": function(arr){
+    return (arr).filter(function(collection){
+      var parts = collection.split("-");
+      try {
+        var searchLang = document.getElementById("searchLang").value;
+        var searchCc = document.getElementById("searchCc").value;
+        var searchType = document.getElementById("searchType").value;
+        var searchSub = document.getElementById("searchSub").value;
+        if (!searchLang && !searchCc && !searchType && !searchSub) return true;
+        return (searchLang?parts[0].indexOf(searchLang)>-1:true) && 
+               (searchCc?parts[1].indexOf(searchCc)>-1:true) &&
+               (searchType?parts[2].indexOf(searchType)>-1:true) &&
+               (searchSub?parts[3].indexOf(searchSub)>-1:true);
+      } catch(e) {
+        return false;
+      }
+    }).sort();
+  },
+  "radio": "unmanaged",
+  "head": {
+    oninit: function(vnode){
+      CollectionBack.getAllCollections();
+      CollectionBack.getAllSecurity();
+      CollectionBack.getUnknown();
+    },
+    onupdate: function(vnode){
+//      AdminPages.head.oninit(vnode);
+    },
+    view: function(vnode) {
+      return [
+        m(CommonPages['header']),
+        m("section.boxed", [
+          m("h1",t("sections.admin.title")),
+          ["unmanaged","proper","missing","unknown","email"].map(function(radio,i){
+            return m("label.control.control--radio",
+              t("sections.admin." + radio),
+              m("input[type=radio]", {
+                id: "radio_" + radio,
+                checked: AdminPages.radio == radio,
+                onclick: function(e){e.preventDefault();AdminPages.radio = radio;}
+              }),
+              m("div.control__indicator")
+            )
+          }),
+          m("hr"),
+          m("h2",t("sections.collection.filter")),
+          m("table.filtercollection",
+            m("tr", [
+              m("th",t("sections.collection.language")),
+              m("th",t("sections.collection.country")),
+              m("th",t("sections.collection.type")),
+              m("th",t("sections.collection.subname"))
+            ]),
+            m("tr",[
+              m("td",m("input#searchLang[type=text]",{oninput: m.redraw})),
+              m("td",m("input#searchCc[type=text]",{oninput: m.redraw})),
+              m("td",m("input#searchType[type=text]",{oninput: m.redraw})),
+              m("td",m("input#searchSub[type=text]",{oninput: m.redraw}))
+            ])
+          )
+        ])
+      ]
+    }
+  },
+  "main": {
+    view: function(vnode) {
+      return [
+        m(AdminPages['head']),
+        m(AdminPages["unmanaged"]),
+        m(AdminPages["proper"]),
+        m(AdminPages["missing"]),
+        m(AdminPages["unknown"]),
+        m(AdminPages["email"])
+      ];
+    }
+  },
+  "unmanaged": {
+    view: function(vnode){
+      return AdminPages.radio!="unmanaged"?"":m("section.boxed",[
+        m("h2",t('sections.admin.unmanaged')),
+        AdminPages.filter(CollectionBack.collections).filter(function(collection){return !(collection in CollectionBack.security)}).map(function(collection){
+          var manager = CollectionBack.rightsCheck(collection,SP_MANAGE);
+          var buttons;
+          if (CollectionBack.deleting==collection){
+            buttons = [
+              m(CommonPages["button"],{class: "warning", key:'system.buttons.cancel', onclick: function(e){e.preventDefault();
+                CollectionBack.deleting = "";
+              }}),
+              m(CommonPages["button"],{class: "danger onRight", key:'system.buttons.delete', onclick: function(e){e.preventDefault();
+                CollectionBack.trash(collection);
+              }})
+            ]
+          } else {
+            buttons = [
+              m(CommonPages["button"],{class: "primary", key:'system.buttons.manage', onclick: function(e){e.preventDefault();
+                routesfn.set("/manage/" + collection);
+                return false;
+              }}),
+              !manager?"":m(CommonPages["button"],{class: "warning", key:'system.buttons.delete', onclick: function(e){e.preventDefault();
+                CollectionBack.deleting = collection;
+                return false;
+              }})
+            ]
+          }
+          return m("form", [
+              m("label[for=interface]",collection),
+              m("input#interface[type=text]",{"disabled": true, "class":"warning","value":t("sections.collection.noname")}),
+              m("label"),
+              m("div.wide",buttons)
+          ])
+        })
+      ])
+    }
+  },
+  "proper": {
+    view: function(vnode){
+      return AdminPages.radio!="proper"?"":m("section.boxed",[
+        m("h2",t('sections.admin.proper')),
+        AdminPages.filter(Object.keys(CollectionBack.security)).filter(function(collection){return CollectionBack.collections.indexOf(collection)>-1}).map(function(collection){
+          var manager = CollectionBack.rightsCheck(collection,SP_MANAGE,CollectionBack.security[collection].user);
+          var buttons;
+          if (CollectionBack.deleting==collection){
+            buttons = [
+              m(CommonPages["button"],{class: "warning", key:'system.buttons.cancel', onclick: function(e){e.preventDefault();
+                CollectionBack.deleting = "";
+              }}),
+              m(CommonPages["button"],{class: "danger onRight", key:'system.buttons.delete', onclick: function(e){e.preventDefault();
+                CollectionBack.trash(collection);
+              }})
+            ]
+          } else {
+            buttons = [
+              m(CommonPages["button"],{class: "primary", key:'system.buttons.manage', onclick: function(e){e.preventDefault();
+                routesfn.set("/manage/" + collection);
+                return false;
+              }}),
+              !manager?"":m(CommonPages["button"],{class: "warning", key:'system.buttons.delete', onclick: function(e){e.preventDefault();
+                CollectionBack.deleting = collection;
+                return false;
+              }})
+            ]
+          }
+          return m("form", [
+              m("label[for=interface]",collection),
+              m("input#interface[type=text]",{"disabled": true, "class":"warning","value":InterfaceFront.collection(collection)}),
+              m("label"),
+              m("div.wide",buttons)
+          ])
+        })
+      ])
+    }
+  },
+  "missing": {
+    view: function(vnode){
+      return AdminPages.radio!="missing"?"":m("section.boxed",[
+        m("h2",t('sections.admin.missing')),
+        AdminPages.filter(Object.keys(CollectionBack.security)).filter(function(collection){return CollectionBack.collections.indexOf(collection)==-1}).map(function(collection){
+          var manager = CollectionBack.rightsCheck(collection,SP_MANAGE,CollectionBack.security[collection].user);
+          var buttons;
+          if (CollectionBack.deleting==collection){
+            buttons = [
+              m(CommonPages["button"],{class: "warning", key:'system.buttons.cancel', onclick: function(e){e.preventDefault();
+                CollectionBack.deleting = "";
+              }}),
+              m(CommonPages["button"],{class: "danger onRight", key:'system.buttons.delete', onclick: function(e){e.preventDefault();
+                CollectionBack.deleteSecurity(collection);
+              }})
+            ]
+          } else {
+            buttons = [
+              m(CommonPages["button"],{class: "primary", key:'system.buttons.manage', onclick: function(e){e.preventDefault();
+                routesfn.set("/manage/" + collection);
+                return false;
+              }}),
+              !manager?"":m(CommonPages["button"],{class: "warning", key:'system.buttons.delete', onclick: function(e){e.preventDefault();
+                CollectionBack.deleting = collection;
+                return false;
+              }})
+            ]
+          }
+          return m("form", [
+              m("label[for=interface]",collection),
+              m("input#interface[type=text]",{"disabled": true, "class":"warning","value":InterfaceFront.collection(collection)}),
+              m("label"),
+              m("div.wide",buttons)
+          ])
+        })
+      ])
+    }
+  },
+  "unknown": {
+    view: function(vnode){
+      return AdminPages.radio!="unknown"?"":m("section.boxed",[
+        m("h2",t('sections.admin.unknown')),
+        AdminPages.filter(CollectionBack.unknown).filter(function(collection){return CollectionBack.collections.indexOf(collection)==-1}).map(function(collection){
+          var manager = CollectionBack.rightsCheck(collection,SP_MANAGE);
+          var buttons;
+          if (CollectionBack.deleting==collection){
+            buttons = [
+              m(CommonPages["button"],{class: "warning", key:'system.buttons.cancel', onclick: function(e){e.preventDefault();
+                CollectionBack.deleting = "";
+              }}),
+              m(CommonPages["button"],{class: "danger onRight", key:'system.buttons.delete', onclick: function(e){e.preventDefault();
+                CollectionBack.deleteManagement(collection);
+              }})
+            ]
+          } else {
+            buttons = [
+              !manager?"":m(CommonPages["button"],{class: "warning", key:'system.buttons.delete', onclick: function(e){e.preventDefault();
+                CollectionBack.deleting = collection;
+                return false;
+              }})
+            ]
+          }
+          return m("form", [
+              m("label[for=interface]",collection),
+              m("input#interface[type=text]",{"disabled": true, "class":"warning","value":t("sections.collection.noname")}),
+              m("label"),
+              m("div.wide",buttons)
+          ])
+        })
+      ])
+    }
+  },
+  "emailGet" : function() {
+    var connection = s("connection");
+    var server = connection.server;
+    var pass = connection.pass;
+    var method = "GET";
+    var route = server + "/user/email";
+    m.request({
+      headers: {Pass: pass},
+      background:true,
+      method: method,
+      url: route,
+      extract: serverfn.parseXHR
+    })
+    .then(function(response) {
+      if (response.status == 200 && response.body){
+        AdminPages.emailRequests = JSON.parse(response.body);
+        m.redraw();
+      } else {
+        AdminPages.emailRequests = [];
+      }
+    });
+  },
+  "emailRequests": [],
+  "email": {
+    "oninit": function(vnode){
+      AdminPages.emailGet();
+    },
+    "view": function(vnode){
+      var locate = window.location;
+      var newline = "%0D%0A";
+      var link = locate.origin + locate.pathname + "#!/user/reset/password";
+      return AdminPages.radio!="email"?"":m("section.boxed",[
+        m("h2",t('sections.admin.email')),
+        m("table.users",
+          (AdminPages.emailRequests).map(function(user){
+            var msg = "username is " + user.name;
+            if (user.temp!="username") {
+              msg += newline + "temporary pass is " + user.temp + newline + newline + link;
+            }
+            return [
+              m("tr", [
+                m("th",user.name),
+                m("td", {rowspan:2},[
+                  m("p",user.display),
+                  m("p",user.email)
+                ])
+              ]),
+              m("tr", m("th",
+                m("a", {href:"mailto:" + user.email + "?subject=SignPuddle 3 Account Services&body="+ msg}, "Send Email")
+              ))
+            ]
+          })
+        )
+      ])
+    }
+  }
+}
+
+
 //    <label for="name">Name</label>
 //    <input type="text" id="name" placeholder="Name">
 //    <label for="email">Email</label>
@@ -1558,8 +2910,8 @@ var CountryPages = {
 //      <option value="male">Male</option>
 //      <option value="female">Female</option>
 //    </select>
-//    <label for="message">MessageParts</label>
-//    <textarea id="message" cols="30" rows="10" placeholder="MessageParts"></textarea>
+//    <label for="message">Messaging</label>
+//    <textarea id="message" cols="30" rows="10" placeholder="Messaging"></textarea>
 //    <input type="submit" value="Submit">
 //  </form>
 //</div>
@@ -1568,16 +2920,22 @@ var CountryPages = {
 m.route(document.body, routes.default, {
   "/": CommonPages['main'],
   "/settings": SettingsPages['main'],
+  "/manage/:name": CollectionPages['manage'],
   "/collection/txt/:collection": CollectionPages['txt'],
   "/interface/:name": InterfacePages['main'],
   "/interface/:name/:q1": InterfacePages['q1'],
   "/interface/:name/:q1/:q2": InterfacePages['q2'],
+  "/interface/:name/:q1/:q2/:q3": InterfacePages['q3'],
   "/user/login": UserPages['login'],
   "/user/profile": UserPages['profile'],
   "/user/register": UserPages['register'],
   "/user/reset": UserPages['reset'],
+  "/user/reset/username": UserPages['resetUsername'],
+  "/user/reset/password": UserPages['resetPassword'],
+  "/user/reset/message": UserPages['resetMessage'],
   "/user/password": UserPages['password'],
   "/country/:cc": CountryPages['country'],
+  "/admin": AdminPages['main'],
   "/special": SpecialPages['main'],
   "/special/icons": SpecialPages['icons'],
   "/special/style": SpecialPages['style'],

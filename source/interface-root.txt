@@ -1,0 +1,45 @@
+root	interface	SignPuddle 3 Interface API	https://signpuddle.com/server
+	line	## Interface
+	line	
+	line	SignPuddle 3 organizes user interface elements into interface collections.
+	line	Interface collections are available in three different forms: database, plain text files, and JSON objects
+	line	
+	line	### Databases
+	line	
+	line	Each collection is available as an SQLite database.
+	line	These databases are the primary source and all edits are directly applied to the database.
+	line	
+	line	table entry
+	line	+ key
+	line	+ message
+	line	+ description
+	line	+ icon
+	line	+ user
+	line	+ created_at
+	line	+ updated_at
+	line	
+	line	### Plain Text Files
+	line	
+	line	Each collection is available as a plain text field where each entry occupies its own line.
+	line	Each entry contains multiple fields that are divided by tab characters.
+	line	The plain text files are designed for easy import and export from the databases.
+	line	
+	line	key /t message /t description /t icon /t user /t created_at /t updated_at
+	line	
+	line	### JSON Data files
+	line	
+	line	The interface JSON data file is an object.
+	line	Each key contains an object with three properties: message, description, icon, and updated_at.
+	line	
+	line	{
+	line	  "name": "en-US-interface-sp3",
+	line	  "data": {
+	line	    "key.example.one": {
+	line	      "message": "example message",
+	line	      "description": "example description",
+	line	      "icon": "example",
+	line	      "updated_at": "date-time"
+	line	    }
+	line	  }
+	line	}
+	line	

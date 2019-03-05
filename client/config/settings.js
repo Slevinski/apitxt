@@ -1,27 +1,23 @@
 var config = {
   "state": {
-    "messages": [],
-    "server": "http://signpuddle.com/server",
-    "server": "http://192.168.254.8:8888/server",
     "status": "state.status.initial",
-    "connection": {},
+    "connection": {
+      "server": "http://signpuddle.com/server",
+      "server": "http://192.168.254.1:8888/server"
+    },
     "profile": {
+      "user": "",
       "country": "",
-      "spoken": "",
       "signed": "",
+      "voiced": "",
       "interface": "",
       "dictionary": "",
       "literature": "",
       "alphabet": "",
       "fingerspell": "",
-      "keyboard":""
+      "keyboard":"",
+      "security": 0
     },
-    "interface": {},
-    "dictionary": {},
-    "literature": {},
-    "alphabet": {},
-    "fingerspell": {},
-    "keyboard": {},
     "specials": ['icons','buttons','style','test','canvas']
   }
 }

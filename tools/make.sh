@@ -1,2 +1,2 @@
-python sections2build.py -s "tools fsw swu user collection apitxt" -f
+python sections2build.py -s "user collection interface tools fsw swu apitxt" -f
 

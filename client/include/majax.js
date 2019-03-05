@@ -79,7 +79,6 @@ majaX = function (data, successcallback, errorcallback) {
     'webma': 'audio/webm',
     'wav'  : 'audio/wav'
   };
-
   url      = data.url === undefined ? false : data.url;
   method   = data.method === undefined ? 'GET' : data.method.toUpperCase();
   port     = data.port === undefined ? urlparts.clean.port === undefined ? '80' : urlparts.clean.port : data.port;
@@ -92,8 +91,8 @@ majaX = function (data, successcallback, errorcallback) {
   header   = data.header === undefined ? {} : data.header;
   successcallback = data.success !== undefined ? data.success : successcallback;
   errorcallback   = data.error !== undefined ? data.error : errorcallback;
-  if (header['Content-type'] === undefined) {
-    header['Content-type'] = 'application/x-www-form-urlencoded';
+  if (header['Content-Type'] === undefined) {
+    header['Content-Type'] = 'application/x-www-form-urlencoded';
   }
   if (method === 'DEBUG') {
     return {
@@ -131,9 +130,10 @@ majaX = function (data, successcallback, errorcallback) {
         } else if (method === 'HEAD') {
           successcallback(ajax.responseText, ajax);
         } else {
-          if (typed < 3) {
+//        The response type is not the same as the request type
+//        if (typed < 3) {
             mimetype = ajax.headersObject['Content-Type'];
-          }
+//        }
           if (mimetype.indexOf('json') !== -1) {
             successcallback(JSON.parse(ajax.responseText), ajax);
           } else if (mimetype.indexOf('xml') !== -1) {
@@ -223,12 +223,13 @@ if ('undefined' !== typeof module) {
 majax = {
   setReqHeaders: function (ajax, headerObject) {
     "use strict";
-    var key;
+    var key,head;
     if (headerObject !== false) {
       if (typeof headerObject === 'object') {
         for (key in headerObject) {
           if (typeof headerObject[key] === 'string') {
-            ajax.setRequestHeader(key, headerObject[key]);
+            head = key.toLowerCase().replace(/^(.)|\-(.)/g, function(l){return l.toUpperCase()});
+            ajax.setRequestHeader(head, headerObject[key]);
           }
         }
       }
@@ -236,15 +237,15 @@ majax = {
   },
   getRespHeaders: function (headerString) {
     "use strict";
-    headerString = headerString.replace("Content-type","Content-Type").replace("content-type","Content-Type");
-    var i, string, header, headerObject = {};
+    var i, string, header, head, headerObject = {};
     if (typeof headerString === 'string') {
       string = headerString.split(/\n/);
       for (i = 0; i < string.length; i += 1) {
         if (typeof string[i] === 'string') {
           header = string[i].split(': ');
           if ((header[0].length > 3) && (header[1].length > 3)) {
-            headerObject[header[0].trim()] = header[1].trim();
+            head = header[0].trim().toLowerCase().replace(/^(.)|\-(.)/g, function(l){return l.toUpperCase()});
+            headerObject[head] = header[1].trim();
           }
         }
       }
@@ -512,8 +513,12 @@ function dataRequest(iG, iR, iM){
         response.headersObject["Content-Type"];
       data["groups"][iG]["routes"][iR]['methods'][iM]["dialog"][0]["responses"][0]["headers"] =
         response.headersObject;
-      data["groups"][iG]["routes"][iR]['methods'][iM]["dialog"][0]["responses"][0]["body"] =
+      if (response.responseText){
+        data["groups"][iG]["routes"][iR]['methods'][iM]["dialog"][0]["responses"][0]["body"] =
         response.responseText.split("\n");
+      } else {
+        delete data["groups"][iG]["routes"][iR]['methods'][iM]["dialog"][0]["responses"][0]["body"];
+      }
     } else {
       data["groups"][iG]["routes"][iR]['methods'][iM]["dialog"][0]["responses"][0]["status"] = 0;
       data["groups"][iG]["routes"][iR]['methods'][iM]["dialog"][0]["responses"][0]["body"] = data['error'];
@@ -525,7 +530,7 @@ function dataRequest(iG, iR, iM){
 var sp3Request = function(request,responseFn){
   var obj = {
     url: request.url,
-    headers: request.headers,
+    header: request.headers,
     method: request.method
   }
   if (request.data){

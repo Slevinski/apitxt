@@ -1,8 +1,15 @@
 <?php
 
+function TimestampNow(){
+  $dt = new DateTime("now");
+  $dt->setTimezone(new DateTimeZone('UTC'));
+  return $dt->format('Y-m-d\TH:i:s\Z');
+}
+
 $db_security = dirname(__FILE__) . '/../data/security.db';
 if (file_exists($db_security)){
   $db0 = new PDO('sqlite:' . $db_security);
+  $db0->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } else {
   $db0 = false;
 }
@@ -10,6 +17,7 @@ if (file_exists($db_security)){
 $db_file = dirname(__FILE__) . '/../data/iswa2010.db';
 if (file_exists($db_file)){
   $db = new PDO('sqlite:' . $db_file );
+  $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } else {
   $db = false;
 }
@@ -26,7 +34,7 @@ function _sqliteRegex($string, $pattern, $ci) {
   } else if ($cnt===0) {
     return false;
   } else {
-    haltValidation("invalid search pattern " . $pattern);
+    haltBadRequest("invalid search pattern " . $pattern);
   }
 }
 
@@ -40,10 +48,12 @@ function collection_db($collection){
     $collection_file = dirname(__FILE__) . '/../data/db/' . $collection . '.db';
     if (file_exists($collection_file)){
       $collection_db = new PDO('sqlite:' . $collection_file );
+      $collection_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
       $collection_db->sqliteCreateFunction('regex', '_sqliteRegex', 3);
       $collection_dbs[$collection] = $collection_db;
       return $collection_db;
     } else {
+      haltNotFound();
       $sel = 'SELECT code from collection_alt where alt=:collection;';
       try {
         $stmt = $db0->prepare($sel);
@@ -53,14 +63,454 @@ function collection_db($collection){
         if ($code){
           return collection_db($code[0]);
         } else {
-          haltValidation('invalid collection code');
+          haltBadRequest('invalid collection code');
         }
       } catch (PDOException $e) {
-        haltValidation($e->getCode() . ' ' . $e->getMessage());
+        haltBadRequest($e->getCode() . ' ' . $e->getMessage());
       }  
   //      haltNoDatabase();
     }
   }
+}
+
+function lastModified($collection){
+  $db = collection_db($collection);
+  try {
+    $sel = 'SELECT max(updated_at) from entry;';
+    $result=$db->query($sel);
+    $max = $result->fetchAll();
+    return $max[0][0];
+  } catch (PDOException $e) {
+    haltBadRequest($e->getCode() . ' ' . $e->getMessage());
+  }  
+}
+
+function lastModifiedCollection(){
+  global $db0;
+  try {
+    $sel = 'SELECT max(updated_at) from collection;';
+    $result=$db0->query($sel);
+    $max = $result->fetchAll();
+    return $max[0][0];
+  } catch (PDOException $e) {
+    haltBadRequest($e->getCode() . ' ' . $e->getMessage());
+  }
+}
+
+function collectionListing($name){
+  $dir = 'data/db/';
+  $ext = '.db';
+  $out = [];
+  if ($name){
+    if (strpos($name,"*")!==false){
+      $collections = $dir . $name . $ext;
+      $files = glob($collections);
+    } else {
+      $collections = $dir . '*' . $name . '*' . $ext;
+      $files = glob($collections);
+    }
+  } else {
+    $collections = $dir . '*' . $ext;
+    $files = glob($collections);
+  }
+  foreach ($files as $filename) {
+    $out[] = str_replace($ext,'',str_replace($dir,'',$filename));
+  }
+  return $out;
+}
+
+function collectionsSecurity(){
+  global $db0;
+  $sel = 'SELECT * from collection;';
+  try {
+    $stmt = $db0->prepare($sel);
+    $stmt->execute();
+    $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    if ($results) {
+      return $results;
+    }
+  } catch (PDOException $e) {
+  }
+  haltForbidden();
+}
+
+function collectionSecurity($collection){
+  global $db0;
+  $sel = 'SELECT * from collection where name=:collection;';
+  try {
+    $stmt = $db0->prepare($sel);
+    $stmt->bindParam(':collection', $collection, PDO::PARAM_STR);
+    $stmt->execute();
+    $results = $stmt->fetch(PDO::FETCH_ASSOC);
+    if ($results) {
+      return $results;
+    }
+  } catch (PDOException $e) {
+  }
+  $return = array();
+  $return['name'] = $collection;
+  $return['title'] = "Unknown Collection";
+  $return['view_pass'] = 0;
+  $return['add_pass'] = 1;
+  $return['edit_pass'] = 1;
+  $return['register_level'] = 0;
+  $return['upload_level'] = 4;
+  return $return;
+}
+
+function collectionSecurityInsert($collection,$data,$pass,$force=false){
+  //request must be from a logged in user
+  $user = userVerified($pass);
+  if (!$user) {
+    haltForbidden();
+  }
+  $dt = TimestampNow();
+  global $db0;
+
+  $stmt = $db0->prepare("INSERT into collection (name, title, user, view_pass, add_pass, edit_pass, register_level, upload_level, created_at, updated_at) values (:name, :title, :user, :view_pass, :add_pass, :edit_pass, :register_level, :upload_level, :dt, :dt);");
+  $stmt->bindValue(':name',$collection, PDO::PARAM_STR);
+  $stmt->bindValue(':title',$data["title"], PDO::PARAM_STR);
+  $stmt->bindValue(':user',$user, PDO::PARAM_STR);
+  $stmt->bindValue(':view_pass',$data["view_pass"], PDO::PARAM_STR);
+  $stmt->bindValue(':add_pass',$data["add_pass"], PDO::PARAM_STR);
+  $stmt->bindValue(':edit_pass',$data["edit_pass"], PDO::PARAM_STR);
+  $stmt->bindValue(':register_level',$data["register_level"], PDO::PARAM_STR);
+  $stmt->bindValue(':upload_level',$data["upload_level"], PDO::PARAM_STR);
+  $stmt->bindValue(':dt',$dt, PDO::PARAM_STR);
+  try {
+    $stmt->execute();
+  } catch(PDOException $exception){ 
+    haltBadRequest($exception->getCode() . ' ' . $exception->getMessage()); 
+  } 
+}
+
+function collectionSecurityUpdate($collection,$data,$pass,$force=false){
+  if (!$force) {rightscheck($collection,$pass,SP_MANAGE);}
+
+  global $db0;
+
+  $dt = TimestampNow();
+  if ($stmt = $db0->prepare("UPDATE collection set title=:title, view_pass=:view_pass, add_pass=:add_pass, edit_pass=:edit_pass, register_level=:register_level, upload_level=:upload_level, updated_at=:updated_at where name=:name;")) {
+    $stmt->bindValue(':title',$data["title"], PDO::PARAM_STR);
+    $stmt->bindValue(':view_pass',$data["view_pass"], PDO::PARAM_STR);
+    $stmt->bindValue(':add_pass',$data["add_pass"], PDO::PARAM_STR);
+    $stmt->bindValue(':edit_pass',$data["edit_pass"], PDO::PARAM_STR);
+    $stmt->bindValue(':register_level',$data["register_level"], PDO::PARAM_STR);
+    $stmt->bindValue(':upload_level',$data["upload_level"], PDO::PARAM_STR);
+    $stmt->bindValue(':updated_at',$dt, PDO::PARAM_STR);
+    $stmt->bindValue(':name',$collection, PDO::PARAM_STR);
+    try {
+      $stmt->execute();
+    } catch(PDOException $exception){ 
+      haltBadRequest($exception->getCode() . ' ' . $exception->getMessage()); 
+    } 
+    if (!$stmt->rowCount()){
+      collectionSecurityInsert($collection,$data,$pass,$force);
+    };
+  }
+}
+
+function collectionSecurityDelete($collection,$pass){
+  rightscheck($collection,$pass,SP_MANAGE);
+  global $db0;
+  if ($stmt = $db0->prepare("DELETE FROM collection where name=:name;")) {
+    $stmt->bindValue(':name',$collection, PDO::PARAM_STR);
+    try {
+      $stmt->execute();
+    } catch(PDOException $exception){ 
+      haltBadRequest($exception->getCode() . ' ' . $exception->getMessage()); 
+    } 
+  }  
+}
+
+function collectionUsers($collection){
+  global $db0;
+  $sel = 'SELECT user, security from usercollection where collection = :collection order by user;';
+  try {
+    $stmt = $db0->prepare($sel);
+    $stmt->bindParam(':collection', $collection, PDO::PARAM_STR);
+    $stmt->execute();
+    $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    if ($results) {
+      return $results;
+    }
+  } catch (PDOException $e) {
+  }
+  haltNoContent();
+}
+
+function collectionUsersDetail($collection,$pass){
+  rightscheck($collection,$pass,SP_MANAGE);
+  global $db0;
+  $sel = 'SELECT name, display, email, usercollection.security from user left join usercollection on name = user and collection = :collection order by name;';
+  try {
+    $stmt = $db0->prepare($sel);
+    $stmt->bindParam(':collection', $collection, PDO::PARAM_STR);
+    $stmt->execute();
+    $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    if ($results) {
+      return $results;
+    }
+  } catch (PDOException $e) {
+  }
+  haltNoContent();
+}
+
+function collectionManageUnknown(){
+  global $db0;
+  $sel = 'SELECT distinct collection from usercollection where collection not in (select name from collection);';
+  try {
+    $stmt = $db0->prepare($sel);
+    $stmt->execute();
+    $results = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    if ($results) {
+      return $results;
+    } else {
+      return [];
+    }
+  } catch (PDOException $e) {
+  }
+}
+
+function collectionManageUpdate($collection,$data,$pass,$force=false){
+  if (!$force) {rightscheck($collection,$pass,SP_MANAGE);}
+
+  global $db0;
+  if ($stmt = $db0->prepare("UPDATE usercollection set security=:security where collection=:collection and user=:user;")) {
+    $stmt->bindValue(':collection',$collection, PDO::PARAM_STR);
+    $stmt->bindValue(':user',$data["user"], PDO::PARAM_STR);
+    $stmt->bindValue(':security',$data["security"], PDO::PARAM_INT);
+    try {
+      $stmt->execute();
+    } catch(PDOException $exception){ 
+      haltBadRequest($exception->getCode() . ' ' . $exception->getMessage()); 
+    } 
+  }
+  if ($stmt = $db0->prepare("INSERT OR IGNORE INTO usercollection (collection, user, security) values (:collection, :user, :security);")) {
+    $stmt->bindValue(':collection',$collection, PDO::PARAM_STR);
+    $stmt->bindValue(':user',$data["user"], PDO::PARAM_STR);
+    $stmt->bindValue(':security',$data["security"], PDO::PARAM_INT);
+    try {
+      $stmt->execute();
+    } catch(PDOException $exception){ 
+      haltBadRequest($exception->getCode() . ' ' . $exception->getMessage()); 
+    } 
+  }
+}
+
+function collectionManageRemove($collection,$user,$pass){
+  rightscheck($collection,$pass,SP_MANAGE);
+  global $db0;
+  if ($stmt = $db0->prepare("DELETE from usercollection where collection=:collection and user=:user;")) {
+    $stmt->bindValue(':collection',$collection, PDO::PARAM_STR);
+    $stmt->bindValue(':user',$user, PDO::PARAM_STR);
+    try {
+      $stmt->execute();
+    } catch(PDOException $exception){ 
+      haltBadRequest($exception->getCode() . ' ' . $exception->getMessage()); 
+    } 
+  }
+}
+
+function collectionManageDelete($collection,$pass){
+  rightscheck($collection,$pass,SP_MANAGE);
+  global $db0;
+  if ($stmt = $db0->prepare("DELETE from usercollection where collection=:collection;")) {
+    $stmt->bindValue(':collection',$collection, PDO::PARAM_STR);
+    try {
+      $stmt->execute();
+    } catch(PDOException $exception){ 
+      haltBadRequest($exception->getCode() . ' ' . $exception->getMessage()); 
+    } 
+  }
+}
+
+function collectionDelete($collection,$pass){
+  rightscheck($collection,$pass,SP_MANAGE);
+  $dir = realpath('data');
+
+  $ext = 'db';
+  $file = $dir . "/" . $ext . "/" . $collection . '.' . $ext;
+  $trash = $dir . "/trash/" . $collection . '.' . $ext;
+  $ver = 0;
+  while(file_exists($trash)){
+    $ver++;
+    $trash = $dir . "/trash/" . $collection . '_' . $ver . '.' . $ext;
+  }
+  @rename($file, $trash);
+
+  $ext = 'json';
+  $file = $dir . "/" . $ext . "/" . $collection . '.' . $ext;
+  @unlink($file);
+
+  $ext = 'txt';
+  $file = $dir . "/" . $ext . "/" . $collection . '.' . $ext;
+  @unlink($file);
+}
+
+function interfaceKeys($interface,$pass){
+  rightscheck($interface,$pass,SP_VIEW);
+  $db = collection_db($interface);
+  try {
+    $sel = 'SELECT key from entry order by key;';
+    $results=$db->query($sel);
+    $entries = $results->fetchAll(PDO::FETCH_COLUMN);
+    return $entries;
+  } catch (PDOException $e) {
+    haltBadRequest($e->getCode() . ' ' . $e->getMessage());
+  }  
+}
+
+function interfaceSearch($interface,$text,$pass){
+  rightscheck($interface,$pass,SP_VIEW);
+  $db = collection_db($interface);
+  $text = "%" . $text . "%";
+  try {
+    $sql = 'SELECT key, message from entry where message like :message order by message;';
+    $stmt = $db->prepare($sql);
+    $stmt->bindParam(':message', $text, PDO::PARAM_STR);
+    $stmt->execute();
+    $entries = $stmt->fetchAll(PDO::FETCH_CLASS);
+    return $entries;
+  } catch (PDOException $e) {
+    haltBadRequest($e->getCode() . ' ' . $e->getMessage());
+  }  
+
+}
+
+function interfaceKeyEntry($interface,$key,$pass){
+  rightscheck($interface,$pass,SP_VIEW);
+  $db = collection_db($interface);
+  try {
+    $sql = 'SELECT key, message, description, icon, user, created_at, updated_at from entry where key like :key order by key;';
+    $stmt = $db->prepare($sql);
+    $stmt->bindParam(':key', $key, PDO::PARAM_STR);
+    $stmt->execute();
+    $entries = $stmt->fetchAll(PDO::FETCH_CLASS);
+    return $entries;
+  } catch (PDOException $e) {
+    haltBadRequest($e->getCode() . ' ' . $e->getMessage());
+  }  
+}
+
+function interfaceKeyNew($interface,$data,$pass){
+  rightscheck($interface,$pass,SP_ADD);
+  $user = userVerified($pass,true);
+
+  $db = collection_db($interface);
+  try {
+    $key = $data['key'];
+  } catch (Exception $e) {
+    haltBadRequest($e->getCode() . ' ' . $e->getMessage());
+  }
+  $err = invalidKey($key);
+  if ($err){
+    haltBadRequest($err);
+  }
+  $dt = TimestampNow();
+  if ($stmt = $db->prepare("INSERT INTO entry (key,message, description, icon, user, created_at, updated_at) VALUES ('$key',:message, :description, :icon, :user, :created_at, :updated_at)")) {
+    $stmt->bindValue(':message',$data["message"], PDO::PARAM_STR);
+    $stmt->bindValue(':description',$data["description"], PDO::PARAM_STR);
+    $stmt->bindValue(':icon',$data["icon"], PDO::PARAM_STR);
+    $stmt->bindValue(':user',$user, PDO::PARAM_STR);
+    $stmt->bindValue(':created_at',$dt, PDO::PARAM_STR);
+    $stmt->bindValue(':updated_at',$dt, PDO::PARAM_STR);
+    try {
+      $stmt->execute();
+    } catch(PDOException $exception){ 
+      haltBadRequest($exception->getCode() . ' ' . $exception->getMessage()); 
+    } 
+  }
+}
+
+function interfaceKeyUpdate($interface,$key,$data,$pass){
+  rightscheck($interface,$pass,SP_EDIT,$key);
+
+  $db = collection_db($interface);
+
+  try {
+    $newkey = $data['key'];
+  } catch (Exception $e) {
+    haltBadRequest($e->getCode() . ' ' . $e->getMessage());
+  }
+  $err = invalidKey($newkey);
+  if ($err){
+    haltBadRequest($err);
+  }
+
+  $dt = TimestampNow();
+
+  if ($stmt = $db->prepare("UPDATE entry set key=:newkey, message=:message, description=:description, icon=:icon, updated_at=:updated_at where key=:key;")) {
+    $stmt->bindValue(':newkey',$data["key"], PDO::PARAM_STR);
+    $stmt->bindValue(':message',$data["message"], PDO::PARAM_STR);
+    $stmt->bindValue(':description',$data["description"], PDO::PARAM_STR);
+    $stmt->bindValue(':icon',$data["icon"], PDO::PARAM_STR);
+    $stmt->bindValue(':updated_at',$dt, PDO::PARAM_STR);
+    $stmt->bindValue(':key',$key, PDO::PARAM_STR);
+    try {
+      $stmt->execute();
+    } catch(PDOException $exception){ 
+      haltBadRequest($exception->getCode() . ' ' . $exception->getMessage()); 
+    } 
+  }
+}
+
+function interfaceKeyDelete($interface,$key,$pass){
+  rightscheck($interface,$pass,SP_EDIT,$key);
+  $db = collection_db($interface);
+  $err = invalidKey($key);
+  if ($err){
+    haltBadRequest($err);
+  }
+  if ($stmt = $db->prepare("DELETE FROM entry where key='$key';")) {
+    try {
+      $stmt->execute();
+    } catch(PDOException $exception){ 
+      haltBadRequest($exception->getCode() . ' ' . $exception->getMessage()); 
+    } 
+  }
+}
+
+function interface2json($interface,$pass=""){
+  //  rightscheck($interface,$pass,SP_VIEW);
+  $db = collection_db($interface);
+  try {
+    $sel = 'SELECT key, message, description, icon, user, created_at, updated_at from entry;';
+    $results=$db->query($sel);
+    $entries = $results->fetchAll(PDO::FETCH_ASSOC);
+    $return = array();
+    $return['name'] = $interface;
+    $return['data'] = array();
+    if($entries){
+      foreach ($entries as $entry){
+        $key = $entry['key'];
+        unset($entry['key']);
+        $return['data'][$key] = $entry;
+      }
+    }
+    return json_pretty($return);
+  } catch (PDOException $e) {
+    haltBadRequest($e->getCode() . ' ' . $e->getMessage());
+  }  
+}
+
+function interface2txt($interface,$pass=""){
+  //  rightscheck($interface,$pass,SP_VIEW);
+  $db = collection_db($interface);
+  try {
+    $sel = 'SELECT key, message, description, icon, user, created_at, updated_at from entry;';
+    $results=$db->query($sel);
+    $entries = $results->fetchAll(PDO::FETCH_ASSOC);
+    $lines = array();
+    if($entries){
+      foreach ($entries as $entry){
+        $lines[] = implode($entry,"\t");
+      }
+    }
+    return implode($lines,"\n");
+  } catch (PDOException $e) {
+    haltBadRequest($e->getCode() . ' ' . $e->getMessage());
+  }  
 }
 
 function entry_orderby($sort,$default){
@@ -119,7 +569,7 @@ function collection_list($lang='',$code=''){
       if ($alt){
         return collection_list('',$alt);
       }
-      haltValidation('invalid collection code');
+      haltBadRequest('invalid collection code');
     }
     foreach ($entries as $i=>$entry){
       if(array_key_exists($entry->code,$alts)){
@@ -133,7 +583,7 @@ function collection_list($lang='',$code=''){
     $return['data'] = $entries;
     return $return;
   } catch (PDOException $e) {
-    haltValidation($e->getCode() . ' ' . $e->getMessage());
+    haltBadRequest($e->getCode() . ' ' . $e->getMessage());
   }  
   
 }
@@ -142,7 +592,7 @@ function collection_query($collection,$query,$offset,$limit,$sort){
   $collection_db = collection_db($collection);
   $regex = SignWriting\query2regex($query);
   if (!$regex){
-    haltValidation('invalid query string');
+    haltBadRequest('invalid query string');
   }
   // $collection_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
   foreach ($regex as $i=>$re){
@@ -189,7 +639,7 @@ function collection_query($collection,$query,$offset,$limit,$sort){
     $return['data'] = $data;
     return $return;
   } catch (PDOException $e) {
-    haltValidation($e->getCode() . ' ' . $e->getMessage());
+    haltBadRequest($e->getCode() . ' ' . $e->getMessage());
   }  
 }
 
@@ -197,7 +647,7 @@ function collection_query_signtext($collection,$query,$offset,$limit,$sort){
   $collection_db = collection_db($collection);
   $regex = SignWriting\query2regex($query);
   if (!$regex){
-    haltValidation('invalid query string');
+    haltBadRequest('invalid query string');
   }
   
   $orderby = entry_orderby($sort,'sign');
@@ -252,7 +702,7 @@ function collection_query_signtext($collection,$query,$offset,$limit,$sort){
     $return['data'] = $data;
     return $return;
   } catch (PDOException $e) {
-    haltValidation($e->getCode() . ' ' . $e->getMessage());
+    haltBadRequest($e->getCode() . ' ' . $e->getMessage());
   }  
 }
 
@@ -274,7 +724,7 @@ function collection_search($collection,$search,$type,$ci,$offset,$limit,$sort){
   $search = "/" . $search . "/";
   $collection_db = collection_db($collection);
   if (!$search){
-    haltValidation('missing search string');
+    haltBadRequest('missing search string');
   }
   $orderby = entry_orderby($sort,'sign');
   $sel = 'select entry.id, user, created_at, updated_at, sign, signtext, group_concat(term,"|") as terms, text, source, detail from entry LEFT JOIN term on entry.id=term.id where entry.id in (select id from term where REGEX(' . $col . ',:search,0)) group by entry.id ' . $orderby . ';';
@@ -304,7 +754,7 @@ function collection_search($collection,$search,$type,$ci,$offset,$limit,$sort){
     $return['data'] = $data;
     return $return;
   } catch (PDOException $e) {
-    haltValidation($e->getCode() . ' ' . $e->getMessage());
+    haltBadRequest($e->getCode() . ' ' . $e->getMessage());
   }  
 }
 
@@ -357,7 +807,7 @@ function collection_date($collection,$date,$before,$after,$offset,$limit,$sort){
     $return['data'] = $data;
     return $return;
   } catch (PDOException $e) {
-    haltValidation($e->getCode() . ' ' . $e->getMessage());
+    haltBadRequest($e->getCode() . ' ' . $e->getMessage());
   }  
 }
 
@@ -367,7 +817,7 @@ function collection_entry($collection,$id,$sort){
   preg_match_all('/[0-9]+/', $id, $matches);
   $ids = implode(array_unique($matches[0]),',');
   if (!$ids) {
-    haltValidation('invalid entry id');
+    haltBadRequest('invalid entry id');
   }
   $sel = 'select entry.id, user, created_at, updated_at, sign, signtext, group_concat(term,"|") as terms, text, source, detail from entry LEFT JOIN term on entry.id=term.id where entry.id in (' . $ids . ')';
   $sel .= ' group by entry.id ' . $orderby . ';';
@@ -658,28 +1108,28 @@ function json_check() {
       //'No errors';
       break;
     case JSON_ERROR_DEPTH:
-      haltValidation('Maximum stack depth exceeded');
+      haltBadRequest('Maximum stack depth exceeded');
       break;
     case JSON_ERROR_STATE_MISMATCH:
-      haltValidation('Underflow or the modes mismatch');
+      haltBadRequest('Underflow or the modes mismatch');
       break;
     case JSON_ERROR_CTRL_CHAR:
-      haltValidation('Unexpected control character found');
+      haltBadRequest('Unexpected control character found');
       break;
     case JSON_ERROR_SYNTAX:
-      haltValidation('Syntax error, malformed JSON');
+      haltBadRequest('Syntax error, malformed JSON');
       break;
     case JSON_ERROR_UTF8:
-      haltValidation('Malformed UTF-8 characters, possibly incorrectly encoded');
+      haltBadRequest('Malformed UTF-8 characters, possibly incorrectly encoded');
       break;
     default:
-      haltValidation('Unknown error');
+      haltBadRequest('Unknown error');
       break;
   }
 }
 
 function json_pretty($object) {
-    $json = json_encode($object);
+    $json = json_encode($object,JSON_NUMERIC_CHECK);
     $tab = "  ";
     $new_json = "";
     $indent_level = 0;

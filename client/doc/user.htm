@@ -149,6 +149,104 @@ code[class*=language-],pre[class*=language-]{color:#f8f8f2;background:0 0;text-s
     </div>
     
   
+    
+    <div class="title">
+      <i class="dropdown icon"></i>
+      
+        <strong>User profile</strong>
+      
+    </div>
+    <div class="content">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item teal" href="#user-user-profile-update-user-profile">
+          <i class="ui teal empty circular label"></i>
+          
+            <span>Update user profile</span>
+          
+        </a>
+      
+        <a class="item blue" href="#user-user-profile-register-new-user">
+          <i class="ui blue empty circular label"></i>
+          
+            <span>Register new user</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+    
+    <div class="title">
+      <i class="dropdown icon"></i>
+      
+        <strong>User password</strong>
+      
+    </div>
+    <div class="content">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item blue" href="#user-user-password-update-user-password">
+          <i class="ui blue empty circular label"></i>
+          
+            <span>Update user password</span>
+          
+        </a>
+      
+        <a class="item teal" href="#user-user-password-reset-user-password">
+          <i class="ui teal empty circular label"></i>
+          
+            <span>Reset user password</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+    
+    <div class="title">
+      <i class="dropdown icon"></i>
+      
+        <strong>User email requests</strong>
+      
+    </div>
+    <div class="content">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#user-user-email-requests-list-of-user-email-requests">
+          <i class="ui green empty circular label"></i>
+          
+            <span>List of user email requests</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+    
+    <div class="title">
+      <i class="dropdown icon"></i>
+      
+        <strong>Username lookup</strong>
+      
+    </div>
+    <div class="content">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item teal" href="#user-username-lookup-lookup-username">
+          <i class="ui teal empty circular label"></i>
+          
+            <span>Lookup username</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
 </div>
 
 
@@ -183,17 +281,6 @@ code[class*=language-],pre[class*=language-]{color:#f8f8f2;background:0 0;text-s
 
 <li><p>Live Page: <a href="../api/user.html">API Interface</a> and <a href="../api/user.js">JavaScript</a></p></li>
 </ul>
-
-<h3 id="country-code">Country code</h3>
-
-<p>The country codes are from ISO-3166.
-Each country is coded with two uppercase letters.</p>
-
-<h3 id="language-code">Language code</h3>
-
-<p>The language codes are from ISO-639-1 for spoken languages and ISO-639-3 for sign languages.
-Each spoken language is coded with two lowercase letters.
-Each sign language is coded with three lowercase letters.</p>
 
     </div>
   </div>
@@ -237,7 +324,7 @@ Each sign language is coded with three lowercase letters.</p>
                   <h3>GET</h3>
                 </div>
                 <a class="ui basic fluid green label">
-                  <code>https://signpuddle.com/server/user/who/</code>
+                  <code>https://signpuddle.com/server/user/who</code>
                 </a>
               </div>
               
@@ -251,11 +338,17 @@ Each sign language is coded with three lowercase letters.</p>
                     <div class="content tabbed">
                       <div class="ui top attached tabular menu">
                         <a data-tab="body" class="active item">BODY</a>
+                        <a data-tab="schema" class="item">SCHEMA</a>
                       </div>
                       <div class="ui bottom attached active tab segment" data-tab="body">
                         <pre style="white-space: inherit">
                           <code class="language-">null
 </code>
+                        </pre>
+                      </div>
+                      <div class="ui bottom attached tab segment" data-tab="schema">
+                        <pre style="white-space: inherit">
+                          <code class="language-json"></code>
                         </pre>
                       </div>
                     </div>
@@ -293,12 +386,18 @@ Each sign language is coded with three lowercase letters.</p>
                   <div class="content tabbed">
                     <div class="ui top attached tabular menu">
                       <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
                     </div>
                     <div class="ui bottom attached active tab segment" data-tab="body">
                       <pre style="white-space: inherit">
                         <code class="language-">BR
 US
 </code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
                       </pre>
                     </div>
                   </div>
@@ -363,11 +462,17 @@ US
                     <div class="content tabbed">
                       <div class="ui top attached tabular menu">
                         <a data-tab="body" class="active item">BODY</a>
+                        <a data-tab="schema" class="item">SCHEMA</a>
                       </div>
                       <div class="ui bottom attached active tab segment" data-tab="body">
                         <pre style="white-space: inherit">
                           <code class="language-">null
 </code>
+                        </pre>
+                      </div>
+                      <div class="ui bottom attached tab segment" data-tab="schema">
+                        <pre style="white-space: inherit">
+                          <code class="language-json"></code>
                         </pre>
                       </div>
                     </div>
@@ -405,11 +510,17 @@ US
                   <div class="content tabbed">
                     <div class="ui top attached tabular menu">
                       <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
                     </div>
                     <div class="ui bottom attached active tab segment" data-tab="body">
                       <pre style="white-space: inherit">
-                        <code class="language-">e3bedc9e9f83cb9dd7ae61250b9e6921
+                        <code class="language-">{&#34;pass&#34;: &#34;90c19ce2076db097c75b3406e966a6b6&#34;,&#34;ip&#34;: &#34;192.168.254.2&#34;}
 </code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
                       </pre>
                     </div>
                   </div>
@@ -454,12 +565,7 @@ US
               <h4 class="ui horizontal divider">
                 REQUEST verify user
               </h4>
-              <div class="description"><ul>
-<li><p>Even a list</p></li>
-
-<li><p>name <code>Name</code> of the metaproperty, should be alphanumeric only. Uneditable.</p></li>
-</ul>
-</div>
+              <div class="description"></div>
               <div class="fluid ui large labeled button">
                 <div class="ui teal large button">
                   <h3>PUT</h3>
@@ -497,11 +603,34 @@ US
                     <div class="content tabbed">
                       <div class="ui top attached tabular menu">
                         <a data-tab="body" class="active item">BODY</a>
+                        <a data-tab="schema" class="item">SCHEMA</a>
                       </div>
                       <div class="ui bottom attached active tab segment" data-tab="body">
                         <pre style="white-space: inherit">
                           <code class="language-json">{&#34;username&#34;:&#34;anonymous&#34;,&#34;pass&#34;:&#34;af77...&#34;,&#34;validated&#34;:&#34;2793f...&#34;}
 </code>
+                        </pre>
+                      </div>
+                      <div class="ui bottom attached tab segment" data-tab="schema">
+                        <pre style="white-space: inherit">
+                          <code class="language-json">{
+  &#34;$schema&#34;: &#34;http://json-schema.org/draft-04/schema#&#34;,
+  &#34;type&#34;: &#34;object&#34;,
+  &#34;properties&#34;: {
+    &#34;username&#34;: {
+      &#34;type&#34;: &#34;string&#34;,
+      &#34;description&#34;: &#34;name of the user&#34;
+    },
+    &#34;pass&#34;: {
+      &#34;type&#34;: &#34;string&#34;,
+      &#34;description&#34;: &#34;pass for session validation&#34;
+    },
+    &#34;validated&#34;: {
+      &#34;type&#34;: &#34;string&#34;,
+      &#34;description&#34;: &#34;validated pass mixed with password&#34;
+    }
+  }
+}</code>
                         </pre>
                       </div>
                     </div>
@@ -540,11 +669,967 @@ US
                   <div class="content tabbed">
                     <div class="ui top attached tabular menu">
                       <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
                     </div>
                     <div class="ui bottom attached active tab segment" data-tab="body">
                       <pre style="white-space: inherit">
                         <code class="language-json">{&#34;user-profile&#34;:&#34;&#34;}
 </code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui stacked segments">
+        <div class="ui basic segment resource">
+          <div class="ui purple huge ribbon label">
+            User profile
+          </div>
+          <div class="ui header">
+            <div class="ui sub header">
+              <p>User details</p>
+
+            </div>
+          </div>
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui pink micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block aligned header" id="user-user-profile-update-user-profile">
+              Update user profile
+            </h3>
+            <div class="description"><p>Updates the profile of the user</p>
+</div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST user-update
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui teal large button">
+                  <h3>PUT</h3>
+                </div>
+                <a class="ui basic fluid teal label">
+                  <code>https://signpuddle.com/server/user/{name}</code>
+                </a>
+              </div>
+              
+                
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="4">Parameters</th>
+    </tr>
+  <thead>
+  <tbody>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>name</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">slevinski</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>The name of a user</p>
+
+        
+      </td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              
+              
+                
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Pass</td>
+      <td><code>5ffab638bde372b4fa63bb6f8484595d</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              
+              
+                <div class="ui stacked segment">
+                  <div class="ui fluid transaction accordion">
+                    <div class="title">
+                      <code></code>
+                    </div>
+                    <div class="content tabbed">
+                      <div class="ui top attached tabular menu">
+                        <a data-tab="body" class="active item">BODY</a>
+                        <a data-tab="schema" class="item">SCHEMA</a>
+                      </div>
+                      <div class="ui bottom attached active tab segment" data-tab="body">
+                        <pre style="white-space: inherit">
+                          <code class="language-">null
+</code>
+                        </pre>
+                      </div>
+                      <div class="ui bottom attached tab segment" data-tab="schema">
+                        <pre style="white-space: inherit">
+                          <code class="language-json"></code>
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+  </tbody>
+</table>
+
+              <div class="ui stacked blue segment">
+                <div class="ui fluid transaction accordion">
+                  <div class="title center aligned">
+                    <a class="ui blue circular label">
+                      204
+                    </a>
+                    <code></code>
+                  </div>
+                  <div class="content tabbed">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-"></code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            
+          </div>
+        
+          
+<div class="ui grey horizontal small divider header">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui pink micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block aligned header" id="user-user-profile-register-new-user">
+              Register new user
+            </h3>
+            <div class="description"><p>Creates and returns a new user</p>
+</div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST user-add
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui blue large button">
+                  <h3>POST</h3>
+                </div>
+                <a class="ui basic fluid blue label">
+                  <code>https://signpuddle.com/server/user/{name}</code>
+                </a>
+              </div>
+              
+                
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="4">Parameters</th>
+    </tr>
+  <thead>
+  <tbody>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>name</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">slevinski</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>The name of a user</p>
+
+        
+      </td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              
+              
+                
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Pass</td>
+      <td><code>5ffab638bde372b4fa63bb6f8484595d</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              
+              
+                <div class="ui stacked segment">
+                  <div class="ui fluid transaction accordion">
+                    <div class="title">
+                      <code></code>
+                    </div>
+                    <div class="content tabbed">
+                      <div class="ui top attached tabular menu">
+                        <a data-tab="body" class="active item">BODY</a>
+                        <a data-tab="schema" class="item">SCHEMA</a>
+                      </div>
+                      <div class="ui bottom attached active tab segment" data-tab="body">
+                        <pre style="white-space: inherit">
+                          <code class="language-">null
+</code>
+                        </pre>
+                      </div>
+                      <div class="ui bottom attached tab segment" data-tab="schema">
+                        <pre style="white-space: inherit">
+                          <code class="language-json"></code>
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>text/plain</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui stacked blue segment">
+                <div class="ui fluid transaction accordion">
+                  <div class="title center aligned">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>text/plain</code>
+                  </div>
+                  <div class="content tabbed">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-">profile created and returned
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui stacked segments">
+        <div class="ui basic segment resource">
+          <div class="ui purple huge ribbon label">
+            User password
+          </div>
+          <div class="ui header">
+            <div class="ui sub header">
+              <p>User password resource</p>
+
+            </div>
+          </div>
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui pink micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block aligned header" id="user-user-password-update-user-password">
+              Update user password
+            </h3>
+            <div class="description"><p>Updates the password of the user</p>
+</div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST user-update-password
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui blue large button">
+                  <h3>POST</h3>
+                </div>
+                <a class="ui basic fluid blue label">
+                  <code>https://signpuddle.com/server/user/{name}/password</code>
+                </a>
+              </div>
+              
+                
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="4">Parameters</th>
+    </tr>
+  <thead>
+  <tbody>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>name</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">slevinski</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>The name of a user</p>
+
+        
+      </td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              
+              
+                
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>plain/text</code></td>
+    </tr>
+  
+    <tr>
+      <td class="four wide">Pass</td>
+      <td><code>5ffab638bde372b4fa63bb6f8484595d</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              
+              
+                <div class="ui stacked segment">
+                  <div class="ui fluid transaction accordion">
+                    <div class="title">
+                      <code>plain/text</code>
+                    </div>
+                    <div class="content tabbed">
+                      <div class="ui top attached tabular menu">
+                        <a data-tab="body" class="active item">BODY</a>
+                        <a data-tab="schema" class="item">SCHEMA</a>
+                      </div>
+                      <div class="ui bottom attached active tab segment" data-tab="body">
+                        <pre style="white-space: inherit">
+                          <code class="language-">{&#34;old&#34;:&#34;149603e6c03516362a8da23f624db945&#34;,&#34;new&#34;:&#34;22af645d1859cb5ca6da0c484f1f37ea&#34;}
+</code>
+                        </pre>
+                      </div>
+                      <div class="ui bottom attached tab segment" data-tab="schema">
+                        <pre style="white-space: inherit">
+                          <code class="language-json"></code>
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+  </tbody>
+</table>
+
+              <div class="ui stacked blue segment">
+                <div class="ui fluid transaction accordion">
+                  <div class="title center aligned">
+                    <a class="ui blue circular label">
+                      204
+                    </a>
+                    <code></code>
+                  </div>
+                  <div class="content tabbed">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-"></code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            
+          </div>
+        
+          
+<div class="ui grey horizontal small divider header">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui pink micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block aligned header" id="user-user-password-reset-user-password">
+              Reset user password
+            </h3>
+            <div class="description"><p>Creates a temporary password for the user</p>
+</div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST user-password-reset
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui teal large button">
+                  <h3>PUT</h3>
+                </div>
+                <a class="ui basic fluid teal label">
+                  <code>https://signpuddle.com/server/user/{name}/password</code>
+                </a>
+              </div>
+              
+                
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="4">Parameters</th>
+    </tr>
+  <thead>
+  <tbody>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>name</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">slevinski</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>The name of a user</p>
+
+        
+      </td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              
+              
+                
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>plain/text</code></td>
+    </tr>
+  
+    <tr>
+      <td class="four wide">Pass</td>
+      <td><code>5ffab638bde372b4fa63bb6f8484595d</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              
+              
+                <div class="ui stacked segment">
+                  <div class="ui fluid transaction accordion">
+                    <div class="title">
+                      <code>plain/text</code>
+                    </div>
+                    <div class="content tabbed">
+                      <div class="ui top attached tabular menu">
+                        <a data-tab="body" class="active item">BODY</a>
+                        <a data-tab="schema" class="item">SCHEMA</a>
+                      </div>
+                      <div class="ui bottom attached active tab segment" data-tab="body">
+                        <pre style="white-space: inherit">
+                          <code class="language-">null
+</code>
+                        </pre>
+                      </div>
+                      <div class="ui bottom attached tab segment" data-tab="schema">
+                        <pre style="white-space: inherit">
+                          <code class="language-json"></code>
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+  </tbody>
+</table>
+
+              <div class="ui stacked blue segment">
+                <div class="ui fluid transaction accordion">
+                  <div class="title center aligned">
+                    <a class="ui blue circular label">
+                      204
+                    </a>
+                    <code></code>
+                  </div>
+                  <div class="content tabbed">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-"></code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui stacked segments">
+        <div class="ui basic segment resource">
+          <div class="ui purple huge ribbon label">
+            User email requests
+          </div>
+          <div class="ui header">
+            <div class="ui sub header">
+              <p>Requests for email of username or password reset</p>
+
+            </div>
+          </div>
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui pink micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block aligned header" id="user-user-email-requests-list-of-user-email-requests">
+              List of user email requests
+            </h3>
+            <div class="description"><p>User email requests for username or passwords</p>
+</div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST user-email-request
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid green label">
+                  <code>https://signpuddle.com/server/user/email</code>
+                </a>
+              </div>
+              
+              
+                
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Pass</td>
+      <td><code>5ffab638bde372b4fa63bb6f8484595d</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              
+              
+                <div class="ui stacked segment">
+                  <div class="ui fluid transaction accordion">
+                    <div class="title">
+                      <code></code>
+                    </div>
+                    <div class="content tabbed">
+                      <div class="ui top attached tabular menu">
+                        <a data-tab="body" class="active item">BODY</a>
+                        <a data-tab="schema" class="item">SCHEMA</a>
+                      </div>
+                      <div class="ui bottom attached active tab segment" data-tab="body">
+                        <pre style="white-space: inherit">
+                          <code class="language-">null
+</code>
+                        </pre>
+                      </div>
+                      <div class="ui bottom attached tab segment" data-tab="schema">
+                        <pre style="white-space: inherit">
+                          <code class="language-json"></code>
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>text/plain</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui stacked blue segment">
+                <div class="ui fluid transaction accordion">
+                  <div class="title center aligned">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>text/plain</code>
+                  </div>
+                  <div class="content tabbed">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-">[{&#34;name&#34;:&#34;slevinski&#34;,&#34;email&#34;:&#34;slevinski@signwriting.org&#34;,&#34;temp&#34;:&#34;username&#34;}]
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui stacked segments">
+        <div class="ui basic segment resource">
+          <div class="ui purple huge ribbon label">
+            Username lookup
+          </div>
+          <div class="ui header">
+            <div class="ui sub header">
+              <p>Forgot username email lookup</p>
+
+            </div>
+          </div>
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui pink micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block aligned header" id="user-username-lookup-lookup-username">
+              Lookup username
+            </h3>
+            <div class="description"><p>Creates a request for email of username</p>
+</div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST user-name-lookup
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui teal large button">
+                  <h3>PUT</h3>
+                </div>
+                <a class="ui basic fluid teal label">
+                  <code>https://signpuddle.com/server/user/email/{email}</code>
+                </a>
+              </div>
+              
+                
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="4">Parameters</th>
+    </tr>
+  <thead>
+  <tbody>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>email</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">slevinski@signwriting.org</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>The email for a user</p>
+
+        
+      </td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              
+              
+                
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Pass</td>
+      <td><code>5ffab638bde372b4fa63bb6f8484595d</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              
+              
+                <div class="ui stacked segment">
+                  <div class="ui fluid transaction accordion">
+                    <div class="title">
+                      <code></code>
+                    </div>
+                    <div class="content tabbed">
+                      <div class="ui top attached tabular menu">
+                        <a data-tab="body" class="active item">BODY</a>
+                        <a data-tab="schema" class="item">SCHEMA</a>
+                      </div>
+                      <div class="ui bottom attached active tab segment" data-tab="body">
+                        <pre style="white-space: inherit">
+                          <code class="language-">null
+</code>
+                        </pre>
+                      </div>
+                      <div class="ui bottom attached tab segment" data-tab="schema">
+                        <pre style="white-space: inherit">
+                          <code class="language-json"></code>
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+  </tbody>
+</table>
+
+              <div class="ui stacked blue segment">
+                <div class="ui fluid transaction accordion">
+                  <div class="title center aligned">
+                    <a class="ui blue circular label">
+                      204
+                    </a>
+                    <code></code>
+                  </div>
+                  <div class="content tabbed">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-"></code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
                       </pre>
                     </div>
                   </div>

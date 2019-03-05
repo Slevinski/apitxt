@@ -1,8 +1,50 @@
 root	collection	SignPuddle 3 Collection API	https://signpuddle.com/server
-	line	> v3.0.0
+	line	## Collections
 	line	
-	line	+ [txt](../src/collection.txt) - ApiTxt format
-	line	+ [json](../src/collection.json) - array of JSON objects
-	line	+ [html](../api/collection.html) - HTML API Interface
-	line	+ [md](../doc/collection.md) - API Blueprint
-	line	+ [htm](../doc/collection.htm) - Stand Alone HTML
+	line	SignPuddle 3 organizes related data into collections.
+	line	All collections are available in three different forms: database, plain text files, and JSON objects
+	line	
+	line	### Databases
+	line	
+	line	Each collection is available as an SQLite database.
+	line	These databases are the primary source and all edits are directly applied to the database.
+	line	
+	line	### Plain Text Files
+	line	
+	line	Each collection is available as a plain text field where each entry occupies its own line.
+	line	Each entry contains multiple fields that are divided by tab characters.
+	line	The plain text files are designed for easy import and export from the databases.
+	line	
+	line	### JSON Data files
+	line	
+	line	Each collection is available as a JSON data file.
+	line	These files are useful for the client section for default configuration.
+	line	
+	line	## Collection Types
+	line	
+	line	There are six types of collections: interface, dictionary, literature, alphabet, fingerspell, and keyboard.
+	line	
+	line	### Interface
+	line	
+	line	The interface collection deals with user interface elements.
+	line	
+	line	### Dictionary
+	line	
+	line	The dictionary collection deals with individual sign details.
+	line	
+	line	### Literature
+	line	
+	line	The literature collection deals with segments of sign text.
+	line	
+	line	### Alphabet
+	line	
+	line	The alphabet collection deals with subset of ISWA 2010.
+	line	
+	line	### Fingerspell
+	line	
+	line	The fingerspell collection deals with individual letters for fingerspelling.
+	line	
+	line	### Keyboard
+	line	
+	line	The keyboard collection deals with commands and keys for keyboarding.
+	line	

@@ -1,0 +1,200 @@
+group	interface	Resources related to interface collections
+	line	+ Source: [ApiTxt format](../src/interface.txt) and [JSON objects](../src/interface.json)
+	line	+ Documents: [API Blueprint](../doc/interface.md) and [Stand Alone HTML](../doc/interface.htm)
+	line	+ Live Page: [API Interface](../api/interface.html) and [JavaScript](../api/interface.js)
+	route	/interface{?name}	Interfaces available
+		parameter	name	sp3	string	partial interface name
+		method	GET	Get available interfaces
+			code	$dir = 'data/db/';
+			code	$ext = '.db';
+			code	$out = [];
+			code	if ($name){
+			code	  if (strpos($name,"interface")!==false){
+			code	    $interfaces = $dir . '*' . $name . '*' . $ext;
+			code	    $files = glob($interfaces);
+			code	  } else {
+			code	    $interfaces = $dir . '*interface*' . $name . '*' . $ext;
+			code	    $files = glob($interfaces);
+			code	    if (count($files)==0) {
+			code	      $interfaces = $dir . '*' . $name . '*interface*' . $ext;
+			code	      $files = glob($interfaces);
+			code	    }
+			code	  }
+			code	} else {
+			code	  $interfaces = $dir . '*interface*' . $ext;
+			code	  $files = glob($interfaces);
+			code	}
+			code	foreach ($files as $filename) {
+			code	  $out[] = str_replace($ext,'',str_replace($dir,'',$filename));
+			code	}
+			code	if (count($out)){
+			code	  echo json_pretty($out);
+			code	} else {
+			code	  $app->response->setStatus(204);
+			code	}
+			code	return;
+			response	200	text/plain
+				body	["en-US-interface-sp3"]
+	route	/interface/{name}{?update}	Interface resource	Access to available interfaces
+		parameter	name	`en-US-interface-sp3`	required,string	The name of an interface
+		parameter	update	1	optional,number	Forces a rewrite of the interface for json and txt formats
+		method	GET	retrieve interface or available interfaces
+			code	$headers = getHeaders();
+			code	$pass = isset($headers['Pass'])?$headers['Pass']:'';
+			code	rightscheck($name,$pass,SP_VIEW);
+			code	$check = isset($headers['If-Modified-Since'])?$headers['If-Modified-Since']:'';
+			code	if (strpos($name,'.')){
+			code	  $parts = explode('.',$name);
+			code	  $name = $parts[0];
+			code	  $format = $parts[1];
+			code	  if (!in_array($format,['db','txt','json'])){
+			code	    haltNotFound();
+			code	  }
+			code	} else {
+			code	  $format = 'json';
+			code	}
+			code	$dir = 'data/' . $format . '/';
+			code	$ext = '.' . $format;
+			code	$file = $dir . $name . $ext;
+			code	$err = invalidName($name);
+			code	if ($err){
+			code	  haltBadRequest($err);
+			code	}
+			code	$lastModified = lastModified($name);
+			code	if ($lastModified <= $check  && !$update){
+			code	  haltNotModified();
+			code	}
+			code	if ($format=='json' && (!file_exists($file) || $update)) {
+			code	  $json = interface2json($name);
+			code	  file_put_contents($file,$json);
+			code	} else if ($format=='txt' && (!file_exists($file) || $update)) {
+			code	  $txt = interface2txt($name);
+			code	  file_put_contents($file,$txt);
+			code	}
+			code	if(file_exists($file)) {
+			code	  $app->response->headers->set('Last-Modified', $lastModified);
+			code	  getFile($file);
+			code	} else {
+			code	  haltNotFound();
+			code	}
+			request	interface text
+				header	If-Modified-Since	2019-01-16T16:56:19.175Z
+				response	200	text/plain
+					body	print.buttons.main<TAB>message<TAB>description<TAB>icon
+	route	/interface/{name}/key	Interface keys	Access to interface keys
+		parameter	name	`en-US-interface-sp3`	required,string	The name of an interface
+		method	GET	retrieve interface keys
+			code	$headers = getHeaders();
+			code	$pass = isset($headers['Pass'])?$headers['Pass']:'';
+			code	$check = isset($headers['If-Modified-Since'])?$headers['If-Modified-Since']:'';
+			code	$err = invalidName($name);
+			code	if ($err){
+			code	  haltBadRequest($err);
+			code	}
+			code	$lastModified = lastModified($name);
+			code	if ($lastModified <= $check){
+			code	  haltNotModified();
+			code	}
+			code	$app->response->headers->set('Last-Modified', $lastModified);
+			code	echo json_pretty(interfaceKeys($name,$pass));
+			request	interface keys
+				header	If-Modified-Since	2019-01-16T16:56:19.175Z
+				header	Pass	5ffab638bde372b4fa63bb6f8484595d
+				response	200	text/plain
+					body	["print.buttons.main"]
+	route	/interface/{name}/search/{text}	Interface entries search	Search interface for text
+		parameter	name	`en-US-interface-sp3`	required,string	The name of an interface
+		parameter	text	`SignPuddle`	required,string	The text for searching
+		method	GET	retrieve matching entries
+			code	$headers = getHeaders();
+			code	$pass = isset($headers['Pass'])?$headers['Pass']:'';
+			code	$err = invalidName($name);
+			code	if ($err){
+			code	  haltBadRequest($err);
+			code	}
+			code	echo json_pretty(interfaceSearch($name,$text,$pass));
+			request	matching interface entries
+				header	Pass	5ffab638bde372b4fa63bb6f8484595d
+				response	200	text/plain
+					body	[
+					body	  {
+					body	    "key": "print.buttons.main",
+					body	    "message": "Print it!"
+					body	  }
+					body	]
+	route	/interface/{name}/entry	Interface entry resource	Entries for interface
+		parameter	name	`en-US-interface-sp3`	string	The name of an interface
+		method	POST	add interface entry
+			code	$headers = getHeaders();
+			code	$pass = isset($headers['Pass'])?$headers['Pass']:'';
+			code	if (!$pass){
+			code	  haltForbidden();
+			code	}
+			code	$err = invalidName($name);
+			code	if ($err){
+			code	  haltBadRequest($err);
+			code	}
+			code	$data = $app->request->getbody();
+			code	$data = json_decode($data,true);
+			code	interfaceKeyNew($name,$data,$pass);
+			code	$app->response->setStatus(201);
+			code	return;
+			request	add new interface entry	application/json
+				header	Pass	5ffab638bde372b4fa63bb6f8484595d
+				body	{"key":"new.key.one", "message":"UI text","description":"about the text","icon":"search"}
+				response	201	text/plain
+					body	...
+	route	/interface/{name}/entry/{key}	Interface entry resource for key	Specific entries for interface
+		parameter	name	`en-US-interface-sp3`	string	The name of an interface
+		parameter	key	system.button.open	string	The name of an interface key
+		method	GET	retrieve interface entry
+			code	$headers = getHeaders();
+			code	$pass = isset($headers['Pass'])?$headers['Pass']:'';
+			code	$check = isset($headers['If-Modified-Since'])?$headers['If-Modified-Since']:'';
+			code	$err = invalidName($name);
+			code	if ($err){
+			code	  haltBadRequest($err);
+			code	}
+			code	$entries = interfaceKeyEntry($name,$key,$pass);
+			code	if (!$entries){
+			code	  haltNoContent();
+			code	}
+			code	$lastModified = max(array_map(function($o) {return $o->updated_at;},$entries));
+			code	if ($lastModified <= $check){
+			code	  haltNotModified();
+			code	}
+			code	$app->response->headers->set('Last-Modified', $lastModified);
+			code	echo json_pretty($entries);
+			request	an interface entry
+				header	If-Modified-Since	2019-01-16T16:56:19.175Z
+				header	Pass	5ffab638bde372b4fa63bb6f8484595d
+				response	200	text/plain
+					body	...
+		method	PUT	update interface entry
+			code	$err = invalidName($name);
+			code	if ($err){
+			code	  haltBadRequest($err);
+			code	}
+			code	$headers = getHeaders();
+			code	$pass = isset($headers['Pass'])?$headers['Pass']:'';
+			code	$data = $app->request->getbody();
+			code	$data = json_decode($data,true);
+			code	interfaceKeyUpdate($name,$key,$data,$pass);
+			code	$app->response->setStatus(204);
+			code	return;
+			request	an update for an existing entry
+				header	Pass	5ffab638bde372b4fa63bb6f8484595d
+				body	{"key":"new.key.one", "message":"UI text","description":"about the text","icon":"search"}
+				response	204
+		method	DELETE	remove interface entry
+			code	$err = invalidName($name);
+			code	if ($err){
+			code	  haltBadRequest($err);
+			code	}
+			code	$headers = getHeaders();
+			code	$pass = isset($headers['Pass'])?$headers['Pass']:'';
+			code	interfaceKeyDelete($name,$key,$pass);
+			code	$app->response->setStatus(204);
+			request	the removal of an interface entry
+				header	Pass	5ffab638bde372b4fa63bb6f8484595d
+				response	204

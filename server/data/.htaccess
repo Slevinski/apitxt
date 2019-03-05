@@ -1,2 +1,6 @@
-Options +FollowSymLinks
 RewriteEngine Off
+<Files security.db>
+Order allow, deny
+Deny from all
+</Files>
+Options +FollowSymLinks

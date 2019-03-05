@@ -1,6 +1,67 @@
 root	index	SignPuddle 3 API	https://signpuddle.com/server
 	line	> v3.0.0
 	line	
+	line	Welcome to the SignPuddle 3 API.
+	line	The API is defined with two types of source, two types of documentation, and a live page of HTML and JavaScript.
+	line	
 	line	+ Source: [ApiTxt format](../src/index.txt) and [JSON objects](../src/index.json)
 	line	+ Documents: [API Blueprint](../doc/index.md) and [Stand Alone HTML](../doc/index.htm)
 	line	+ Live Page: [API Interface](../api/index.html) and [JavaScript](../api/index.js)
+	line	
+	line	The API is divided into several sections.
+	line	This main document includes all of the sections.
+	line	Each section is available separately as well.
+	line	
+	line	## HTTP Request Methods
+	line	
+	line	The SignPuddle 3 server accepts HTTP request methods of GET, POST, PUT, and DELETE.
+	line	+ GET - retrieve information without altering the server
+	line	+ POST - add information to the server with each request
+	line	+ PUT - update information on the server
+	line	+ DELETE - remove information on the server.
+	line	## HTTP Response Statuses
+	line	
+	line	The SignPuddle 3 server responds with status codes.
+	line	
+	line	### Success Codes
+	line	
+	line	+ 200 OK
+	line	+ 201 Created
+	line	+ 202 Accepted
+	line	+ 204 No Content
+	line	
+	line	### Redirect Codes
+	line	
+	line	+ 300 Multiple Choices
+	line	+ 304 No Modified
+	line	+ 307 Temporary Redirect
+	line	+ 308 Permanent Redirect
+	line	
+	line	### Client Error Codes
+	line	
+	line	+ 400 Bad Request
+	line	+ 403 Forbidden
+	line	+ 404 Not Found
+	line	+ 409 Conflict
+	line	+ 429 Too Many Requests
+	line	
+	line	### Server Error Codes
+	line	
+	line	+ 500 Internal Server Error
+	line	+ 501 Not Implemented
+	line	+ 503 Service Unavailable
+	line	
+	line	## HTTP Headers
+	line	
+	line	Headers pass additional information about the request or response.
+	line	
+	line	### Headers
+	line	
+	line	+ Content-Type - the MIME type of the response
+	line	+ ETag - an entity tag used to validate cached values
+	line	+ Expires - date after which response is stale
+	line	+ Location - used for redirect or for newly created resource
+	line	+ If-None-Match - request header compared to ETag value, response status 304 if matching
+	line	+ If-Modified-Since - request header, causes response status 304 if unmodified
+	line	+ Last-Modified - response header, used with If-Modified-Since request header
+	line	

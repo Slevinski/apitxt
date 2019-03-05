@@ -5,15 +5,16 @@
 .print
 
 .print ## Importing collections
-CREATE TABLE IF NOT EXISTS collection(name text primary key unique, code text unique,  title text, user text, created_at text, view_pass int, add_pass int, edit_pass int, register_level int, upload_level int);
+CREATE TABLE IF NOT EXISTS collection(name text primary key unique, code text unique,  title text, user text, created_at text, updated_at text, view_pass int, add_pass int, edit_pass int, register_level int, upload_level int);
 .import collection.txt collection
 
 .print ## Importing users
-CREATE TABLE IF NOT EXISTS user(name text primary key unique, display text, signname text, email text, password text, temp text, security int, country text, spoken text, signed text, interface text, dictionary text, literature text, fingerspell text, alphabet text, keyboard text, detail text);
+CREATE TABLE IF NOT EXISTS user(name text primary key unique, display text, signname text, email text, password text, temp text, security int, country text, signed text, voiced text, interface text, dictionary text, literature text, fingerspell text, alphabet text, keyboard text, detail text);
+.import admin.txt user 
 .import user.txt user 
 
 .print ## Importing users collection security
-CREATE TABLE IF NOT EXISTS usercollection(collection text, user text, security int);
+CREATE TABLE IF NOT EXISTS usercollection(collection text, user text, security int, PRIMARY KEY (collection, user));
 .import user_collections.txt usercollection
 
 .print ## Create verify table 

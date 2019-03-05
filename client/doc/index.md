@@ -4,9 +4,673 @@ HOST: https://signpuddle.com/server
 # SignPuddle 3 API
 > v3.0.0
 
+Welcome to the SignPuddle 3 API.
+The API is defined with two types of source, two types of documentation, and a live page of HTML and JavaScript.
+
 + Source: [ApiTxt format](../src/index.txt) and [JSON objects](../src/index.json)
 + Documents: [API Blueprint](../doc/index.md) and [Stand Alone HTML](../doc/index.htm)
 + Live Page: [API Interface](../api/index.html) and [JavaScript](../api/index.js)
+
+The API is divided into several sections.
+This main document includes all of the sections.
+Each section is available separately as well.
+
+## HTTP Request Methods
+
+The SignPuddle 3 server accepts HTTP request methods of GET, POST, PUT, and DELETE.
++ GET - retrieve information without altering the server
++ POST - add information to the server with each request
++ PUT - update information on the server
++ DELETE - remove information on the server.
+## HTTP Response Statuses
+
+The SignPuddle 3 server responds with status codes.
+
+### Success Codes
+
++ 200 OK
++ 201 Created
++ 202 Accepted
++ 204 No Content
+
+### Redirect Codes
+
++ 300 Multiple Choices
++ 304 No Modified
++ 307 Temporary Redirect
++ 308 Permanent Redirect
+
+### Client Error Codes
+
++ 400 Bad Request
++ 403 Forbidden
++ 404 Not Found
++ 409 Conflict
++ 429 Too Many Requests
+
+### Server Error Codes
+
++ 500 Internal Server Error
++ 501 Not Implemented
++ 503 Service Unavailable
+
+## HTTP Headers
+
+Headers pass additional information about the request or response.
+
+### Headers
+
++ Content-Type - the MIME type of the response
++ ETag - an entity tag used to validate cached values
++ Expires - date after which response is stale
++ Location - used for redirect or for newly created resource
++ If-None-Match - request header compared to ETag value, response status 304 if matching
++ If-Modified-Since - request header, causes response status 304 if unmodified
++ Last-Modified - response header, used with If-Modified-Since request header
+
+
+## Group user
+SignPuddle 3 collections are organized by country and language codes
+
++ Source: [ApiTxt format](../src/user.txt) and [JSON objects](../src/user.json)
++ Documents: [API Blueprint](../doc/user.md) and [Stand Alone HTML](../doc/user.htm)
++ Live Page: [API Interface](../api/user.html) and [JavaScript](../api/user.js)
+
+### Who uses SignWriting? [/user/who]
+List of countries with size and activity.
+
+#### Retrieve country list [GET]
+The available countries where signs are available.
+
++ Request user-who
+
+     + Body
+
+            null
+
++ Response 200 (text/plain)
+
+     + Body
+
+            BR
+            US
+
+### User pass [/user/pass]
+A string for accounting and validation
+
+#### String for accounting and validation [POST]
+
++ Request user pass
+
+     + Body
+
+            null
+
++ Response 200 (text/plain)
+
+     + Body
+
+            {"pass": "90c19ce2076db097c75b3406e966a6b6","ip": "192.168.254.2"}
+
+### User login [/user/login]
+Validation of user with validated password
+
+#### Process log in to server [PUT]
+
++ Request verify user (application/json)
+
+     + Attributes
+         + username: anonymous (string) - name of the user
+         + pass: af77... (string) - pass for session validation
+         + validated: 2793f... (string) - validated pass mixed with password
+
+     + Body
+
+            {"username":"anonymous","pass":"af77...","validated":"2793f..."}
+
++ Response 200 (application/json)
+
+     response text here
+
+     + Body
+
+            {"user-profile":""}
+
+### User profile [/user/{name}]
+User details
+
++ Parameters
+
+     + name: slevinski (string) - The name of a user
+
+#### Update user profile [PUT]
+Updates the profile of the user
+
++ Request user-update
+
+     + Headers
+
+            Pass: 5ffab638bde372b4fa63bb6f8484595d
+
+     + Body
+
+            null
+
++ Response 204
+
+#### Register new user [POST]
+Creates and returns a new user
+
++ Request user-add
+
+     + Headers
+
+            Pass: 5ffab638bde372b4fa63bb6f8484595d
+
+     + Body
+
+            null
+
++ Response 200 (text/plain)
+
+     + Body
+
+            profile created and returned
+
+### User password [/user/{name}/password]
+User password resource
+
++ Parameters
+
+     + name: slevinski (string) - The name of a user
+
+#### Update user password [POST]
+Updates the password of the user
+
++ Request user-update-password (plain/text)
+
+     + Headers
+
+            Pass: 5ffab638bde372b4fa63bb6f8484595d
+
+     + Body
+
+            {"old":"149603e6c03516362a8da23f624db945","new":"22af645d1859cb5ca6da0c484f1f37ea"}
+
++ Response 204
+
+#### Reset user password [PUT]
+Creates a temporary password for the user
+
++ Request user-password-reset (plain/text)
+
+     + Headers
+
+            Pass: 5ffab638bde372b4fa63bb6f8484595d
+
+     + Body
+
+            null
+
++ Response 204
+
+### User email requests [/user/email]
+Requests for email of username or password reset
+
+#### List of user email requests [GET]
+User email requests for username or passwords
+
++ Request user-email-request
+
+     + Headers
+
+            Pass: 5ffab638bde372b4fa63bb6f8484595d
+
+     + Body
+
+            null
+
++ Response 200 (text/plain)
+
+     + Body
+
+            [{"name":"slevinski","email":"slevinski@signwriting.org","temp":"username"}]
+
+### Username lookup [/user/email/{email}]
+Forgot username email lookup
+
++ Parameters
+
+     + email: slevinski@signwriting.org (string) - The email for a user
+
+#### Lookup username [PUT]
+Creates a request for email of username
+
++ Request user-name-lookup
+
+     + Headers
+
+            Pass: 5ffab638bde372b4fa63bb6f8484595d
+
+     + Body
+
+            null
+
++ Response 204
+
+## Group collection
+Resources related to collections in general
+
++ Source: [ApiTxt format](../src/collection.txt) and [JSON objects](../src/collection.json)
++ Documents: [API Blueprint](../doc/collection.md) and [Stand Alone HTML](../doc/collection.htm)
++ Live Page: [API Interface](../api/collection.html) and [JavaScript](../api/collection.js)
+
+### Collections available [/collection{?name}]
+
++ Parameters
+
+     + name: sp3 (string) - partial collection name
+
+#### Get available collections [GET]
+
++ Response 200 (text/plain)
+
+     + Body
+
+            ["en-US-interface-sp3"]
+
+### Collection resource [/collection/{name}]
+Specific collection
+
++ Parameters
+
+     + name: `en-US-interface-sp3` (string) - The name of a collection
+
+#### delete collection [DELETE]
+
++ Request the removal of a collection
+
+     + Headers
+
+            Pass: 5ffab638bde372b4fa63bb6f8484595d
+
+     + Body
+
+            null
+
++ Response 204
+
+### Collections security [/collection/security]
+Security settings for all collections
+
+#### Get collections security [GET]
+
++ Request collections security
+
+     + Headers
+
+            If-Modified-Since: 2019-01-16T16:56:19.175Z
+
+     + Body
+
+            null
+
++ Response 200 (text/plain)
+
+     + Body
+
+            [{"name": "en-US-interface-sp3","code": "ui1","title": "English Interface for SignPuddle 3","user": "slevinski","created_at": "","view_pass": 0,"add_pass": 1,"edit_pass": 1,"register_level": 0,"upload_level": 4}]
+
+### Collection security [/collection/{name}/security]
+Details about the collection security
+
++ Parameters
+
+     + name: `en-US-interface-sp3` (required,string) - The name of the collection
+
+#### retrieve collection security [GET]
+
++ Request interface security
+
+     + Body
+
+            null
+
++ Response 200 (text/plain)
+
+     + Body
+
+            {"name": "en-US-interface-sp3","code": "ui1","title": "English Interface for SignPuddle 3","user": "slevinski","created_at": "","view_pass": 0,"add_pass": 1,"edit_pass": 1,"register_level": 0,"upload_level": 4}
+
+#### Update collection security [PUT]
+
++ Request an update for an existing entry (text/plain)
+
+     + Headers
+
+            Pass: 5ffab638bde372b4fa63bb6f8484595d
+
+     + Body
+
+            {"name": "en-US-interface-sp3","code": "ui1","title": "English Interface for SignPuddle 3","user": "slevinski","created_at": "","view_pass": 0,"add_pass": 1,"edit_pass": 1,"register_level": 0,"upload_level": 4}
+
++ Response 204
+
+#### Remove security for collection [DELETE]
+
++ Request the deletion of collection security
+
+     + Headers
+
+            Pass: 5ffab638bde372b4fa63bb6f8484595d
+
+     + Body
+
+            null
+
++ Response 204
+
+### Collection users [/collection/{name}/users]
+
++ Parameters
+
+     + name: `ase-US-dictionary-public` (string) - collection name
+
+#### Get collection users [GET]
+
++ Response 200 (text/plain)
+
+     + Body
+
+            [{"user": "test_user","security": 3}]
+
+### Management for unknown collections [/collection/manage/unknown]
+
+#### Get list of unknown collections with user management [GET]
+
++ Response 200 (text/plain)
+
+     + Body
+
+            ["es-US-interface-sp3"]
+
+### Collection users management [/collection/{name}/manage]
+
++ Parameters
+
+     + name: `ase-US-dictionary-public` (string) - collection name
+
+#### Get collection management [GET]
+
++ Request collection management
+
+     + Headers
+
+            Pass: 5ffab638bde372b4fa63bb6f8484595d
+
+     + Body
+
+            null
+
++ Response 200 (text/plain)
+
+     + Body
+
+            [{"name": "test_user","display": "Test Editor","email": "testing@gmail.com","security": 3}]
+
+#### Update collection management [PUT]
+
++ Request an update for collection management
+
+     + Headers
+
+            Pass: 5ffab638bde372b4fa63bb6f8484595d
+
+     + Body
+
+            {"user":"slevinski","security":4}
+
++ Response 204
+
+#### Remove user management for collection [DELETE]
+
++ Request the removal of user management for a collection
+
+     + Headers
+
+            Pass: 5ffab638bde372b4fa63bb6f8484595d
+
+     + Body
+
+            null
+
++ Response 204
+
+### Collection user [/collection/{name}/manage/{user}]
+
++ Parameters
+
+     + name: `ase-US-dictionary-public` (string) - collection name
+     + user: `slevinski` (string) - user name
+
+#### Remove user from collection management [DELETE]
+
++ Request the removal of a user from collection management
+
+     + Headers
+
+            Pass: 5ffab638bde372b4fa63bb6f8484595d
+
+     + Body
+
+            null
+
++ Response 204
+
+### Collection Request Copy [/collection/{name}/request/{source}]
+
++ Parameters
+
+     + name: `es-US-interface-sp3` (required,string) - The name of the new collection
+     + source: `en-US-interface-sp3` (required,string) - The name of the source collection
+
+#### request the creation of a new collection [POST]
+
++ Request new collection from source
+
+     + Headers
+
+            Pass: 5ffab638bde372b4fa63bb6f8484595d
+
+     + Body
+
+            null
+
++ Response 204
+
+## Group interface
+Resources related to interface collections
+
++ Source: [ApiTxt format](../src/interface.txt) and [JSON objects](../src/interface.json)
++ Documents: [API Blueprint](../doc/interface.md) and [Stand Alone HTML](../doc/interface.htm)
++ Live Page: [API Interface](../api/interface.html) and [JavaScript](../api/interface.js)
+
+### Interfaces available [/interface{?name}]
+
++ Parameters
+
+     + name: sp3 (string) - partial interface name
+
+#### Get available interfaces [GET]
+
++ Response 200 (text/plain)
+
+     + Body
+
+            ["en-US-interface-sp3"]
+
+### Interface resource [/interface/{name}{?update}]
+Access to available interfaces
+
++ Parameters
+
+     + name: `en-US-interface-sp3` (required,string) - The name of an interface
+     + update: 1 (optional,number) - Forces a rewrite of the interface for json and txt formats
+
+#### retrieve interface or available interfaces [GET]
+
++ Request interface text
+
+     + Headers
+
+            If-Modified-Since: 2019-01-16T16:56:19.175Z
+
+     + Body
+
+            null
+
++ Response 200 (text/plain)
+
+     + Body
+
+            print.buttons.main   message   description   icon
+
+### Interface keys [/interface/{name}/key]
+Access to interface keys
+
++ Parameters
+
+     + name: `en-US-interface-sp3` (required,string) - The name of an interface
+
+#### retrieve interface keys [GET]
+
++ Request interface keys
+
+     + Headers
+
+            If-Modified-Since: 2019-01-16T16:56:19.175Z
+            Pass: 5ffab638bde372b4fa63bb6f8484595d
+
+     + Body
+
+            null
+
++ Response 200 (text/plain)
+
+     + Body
+
+            ["print.buttons.main"]
+
+### Interface entries search [/interface/{name}/search/{text}]
+Search interface for text
+
++ Parameters
+
+     + name: `en-US-interface-sp3` (required,string) - The name of an interface
+     + text: `SignPuddle` (required,string) - The text for searching
+
+#### retrieve matching entries [GET]
+
++ Request matching interface entries
+
+     + Headers
+
+            Pass: 5ffab638bde372b4fa63bb6f8484595d
+
+     + Body
+
+            null
+
++ Response 200 (text/plain)
+
+     + Body
+
+            [
+              {
+                "key": "print.buttons.main",
+                "message": "Print it!"
+              }
+            ]
+
+### Interface entry resource [/interface/{name}/entry]
+Entries for interface
+
++ Parameters
+
+     + name: `en-US-interface-sp3` (string) - The name of an interface
+
+#### add interface entry [POST]
+
++ Request add new interface entry (application/json)
+
+     + Headers
+
+            Pass: 5ffab638bde372b4fa63bb6f8484595d
+
+     + Body
+
+            {"key":"new.key.one", "message":"UI text","description":"about the text","icon":"search"}
+
++ Response 201 (text/plain)
+
+     + Body
+
+            ...
+
+### Interface entry resource for key [/interface/{name}/entry/{key}]
+Specific entries for interface
+
++ Parameters
+
+     + name: `en-US-interface-sp3` (string) - The name of an interface
+     + key: system.button.open (string) - The name of an interface key
+
+#### retrieve interface entry [GET]
+
++ Request an interface entry
+
+     + Headers
+
+            If-Modified-Since: 2019-01-16T16:56:19.175Z
+            Pass: 5ffab638bde372b4fa63bb6f8484595d
+
+     + Body
+
+            null
+
++ Response 200 (text/plain)
+
+     + Body
+
+            ...
+
+#### update interface entry [PUT]
+
++ Request an update for an existing entry
+
+     + Headers
+
+            Pass: 5ffab638bde372b4fa63bb6f8484595d
+
+     + Body
+
+            {"key":"new.key.one", "message":"UI text","description":"about the text","icon":"search"}
+
++ Response 204
+
+#### remove interface entry [DELETE]
+
++ Request the removal of an interface entry
+
+     + Headers
+
+            Pass: 5ffab638bde372b4fa63bb6f8484595d
+
+     + Body
+
+            null
+
++ Response 204
 
 ## Group tools
 Resources related to tools
@@ -35,7 +699,6 @@ Resources related to tools
             /tools/decode{?text}
             /tools/utf8{?text}
 
-
 ### Character definition tree [/tools/define]
 
 The definition tree for character mapping
@@ -54,7 +717,6 @@ The definition tree for character mapping
               "swu": {},
               "style": {}
             }
-
 
 ### Section definition [/tools/define/{section}]
 
@@ -80,7 +742,6 @@ A section of the definition tree
               "query": []
             }
 
-
 ### Part definition [/tools/define/{section}/{part}]
 
 A part of the section definition
@@ -102,7 +763,6 @@ A part of the section definition
               "[\\x{40000}-\\x{4F428}]"
             ]
 
-
 ### Parse text [/tools/parse{?text,utf}]
 
 A function to analyze text and parse it into individual components
@@ -119,7 +779,6 @@ A function to analyze text and parse it into individual components
      + Body
 
             parse results of text
-
 
 ### Encode text [/tools/encode{?text,slash}]
 
@@ -138,7 +797,6 @@ A function to encode SignWriting in Unicode (SWU) as UTF-16
 
             \uD836\uDC00
 
-
 ### Decode text [/tools/decode{?text}]
 
 A function to decode SignWriting in Unicode (SWU) from UTF-16
@@ -155,7 +813,6 @@ A function to decode SignWriting in Unicode (SWU) from UTF-16
 
             \x{1D800}
 
-
 ### UTF-8 encode text [/tools/utf8{?text}]
 
 + Parameters
@@ -169,7 +826,6 @@ A function to decode SignWriting in Unicode (SWU) from UTF-16
      + Body
 
             %F0%9D%A0%80
-
 
 ### Test with input [/tools/test{?text}]
 
@@ -186,7 +842,6 @@ A general purpose function for testing
      + Body
 
             test output
-
 
 ## Group FSW
 Resources related to Formal SignWriting in ASCII (FSW)
@@ -216,7 +871,6 @@ Resources related to Formal SignWriting in ASCII (FSW)
 
             AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520
 
-
 ### FSW Text [/fsw/all{?text,style}]
 
 + Parameters
@@ -237,7 +891,6 @@ Resources related to Formal SignWriting in ASCII (FSW)
      + Body
 
             AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520
-
 
 ### FSW to SWU [/fsw/swu{?text}]
 
@@ -262,7 +915,6 @@ Resources related to Formal SignWriting in ASCII (FSW)
      + Body
 
             𝠀񆄱񈠣񍉡𝠃𝤛𝤵񍉡𝣴𝣵񆄱𝤌𝤆񈠣𝤉𝤚
-
 
 ### SVG image [/fsw/svg/{text}]
 
@@ -290,7 +942,6 @@ Create a stand-alone SVG image using Formal SignWriting in ASCII (FSW)
               <svg x='506' y='500'><g transform="translate(0.0,15.0) scale(0.01,-0.01)"><path class="sym-fill" fill="white" d="M200 750 l0 -550 300 0 300 0 0 550 0 550 -300 0 -300 0 0 -550z"/><path class="sym-line" fill="black" d="M0 750 l0 -750 750 0 750 0 0 750 0 750 -750 0 -750 0 0 -750z m800 0 l0 -550 -300 0 -300 0 0 550 0 550 300 0 300 0 0 -550z"/></g></svg>
               <svg x='503' y='520'><g transform="translate(0.196840829729,26.6999810561) scale(0.00975214136907,-0.00983390502079)"><path class="sym-line" fill="black" d="M345 2350 l-350 -350 325 -325 325 -325 -325 -325 -325 -325 353 -353 352 -352 0 303 0 302 350 0 350 0 0 100 0 100 -350 0 -350 0 0 550 0 550 350 0 350 0 0 100 0 100 -350 0 -350 0 -2 300 -3 300 -350 -350z M1600 1350 l0 -1350 100 0 100 0 0 1350 0 1350 -100 0 -100 0 0 -1350z"/></g></svg>
             </svg>
-
 
 ### SVG with font [/fsw/svg/font/{text}]
 
@@ -320,7 +971,6 @@ Create an SVG with font using Formal SignWriting in ASCII (FSW)
               <g transform="translate(476,475)"><text class="sym-fill" style="pointer-events:none;font-family:'SuttonSignWritingFill';font-size:30px;fill:white;">􀀚</text><text class="sym-line" style="pointer-events:none;font-family:'SuttonSignWritingLine';font-size:30px;fill:black;">󰀚</text></g>
             </svg>
 
-
 ## Group swu
 Resources related to Formal SignWriting in ASCII (SWU)
 
@@ -349,7 +999,6 @@ Resources related to Formal SignWriting in ASCII (SWU)
 
             AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520
 
-
 ### SWU Text [/swu/all{?text,style}]
 
 + Parameters
@@ -371,7 +1020,6 @@ Resources related to Formal SignWriting in ASCII (SWU)
 
             AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520
 
-
 ### SWU to FSW [/swu/fsw{?text}]
 
 + Parameters
@@ -391,7 +1039,6 @@ Resources related to Formal SignWriting in ASCII (SWU)
      + Body
 
             AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520
-
 
 ### SVG image [/swu/svg/{text}]
 
@@ -420,7 +1067,6 @@ Create a stand-alone SVG image using Formal SignWriting in ASCII (SWU)
               <svg x='503' y='520'><g transform="translate(0.196840829729,26.6999810561) scale(0.00975214136907,-0.00983390502079)"><path class="sym-line" fill="black" d="M345 2350 l-350 -350 325 -325 325 -325 -325 -325 -325 -325 353 -353 352 -352 0 303 0 302 350 0 350 0 0 100 0 100 -350 0 -350 0 0 550 0 550 350 0 350 0 0 100 0 100 -350 0 -350 0 -2 300 -3 300 -350 -350z M1600 1350 l0 -1350 100 0 100 0 0 1350 0 1350 -100 0 -100 0 0 -1350z"/></g></svg>
             </svg>
 
-
 ### SVG with font [/swu/svg/font/{text}]
 
 Create an SVG with font using Formal SignWriting in ASCII (SWU)
@@ -448,208 +1094,6 @@ Create an SVG with font using Formal SignWriting in ASCII (SWU)
               <g transform="translate(510,500)"><text class="sym-fill" style="pointer-events:none;font-family:'SuttonSignWritingFill';font-size:30px;fill:white;">􋚥</text><text class="sym-line" style="pointer-events:none;font-family:'SuttonSignWritingLine';font-size:30px;fill:black;">󻚥</text></g>
               <g transform="translate(476,475)"><text class="sym-fill" style="pointer-events:none;font-family:'SuttonSignWritingFill';font-size:30px;fill:white;">􀀚</text><text class="sym-line" style="pointer-events:none;font-family:'SuttonSignWritingLine';font-size:30px;fill:black;">󰀚</text></g>
             </svg>
-
-
-## Group user
-SignPuddle 3 collections are organized by country and language codes
-
-+ Source: [ApiTxt format](../src/user.txt) and [JSON objects](../src/user.json)
-+ Documents: [API Blueprint](../doc/user.md) and [Stand Alone HTML](../doc/user.htm)
-+ Live Page: [API Interface](../api/user.html) and [JavaScript](../api/user.js)
-
-### Country code
-The country codes are from ISO-3166.
-Each country is coded with two uppercase letters.
-
-### Language code
-The language codes are from ISO-639-1 for spoken languages and ISO-639-3 for sign languages.
-Each spoken language is coded with two lowercase letters.
-Each sign language is coded with three lowercase letters.
-
-### Who uses SignWriting? [/user/who/]
-List of countries with size and activity.
-
-#### Retrieve country list [GET]
-The available countries where signs are available.
-
-+ Request user-who
-
-     + Body
-
-            null
-
-+ Response 200 (text/plain)
-
-     + Body
-
-            BR
-            US
-
-
-### User pass [/user/pass]
-A string for accounting and validation
-
-#### String for accounting and validation [POST]
-
-+ Request user pass
-
-     + Body
-
-            null
-
-+ Response 200 (text/plain)
-
-     + Body
-
-            e3bedc9e9f83cb9dd7ae61250b9e6921
-
-
-### User login [/user/login]
-Validation of user with validated password
-
-#### Process log in to server [PUT]
-
-+ Request verify user (application/json)
-
-     + Even a list
-     + name `Name` of the metaproperty, should be alphanumeric only. Uneditable.
-
-     + Body
-
-            {"username":"anonymous","pass":"af77...","validated":"2793f..."}
-
-+ Response 200 (application/json)
-
-     response text here
-
-     + Body
-
-            {"user-profile":""}
-
-
-## Group collection
-Resources related to making collections
-
-+ Source: [ApiTxt format](../src/collection.txt) and [JSON objects](../src/collection.json)
-+ Documents: [API Blueprint](../doc/collection.md) and [Stand Alone HTML](../doc/collection.htm)
-+ Live Page: [API Interface](../api/collection.html) and [JavaScript](../api/collection.js)
-
-### Available collections [/collection]
-
-#### Get available languages [GET]
-
-+ Response 200 (text/plain)
-
-     + Body
-
-            en
-            ase
-
-
-### Collection resource [/collection/{name}]
-Access to available collections
-
-+ Parameters
-
-     + name: en-US-interface-sp3 (string) - The name of a collection
-
-#### retrieve collection or available collections [GET]
-
-+ Request collection text
-
-     + Body
-
-            null
-
-+ Response 200 (text/plain)
-
-     + Body
-
-            print.buttons.main   message   description   icon
-
-
-### Collection resource md5 hash [/collection/{name}/md5]
-MD5 hash of collection
-
-+ Parameters
-
-     + name: en-US-interface-sp3 (string) - The name of a collection
-
-#### retrieve collection md5 hash [GET]
-
-+ Request the md5 hash of a collection
-
-     + Headers
-
-            If-None-Match: af779785a5c3ffd166bc95e6dd530889
-
-     + Body
-
-            null
-
-+ Response 200 (text/plain)
-
-     + Body
-
-            9785a5c3ffd166bc95e6dd5308894691
-
-
-#### retrieve collection md5 hash [POST]
-
-+ Request the md5 hash of a collection
-
-     + Headers
-
-            If-None-Match: af779785a5c3ffd166bc95e6dd530889
-
-     + Body
-
-            null
-
-+ Response 200 (text/plain)
-
-     + Body
-
-            9785a5c3ffd166bc95e6dd5308894691
-
-
-#### retrieve collection md5 hash [PUT]
-
-+ Request the md5 hash of a collection
-
-     + Headers
-
-            If-None-Match: af779785a5c3ffd166bc95e6dd530889
-
-     + Body
-
-            null
-
-+ Response 200 (text/plain)
-
-     + Body
-
-            9785a5c3ffd166bc95e6dd5308894691
-
-
-#### retrieve collection md5 hash [DELETE]
-
-+ Request the md5 hash of a collection
-
-     + Headers
-
-            If-None-Match: af779785a5c3ffd166bc95e6dd530889
-
-     + Body
-
-            null
-
-+ Response 200 (text/plain)
-
-     + Body
-
-            9785a5c3ffd166bc95e6dd5308894691
-
 
 ## Group apitxt
 ApiTxt uses eleven types of element to define an API.
@@ -796,7 +1240,6 @@ root &lt;TAB> apitxt &lt;TAB> ApiTxt &lt;TAB> https://signpuddle.com/apitxt
             }
             ```
 
-
 ### group [/apitxt/group]
 
 #### Get group definition [GET]
@@ -872,7 +1315,6 @@ group &lt;TAB> Section name &lt;TAB> an example section
               "lines": []
             }
             ```
-
 
 ### route [/apitxt/route]
 
@@ -958,7 +1400,6 @@ route &lt;TAB> /example &lt;TAB> an example route &lt;TAB> a description of the 
             }
             ```
 
-
 ### parameter [/apitxt/parameter]
 
 #### Get parameter definition [GET]
@@ -1040,7 +1481,6 @@ parameter lines are added to a parameters array
               ]
             }
             ```
-
 
 ### method [/apitxt/method]
 
@@ -1140,7 +1580,6 @@ method &lt;TAB> GET &lt;TAB> Get an example &lt;TAB> This method retrieves an ex
             }
             ```
 
-
 ### request [/apitxt/request]
 
 #### Get request definition [GET]
@@ -1222,7 +1661,6 @@ request &lt;TAB> matching text within request body &lt;TAB> plain/text
               "body" : []
             }
             ```
-
 
 ### response [/apitxt/response]
 
@@ -1306,7 +1744,6 @@ response &lt;TAB> 200 &lt;TAB> plain/text
             }
             ```
 
-
 ### header [/apitxt/header]
 
 #### Get header definition [GET]
@@ -1359,7 +1796,6 @@ header &lt;TAB> X-Powered-By &lt;TAB> ApiTxt
             { field[1] : field[2] }
             ```
 
-
 ### body [/apitxt/body]
 
 #### Get body definition [GET]
@@ -1380,7 +1816,6 @@ The text of the body is everything after the string "body &lt;TAB>".
             The body element adds contents to a preceding request or response.
             
             The text of the body is everything after the string "body <TAB>"
-
 
 ### line [/apitxt/line]
 
@@ -1407,7 +1842,6 @@ The text of the line is everything after the string "line &lt;TAB>".
             
             The text of the line is everything after the string "line <TAB>".
 
-
 ### code [/apitxt/code]
 
 #### Get code definition [GET]
@@ -1432,5 +1866,4 @@ The text of the code is everything after the string "code &lt;TAB>".
             The code element contains programming text.  ApiTxt comes integrated with the PHP project the Slim Framework v2.  The conversion to working PHP adds boilerplate details for routes and method, with named parameters and query parameters available as functional variables.
             
             The text of the code is everything after the string "code <TAB>".
-
 

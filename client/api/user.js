@@ -1,7 +1,7 @@
 var spVersion = "3";
 var host = "";
 try {
-  host = config['state']['server'];
+  host = config['state']['connection']['server'];
 } catch (e){
  host = "https://signpuddle.com/server"
 }
@@ -43,7 +43,7 @@ var data = {
               "method": "GET"
             }
           ], 
-          "route": "/user/who/", 
+          "route": "/user/who", 
           "name": "Who uses SignWriting?", 
           "description": "List of countries with size and activity."
         }, 
@@ -51,7 +51,7 @@ var data = {
           "methods": [
             {
               "code": [
-                "  echo userPass();"
+                "  echo json_pretty(userPass());"
               ], 
               "method": "POST", 
               "dialog": [
@@ -63,7 +63,7 @@ var data = {
                     {
                       "status": 200, 
                       "body": [
-                        "e3bedc9e9f83cb9dd7ae61250b9e6921"
+                        "{\"pass\": \"90c19ce2076db097c75b3406e966a6b6\",\"ip\": \"192.168.254.2\"}"
                       ], 
                       "type": "text/plain"
                     }
@@ -83,19 +83,8 @@ var data = {
               "code": [
                 "  $data = $app->request->getbody();", 
                 "  $data = json_decode($data,true);", 
-                "  try {", 
-                "    $results = userVerify($data['username'],$data['pass'],$data['validated']);", 
-                "    $return = array();", 
-                "    $return['meta']=array();", 
-                "    $return['results']=$results;", 
-                "    $return['meta']['method']='POST';", 
-                "    $return['meta']['location']='/user/login';", 
-                "    $return['meta']['searchTime'] = searchtime($timein);", 
-                "    echo json_pretty($return);", 
-                "  } catch (Exception $e) {", 
-                "    //echo json_pretty($e);", 
-                "    haltValidation($e->getCode() . ' ' . $e->getMessage());", 
-                "  }"
+                "  $results = userVerify($data['username'],$data['pass'],$data['validated']);", 
+                "  echo json_pretty($results);"
               ], 
               "method": "PUT", 
               "dialog": [
@@ -105,10 +94,12 @@ var data = {
                       "{\"username\":\"anonymous\",\"pass\":\"af77...\",\"validated\":\"2793f...\"}"
                     ], 
                     "type": "application/json", 
-                    "html": "<ul>\n<li>Even a list</li>\n<li>name <pre><code>Name</code></pre> of the metaproperty, should be alphanumeric only. Uneditable.</li>\n</ul>", 
+                    "html": "<ul>\n<li>Attributes<ul>\n<li>username: anonymous (string) - name of the user</li>\n<li>pass: af77... (string) - pass for session validation</li>\n<li>validated: 2793f... (string) - validated pass mixed with password</li>\n</ul>\n</li>\n</ul>", 
                     "lines": [
-                      "+ Even a list", 
-                      "+ name `Name` of the metaproperty, should be alphanumeric only. Uneditable."
+                      "+ Attributes", 
+                      "    + username: anonymous (string) - name of the user", 
+                      "    + pass: af77... (string) - pass for session validation", 
+                      "    + validated: 2793f... (string) - validated pass mixed with password"
                     ], 
                     "name": "verify user"
                   }, 
@@ -133,23 +124,260 @@ var data = {
           "route": "/user/login", 
           "name": "User login", 
           "description": "Validation of user with validated password"
+        }, 
+        {
+          "methods": [
+            {
+              "name": "Update user profile", 
+              "code": [
+                "$headers = getHeaders();", 
+                "$pass = isset($headers['Pass'])?$headers['Pass']:'';", 
+                "$user = userVerified($pass);", 
+                "if ($user!=$name) haltForbidden($user . \" not \" . $name);", 
+                "$data = $app->request->getbody();", 
+                "$data = json_decode($data,true);", 
+                "userProfileUpdate($name,$data);", 
+                "$app->response->setStatus(204);", 
+                "return;"
+              ], 
+              "description": "Updates the profile of the user", 
+              "dialog": [
+                {
+                  "request": {
+                    "headers": {
+                      "Pass": "5ffab638bde372b4fa63bb6f8484595d"
+                    }, 
+                    "name": "user-update"
+                  }, 
+                  "responses": [
+                    {
+                      "status": 204
+                    }
+                  ]
+                }
+              ], 
+              "method": "PUT"
+            }, 
+            {
+              "name": "Register new user", 
+              "description": "Creates and returns a new user", 
+              "dialog": [
+                {
+                  "request": {
+                    "headers": {
+                      "Pass": "5ffab638bde372b4fa63bb6f8484595d"
+                    }, 
+                    "name": "user-add"
+                  }, 
+                  "responses": [
+                    {
+                      "status": 200, 
+                      "body": [
+                        "profile created and returned"
+                      ], 
+                      "type": "text/plain"
+                    }
+                  ]
+                }
+              ], 
+              "method": "POST"
+            }
+          ], 
+          "route": "/user/{name}", 
+          "name": "User profile", 
+          "parameters": [
+            {
+              "example": "slevinski", 
+              "type": "string", 
+              "description": "The name of a user", 
+              "name": "name"
+            }
+          ], 
+          "description": "User details"
+        }, 
+        {
+          "methods": [
+            {
+              "name": "Update user password", 
+              "code": [
+                "$headers = getHeaders();", 
+                "$pass = isset($headers['Pass'])?$headers['Pass']:'';", 
+                "$user = userVerified($pass,true);", 
+                "if (!$user) haltForbidden();", 
+                "$data = $app->request->getbody();", 
+                "$data = json_decode($data,true);", 
+                "$old = isset($data['old'])?$data['old']:'';", 
+                "$new = isset($data['new'])?$data['new']:'';", 
+                "if ($old && $new){", 
+                "  userPasswordUpdate($name,$old,$new);", 
+                "  $app->response->setStatus(204);", 
+                "  return;", 
+                "} else {", 
+                "  haltBadRequest();", 
+                "}"
+              ], 
+              "description": "Updates the password of the user", 
+              "dialog": [
+                {
+                  "request": {
+                    "body": [
+                      "{\"old\":\"149603e6c03516362a8da23f624db945\",\"new\":\"22af645d1859cb5ca6da0c484f1f37ea\"}"
+                    ], 
+                    "headers": {
+                      "Pass": "5ffab638bde372b4fa63bb6f8484595d"
+                    }, 
+                    "type": "plain/text", 
+                    "name": "user-update-password"
+                  }, 
+                  "responses": [
+                    {
+                      "status": 204
+                    }
+                  ]
+                }
+              ], 
+              "method": "POST"
+            }, 
+            {
+              "name": "Reset user password", 
+              "code": [
+                "$headers = getHeaders();", 
+                "$pass = isset($headers['Pass'])?$headers['Pass']:'';", 
+                "$user = userVerified($pass,true);", 
+                "if (!$user) haltForbidden();", 
+                "$data = $app->request->getbody();", 
+                "$data = json_decode($data,true);", 
+                "$user = isset($data['user'])?$data['user']:'';", 
+                "if ($user){", 
+                "  userPasswordReset($user);", 
+                "  $app->response->setStatus(204);", 
+                "  return;", 
+                "} else {", 
+                "  haltBadRequest();", 
+                "}"
+              ], 
+              "description": "Creates a temporary password for the user", 
+              "dialog": [
+                {
+                  "request": {
+                    "headers": {
+                      "Pass": "5ffab638bde372b4fa63bb6f8484595d"
+                    }, 
+                    "type": "plain/text", 
+                    "name": "user-password-reset"
+                  }, 
+                  "responses": [
+                    {
+                      "status": 204
+                    }
+                  ]
+                }
+              ], 
+              "method": "PUT"
+            }
+          ], 
+          "route": "/user/{name}/password", 
+          "name": "User password", 
+          "parameters": [
+            {
+              "example": "slevinski", 
+              "type": "string", 
+              "description": "The name of a user", 
+              "name": "name"
+            }
+          ], 
+          "description": "User password resource"
+        }, 
+        {
+          "methods": [
+            {
+              "name": "List of user email requests", 
+              "code": [
+                "$headers = getHeaders();", 
+                "$pass = isset($headers['Pass'])?$headers['Pass']:'';", 
+                "rightscheck(\"\",$pass,SP_ADMIN);", 
+                "$users = userEmailRequests();", 
+                "echo json_pretty($users);", 
+                "return;"
+              ], 
+              "description": "User email requests for username or passwords", 
+              "dialog": [
+                {
+                  "request": {
+                    "headers": {
+                      "Pass": "5ffab638bde372b4fa63bb6f8484595d"
+                    }, 
+                    "name": "user-email-request"
+                  }, 
+                  "responses": [
+                    {
+                      "status": 200, 
+                      "body": [
+                        "[{\"name\":\"slevinski\",\"email\":\"slevinski@signwriting.org\",\"temp\":\"username\"}]"
+                      ], 
+                      "type": "text/plain"
+                    }
+                  ]
+                }
+              ], 
+              "method": "GET"
+            }
+          ], 
+          "route": "/user/email", 
+          "name": "User email requests", 
+          "description": "Requests for email of username or password reset"
+        }, 
+        {
+          "methods": [
+            {
+              "name": "Lookup username", 
+              "code": [
+                "$headers = getHeaders();", 
+                "$pass = isset($headers['Pass'])?$headers['Pass']:'';", 
+                "$user = userVerified($pass,true);", 
+                "if (!$user) haltForbidden();", 
+                "userNameLookup($email);", 
+                "$app->response->setStatus(204);", 
+                "return;"
+              ], 
+              "description": "Creates a request for email of username", 
+              "dialog": [
+                {
+                  "request": {
+                    "headers": {
+                      "Pass": "5ffab638bde372b4fa63bb6f8484595d"
+                    }, 
+                    "name": "user-name-lookup"
+                  }, 
+                  "responses": [
+                    {
+                      "status": 204
+                    }
+                  ]
+                }
+              ], 
+              "method": "PUT"
+            }
+          ], 
+          "route": "/user/email/{email}", 
+          "name": "Username lookup", 
+          "parameters": [
+            {
+              "example": "slevinski@signwriting.org", 
+              "type": "string", 
+              "description": "The email for a user", 
+              "name": "email"
+            }
+          ], 
+          "description": "Forgot username email lookup"
         }
       ], 
       "group": "user", 
-      "html": "<ul>\n<li>Source: <a href=\"../src/user.txt\">ApiTxt format</a> and <a href=\"../src/user.json\">JSON objects</a></li>\n<li>Documents: <a href=\"../doc/user.md\">API Blueprint</a> and <a href=\"../doc/user.htm\">Stand Alone HTML</a></li>\n<li>Live Page: <a href=\"../api/user.html\">API Interface</a> and <a href=\"../api/user.js\">JavaScript</a></li>\n</ul>\n<h3>Country code</h3>\n<p>The country codes are from ISO-3166.\nEach country is coded with two uppercase letters.</p>\n<h3>Language code</h3>\n<p>The language codes are from ISO-639-1 for spoken languages and ISO-639-3 for sign languages.\nEach spoken language is coded with two lowercase letters.\nEach sign language is coded with three lowercase letters.</p>", 
+      "html": "<ul>\n<li>Source: <a href=\"../src/user.txt\">ApiTxt format</a> and <a href=\"../src/user.json\">JSON objects</a></li>\n<li>Documents: <a href=\"../doc/user.md\">API Blueprint</a> and <a href=\"../doc/user.htm\">Stand Alone HTML</a></li>\n<li>Live Page: <a href=\"../api/user.html\">API Interface</a> and <a href=\"../api/user.js\">JavaScript</a></li>\n</ul>", 
       "lines": [
         "+ Source: [ApiTxt format](../src/user.txt) and [JSON objects](../src/user.json)", 
         "+ Documents: [API Blueprint](../doc/user.md) and [Stand Alone HTML](../doc/user.htm)", 
-        "+ Live Page: [API Interface](../api/user.html) and [JavaScript](../api/user.js)", 
-        "", 
-        "### Country code", 
-        "The country codes are from ISO-3166.", 
-        "Each country is coded with two uppercase letters.", 
-        "", 
-        "### Language code", 
-        "The language codes are from ISO-639-1 for spoken languages and ISO-639-3 for sign languages.", 
-        "Each spoken language is coded with two lowercase letters.", 
-        "Each sign language is coded with three lowercase letters."
+        "+ Live Page: [API Interface](../api/user.html) and [JavaScript](../api/user.js)"
       ], 
       "description": "SignPuddle 3 collections are organized by country and language codes"
     }
@@ -222,13 +450,25 @@ var Group = {
           m.trust(route["html"]),
           route["methods"].map(function (method, iM){
             var id = method["name"].replace(/\s/g, '') + "_";
+            var headers = (((method["dialog"] || [])[0] || {})["request"] || {})["headers"] || [];
             return [
               m("form",
                 m("fieldset",[
                   m("h3",method["name"]),
                   m.trust(method["html"]),
                   m("input.large." + mclass[method["method"]], {"disabled": true, "value":route["route"]}),
+                  Object.keys(headers).map(function(key){
+                    if (key == "Location" || key == "Description" || key == "Content-type") return;
+                    return m("p",[
+                      m("label[for=" + id + key + "]", "HEADER " + key),
+                      m("input#" + id + key + "[type=text][name="+ key + "]",{
+                        "value":headers[key],
+                        onchange: function(e){data["groups"][iG]["routes"][iR]["methods"][iM]["dialog"][0]["request"]["headers"][key]=e.target.value;}
+                      })
+                    ]);
+                  }),
                   (route["parameters"] || []).map(function(param,iP){
+                    param["example"] = param["example"].replace(/`/g, "");
                     return m("p",[
                       m("label[for=" + id + param["name"] + "]",param["name"] + ": " + param["description"]+ " (" + param["type"] + ")"),
                       m("input#" + id + param["name"] + "[type=text][name="+ param["name"] + "]",{

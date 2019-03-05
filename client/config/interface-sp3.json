@@ -1,0 +1,717 @@
+{
+  "name": "en-US-interface-sp3",
+  "data": {
+    "system.signpuddle.short": {
+      "message": "SP$1",
+      "description": "Short title of SignPuddle.",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-01-16T16:55:58.846Z",
+      "updated_at": "2019-02-06T16:38:23.567Z"
+    },
+    "system.buttons.edit": {
+      "message": "Edit",
+      "description": "Generic edit button",
+      "icon": "edit",
+      "user": "slevinski",
+      "created_at": "2019-01-16T16:55:58.846Z",
+      "updated_at": "2019-02-25T15:50:32Z"
+    },
+    "system.buttons.remove": {
+      "message": "Remove",
+      "description": "Generic remove button",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-01-16T16:55:58.846Z",
+      "updated_at": "2019-01-16T16:56:19.175Z"
+    },
+    "system.buttons.cancel": {
+      "message": "Cancel",
+      "description": "Generic cancel button",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-01-16T16:55:58.846Z",
+      "updated_at": "2019-01-16T16:56:19.175Z"
+    },
+    "system.buttons.save": {
+      "message": "Save",
+      "description": "Generic save button",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-01-16T16:55:58.846Z",
+      "updated_at": "2019-01-16T16:56:19.175Z"
+    },
+    "system.buttons.error": {
+      "message": "Error",
+      "description": "Generic error button",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-01-16T16:55:58.846Z",
+      "updated_at": "2019-01-16T16:56:19.175Z"
+    },
+    "system.buttons.select": {
+      "message": "Select",
+      "description": "Select item.",
+      "icon": "circle-o",
+      "user": "slevinski",
+      "created_at": "2019-01-16T16:55:58.846Z",
+      "updated_at": "2019-02-25T16:09:14Z"
+    },
+    "system.buttons.selected": {
+      "message": "Selected",
+      "description": "Selected item.",
+      "icon": "dot-circle-o",
+      "user": "slevinski",
+      "created_at": "2019-01-16T16:55:58.846Z",
+      "updated_at": "2019-02-25T16:09:21Z"
+    },
+    "system.buttons.more": {
+      "message": "More",
+      "description": "Show more information.",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-01-16T16:55:58.846Z",
+      "updated_at": "2019-01-16T16:56:19.175Z"
+    },
+    "sections.settings.title": {
+      "message": "Settings",
+      "description": "Settings title.",
+      "icon": "cog",
+      "user": "slevinski",
+      "created_at": "2019-01-16T16:55:58.846Z",
+      "updated_at": "2019-02-22T15:46:52Z"
+    },
+    "sections.server.title": {
+      "message": "Server",
+      "description": "Server settings title",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-01-16T16:55:58.846Z",
+      "updated_at": "2019-02-20T20:57:32.513Z"
+    },
+    "sections.server.url": {
+      "message": "Server URL",
+      "description": "Label for server url",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-01-16T16:55:58.846Z",
+      "updated_at": "2019-02-20T20:57:39.915Z"
+    },
+    "sections.interface.title": {
+      "message": "Interface",
+      "description": "Interfaces title.",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-01-16T16:55:58.846Z",
+      "updated_at": "2019-02-20T20:59:27.300Z"
+    },
+    "user.profile.title": {
+      "message": "User Profile",
+      "description": "Profile title",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-01-16T16:55:58.846Z",
+      "updated_at": "2019-01-16T16:56:19.175Z"
+    },
+    "user.profile.username": {
+      "message": "Username",
+      "description": "Label for user name",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-01-16T16:55:58.846Z",
+      "updated_at": "2019-01-16T16:56:19.175Z"
+    },
+    "user.profile.email": {
+      "message": "Email",
+      "description": "Label for user email.",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-01-16T16:55:58.846Z",
+      "updated_at": "2019-01-16T16:56:19.175Z"
+    },
+    "user.profile.password": {
+      "message": "Password",
+      "description": "Label for user password.",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-01-16T16:55:58.846Z",
+      "updated_at": "2019-01-16T16:56:19.175Z"
+    },
+    "user.buttons.profile": {
+      "message": "Update Profile",
+      "description": "",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-01-16T16:55:58.846Z",
+      "updated_at": "2019-03-04T16:51:30Z"
+    },
+    "user.titles.login": {
+      "message": "Login",
+      "description": "Login title.",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-01-16T16:55:58.846Z",
+      "updated_at": "2019-02-20T21:20:41.377Z"
+    },
+    "user.buttons.login": {
+      "message": "Login",
+      "description": "",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-01-16T16:55:58.846Z",
+      "updated_at": "2019-03-04T16:51:38Z"
+    },
+    "user.titles.reset": {
+      "message": "User Account Reset",
+      "description": "Login title.",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-01-16T16:55:58.846Z",
+      "updated_at": "2019-02-20T21:22:17.535Z"
+    },
+    "user.buttons.reset": {
+      "message": "Reset Account",
+      "description": "",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-01-16T16:55:58.846Z",
+      "updated_at": "2019-03-04T16:51:20Z"
+    },
+    "user.titles.register": {
+      "message": "Register",
+      "description": "Register title.",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-01-16T16:55:58.846Z",
+      "updated_at": "2019-02-20T21:21:40.078Z"
+    },
+    "user.buttons.register": {
+      "message": "Register",
+      "description": "",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-01-16T16:55:58.846Z",
+      "updated_at": "2019-03-04T16:51:25Z"
+    },
+    "system.response.status": {
+      "message": "Status",
+      "description": "Response status code",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-01-16T16:55:58.846Z",
+      "updated_at": "2019-01-16T16:56:19.175Z"
+    },
+    "system.response.headers": {
+      "message": "Headers",
+      "description": "Response code headers",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-01-16T16:55:58.846Z",
+      "updated_at": "2019-01-16T16:56:19.175Z"
+    },
+    "system.response.problems": {
+      "message": "ERROR: Server problem",
+      "description": "error message when server has a problem.",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-01-16T16:55:58.846Z",
+      "updated_at": "2019-02-20T20:47:55.793Z"
+    },
+    "system.response.success": {
+      "message": "SUCCESS: Server response",
+      "description": "message when server responds successfully.",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-01-16T16:55:58.846Z",
+      "updated_at": "2019-02-20T20:48:08.989Z"
+    },
+    "sections.collection.key": {
+      "message": "Key",
+      "description": "Interface Key field label",
+      "icon": "",
+      "user": "",
+      "created_at": "2019-01-31T21:09:50.285Z",
+      "updated_at": "2019-02-20T21:11:42.562Z"
+    },
+    "sections.collection.message": {
+      "message": "Message",
+      "description": "The user interface message",
+      "icon": "",
+      "user": "",
+      "created_at": "2019-02-06T16:01:05.017Z",
+      "updated_at": "2019-02-20T21:11:48.680Z"
+    },
+    "sections.collection.description": {
+      "message": "Description",
+      "description": "The description of the interface message",
+      "icon": "",
+      "user": "",
+      "created_at": "2019-02-06T16:03:58.757Z",
+      "updated_at": "2019-02-20T21:11:28.716Z"
+    },
+    "sections.collection.icon": {
+      "message": "Icon",
+      "description": "The icon for the interface message",
+      "icon": "",
+      "user": "",
+      "created_at": "2019-02-06T16:04:17.358Z",
+      "updated_at": "2019-02-20T21:11:36.136Z"
+    },
+    "system.buttons.search": {
+      "message": "Search",
+      "description": "General search button",
+      "icon": "search",
+      "user": "",
+      "created_at": "2019-02-06T16:16:00.988Z",
+      "updated_at": "2019-02-25T16:11:03Z"
+    },
+    "system.buttons.delete": {
+      "message": "Delete",
+      "description": "General delete button",
+      "icon": "",
+      "user": "",
+      "created_at": "2019-02-06T16:33:20.101Z",
+      "updated_at": "2019-02-06T16:33:20.101Z"
+    },
+    "sections.server.connect": {
+      "message": "Connect",
+      "description": "Connect to server",
+      "icon": "",
+      "user": "",
+      "created_at": "2019-02-06T16:34:54.087Z",
+      "updated_at": "2019-02-20T20:57:10.157Z"
+    },
+    "sections.server.disconnect": {
+      "message": "Disconnect",
+      "description": "Disconnect from server",
+      "icon": "",
+      "user": "",
+      "created_at": "2019-02-06T16:35:29.784Z",
+      "updated_at": "2019-02-20T20:57:22.668Z"
+    },
+    "system.signpuddle.title": {
+      "message": "SignPuddle $1",
+      "description": "Title for SignPuddle",
+      "icon": "",
+      "user": "",
+      "created_at": "2019-02-06T16:38:55.239Z",
+      "updated_at": "2019-02-06T16:38:55.239Z"
+    },
+    "system.buttons.update": {
+      "message": "Update",
+      "description": "General update button",
+      "icon": "refresh",
+      "user": "",
+      "created_at": "2019-02-06T16:45:52.905Z",
+      "updated_at": "2019-02-25T16:02:49Z"
+    },
+    "sections.country.title": {
+      "message": "Country",
+      "description": "Country settings title",
+      "icon": "",
+      "user": "",
+      "created_at": "2019-02-06T16:46:27.283Z",
+      "updated_at": "2019-02-20T20:58:26.987Z"
+    },
+    "system.buttons.viewall": {
+      "message": "View All",
+      "description": "General view all button",
+      "icon": "",
+      "user": "",
+      "created_at": "2019-02-06T16:48:11.877Z",
+      "updated_at": "2019-02-06T16:48:42.794Z"
+    },
+    "sections.collection.country": {
+      "message": "Country",
+      "description": "",
+      "icon": "",
+      "user": "192.168.254.7",
+      "created_at": "2019-02-08T19:45:34.243Z",
+      "updated_at": "2019-02-25T20:25:10Z"
+    },
+    "sections.collection.title": {
+      "message": "Collection Title",
+      "description": "",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-02-15T15:20:35.388Z",
+      "updated_at": "2019-02-20T21:11:55.612Z"
+    },
+    "security.titles.register": {
+      "message": "Security rights for new registration",
+      "description": "",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-02-15T15:21:33.000Z",
+      "updated_at": "2019-02-20T21:07:57.799Z"
+    },
+    "security.titles.upload": {
+      "message": "Required security rights to upload",
+      "description": "",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-02-15T15:21:41.145Z",
+      "updated_at": "2019-02-20T21:08:12.639Z"
+    },
+    "security.rights.add": {
+      "message": "Add",
+      "description": "Security right for adding to a collection",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-02-15T15:21:47.098Z",
+      "updated_at": "2019-02-22T22:51:09Z"
+    },
+    "security.rights.edit": {
+      "message": "Edit",
+      "description": "",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-02-15T15:21:56.918Z",
+      "updated_at": "2019-02-15T15:21:56.918Z"
+    },
+    "security.rights.manage": {
+      "message": "Manage",
+      "description": "",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-02-15T15:22:07.358Z",
+      "updated_at": "2019-02-15T15:22:07.358Z"
+    },
+    "security.titles.adduser": {
+      "message": "Add security rights for users",
+      "description": "",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-02-15T15:23:10.294Z",
+      "updated_at": "2019-02-20T21:09:37.811Z"
+    },
+    "security.titles.users": {
+      "message": "User List",
+      "description": "",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-02-15T15:23:26.507Z",
+      "updated_at": "2019-02-20T21:10:14.043Z"
+    },
+    "user.profile.display": {
+      "message": "Display Name",
+      "description": "",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-02-15T15:23:40.029Z",
+      "updated_at": "2019-02-15T15:23:40.029Z"
+    },
+    "security.rights.view": {
+      "message": "View",
+      "description": "",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-02-15T15:27:11.760Z",
+      "updated_at": "2019-02-15T15:27:11.760Z"
+    },
+    "security.rights.none": {
+      "message": "None",
+      "description": "",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-02-18T17:13:43.210Z",
+      "updated_at": "2019-02-18T17:13:43.210Z"
+    },
+    "system.buttons.manage": {
+      "message": "Manage",
+      "description": "",
+      "icon": "users",
+      "user": "slevinski",
+      "created_at": "2019-02-19T16:52:19.965Z",
+      "updated_at": "2019-02-25T16:05:06Z"
+    },
+    "security.rights.admin": {
+      "message": "Admin",
+      "description": "",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-02-20T21:05:00.459Z",
+      "updated_at": "2019-02-20T21:05:00.459Z"
+    },
+    "user.buttons.logout": {
+      "message": "Logout",
+      "description": "",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-02-20T21:24:46.400Z",
+      "updated_at": "2019-02-20T21:24:46.400Z"
+    },
+    "user.buttons.password": {
+      "message": "Update Password",
+      "description": "",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-02-20T21:25:06.978Z",
+      "updated_at": "2019-02-20T21:25:06.978Z"
+    },
+    "user.profile.old": {
+      "message": "Old Password",
+      "description": "",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-02-20T21:26:14.569Z",
+      "updated_at": "2019-02-20T21:26:14.569Z"
+    },
+    "user.profile.new": {
+      "message": "New Password",
+      "description": "",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-02-20T21:26:22.772Z",
+      "updated_at": "2019-02-20T21:26:22.772Z"
+    },
+    "user.profile.confirm": {
+      "message": "Confirm Password",
+      "description": "",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-02-20T21:26:35.915Z",
+      "updated_at": "2019-02-20T21:26:35.915Z"
+    },
+    "system.buttons.clear": {
+      "message": "Clear",
+      "description": "",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-02-20T22:01:38.703Z",
+      "updated_at": "2019-02-20T22:01:38.703Z"
+    },
+    "sections.state.title": {
+      "message": "Browser State",
+      "description": "",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-02-20T22:25:46.892Z",
+      "updated_at": "2019-02-20T22:25:46.892Z"
+    },
+    "sections.state.reset": {
+      "message": "Reset",
+      "description": "",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-02-20T22:27:14.635Z",
+      "updated_at": "2019-02-20T22:36:38.721Z"
+    },
+    "sections.state.restore": {
+      "message": "Restore",
+      "description": "",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-02-20T22:27:24.344Z",
+      "updated_at": "2019-02-20T22:27:24.344Z"
+    },
+    "sections.state.forget": {
+      "message": "Forget",
+      "description": "",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-02-20T22:27:34.155Z",
+      "updated_at": "2019-02-20T22:27:34.155Z"
+    },
+    "sections.state.status": {
+      "message": "Status",
+      "description": "",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-02-20T22:28:42.421Z",
+      "updated_at": "2019-02-20T22:28:42.421Z"
+    },
+    "sections.interface.available": {
+      "message": "Available Interfaces",
+      "description": "",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-02-20T22:48:08.731Z",
+      "updated_at": "2019-02-20T22:48:08.731Z"
+    },
+    "security.titles.required": {
+      "message": "Require security rights",
+      "description": "",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-02-22T22:44:19Z",
+      "updated_at": "2019-02-22T22:44:19Z"
+    },
+    "sections.interface.potential": {
+      "message": "Request Interface",
+      "description": "",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-02-25T16:44:25Z",
+      "updated_at": "2019-02-25T16:44:25Z"
+    },
+    "sections.collection.language": {
+      "message": "Language",
+      "description": "",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-02-25T20:24:53Z",
+      "updated_at": "2019-02-25T20:24:53Z"
+    },
+    "sections.collection.type": {
+      "message": "Type",
+      "description": "Type of collection",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-02-25T20:25:41Z",
+      "updated_at": "2019-02-25T20:25:41Z"
+    },
+    "sections.collection.subname": {
+      "message": "Sub Name",
+      "description": "The sub name of the collection",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-02-25T20:26:26Z",
+      "updated_at": "2019-02-25T20:26:26Z"
+    },
+    "sections.collection.filter": {
+      "message": "Filter Collections",
+      "description": "",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-02-25T20:27:38Z",
+      "updated_at": "2019-02-25T20:27:38Z"
+    },
+    "sections.admin.title": {
+      "message": "Administration",
+      "description": "",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-02-25T20:36:25Z",
+      "updated_at": "2019-02-25T20:36:25Z"
+    },
+    "sections.admin.unmanaged": {
+      "message": "Unmanaged Collections",
+      "description": "",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-02-25T21:04:07Z",
+      "updated_at": "2019-03-05T15:59:38Z"
+    },
+    "sections.admin.missing": {
+      "message": "Missing Collections",
+      "description": "",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-02-25T21:08:59Z",
+      "updated_at": "2019-03-05T17:07:46Z"
+    },
+    "sections.admin.proper": {
+      "message": "Proper Collections",
+      "description": "Collections that exist and have defined security",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-02-26T15:22:38Z",
+      "updated_at": "2019-03-05T15:59:57Z"
+    },
+    "sections.collection.all": {
+      "message": "All Collections",
+      "description": "",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-02-26T15:22:51Z",
+      "updated_at": "2019-02-26T15:22:51Z"
+    },
+    "system.buttons.request": {
+      "message": "Request",
+      "description": "",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-02-27T19:35:24Z",
+      "updated_at": "2019-02-27T19:35:24Z"
+    },
+    "sections.admin.unknown": {
+      "message": "Unknown Collections with Users",
+      "description": "",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-02-27T20:33:59Z",
+      "updated_at": "2019-03-05T16:06:52Z"
+    },
+    "sections.admin.noname": {
+      "message": "Unknown Collection",
+      "description": "",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-02-27T22:44:48Z",
+      "updated_at": "2019-03-05T16:37:46Z"
+    },
+    "system.buttons.admin": {
+      "message": "Admin",
+      "description": "",
+      "icon": "bolt",
+      "user": "slevinski",
+      "created_at": "2019-02-28T15:15:57Z",
+      "updated_at": "2019-02-28T15:15:57Z"
+    },
+    "system.buttons.okay": {
+      "message": "Okay",
+      "description": "",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-02-28T20:53:21Z",
+      "updated_at": "2019-02-28T20:53:21Z"
+    },
+    "user.titles.password": {
+      "message": "Update Password",
+      "description": "",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-02-28T22:09:30Z",
+      "updated_at": "2019-02-28T22:09:30Z"
+    },
+    "user.titles.resetmessage": {
+      "message": "A recovery email will be sent",
+      "description": "",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-02-28T22:10:11Z",
+      "updated_at": "2019-02-28T22:10:11Z"
+    },
+    "user.buttons.resetpassword": {
+      "message": "Reset Password",
+      "description": "",
+      "icon": "",
+      "user": "admin",
+      "created_at": "2019-03-04T17:03:52Z",
+      "updated_at": "2019-03-04T17:03:52Z"
+    },
+    "user.buttons.forgotusername": {
+      "message": "Forgot Username",
+      "description": "",
+      "icon": "",
+      "user": "admin",
+      "created_at": "2019-03-04T17:04:07Z",
+      "updated_at": "2019-03-04T17:04:07Z"
+    },
+    "user.buttons.havetemp": {
+      "message": "Have Temporary",
+      "description": "",
+      "icon": "",
+      "user": "admin",
+      "created_at": "2019-03-04T17:04:22Z",
+      "updated_at": "2019-03-04T17:04:22Z"
+    },
+    "user.profile.temp": {
+      "message": "Temporary Pass",
+      "description": "",
+      "icon": "",
+      "user": "admin",
+      "created_at": "2019-03-04T17:06:40Z",
+      "updated_at": "2019-03-04T17:06:40Z"
+    },
+    "sections.admin.email": {
+      "message": "User email requests",
+      "description": "",
+      "icon": "",
+      "user": "slevinski",
+      "created_at": "2019-03-05T17:09:08Z",
+      "updated_at": "2019-03-05T17:09:08Z"
+    }
+  }
+}

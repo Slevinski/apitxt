@@ -1,0 +1,6 @@
+group	interfacefiles
+	route	/interface/	Root as interface.html
+		method	GET	Get the interface as HTML
+			code	getFile('api/interface.html');
+			response	200	text/plain
+				body	interface.html file contents here

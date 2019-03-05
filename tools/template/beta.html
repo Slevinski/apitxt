@@ -280,10 +280,16 @@ Prism.languages.json={property:/".*?"(?=\s*:)/gi,string:/"(?!:)(\\?[^"])*?"(?!:)
                     <div class="content tabbed">
                       <div class="ui top attached tabular menu">
                         <a data-tab="body" class="active item">BODY</a>
+                        <a data-tab="schema" class="item">SCHEMA</a>
                       </div>
                       <div class="ui bottom attached active tab segment" data-tab="body">
                         <pre style="white-space: inherit">
                           <code class="language-{{alias $transaction.Request.Body.ContentType}}">{{$transaction.Request.Body.Body}}</code>
+                        </pre>
+                      </div>
+                      <div class="ui bottom attached tab segment" data-tab="schema">
+                        <pre style="white-space: inherit">
+                          <code class="language-json">{{$transaction.Request.Schema.Body}}</code>
                         </pre>
                       </div>
                     </div>
@@ -305,10 +311,16 @@ Prism.languages.json={property:/".*?"(?=\s*:)/gi,string:/"(?!:)(\\?[^"])*?"(?!:)
                   <div class="content tabbed">
                     <div class="ui top attached tabular menu">
                       <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
                     </div>
                     <div class="ui bottom attached active tab segment" data-tab="body">
                       <pre style="white-space: inherit">
                         <code class="language-{{alias $transaction.Response.Body.ContentType}}">{{$transaction.Response.Body.Body}}</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{{$transaction.Response.Schema.Body}}</code>
                       </pre>
                     </div>
                   </div>

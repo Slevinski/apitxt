@@ -33,13 +33,29 @@ This is a work in progress. Feedback, bug reports, and patches are welcomed.
 MIT
 
 ## To Do
-* Searching for SignWriting in Unicode (SWU) with SQLite
-* Editing the various languages for the user interface
-* Convert PDF printing to the SignPuddle 3 databases
-* Editing dictionaries and individual signs
-* Writing and editing literature 
+
+* Utilities
+** Searching for SignWriting in Unicode (SWU) with SQLite
+
+* General
+** update flags
+** standardize error responses in JSON
+** world.db
+
+* Interface
+** request blank
+** pull updates
+** server side only manager can update interface keys
+
+* Initial UI
+** override InterfaceFront.init for hash or state
+
+* User
+** register new user
 
 ## Version History
+* v3.0.0-alpha.6 - Jan 5th, 2019: interface system
+* v3.0.0-alpha.5 - Oct 18th, 2018: user login system framework
 * v3.0.0-alpha.4 - Sept 20th, 2018: documents for system and tools
 * v3.0.0-alpha - Sept 14th, 2018: first release on SignPuddle.com
 * v1.0.0 - Sept 28th, 2017: initial release 

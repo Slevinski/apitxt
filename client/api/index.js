@@ -1,7 +1,7 @@
 var spVersion = "3";
 var host = "";
 try {
-  host = config['state']['server'];
+  host = config['state']['connection']['server'];
 } catch (e){
  host = "https://signpuddle.com/server"
 }
@@ -12,14 +12,1446 @@ var data = {
   "lines": [
     "> v3.0.0", 
     "", 
+    "Welcome to the SignPuddle 3 API.", 
+    "The API is defined with two types of source, two types of documentation, and a live page of HTML and JavaScript.", 
+    "", 
     "+ Source: [ApiTxt format](../src/index.txt) and [JSON objects](../src/index.json)", 
     "+ Documents: [API Blueprint](../doc/index.md) and [Stand Alone HTML](../doc/index.htm)", 
-    "+ Live Page: [API Interface](../api/index.html) and [JavaScript](../api/index.js)"
+    "+ Live Page: [API Interface](../api/index.html) and [JavaScript](../api/index.js)", 
+    "", 
+    "The API is divided into several sections.", 
+    "This main document includes all of the sections.", 
+    "Each section is available separately as well.", 
+    "", 
+    "## HTTP Request Methods", 
+    "", 
+    "The SignPuddle 3 server accepts HTTP request methods of GET, POST, PUT, and DELETE.", 
+    "+ GET - retrieve information without altering the server", 
+    "+ POST - add information to the server with each request", 
+    "+ PUT - update information on the server", 
+    "+ DELETE - remove information on the server.", 
+    "## HTTP Response Statuses", 
+    "", 
+    "The SignPuddle 3 server responds with status codes.", 
+    "", 
+    "### Success Codes", 
+    "", 
+    "+ 200 OK", 
+    "+ 201 Created", 
+    "+ 202 Accepted", 
+    "+ 204 No Content", 
+    "", 
+    "### Redirect Codes", 
+    "", 
+    "+ 300 Multiple Choices", 
+    "+ 304 No Modified", 
+    "+ 307 Temporary Redirect", 
+    "+ 308 Permanent Redirect", 
+    "", 
+    "### Client Error Codes", 
+    "", 
+    "+ 400 Bad Request", 
+    "+ 403 Forbidden", 
+    "+ 404 Not Found", 
+    "+ 409 Conflict", 
+    "+ 429 Too Many Requests", 
+    "", 
+    "### Server Error Codes", 
+    "", 
+    "+ 500 Internal Server Error", 
+    "+ 501 Not Implemented", 
+    "+ 503 Service Unavailable", 
+    "", 
+    "## HTTP Headers", 
+    "", 
+    "Headers pass additional information about the request or response.", 
+    "", 
+    "### Headers", 
+    "", 
+    "+ Content-Type - the MIME type of the response", 
+    "+ ETag - an entity tag used to validate cached values", 
+    "+ Expires - date after which response is stale", 
+    "+ Location - used for redirect or for newly created resource", 
+    "+ If-None-Match - request header compared to ETag value, response status 304 if matching", 
+    "+ If-Modified-Since - request header, causes response status 304 if unmodified", 
+    "+ Last-Modified - response header, used with If-Modified-Since request header", 
+    ""
   ], 
-  "html": "<blockquote>\n<p>v3.0.0</p>\n</blockquote>\n<ul>\n<li>Source: <a href=\"../src/index.txt\">ApiTxt format</a> and <a href=\"../src/index.json\">JSON objects</a></li>\n<li>Documents: <a href=\"../doc/index.md\">API Blueprint</a> and <a href=\"../doc/index.htm\">Stand Alone HTML</a></li>\n<li>Live Page: <a href=\"../api/index.html\">API Interface</a> and <a href=\"../api/index.js\">JavaScript</a></li>\n</ul>", 
+  "html": "<blockquote>\n<p>v3.0.0</p>\n</blockquote>\n<p>Welcome to the SignPuddle 3 API.\nThe API is defined with two types of source, two types of documentation, and a live page of HTML and JavaScript.</p>\n<ul>\n<li>Source: <a href=\"../src/index.txt\">ApiTxt format</a> and <a href=\"../src/index.json\">JSON objects</a></li>\n<li>Documents: <a href=\"../doc/index.md\">API Blueprint</a> and <a href=\"../doc/index.htm\">Stand Alone HTML</a></li>\n<li>Live Page: <a href=\"../api/index.html\">API Interface</a> and <a href=\"../api/index.js\">JavaScript</a></li>\n</ul>\n<p>The API is divided into several sections.\nThis main document includes all of the sections.\nEach section is available separately as well.</p>\n<h2>HTTP Request Methods</h2>\n<p>The SignPuddle 3 server accepts HTTP request methods of GET, POST, PUT, and DELETE.\n+ GET - retrieve information without altering the server\n+ POST - add information to the server with each request\n+ PUT - update information on the server\n+ DELETE - remove information on the server.</p>\n<h2>HTTP Response Statuses</h2>\n<p>The SignPuddle 3 server responds with status codes.</p>\n<h3>Success Codes</h3>\n<ul>\n<li>200 OK</li>\n<li>201 Created</li>\n<li>202 Accepted</li>\n<li>204 No Content</li>\n</ul>\n<h3>Redirect Codes</h3>\n<ul>\n<li>300 Multiple Choices</li>\n<li>304 No Modified</li>\n<li>307 Temporary Redirect</li>\n<li>308 Permanent Redirect</li>\n</ul>\n<h3>Client Error Codes</h3>\n<ul>\n<li>400 Bad Request</li>\n<li>403 Forbidden</li>\n<li>404 Not Found</li>\n<li>409 Conflict</li>\n<li>429 Too Many Requests</li>\n</ul>\n<h3>Server Error Codes</h3>\n<ul>\n<li>500 Internal Server Error</li>\n<li>501 Not Implemented</li>\n<li>503 Service Unavailable</li>\n</ul>\n<h2>HTTP Headers</h2>\n<p>Headers pass additional information about the request or response.</p>\n<h3>Headers</h3>\n<ul>\n<li>Content-Type - the MIME type of the response</li>\n<li>ETag - an entity tag used to validate cached values</li>\n<li>Expires - date after which response is stale</li>\n<li>Location - used for redirect or for newly created resource</li>\n<li>If-None-Match - request header compared to ETag value, response status 304 if matching</li>\n<li>If-Modified-Since - request header, causes response status 304 if unmodified</li>\n<li>Last-Modified - response header, used with If-Modified-Since request header</li>\n</ul>", 
   "host": "https://signpuddle.com/server", 
   "meta": "Generated from ApiTxt format (output/index.txt) using txt2json.py", 
   "groups": [
+    {
+      "routes": [
+        {
+          "methods": [
+            {
+              "name": "Retrieve country list", 
+              "description": "The available countries where signs are available.", 
+              "dialog": [
+                {
+                  "request": {
+                    "name": "user-who"
+                  }, 
+                  "responses": [
+                    {
+                      "status": 200, 
+                      "body": [
+                        "BR", 
+                        "US"
+                      ], 
+                      "type": "text/plain"
+                    }
+                  ]
+                }
+              ], 
+              "method": "GET"
+            }
+          ], 
+          "route": "/user/who", 
+          "name": "Who uses SignWriting?", 
+          "description": "List of countries with size and activity."
+        }, 
+        {
+          "methods": [
+            {
+              "code": [
+                "  echo json_pretty(userPass());"
+              ], 
+              "method": "POST", 
+              "dialog": [
+                {
+                  "request": {
+                    "name": "user pass"
+                  }, 
+                  "responses": [
+                    {
+                      "status": 200, 
+                      "body": [
+                        "{\"pass\": \"90c19ce2076db097c75b3406e966a6b6\",\"ip\": \"192.168.254.2\"}"
+                      ], 
+                      "type": "text/plain"
+                    }
+                  ]
+                }
+              ], 
+              "name": "String for accounting and validation"
+            }
+          ], 
+          "route": "/user/pass", 
+          "name": "User pass", 
+          "description": "A string for accounting and validation"
+        }, 
+        {
+          "methods": [
+            {
+              "code": [
+                "  $data = $app->request->getbody();", 
+                "  $data = json_decode($data,true);", 
+                "  $results = userVerify($data['username'],$data['pass'],$data['validated']);", 
+                "  echo json_pretty($results);"
+              ], 
+              "method": "PUT", 
+              "dialog": [
+                {
+                  "request": {
+                    "body": [
+                      "{\"username\":\"anonymous\",\"pass\":\"af77...\",\"validated\":\"2793f...\"}"
+                    ], 
+                    "type": "application/json", 
+                    "html": "<ul>\n<li>Attributes<ul>\n<li>username: anonymous (string) - name of the user</li>\n<li>pass: af77... (string) - pass for session validation</li>\n<li>validated: 2793f... (string) - validated pass mixed with password</li>\n</ul>\n</li>\n</ul>", 
+                    "lines": [
+                      "+ Attributes", 
+                      "    + username: anonymous (string) - name of the user", 
+                      "    + pass: af77... (string) - pass for session validation", 
+                      "    + validated: 2793f... (string) - validated pass mixed with password"
+                    ], 
+                    "name": "verify user"
+                  }, 
+                  "responses": [
+                    {
+                      "status": 200, 
+                      "body": [
+                        "{\"user-profile\":\"\"}"
+                      ], 
+                      "html": "<p>response text here</p>", 
+                      "lines": [
+                        "response text here"
+                      ], 
+                      "type": "application/json"
+                    }
+                  ]
+                }
+              ], 
+              "name": "Process log in to server"
+            }
+          ], 
+          "route": "/user/login", 
+          "name": "User login", 
+          "description": "Validation of user with validated password"
+        }, 
+        {
+          "methods": [
+            {
+              "name": "Update user profile", 
+              "code": [
+                "$headers = getHeaders();", 
+                "$pass = isset($headers['Pass'])?$headers['Pass']:'';", 
+                "$user = userVerified($pass);", 
+                "if ($user!=$name) haltForbidden($user . \" not \" . $name);", 
+                "$data = $app->request->getbody();", 
+                "$data = json_decode($data,true);", 
+                "userProfileUpdate($name,$data);", 
+                "$app->response->setStatus(204);", 
+                "return;"
+              ], 
+              "description": "Updates the profile of the user", 
+              "dialog": [
+                {
+                  "request": {
+                    "headers": {
+                      "Pass": "5ffab638bde372b4fa63bb6f8484595d"
+                    }, 
+                    "name": "user-update"
+                  }, 
+                  "responses": [
+                    {
+                      "status": 204
+                    }
+                  ]
+                }
+              ], 
+              "method": "PUT"
+            }, 
+            {
+              "name": "Register new user", 
+              "description": "Creates and returns a new user", 
+              "dialog": [
+                {
+                  "request": {
+                    "headers": {
+                      "Pass": "5ffab638bde372b4fa63bb6f8484595d"
+                    }, 
+                    "name": "user-add"
+                  }, 
+                  "responses": [
+                    {
+                      "status": 200, 
+                      "body": [
+                        "profile created and returned"
+                      ], 
+                      "type": "text/plain"
+                    }
+                  ]
+                }
+              ], 
+              "method": "POST"
+            }
+          ], 
+          "route": "/user/{name}", 
+          "name": "User profile", 
+          "parameters": [
+            {
+              "example": "slevinski", 
+              "type": "string", 
+              "description": "The name of a user", 
+              "name": "name"
+            }
+          ], 
+          "description": "User details"
+        }, 
+        {
+          "methods": [
+            {
+              "name": "Update user password", 
+              "code": [
+                "$headers = getHeaders();", 
+                "$pass = isset($headers['Pass'])?$headers['Pass']:'';", 
+                "$user = userVerified($pass,true);", 
+                "if (!$user) haltForbidden();", 
+                "$data = $app->request->getbody();", 
+                "$data = json_decode($data,true);", 
+                "$old = isset($data['old'])?$data['old']:'';", 
+                "$new = isset($data['new'])?$data['new']:'';", 
+                "if ($old && $new){", 
+                "  userPasswordUpdate($name,$old,$new);", 
+                "  $app->response->setStatus(204);", 
+                "  return;", 
+                "} else {", 
+                "  haltBadRequest();", 
+                "}"
+              ], 
+              "description": "Updates the password of the user", 
+              "dialog": [
+                {
+                  "request": {
+                    "body": [
+                      "{\"old\":\"149603e6c03516362a8da23f624db945\",\"new\":\"22af645d1859cb5ca6da0c484f1f37ea\"}"
+                    ], 
+                    "headers": {
+                      "Pass": "5ffab638bde372b4fa63bb6f8484595d"
+                    }, 
+                    "type": "plain/text", 
+                    "name": "user-update-password"
+                  }, 
+                  "responses": [
+                    {
+                      "status": 204
+                    }
+                  ]
+                }
+              ], 
+              "method": "POST"
+            }, 
+            {
+              "name": "Reset user password", 
+              "code": [
+                "$headers = getHeaders();", 
+                "$pass = isset($headers['Pass'])?$headers['Pass']:'';", 
+                "$user = userVerified($pass,true);", 
+                "if (!$user) haltForbidden();", 
+                "$data = $app->request->getbody();", 
+                "$data = json_decode($data,true);", 
+                "$user = isset($data['user'])?$data['user']:'';", 
+                "if ($user){", 
+                "  userPasswordReset($user);", 
+                "  $app->response->setStatus(204);", 
+                "  return;", 
+                "} else {", 
+                "  haltBadRequest();", 
+                "}"
+              ], 
+              "description": "Creates a temporary password for the user", 
+              "dialog": [
+                {
+                  "request": {
+                    "headers": {
+                      "Pass": "5ffab638bde372b4fa63bb6f8484595d"
+                    }, 
+                    "type": "plain/text", 
+                    "name": "user-password-reset"
+                  }, 
+                  "responses": [
+                    {
+                      "status": 204
+                    }
+                  ]
+                }
+              ], 
+              "method": "PUT"
+            }
+          ], 
+          "route": "/user/{name}/password", 
+          "name": "User password", 
+          "parameters": [
+            {
+              "example": "slevinski", 
+              "type": "string", 
+              "description": "The name of a user", 
+              "name": "name"
+            }
+          ], 
+          "description": "User password resource"
+        }, 
+        {
+          "methods": [
+            {
+              "name": "List of user email requests", 
+              "code": [
+                "$headers = getHeaders();", 
+                "$pass = isset($headers['Pass'])?$headers['Pass']:'';", 
+                "rightscheck(\"\",$pass,SP_ADMIN);", 
+                "$users = userEmailRequests();", 
+                "echo json_pretty($users);", 
+                "return;"
+              ], 
+              "description": "User email requests for username or passwords", 
+              "dialog": [
+                {
+                  "request": {
+                    "headers": {
+                      "Pass": "5ffab638bde372b4fa63bb6f8484595d"
+                    }, 
+                    "name": "user-email-request"
+                  }, 
+                  "responses": [
+                    {
+                      "status": 200, 
+                      "body": [
+                        "[{\"name\":\"slevinski\",\"email\":\"slevinski@signwriting.org\",\"temp\":\"username\"}]"
+                      ], 
+                      "type": "text/plain"
+                    }
+                  ]
+                }
+              ], 
+              "method": "GET"
+            }
+          ], 
+          "route": "/user/email", 
+          "name": "User email requests", 
+          "description": "Requests for email of username or password reset"
+        }, 
+        {
+          "methods": [
+            {
+              "name": "Lookup username", 
+              "code": [
+                "$headers = getHeaders();", 
+                "$pass = isset($headers['Pass'])?$headers['Pass']:'';", 
+                "$user = userVerified($pass,true);", 
+                "if (!$user) haltForbidden();", 
+                "userNameLookup($email);", 
+                "$app->response->setStatus(204);", 
+                "return;"
+              ], 
+              "description": "Creates a request for email of username", 
+              "dialog": [
+                {
+                  "request": {
+                    "headers": {
+                      "Pass": "5ffab638bde372b4fa63bb6f8484595d"
+                    }, 
+                    "name": "user-name-lookup"
+                  }, 
+                  "responses": [
+                    {
+                      "status": 204
+                    }
+                  ]
+                }
+              ], 
+              "method": "PUT"
+            }
+          ], 
+          "route": "/user/email/{email}", 
+          "name": "Username lookup", 
+          "parameters": [
+            {
+              "example": "slevinski@signwriting.org", 
+              "type": "string", 
+              "description": "The email for a user", 
+              "name": "email"
+            }
+          ], 
+          "description": "Forgot username email lookup"
+        }
+      ], 
+      "group": "user", 
+      "html": "<ul>\n<li>Source: <a href=\"../src/user.txt\">ApiTxt format</a> and <a href=\"../src/user.json\">JSON objects</a></li>\n<li>Documents: <a href=\"../doc/user.md\">API Blueprint</a> and <a href=\"../doc/user.htm\">Stand Alone HTML</a></li>\n<li>Live Page: <a href=\"../api/user.html\">API Interface</a> and <a href=\"../api/user.js\">JavaScript</a></li>\n</ul>", 
+      "lines": [
+        "+ Source: [ApiTxt format](../src/user.txt) and [JSON objects](../src/user.json)", 
+        "+ Documents: [API Blueprint](../doc/user.md) and [Stand Alone HTML](../doc/user.htm)", 
+        "+ Live Page: [API Interface](../api/user.html) and [JavaScript](../api/user.js)"
+      ], 
+      "description": "SignPuddle 3 collections are organized by country and language codes"
+    }, 
+    {
+      "routes": [
+        {
+          "route": "/collection{?name}", 
+          "name": "Collections available", 
+          "parameters": [
+            {
+              "example": "sp3", 
+              "type": "string", 
+              "description": "partial collection name", 
+              "name": "name"
+            }
+          ], 
+          "methods": [
+            {
+              "code": [
+                "$collections = collectionListing($name);", 
+                "if (count($collections)){", 
+                "  echo json_pretty($collections);", 
+                "} else {", 
+                "  $app->response->setStatus(204);", 
+                "}", 
+                "return;"
+              ], 
+              "method": "GET", 
+              "dialog": [
+                {
+                  "responses": [
+                    {
+                      "status": 200, 
+                      "body": [
+                        "[\"en-US-interface-sp3\"]"
+                      ], 
+                      "type": "text/plain"
+                    }
+                  ]
+                }
+              ], 
+              "name": "Get available collections"
+            }
+          ]
+        }, 
+        {
+          "methods": [
+            {
+              "code": [
+                "$err = invalidName($name);", 
+                "if ($err){", 
+                "  haltBadRequest($err);", 
+                "}", 
+                "$headers = getHeaders();", 
+                "$pass = isset($headers['Pass'])?$headers['Pass']:'';", 
+                "collectionDelete($name,$pass);", 
+                "collectionSecurityDelete($name,$pass);", 
+                "collectionManageDelete($name,$pass);", 
+                "$app->response->setStatus(204);"
+              ], 
+              "method": "DELETE", 
+              "dialog": [
+                {
+                  "request": {
+                    "headers": {
+                      "Pass": "5ffab638bde372b4fa63bb6f8484595d"
+                    }, 
+                    "name": "the removal of a collection"
+                  }, 
+                  "responses": [
+                    {
+                      "status": 204
+                    }
+                  ]
+                }
+              ], 
+              "name": "delete collection"
+            }
+          ], 
+          "route": "/collection/{name}", 
+          "name": "Collection resource", 
+          "parameters": [
+            {
+              "example": "`en-US-interface-sp3`", 
+              "type": "string", 
+              "description": "The name of a collection", 
+              "name": "name"
+            }
+          ], 
+          "description": "Specific collection"
+        }, 
+        {
+          "methods": [
+            {
+              "code": [
+                "$headers = getHeaders();", 
+                "$check = isset($headers['If-Modified-Since'])?$headers['If-Modified-Since']:'';", 
+                "$lastModified = lastModifiedCollection();", 
+                "if ($lastModified <= $check){", 
+                "  haltNotModified();", 
+                "}", 
+                "$app->response->headers->set('Last-Modified', $lastModified);", 
+                "echo json_pretty(collectionsSecurity());"
+              ], 
+              "method": "GET", 
+              "dialog": [
+                {
+                  "request": {
+                    "headers": {
+                      "If-Modified-Since": "2019-01-16T16:56:19.175Z"
+                    }, 
+                    "name": "collections security"
+                  }, 
+                  "responses": [
+                    {
+                      "status": 200, 
+                      "body": [
+                        "[{\"name\": \"en-US-interface-sp3\",\"code\": \"ui1\",\"title\": \"English Interface for SignPuddle 3\",\"user\": \"slevinski\",\"created_at\": \"\",\"view_pass\": 0,\"add_pass\": 1,\"edit_pass\": 1,\"register_level\": 0,\"upload_level\": 4}]"
+                      ], 
+                      "type": "text/plain"
+                    }
+                  ]
+                }
+              ], 
+              "name": "Get collections security"
+            }
+          ], 
+          "route": "/collection/security", 
+          "name": "Collections security", 
+          "description": "Security settings for all collections"
+        }, 
+        {
+          "methods": [
+            {
+              "code": [
+                "$err = invalidName($name);", 
+                "if ($err){", 
+                "  haltBadRequest($err);", 
+                "}", 
+                "echo json_pretty(collectionSecurity($name));"
+              ], 
+              "method": "GET", 
+              "dialog": [
+                {
+                  "request": {
+                    "name": "interface security"
+                  }, 
+                  "responses": [
+                    {
+                      "status": 200, 
+                      "body": [
+                        "{\"name\": \"en-US-interface-sp3\",\"code\": \"ui1\",\"title\": \"English Interface for SignPuddle 3\",\"user\": \"slevinski\",\"created_at\": \"\",\"view_pass\": 0,\"add_pass\": 1,\"edit_pass\": 1,\"register_level\": 0,\"upload_level\": 4}"
+                      ], 
+                      "type": "text/plain"
+                    }
+                  ]
+                }
+              ], 
+              "name": "retrieve collection security"
+            }, 
+            {
+              "code": [
+                "$err = invalidName($name);", 
+                "if ($err){", 
+                "  haltBadRequest($err);", 
+                "}", 
+                "$headers = getHeaders();", 
+                "$pass = isset($headers['Pass'])?$headers['Pass']:'';", 
+                "$data = $app->request->getbody();", 
+                "$data = json_decode($data,true);", 
+                "collectionSecurityUpdate($name,$data,$pass);", 
+                "$app->response->setStatus(204);", 
+                "return;"
+              ], 
+              "method": "PUT", 
+              "dialog": [
+                {
+                  "request": {
+                    "body": [
+                      "{\"name\": \"en-US-interface-sp3\",\"code\": \"ui1\",\"title\": \"English Interface for SignPuddle 3\",\"user\": \"slevinski\",\"created_at\": \"\",\"view_pass\": 0,\"add_pass\": 1,\"edit_pass\": 1,\"register_level\": 0,\"upload_level\": 4}"
+                    ], 
+                    "headers": {
+                      "Pass": "5ffab638bde372b4fa63bb6f8484595d"
+                    }, 
+                    "type": "text/plain", 
+                    "name": "an update for an existing entry"
+                  }, 
+                  "responses": [
+                    {
+                      "status": 204
+                    }
+                  ]
+                }
+              ], 
+              "name": "Update collection security"
+            }, 
+            {
+              "code": [
+                "$err = invalidName($name);", 
+                "if ($err){", 
+                "  haltBadRequest($err);", 
+                "}", 
+                "$headers = getHeaders();", 
+                "$pass = isset($headers['Pass'])?$headers['Pass']:'';", 
+                "collectionSecurityDelete($name,$pass);", 
+                "$app->response->setStatus(204);"
+              ], 
+              "method": "DELETE", 
+              "dialog": [
+                {
+                  "request": {
+                    "headers": {
+                      "Pass": "5ffab638bde372b4fa63bb6f8484595d"
+                    }, 
+                    "name": "the deletion of collection security"
+                  }, 
+                  "responses": [
+                    {
+                      "status": 204
+                    }
+                  ]
+                }
+              ], 
+              "name": "Remove security for collection"
+            }
+          ], 
+          "route": "/collection/{name}/security", 
+          "name": "Collection security", 
+          "parameters": [
+            {
+              "example": "`en-US-interface-sp3`", 
+              "type": "required,string", 
+              "description": "The name of the collection", 
+              "name": "name"
+            }
+          ], 
+          "description": "Details about the collection security"
+        }, 
+        {
+          "route": "/collection/{name}/users", 
+          "name": "Collection users", 
+          "parameters": [
+            {
+              "example": "`ase-US-dictionary-public`", 
+              "type": "string", 
+              "description": "collection name", 
+              "name": "name"
+            }
+          ], 
+          "methods": [
+            {
+              "code": [
+                "$err = invalidName($name);", 
+                "if ($err){", 
+                "  haltBadRequest($err);", 
+                "}", 
+                "echo json_pretty(collectionUsers($name));"
+              ], 
+              "method": "GET", 
+              "dialog": [
+                {
+                  "responses": [
+                    {
+                      "status": 200, 
+                      "body": [
+                        "[{\"user\": \"test_user\",\"security\": 3}]"
+                      ], 
+                      "type": "text/plain"
+                    }
+                  ]
+                }
+              ], 
+              "name": "Get collection users"
+            }
+          ]
+        }, 
+        {
+          "route": "/collection/manage/unknown", 
+          "name": "Management for unknown collections", 
+          "methods": [
+            {
+              "code": [
+                "echo json_pretty(collectionManageUnknown());"
+              ], 
+              "method": "GET", 
+              "dialog": [
+                {
+                  "responses": [
+                    {
+                      "status": 200, 
+                      "body": [
+                        "[\"es-US-interface-sp3\"]"
+                      ], 
+                      "type": "text/plain"
+                    }
+                  ]
+                }
+              ], 
+              "name": "Get list of unknown collections with user management"
+            }
+          ]
+        }, 
+        {
+          "route": "/collection/{name}/manage", 
+          "name": "Collection users management", 
+          "parameters": [
+            {
+              "example": "`ase-US-dictionary-public`", 
+              "type": "string", 
+              "description": "collection name", 
+              "name": "name"
+            }
+          ], 
+          "methods": [
+            {
+              "code": [
+                "$err = invalidName($name);", 
+                "if ($err){", 
+                "  haltBadRequest($err);", 
+                "}", 
+                "$headers = getHeaders();", 
+                "$pass = isset($headers['Pass'])?$headers['Pass']:'';", 
+                "echo json_pretty(collectionUsersDetail($name,$pass));"
+              ], 
+              "method": "GET", 
+              "dialog": [
+                {
+                  "request": {
+                    "headers": {
+                      "Pass": "5ffab638bde372b4fa63bb6f8484595d"
+                    }, 
+                    "name": "collection management"
+                  }, 
+                  "responses": [
+                    {
+                      "status": 200, 
+                      "body": [
+                        "[{\"name\": \"test_user\",\"display\": \"Test Editor\",\"email\": \"testing@gmail.com\",\"security\": 3}]"
+                      ], 
+                      "type": "text/plain"
+                    }
+                  ]
+                }
+              ], 
+              "name": "Get collection management"
+            }, 
+            {
+              "code": [
+                "$err = invalidName($name);", 
+                "if ($err){", 
+                "  haltBadRequest($err);", 
+                "}", 
+                "$headers = getHeaders();", 
+                "$pass = isset($headers['Pass'])?$headers['Pass']:'';", 
+                "$data = $app->request->getbody();", 
+                "$data = json_decode($data,true);", 
+                "collectionManageUpdate($name,$data,$pass);", 
+                "$app->response->setStatus(204);", 
+                "return;"
+              ], 
+              "method": "PUT", 
+              "dialog": [
+                {
+                  "request": {
+                    "body": [
+                      "{\"user\":\"slevinski\",\"security\":4}"
+                    ], 
+                    "headers": {
+                      "Pass": "5ffab638bde372b4fa63bb6f8484595d"
+                    }, 
+                    "name": "an update for collection management"
+                  }, 
+                  "responses": [
+                    {
+                      "status": 204
+                    }
+                  ]
+                }
+              ], 
+              "name": "Update collection management"
+            }, 
+            {
+              "code": [
+                "$err = invalidName($name);", 
+                "if ($err){", 
+                "  haltBadRequest($err);", 
+                "}", 
+                "$headers = getHeaders();", 
+                "$pass = isset($headers['Pass'])?$headers['Pass']:'';", 
+                "collectionManageDelete($name,$pass);", 
+                "$app->response->setStatus(204);"
+              ], 
+              "method": "DELETE", 
+              "dialog": [
+                {
+                  "request": {
+                    "headers": {
+                      "Pass": "5ffab638bde372b4fa63bb6f8484595d"
+                    }, 
+                    "name": "the removal of user management for a collection"
+                  }, 
+                  "responses": [
+                    {
+                      "status": 204
+                    }
+                  ]
+                }
+              ], 
+              "name": "Remove user management for collection"
+            }
+          ]
+        }, 
+        {
+          "route": "/collection/{name}/manage/{user}", 
+          "name": "Collection user", 
+          "parameters": [
+            {
+              "example": "`ase-US-dictionary-public`", 
+              "type": "string", 
+              "description": "collection name", 
+              "name": "name"
+            }, 
+            {
+              "example": "`slevinski`", 
+              "type": "string", 
+              "description": "user name", 
+              "name": "user"
+            }
+          ], 
+          "methods": [
+            {
+              "code": [
+                "$err = invalidName($name);", 
+                "if ($err){", 
+                "  haltBadRequest($err);", 
+                "}", 
+                "$headers = getHeaders();", 
+                "$pass = isset($headers['Pass'])?$headers['Pass']:'';", 
+                "collectionManageRemove($name,$user,$pass);", 
+                "$app->response->setStatus(204);"
+              ], 
+              "method": "DELETE", 
+              "dialog": [
+                {
+                  "request": {
+                    "headers": {
+                      "Pass": "5ffab638bde372b4fa63bb6f8484595d"
+                    }, 
+                    "name": "the removal of a user from collection management"
+                  }, 
+                  "responses": [
+                    {
+                      "status": 204
+                    }
+                  ]
+                }
+              ], 
+              "name": "Remove user from collection management"
+            }
+          ]
+        }, 
+        {
+          "route": "/collection/{name}/request/{source}", 
+          "name": "Collection Request Copy", 
+          "parameters": [
+            {
+              "example": "`es-US-interface-sp3`", 
+              "type": "required,string", 
+              "description": "The name of the new collection", 
+              "name": "name"
+            }, 
+            {
+              "example": "`en-US-interface-sp3`", 
+              "type": "required,string", 
+              "description": "The name of the source collection", 
+              "name": "source"
+            }
+          ], 
+          "methods": [
+            {
+              "code": [
+                "$headers = getHeaders();", 
+                "$pass = isset($headers['Pass'])?$headers['Pass']:'';", 
+                "$user = userVerified($pass);", 
+                "if (!$user) haltForbidden();", 
+                "rightscheck($source,$pass,SP_VIEW);", 
+                "$err = invalidName($source);", 
+                "if ($err){", 
+                "  haltBadRequest($err);", 
+                "}", 
+                "$parts = explode(\"-\",$source);", 
+                "$err = invalidName($name,$parts[2]);", 
+                "if ($err){", 
+                "  haltBadRequest($err);", 
+                "}", 
+                "$dir = 'data/db/';", 
+                "$infile = $dir . $source . \".db\";", 
+                "$outfile = $dir . $name . \".db\";", 
+                "if (!file_exists($infile)) haltBadRequest('Source collection does not exist: ' . $source);", 
+                "if (file_exists($outfile)) haltBadRequest('Collection already exists: ' . $name);", 
+                "if (copy($infile,$outfile)){", 
+                "  $data = array();", 
+                "  $data[\"user\"] = $user;", 
+                "  $data[\"security\"] = SP_EDIT;", 
+                "  collectionManageUpdate($name,$data,$pass,true);", 
+                "", 
+                "  $data = $app->request->getbody();", 
+                "  $data = json_decode($data,true);", 
+                "  $title = isset($data['title'])?$data['title']:'New Collection';", 
+                "  $data = array();", 
+                "  $data[\"title\"] = $title;", 
+                "  $data[\"user\"] = \"admin\";", 
+                "  $data[\"view_pass\"] = 0;", 
+                "  $data[\"add_pass\"] = 1;", 
+                "  $data[\"edit_pass\"] = 1;", 
+                "  $data[\"register_level\"] = 0;", 
+                "  $data[\"upload_level\"] = 4;", 
+                "  collectionSecurityUpdate($name,$data,$pass,true);", 
+                "  $app->response->setStatus(204);", 
+                "  return;", 
+                "} else {", 
+                "  haltForbidden();", 
+                "}"
+              ], 
+              "method": "POST", 
+              "dialog": [
+                {
+                  "request": {
+                    "headers": {
+                      "Pass": "5ffab638bde372b4fa63bb6f8484595d"
+                    }, 
+                    "name": "new collection from source"
+                  }, 
+                  "responses": [
+                    {
+                      "status": 204
+                    }
+                  ]
+                }
+              ], 
+              "name": "request the creation of a new collection"
+            }
+          ]
+        }
+      ], 
+      "group": "collection", 
+      "html": "<ul>\n<li>Source: <a href=\"../src/collection.txt\">ApiTxt format</a> and <a href=\"../src/collection.json\">JSON objects</a></li>\n<li>Documents: <a href=\"../doc/collection.md\">API Blueprint</a> and <a href=\"../doc/collection.htm\">Stand Alone HTML</a></li>\n<li>Live Page: <a href=\"../api/collection.html\">API Interface</a> and <a href=\"../api/collection.js\">JavaScript</a></li>\n</ul>", 
+      "lines": [
+        "+ Source: [ApiTxt format](../src/collection.txt) and [JSON objects](../src/collection.json)", 
+        "+ Documents: [API Blueprint](../doc/collection.md) and [Stand Alone HTML](../doc/collection.htm)", 
+        "+ Live Page: [API Interface](../api/collection.html) and [JavaScript](../api/collection.js)"
+      ], 
+      "description": "Resources related to collections in general"
+    }, 
+    {
+      "routes": [
+        {
+          "route": "/interface{?name}", 
+          "name": "Interfaces available", 
+          "parameters": [
+            {
+              "example": "sp3", 
+              "type": "string", 
+              "description": "partial interface name", 
+              "name": "name"
+            }
+          ], 
+          "methods": [
+            {
+              "code": [
+                "$dir = 'data/db/';", 
+                "$ext = '.db';", 
+                "$out = [];", 
+                "if ($name){", 
+                "  if (strpos($name,\"interface\")!==false){", 
+                "    $interfaces = $dir . '*' . $name . '*' . $ext;", 
+                "    $files = glob($interfaces);", 
+                "  } else {", 
+                "    $interfaces = $dir . '*interface*' . $name . '*' . $ext;", 
+                "    $files = glob($interfaces);", 
+                "    if (count($files)==0) {", 
+                "      $interfaces = $dir . '*' . $name . '*interface*' . $ext;", 
+                "      $files = glob($interfaces);", 
+                "    }", 
+                "  }", 
+                "} else {", 
+                "  $interfaces = $dir . '*interface*' . $ext;", 
+                "  $files = glob($interfaces);", 
+                "}", 
+                "foreach ($files as $filename) {", 
+                "  $out[] = str_replace($ext,'',str_replace($dir,'',$filename));", 
+                "}", 
+                "if (count($out)){", 
+                "  echo json_pretty($out);", 
+                "} else {", 
+                "  $app->response->setStatus(204);", 
+                "}", 
+                "return;"
+              ], 
+              "method": "GET", 
+              "dialog": [
+                {
+                  "responses": [
+                    {
+                      "status": 200, 
+                      "body": [
+                        "[\"en-US-interface-sp3\"]"
+                      ], 
+                      "type": "text/plain"
+                    }
+                  ]
+                }
+              ], 
+              "name": "Get available interfaces"
+            }
+          ]
+        }, 
+        {
+          "methods": [
+            {
+              "code": [
+                "$headers = getHeaders();", 
+                "$pass = isset($headers['Pass'])?$headers['Pass']:'';", 
+                "rightscheck($name,$pass,SP_VIEW);", 
+                "$check = isset($headers['If-Modified-Since'])?$headers['If-Modified-Since']:'';", 
+                "if (strpos($name,'.')){", 
+                "  $parts = explode('.',$name);", 
+                "  $name = $parts[0];", 
+                "  $format = $parts[1];", 
+                "  if (!in_array($format,['db','txt','json'])){", 
+                "    haltNotFound();", 
+                "  }", 
+                "} else {", 
+                "  $format = 'json';", 
+                "}", 
+                "$dir = 'data/' . $format . '/';", 
+                "$ext = '.' . $format;", 
+                "$file = $dir . $name . $ext;", 
+                "$err = invalidName($name);", 
+                "if ($err){", 
+                "  haltBadRequest($err);", 
+                "}", 
+                "$lastModified = lastModified($name);", 
+                "if ($lastModified <= $check  && !$update){", 
+                "  haltNotModified();", 
+                "}", 
+                "if ($format=='json' && (!file_exists($file) || $update)) {", 
+                "  $json = interface2json($name);", 
+                "  file_put_contents($file,$json);", 
+                "} else if ($format=='txt' && (!file_exists($file) || $update)) {", 
+                "  $txt = interface2txt($name);", 
+                "  file_put_contents($file,$txt);", 
+                "}", 
+                "if(file_exists($file)) {", 
+                "  $app->response->headers->set('Last-Modified', $lastModified);", 
+                "  getFile($file);", 
+                "} else {", 
+                "  haltNotFound();", 
+                "}"
+              ], 
+              "method": "GET", 
+              "dialog": [
+                {
+                  "request": {
+                    "headers": {
+                      "If-Modified-Since": "2019-01-16T16:56:19.175Z"
+                    }, 
+                    "name": "interface text"
+                  }, 
+                  "responses": [
+                    {
+                      "status": 200, 
+                      "body": [
+                        "print.buttons.main\tmessage\tdescription\ticon"
+                      ], 
+                      "type": "text/plain"
+                    }
+                  ]
+                }
+              ], 
+              "name": "retrieve interface or available interfaces"
+            }
+          ], 
+          "route": "/interface/{name}{?update}", 
+          "name": "Interface resource", 
+          "parameters": [
+            {
+              "example": "`en-US-interface-sp3`", 
+              "type": "required,string", 
+              "description": "The name of an interface", 
+              "name": "name"
+            }, 
+            {
+              "example": "1", 
+              "type": "optional,number", 
+              "description": "Forces a rewrite of the interface for json and txt formats", 
+              "name": "update"
+            }
+          ], 
+          "description": "Access to available interfaces"
+        }, 
+        {
+          "methods": [
+            {
+              "code": [
+                "$headers = getHeaders();", 
+                "$pass = isset($headers['Pass'])?$headers['Pass']:'';", 
+                "$check = isset($headers['If-Modified-Since'])?$headers['If-Modified-Since']:'';", 
+                "$err = invalidName($name);", 
+                "if ($err){", 
+                "  haltBadRequest($err);", 
+                "}", 
+                "$lastModified = lastModified($name);", 
+                "if ($lastModified <= $check){", 
+                "  haltNotModified();", 
+                "}", 
+                "$app->response->headers->set('Last-Modified', $lastModified);", 
+                "echo json_pretty(interfaceKeys($name,$pass));"
+              ], 
+              "method": "GET", 
+              "dialog": [
+                {
+                  "request": {
+                    "headers": {
+                      "If-Modified-Since": "2019-01-16T16:56:19.175Z", 
+                      "Pass": "5ffab638bde372b4fa63bb6f8484595d"
+                    }, 
+                    "name": "interface keys"
+                  }, 
+                  "responses": [
+                    {
+                      "status": 200, 
+                      "body": [
+                        "[\"print.buttons.main\"]"
+                      ], 
+                      "type": "text/plain"
+                    }
+                  ]
+                }
+              ], 
+              "name": "retrieve interface keys"
+            }
+          ], 
+          "route": "/interface/{name}/key", 
+          "name": "Interface keys", 
+          "parameters": [
+            {
+              "example": "`en-US-interface-sp3`", 
+              "type": "required,string", 
+              "description": "The name of an interface", 
+              "name": "name"
+            }
+          ], 
+          "description": "Access to interface keys"
+        }, 
+        {
+          "methods": [
+            {
+              "code": [
+                "$headers = getHeaders();", 
+                "$pass = isset($headers['Pass'])?$headers['Pass']:'';", 
+                "$err = invalidName($name);", 
+                "if ($err){", 
+                "  haltBadRequest($err);", 
+                "}", 
+                "echo json_pretty(interfaceSearch($name,$text,$pass));"
+              ], 
+              "method": "GET", 
+              "dialog": [
+                {
+                  "request": {
+                    "headers": {
+                      "Pass": "5ffab638bde372b4fa63bb6f8484595d"
+                    }, 
+                    "name": "matching interface entries"
+                  }, 
+                  "responses": [
+                    {
+                      "status": 200, 
+                      "body": [
+                        "[", 
+                        "  {", 
+                        "    \"key\": \"print.buttons.main\",", 
+                        "    \"message\": \"Print it!\"", 
+                        "  }", 
+                        "]"
+                      ], 
+                      "type": "text/plain"
+                    }
+                  ]
+                }
+              ], 
+              "name": "retrieve matching entries"
+            }
+          ], 
+          "route": "/interface/{name}/search/{text}", 
+          "name": "Interface entries search", 
+          "parameters": [
+            {
+              "example": "`en-US-interface-sp3`", 
+              "type": "required,string", 
+              "description": "The name of an interface", 
+              "name": "name"
+            }, 
+            {
+              "example": "`SignPuddle`", 
+              "type": "required,string", 
+              "description": "The text for searching", 
+              "name": "text"
+            }
+          ], 
+          "description": "Search interface for text"
+        }, 
+        {
+          "methods": [
+            {
+              "code": [
+                "$headers = getHeaders();", 
+                "$pass = isset($headers['Pass'])?$headers['Pass']:'';", 
+                "if (!$pass){", 
+                "  haltForbidden();", 
+                "}", 
+                "$err = invalidName($name);", 
+                "if ($err){", 
+                "  haltBadRequest($err);", 
+                "}", 
+                "$data = $app->request->getbody();", 
+                "$data = json_decode($data,true);", 
+                "interfaceKeyNew($name,$data,$pass);", 
+                "$app->response->setStatus(201);", 
+                "return;"
+              ], 
+              "method": "POST", 
+              "dialog": [
+                {
+                  "request": {
+                    "body": [
+                      "{\"key\":\"new.key.one\", \"message\":\"UI text\",\"description\":\"about the text\",\"icon\":\"search\"}"
+                    ], 
+                    "headers": {
+                      "Pass": "5ffab638bde372b4fa63bb6f8484595d"
+                    }, 
+                    "type": "application/json", 
+                    "name": "add new interface entry"
+                  }, 
+                  "responses": [
+                    {
+                      "status": 201, 
+                      "body": [
+                        "..."
+                      ], 
+                      "type": "text/plain"
+                    }
+                  ]
+                }
+              ], 
+              "name": "add interface entry"
+            }
+          ], 
+          "route": "/interface/{name}/entry", 
+          "name": "Interface entry resource", 
+          "parameters": [
+            {
+              "example": "`en-US-interface-sp3`", 
+              "type": "string", 
+              "description": "The name of an interface", 
+              "name": "name"
+            }
+          ], 
+          "description": "Entries for interface"
+        }, 
+        {
+          "methods": [
+            {
+              "code": [
+                "$headers = getHeaders();", 
+                "$pass = isset($headers['Pass'])?$headers['Pass']:'';", 
+                "$check = isset($headers['If-Modified-Since'])?$headers['If-Modified-Since']:'';", 
+                "$err = invalidName($name);", 
+                "if ($err){", 
+                "  haltBadRequest($err);", 
+                "}", 
+                "$entries = interfaceKeyEntry($name,$key,$pass);", 
+                "if (!$entries){", 
+                "  haltNoContent();", 
+                "}", 
+                "$lastModified = max(array_map(function($o) {return $o->updated_at;},$entries));", 
+                "if ($lastModified <= $check){", 
+                "  haltNotModified();", 
+                "}", 
+                "$app->response->headers->set('Last-Modified', $lastModified);", 
+                "echo json_pretty($entries);"
+              ], 
+              "method": "GET", 
+              "dialog": [
+                {
+                  "request": {
+                    "headers": {
+                      "If-Modified-Since": "2019-01-16T16:56:19.175Z", 
+                      "Pass": "5ffab638bde372b4fa63bb6f8484595d"
+                    }, 
+                    "name": "an interface entry"
+                  }, 
+                  "responses": [
+                    {
+                      "status": 200, 
+                      "body": [
+                        "..."
+                      ], 
+                      "type": "text/plain"
+                    }
+                  ]
+                }
+              ], 
+              "name": "retrieve interface entry"
+            }, 
+            {
+              "code": [
+                "$err = invalidName($name);", 
+                "if ($err){", 
+                "  haltBadRequest($err);", 
+                "}", 
+                "$headers = getHeaders();", 
+                "$pass = isset($headers['Pass'])?$headers['Pass']:'';", 
+                "$data = $app->request->getbody();", 
+                "$data = json_decode($data,true);", 
+                "interfaceKeyUpdate($name,$key,$data,$pass);", 
+                "$app->response->setStatus(204);", 
+                "return;"
+              ], 
+              "method": "PUT", 
+              "dialog": [
+                {
+                  "request": {
+                    "body": [
+                      "{\"key\":\"new.key.one\", \"message\":\"UI text\",\"description\":\"about the text\",\"icon\":\"search\"}"
+                    ], 
+                    "headers": {
+                      "Pass": "5ffab638bde372b4fa63bb6f8484595d"
+                    }, 
+                    "name": "an update for an existing entry"
+                  }, 
+                  "responses": [
+                    {
+                      "status": 204
+                    }
+                  ]
+                }
+              ], 
+              "name": "update interface entry"
+            }, 
+            {
+              "code": [
+                "$err = invalidName($name);", 
+                "if ($err){", 
+                "  haltBadRequest($err);", 
+                "}", 
+                "$headers = getHeaders();", 
+                "$pass = isset($headers['Pass'])?$headers['Pass']:'';", 
+                "interfaceKeyDelete($name,$key,$pass);", 
+                "$app->response->setStatus(204);"
+              ], 
+              "method": "DELETE", 
+              "dialog": [
+                {
+                  "request": {
+                    "headers": {
+                      "Pass": "5ffab638bde372b4fa63bb6f8484595d"
+                    }, 
+                    "name": "the removal of an interface entry"
+                  }, 
+                  "responses": [
+                    {
+                      "status": 204
+                    }
+                  ]
+                }
+              ], 
+              "name": "remove interface entry"
+            }
+          ], 
+          "route": "/interface/{name}/entry/{key}", 
+          "name": "Interface entry resource for key", 
+          "parameters": [
+            {
+              "example": "`en-US-interface-sp3`", 
+              "type": "string", 
+              "description": "The name of an interface", 
+              "name": "name"
+            }, 
+            {
+              "example": "system.button.open", 
+              "type": "string", 
+              "description": "The name of an interface key", 
+              "name": "key"
+            }
+          ], 
+          "description": "Specific entries for interface"
+        }
+      ], 
+      "group": "interface", 
+      "html": "<ul>\n<li>Source: <a href=\"../src/interface.txt\">ApiTxt format</a> and <a href=\"../src/interface.json\">JSON objects</a></li>\n<li>Documents: <a href=\"../doc/interface.md\">API Blueprint</a> and <a href=\"../doc/interface.htm\">Stand Alone HTML</a></li>\n<li>Live Page: <a href=\"../api/interface.html\">API Interface</a> and <a href=\"../api/interface.js\">JavaScript</a></li>\n</ul>", 
+      "lines": [
+        "+ Source: [ApiTxt format](../src/interface.txt) and [JSON objects](../src/interface.json)", 
+        "+ Documents: [API Blueprint](../doc/interface.md) and [Stand Alone HTML](../doc/interface.htm)", 
+        "+ Live Page: [API Interface](../api/interface.html) and [JavaScript](../api/interface.js)"
+      ], 
+      "description": "Resources related to interface collections"
+    }, 
     {
       "routes": [
         {
@@ -964,388 +2396,6 @@ var data = {
         "+ Live Page: [API Interface](../api/swu.html) and [JavaScript](../api/swu.js)"
       ], 
       "description": "Resources related to Formal SignWriting in ASCII (SWU)"
-    }, 
-    {
-      "routes": [
-        {
-          "methods": [
-            {
-              "name": "Retrieve country list", 
-              "description": "The available countries where signs are available.", 
-              "dialog": [
-                {
-                  "request": {
-                    "name": "user-who"
-                  }, 
-                  "responses": [
-                    {
-                      "status": 200, 
-                      "body": [
-                        "BR", 
-                        "US"
-                      ], 
-                      "type": "text/plain"
-                    }
-                  ]
-                }
-              ], 
-              "method": "GET"
-            }
-          ], 
-          "route": "/user/who/", 
-          "name": "Who uses SignWriting?", 
-          "description": "List of countries with size and activity."
-        }, 
-        {
-          "methods": [
-            {
-              "code": [
-                "  echo userPass();"
-              ], 
-              "method": "POST", 
-              "dialog": [
-                {
-                  "request": {
-                    "name": "user pass"
-                  }, 
-                  "responses": [
-                    {
-                      "status": 200, 
-                      "body": [
-                        "e3bedc9e9f83cb9dd7ae61250b9e6921"
-                      ], 
-                      "type": "text/plain"
-                    }
-                  ]
-                }
-              ], 
-              "name": "String for accounting and validation"
-            }
-          ], 
-          "route": "/user/pass", 
-          "name": "User pass", 
-          "description": "A string for accounting and validation"
-        }, 
-        {
-          "methods": [
-            {
-              "code": [
-                "  $data = $app->request->getbody();", 
-                "  $data = json_decode($data,true);", 
-                "  try {", 
-                "    $results = userVerify($data['username'],$data['pass'],$data['validated']);", 
-                "    $return = array();", 
-                "    $return['meta']=array();", 
-                "    $return['results']=$results;", 
-                "    $return['meta']['method']='POST';", 
-                "    $return['meta']['location']='/user/login';", 
-                "    $return['meta']['searchTime'] = searchtime($timein);", 
-                "    echo json_pretty($return);", 
-                "  } catch (Exception $e) {", 
-                "    //echo json_pretty($e);", 
-                "    haltValidation($e->getCode() . ' ' . $e->getMessage());", 
-                "  }"
-              ], 
-              "method": "PUT", 
-              "dialog": [
-                {
-                  "request": {
-                    "body": [
-                      "{\"username\":\"anonymous\",\"pass\":\"af77...\",\"validated\":\"2793f...\"}"
-                    ], 
-                    "type": "application/json", 
-                    "html": "<ul>\n<li>Even a list</li>\n<li>name <pre><code>Name</code></pre> of the metaproperty, should be alphanumeric only. Uneditable.</li>\n</ul>", 
-                    "lines": [
-                      "+ Even a list", 
-                      "+ name `Name` of the metaproperty, should be alphanumeric only. Uneditable."
-                    ], 
-                    "name": "verify user"
-                  }, 
-                  "responses": [
-                    {
-                      "status": 200, 
-                      "body": [
-                        "{\"user-profile\":\"\"}"
-                      ], 
-                      "html": "<p>response text here</p>", 
-                      "lines": [
-                        "response text here"
-                      ], 
-                      "type": "application/json"
-                    }
-                  ]
-                }
-              ], 
-              "name": "Process log in to server"
-            }
-          ], 
-          "route": "/user/login", 
-          "name": "User login", 
-          "description": "Validation of user with validated password"
-        }
-      ], 
-      "group": "user", 
-      "html": "<ul>\n<li>Source: <a href=\"../src/user.txt\">ApiTxt format</a> and <a href=\"../src/user.json\">JSON objects</a></li>\n<li>Documents: <a href=\"../doc/user.md\">API Blueprint</a> and <a href=\"../doc/user.htm\">Stand Alone HTML</a></li>\n<li>Live Page: <a href=\"../api/user.html\">API Interface</a> and <a href=\"../api/user.js\">JavaScript</a></li>\n</ul>\n<h3>Country code</h3>\n<p>The country codes are from ISO-3166.\nEach country is coded with two uppercase letters.</p>\n<h3>Language code</h3>\n<p>The language codes are from ISO-639-1 for spoken languages and ISO-639-3 for sign languages.\nEach spoken language is coded with two lowercase letters.\nEach sign language is coded with three lowercase letters.</p>", 
-      "lines": [
-        "+ Source: [ApiTxt format](../src/user.txt) and [JSON objects](../src/user.json)", 
-        "+ Documents: [API Blueprint](../doc/user.md) and [Stand Alone HTML](../doc/user.htm)", 
-        "+ Live Page: [API Interface](../api/user.html) and [JavaScript](../api/user.js)", 
-        "", 
-        "### Country code", 
-        "The country codes are from ISO-3166.", 
-        "Each country is coded with two uppercase letters.", 
-        "", 
-        "### Language code", 
-        "The language codes are from ISO-639-1 for spoken languages and ISO-639-3 for sign languages.", 
-        "Each spoken language is coded with two lowercase letters.", 
-        "Each sign language is coded with three lowercase letters."
-      ], 
-      "description": "SignPuddle 3 collections are organized by country and language codes"
-    }, 
-    {
-      "routes": [
-        {
-          "route": "/collection", 
-          "name": "Available collections", 
-          "methods": [
-            {
-              "code": [
-                "  echo \"en\\nase\";"
-              ], 
-              "method": "GET", 
-              "dialog": [
-                {
-                  "responses": [
-                    {
-                      "status": 200, 
-                      "body": [
-                        "en", 
-                        "ase"
-                      ], 
-                      "type": "text/plain"
-                    }
-                  ]
-                }
-              ], 
-              "name": "Get available languages"
-            }
-          ]
-        }, 
-        {
-          "methods": [
-            {
-              "code": [
-                "$check = $app->request->headers->get('If-None-Match');", 
-                "$dir = 'data/txt/';", 
-                "$ext = '.txt';", 
-                "$file = $dir . $name . $ext;", 
-                "$err = invalidName($name);", 
-                "if ($err){", 
-                "  haltBadRequest($err);", 
-                "}", 
-                "if(file_exists($file)) {", 
-                "  $md5 = md5_file($file);", 
-                "  $app->response->headers->set('ETag', $md5);", 
-                "  if ($md5 == $check){", 
-                "    haltNotModified();", 
-                "  }", 
-                "  getFile($file);", 
-                "} else {", 
-                "  $out = [];", 
-                "  foreach (glob($file) as $filename) {", 
-                "    $out[] = str_replace($ext,'',str_replace($dir,'',$filename));", 
-                "  }", 
-                "  if (count($out)){", 
-                "    haltMultipleChoices(implode($out,\"\\n\"));", 
-                "  } else {", 
-                "    haltNoContent();", 
-                "  }", 
-                "}"
-              ], 
-              "method": "GET", 
-              "dialog": [
-                {
-                  "request": {
-                    "name": "collection text"
-                  }, 
-                  "responses": [
-                    {
-                      "status": 200, 
-                      "body": [
-                        "print.buttons.main\tmessage\tdescription\ticon"
-                      ], 
-                      "type": "text/plain"
-                    }
-                  ]
-                }
-              ], 
-              "name": "retrieve collection or available collections"
-            }
-          ], 
-          "route": "/collection/{name}", 
-          "name": "Collection resource", 
-          "parameters": [
-            {
-              "example": "en-US-interface-sp3", 
-              "type": "string", 
-              "description": "The name of a collection", 
-              "name": "name"
-            }
-          ], 
-          "description": "Access to available collections"
-        }, 
-        {
-          "methods": [
-            {
-              "code": [
-                "$dir = 'data/txt/';", 
-                "$ext = '.txt';", 
-                "$file = $dir . $name . $ext;", 
-                "if (strpos($name,\"*\")!==false) {", 
-                "  $err = invalidNameWild($name);", 
-                "  if($err){", 
-                "    haltBadRequest($err);", 
-                "  }", 
-                "  $out = [];", 
-                "  foreach (glob($file) as $filename) {", 
-                "    $out[] = str_replace($ext,'',str_replace($dir,'',$filename));", 
-                "  }", 
-                "  if (count($out)){", 
-                "    if (count($out)==1) {", 
-                "      $app->request->headers->set('Location','/location/' . $out[0] . '/md5');", 
-                "      haltSeeOther($out[0]);", 
-                "    } else {", 
-                "      haltMultipleChoices(implode($out,\"\\n\"));", 
-                "    }", 
-                "  } else {", 
-                "    haltBadRequest(\"No choices available\");", 
-                "  }", 
-                "} else {", 
-                "  $err = invalidName($name);", 
-                "  if ($err){", 
-                "    haltBadRequest($err);", 
-                "  }", 
-                "  if(file_exists($file)) {", 
-                "    $md5 = md5_file($file);", 
-                "    echo $md5;", 
-                "  } else {", 
-                "    halting(202, md5($name));", 
-                "  }", 
-                "}"
-              ], 
-              "method": "GET", 
-              "dialog": [
-                {
-                  "request": {
-                    "headers": {
-                      "If-None-Match": "af779785a5c3ffd166bc95e6dd530889"
-                    }, 
-                    "name": "the md5 hash of a collection"
-                  }, 
-                  "responses": [
-                    {
-                      "status": 200, 
-                      "body": [
-                        "9785a5c3ffd166bc95e6dd5308894691"
-                      ], 
-                      "type": "text/plain"
-                    }
-                  ]
-                }
-              ], 
-              "name": "retrieve collection md5 hash"
-            }, 
-            {
-              "method": "POST", 
-              "dialog": [
-                {
-                  "request": {
-                    "headers": {
-                      "If-None-Match": "af779785a5c3ffd166bc95e6dd530889"
-                    }, 
-                    "name": "the md5 hash of a collection"
-                  }, 
-                  "responses": [
-                    {
-                      "status": 200, 
-                      "body": [
-                        "9785a5c3ffd166bc95e6dd5308894691"
-                      ], 
-                      "type": "text/plain"
-                    }
-                  ]
-                }
-              ], 
-              "name": "retrieve collection md5 hash"
-            }, 
-            {
-              "method": "PUT", 
-              "dialog": [
-                {
-                  "request": {
-                    "headers": {
-                      "If-None-Match": "af779785a5c3ffd166bc95e6dd530889"
-                    }, 
-                    "name": "the md5 hash of a collection"
-                  }, 
-                  "responses": [
-                    {
-                      "status": 200, 
-                      "body": [
-                        "9785a5c3ffd166bc95e6dd5308894691"
-                      ], 
-                      "type": "text/plain"
-                    }
-                  ]
-                }
-              ], 
-              "name": "retrieve collection md5 hash"
-            }, 
-            {
-              "method": "DELETE", 
-              "dialog": [
-                {
-                  "request": {
-                    "headers": {
-                      "If-None-Match": "af779785a5c3ffd166bc95e6dd530889"
-                    }, 
-                    "name": "the md5 hash of a collection"
-                  }, 
-                  "responses": [
-                    {
-                      "status": 200, 
-                      "body": [
-                        "9785a5c3ffd166bc95e6dd5308894691"
-                      ], 
-                      "type": "text/plain"
-                    }
-                  ]
-                }
-              ], 
-              "name": "retrieve collection md5 hash"
-            }
-          ], 
-          "route": "/collection/{name}/md5", 
-          "name": "Collection resource md5 hash", 
-          "parameters": [
-            {
-              "example": "en-US-interface-sp3", 
-              "type": "string", 
-              "description": "The name of a collection", 
-              "name": "name"
-            }
-          ], 
-          "description": "MD5 hash of collection"
-        }
-      ], 
-      "group": "collection", 
-      "html": "<ul>\n<li>Source: <a href=\"../src/collection.txt\">ApiTxt format</a> and <a href=\"../src/collection.json\">JSON objects</a></li>\n<li>Documents: <a href=\"../doc/collection.md\">API Blueprint</a> and <a href=\"../doc/collection.htm\">Stand Alone HTML</a></li>\n<li>Live Page: <a href=\"../api/collection.html\">API Interface</a> and <a href=\"../api/collection.js\">JavaScript</a></li>\n</ul>", 
-      "lines": [
-        "+ Source: [ApiTxt format](../src/collection.txt) and [JSON objects](../src/collection.json)", 
-        "+ Documents: [API Blueprint](../doc/collection.md) and [Stand Alone HTML](../doc/collection.htm)", 
-        "+ Live Page: [API Interface](../api/collection.html) and [JavaScript](../api/collection.js)"
-      ], 
-      "description": "Resources related to making collections"
     }, 
     {
       "routes": [
@@ -2338,13 +3388,25 @@ var Group = {
           m.trust(route["html"]),
           route["methods"].map(function (method, iM){
             var id = method["name"].replace(/\s/g, '') + "_";
+            var headers = (((method["dialog"] || [])[0] || {})["request"] || {})["headers"] || [];
             return [
               m("form",
                 m("fieldset",[
                   m("h3",method["name"]),
                   m.trust(method["html"]),
                   m("input.large." + mclass[method["method"]], {"disabled": true, "value":route["route"]}),
+                  Object.keys(headers).map(function(key){
+                    if (key == "Location" || key == "Description" || key == "Content-type") return;
+                    return m("p",[
+                      m("label[for=" + id + key + "]", "HEADER " + key),
+                      m("input#" + id + key + "[type=text][name="+ key + "]",{
+                        "value":headers[key],
+                        onchange: function(e){data["groups"][iG]["routes"][iR]["methods"][iM]["dialog"][0]["request"]["headers"][key]=e.target.value;}
+                      })
+                    ]);
+                  }),
                   (route["parameters"] || []).map(function(param,iP){
+                    param["example"] = param["example"].replace(/`/g, "");
                     return m("p",[
                       m("label[for=" + id + param["name"] + "]",param["name"] + ": " + param["description"]+ " (" + param["type"] + ")"),
                       m("input#" + id + param["name"] + "[type=text][name="+ param["name"] + "]",{

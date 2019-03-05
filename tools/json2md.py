@@ -155,15 +155,12 @@ for segment in data:
 							for attr in response['headers']:
 								print indent3 + attr + ": " + response['headers'][attr]
 						print
-						print indent1 + "+ Body"
-						print
 						if 'body' in response:
+							print indent1 + "+ Body"
+							print
 							for body in response['body']:
 								print indent3 + utf8(body.replace("\t","   "))
 							print
-						else:
-							print indent3 + "null"
-						print
 
 	elif 'lines' in segment:
 		for line in segment['lines']:

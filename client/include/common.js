@@ -1,4 +1,19 @@
+const SP_NONE = 0;
+const SP_VIEW = 1;
+const SP_ADD = 2;
+const SP_EDIT = 3;
+const SP_MANAGE = 4;
+const SP_ADMIN = 5;
 
+function validate(password,pass){
+  var temp = md5(password) + pass;
+  return md5(temp);
+}
+
+function validKey(key){
+  var re = /^[a-z0-9]+(\.[a-z0-9]+){2}$/;
+  return re.test(key);
+}
 
 var SpecialPages = {
   "main" : {

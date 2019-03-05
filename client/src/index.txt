@@ -1,9 +1,592 @@
 root	index	SignPuddle 3 API	https://signpuddle.com/server
 	line	> v3.0.0
 	line	
+	line	Welcome to the SignPuddle 3 API.
+	line	The API is defined with two types of source, two types of documentation, and a live page of HTML and JavaScript.
+	line	
 	line	+ Source: [ApiTxt format](../src/index.txt) and [JSON objects](../src/index.json)
 	line	+ Documents: [API Blueprint](../doc/index.md) and [Stand Alone HTML](../doc/index.htm)
 	line	+ Live Page: [API Interface](../api/index.html) and [JavaScript](../api/index.js)
+	line	
+	line	The API is divided into several sections.
+	line	This main document includes all of the sections.
+	line	Each section is available separately as well.
+	line	
+	line	## HTTP Request Methods
+	line	
+	line	The SignPuddle 3 server accepts HTTP request methods of GET, POST, PUT, and DELETE.
+	line	+ GET - retrieve information without altering the server
+	line	+ POST - add information to the server with each request
+	line	+ PUT - update information on the server
+	line	+ DELETE - remove information on the server.
+	line	## HTTP Response Statuses
+	line	
+	line	The SignPuddle 3 server responds with status codes.
+	line	
+	line	### Success Codes
+	line	
+	line	+ 200 OK
+	line	+ 201 Created
+	line	+ 202 Accepted
+	line	+ 204 No Content
+	line	
+	line	### Redirect Codes
+	line	
+	line	+ 300 Multiple Choices
+	line	+ 304 No Modified
+	line	+ 307 Temporary Redirect
+	line	+ 308 Permanent Redirect
+	line	
+	line	### Client Error Codes
+	line	
+	line	+ 400 Bad Request
+	line	+ 403 Forbidden
+	line	+ 404 Not Found
+	line	+ 409 Conflict
+	line	+ 429 Too Many Requests
+	line	
+	line	### Server Error Codes
+	line	
+	line	+ 500 Internal Server Error
+	line	+ 501 Not Implemented
+	line	+ 503 Service Unavailable
+	line	
+	line	## HTTP Headers
+	line	
+	line	Headers pass additional information about the request or response.
+	line	
+	line	### Headers
+	line	
+	line	+ Content-Type - the MIME type of the response
+	line	+ ETag - an entity tag used to validate cached values
+	line	+ Expires - date after which response is stale
+	line	+ Location - used for redirect or for newly created resource
+	line	+ If-None-Match - request header compared to ETag value, response status 304 if matching
+	line	+ If-Modified-Since - request header, causes response status 304 if unmodified
+	line	+ Last-Modified - response header, used with If-Modified-Since request header
+	line	
+group	user	SignPuddle 3 collections are organized by country and language codes
+	line	+ Source: [ApiTxt format](../src/user.txt) and [JSON objects](../src/user.json)
+	line	+ Documents: [API Blueprint](../doc/user.md) and [Stand Alone HTML](../doc/user.htm)
+	line	+ Live Page: [API Interface](../api/user.html) and [JavaScript](../api/user.js)
+	route	/user/who	Who uses SignWriting?	List of countries with size and activity.
+		method	GET	Retrieve country list	The available countries where signs are available.
+			request	user-who
+				response	200	text/plain
+					body	BR
+					body	US
+	route	/user/pass	User pass	A string for accounting and validation
+		method	POST	String for accounting and validation
+			code	  echo json_pretty(userPass());
+			request	user pass
+				response	200	text/plain
+					body	{"pass": "90c19ce2076db097c75b3406e966a6b6","ip": "192.168.254.2"}
+	route	/user/login	User login	Validation of user with validated password
+		method	PUT	Process log in to server
+			code	  $data = $app->request->getbody();
+			code	  $data = json_decode($data,true);
+			code	  $results = userVerify($data['username'],$data['pass'],$data['validated']);
+			code	  echo json_pretty($results);
+			request	verify user	application/json
+				line	+ Attributes
+				line	    + username: anonymous (string) - name of the user
+				line	    + pass: af77... (string) - pass for session validation
+				line	    + validated: 2793f... (string) - validated pass mixed with password
+				body	{"username":"anonymous","pass":"af77...","validated":"2793f..."}
+				response	200	application/json
+					line	response text here
+					body	{"user-profile":""}
+	route	/user/{name}	User profile	User details
+		parameter	name	slevinski	string	The name of a user
+		method	PUT	Update user profile	Updates the profile of the user
+			code	$headers = getHeaders();
+			code	$pass = isset($headers['Pass'])?$headers['Pass']:'';
+			code	$user = userVerified($pass);
+			code	if ($user!=$name) haltForbidden($user . " not " . $name);
+			code	$data = $app->request->getbody();
+			code	$data = json_decode($data,true);
+			code	userProfileUpdate($name,$data);
+			code	$app->response->setStatus(204);
+			code	return;
+			request	user-update
+				header	Pass	5ffab638bde372b4fa63bb6f8484595d
+				response	204
+		method	POST	Register new user	Creates and returns a new user
+			request	user-add
+				header	Pass	5ffab638bde372b4fa63bb6f8484595d
+				response	200	text/plain
+					body	profile created and returned
+	route	/user/{name}/password	User password	User password resource
+		parameter	name	slevinski	string	The name of a user
+		method	POST	Update user password	Updates the password of the user
+			code	$headers = getHeaders();
+			code	$pass = isset($headers['Pass'])?$headers['Pass']:'';
+			code	$user = userVerified($pass,true);
+			code	if (!$user) haltForbidden();
+			code	$data = $app->request->getbody();
+			code	$data = json_decode($data,true);
+			code	$old = isset($data['old'])?$data['old']:'';
+			code	$new = isset($data['new'])?$data['new']:'';
+			code	if ($old && $new){
+			code	  userPasswordUpdate($name,$old,$new);
+			code	  $app->response->setStatus(204);
+			code	  return;
+			code	} else {
+			code	  haltBadRequest();
+			code	}
+			request	user-update-password	plain/text
+				header	Pass	5ffab638bde372b4fa63bb6f8484595d
+				body	{"old":"149603e6c03516362a8da23f624db945","new":"22af645d1859cb5ca6da0c484f1f37ea"}
+				response	204
+		method	PUT	Reset user password	Creates a temporary password for the user
+			code	$headers = getHeaders();
+			code	$pass = isset($headers['Pass'])?$headers['Pass']:'';
+			code	$user = userVerified($pass,true);
+			code	if (!$user) haltForbidden();
+			code	$data = $app->request->getbody();
+			code	$data = json_decode($data,true);
+			code	$user = isset($data['user'])?$data['user']:'';
+			code	if ($user){
+			code	  userPasswordReset($user);
+			code	  $app->response->setStatus(204);
+			code	  return;
+			code	} else {
+			code	  haltBadRequest();
+			code	}
+			request	user-password-reset	plain/text
+				header	Pass	5ffab638bde372b4fa63bb6f8484595d
+				response	204
+	route	/user/email	User email requests	Requests for email of username or password reset
+		method	GET	List of user email requests	User email requests for username or passwords
+			code	$headers = getHeaders();
+			code	$pass = isset($headers['Pass'])?$headers['Pass']:'';
+			code	rightscheck("",$pass,SP_ADMIN);
+			code	$users = userEmailRequests();
+			code	echo json_pretty($users);
+			code	return;
+			request	user-email-request
+				header	Pass	5ffab638bde372b4fa63bb6f8484595d
+				response	200	text/plain
+					body	[{"name":"slevinski","email":"slevinski@signwriting.org","temp":"username"}]
+	route	/user/email/{email}	Username lookup	Forgot username email lookup
+		parameter	email	slevinski@signwriting.org	string	The email for a user
+		method	PUT	Lookup username	Creates a request for email of username
+			code	$headers = getHeaders();
+			code	$pass = isset($headers['Pass'])?$headers['Pass']:'';
+			code	$user = userVerified($pass,true);
+			code	if (!$user) haltForbidden();
+			code	userNameLookup($email);
+			code	$app->response->setStatus(204);
+			code	return;
+			request	user-name-lookup
+				header	Pass	5ffab638bde372b4fa63bb6f8484595d
+				response	204
+group	collection	Resources related to collections in general
+	line	+ Source: [ApiTxt format](../src/collection.txt) and [JSON objects](../src/collection.json)
+	line	+ Documents: [API Blueprint](../doc/collection.md) and [Stand Alone HTML](../doc/collection.htm)
+	line	+ Live Page: [API Interface](../api/collection.html) and [JavaScript](../api/collection.js)
+	route	/collection{?name}	Collections available
+		parameter	name	sp3	string	partial collection name
+		method	GET	Get available collections
+			code	$collections = collectionListing($name);
+			code	if (count($collections)){
+			code	  echo json_pretty($collections);
+			code	} else {
+			code	  $app->response->setStatus(204);
+			code	}
+			code	return;
+			response	200	text/plain
+				body	["en-US-interface-sp3"]
+	route	/collection/{name}	Collection resource	Specific collection
+		parameter	name	`en-US-interface-sp3`	string	The name of a collection
+		method	DELETE	delete collection
+			code	$err = invalidName($name);
+			code	if ($err){
+			code	  haltBadRequest($err);
+			code	}
+			code	$headers = getHeaders();
+			code	$pass = isset($headers['Pass'])?$headers['Pass']:'';
+			code	collectionDelete($name,$pass);
+			code	collectionSecurityDelete($name,$pass);
+			code	collectionManageDelete($name,$pass);
+			code	$app->response->setStatus(204);
+			request	the removal of a collection
+				header	Pass	5ffab638bde372b4fa63bb6f8484595d
+				response	204
+	route	/collection/security	Collections security	Security settings for all collections
+		method	GET	Get collections security
+			code	$headers = getHeaders();
+			code	$check = isset($headers['If-Modified-Since'])?$headers['If-Modified-Since']:'';
+			code	$lastModified = lastModifiedCollection();
+			code	if ($lastModified <= $check){
+			code	  haltNotModified();
+			code	}
+			code	$app->response->headers->set('Last-Modified', $lastModified);
+			code	echo json_pretty(collectionsSecurity());
+			request	collections security
+				header	If-Modified-Since	2019-01-16T16:56:19.175Z
+				response	200	text/plain
+					body	[{"name": "en-US-interface-sp3","code": "ui1","title": "English Interface for SignPuddle 3","user": "slevinski","created_at": "","view_pass": 0,"add_pass": 1,"edit_pass": 1,"register_level": 0,"upload_level": 4}]
+	route	/collection/{name}/security	Collection security	Details about the collection security
+		parameter	name	`en-US-interface-sp3`	required,string	The name of the collection
+		method	GET	retrieve collection security
+			code	$err = invalidName($name);
+			code	if ($err){
+			code	  haltBadRequest($err);
+			code	}
+			code	echo json_pretty(collectionSecurity($name));
+			request	interface security
+				response	200	text/plain
+					body	{"name": "en-US-interface-sp3","code": "ui1","title": "English Interface for SignPuddle 3","user": "slevinski","created_at": "","view_pass": 0,"add_pass": 1,"edit_pass": 1,"register_level": 0,"upload_level": 4}
+		method	PUT	Update collection security
+			code	$err = invalidName($name);
+			code	if ($err){
+			code	  haltBadRequest($err);
+			code	}
+			code	$headers = getHeaders();
+			code	$pass = isset($headers['Pass'])?$headers['Pass']:'';
+			code	$data = $app->request->getbody();
+			code	$data = json_decode($data,true);
+			code	collectionSecurityUpdate($name,$data,$pass);
+			code	$app->response->setStatus(204);
+			code	return;
+			request	an update for an existing entry	text/plain
+				header	Pass	5ffab638bde372b4fa63bb6f8484595d
+				body	{"name": "en-US-interface-sp3","code": "ui1","title": "English Interface for SignPuddle 3","user": "slevinski","created_at": "","view_pass": 0,"add_pass": 1,"edit_pass": 1,"register_level": 0,"upload_level": 4}
+				response	204
+		method	DELETE	Remove security for collection
+			code	$err = invalidName($name);
+			code	if ($err){
+			code	  haltBadRequest($err);
+			code	}
+			code	$headers = getHeaders();
+			code	$pass = isset($headers['Pass'])?$headers['Pass']:'';
+			code	collectionSecurityDelete($name,$pass);
+			code	$app->response->setStatus(204);
+			request	the deletion of collection security
+				header	Pass	5ffab638bde372b4fa63bb6f8484595d
+				response	204
+	route	/collection/{name}/users	Collection users
+		parameter	name	`ase-US-dictionary-public`	string	collection name
+		method	GET	Get collection users
+			code	$err = invalidName($name);
+			code	if ($err){
+			code	  haltBadRequest($err);
+			code	}
+			code	echo json_pretty(collectionUsers($name));
+			response	200	text/plain
+				body	[{"user": "test_user","security": 3}]
+	route	/collection/manage/unknown	Management for unknown collections
+		method	GET	Get list of unknown collections with user management
+			code	echo json_pretty(collectionManageUnknown());
+			response	200	text/plain
+				body	["es-US-interface-sp3"]
+	route	/collection/{name}/manage	Collection users management
+		parameter	name	`ase-US-dictionary-public`	string	collection name
+		method	GET	Get collection management
+			code	$err = invalidName($name);
+			code	if ($err){
+			code	  haltBadRequest($err);
+			code	}
+			code	$headers = getHeaders();
+			code	$pass = isset($headers['Pass'])?$headers['Pass']:'';
+			code	echo json_pretty(collectionUsersDetail($name,$pass));
+			request	collection management
+				header	Pass	5ffab638bde372b4fa63bb6f8484595d
+				response	200	text/plain
+					body	[{"name": "test_user","display": "Test Editor","email": "testing@gmail.com","security": 3}]
+		method	PUT	Update collection management
+			code	$err = invalidName($name);
+			code	if ($err){
+			code	  haltBadRequest($err);
+			code	}
+			code	$headers = getHeaders();
+			code	$pass = isset($headers['Pass'])?$headers['Pass']:'';
+			code	$data = $app->request->getbody();
+			code	$data = json_decode($data,true);
+			code	collectionManageUpdate($name,$data,$pass);
+			code	$app->response->setStatus(204);
+			code	return;
+			request	an update for collection management
+				header	Pass	5ffab638bde372b4fa63bb6f8484595d
+				body	{"user":"slevinski","security":4}
+				response	204
+		method	DELETE	Remove user management for collection
+			code	$err = invalidName($name);
+			code	if ($err){
+			code	  haltBadRequest($err);
+			code	}
+			code	$headers = getHeaders();
+			code	$pass = isset($headers['Pass'])?$headers['Pass']:'';
+			code	collectionManageDelete($name,$pass);
+			code	$app->response->setStatus(204);
+			request	the removal of user management for a collection
+				header	Pass	5ffab638bde372b4fa63bb6f8484595d
+				response	204
+	route	/collection/{name}/manage/{user}	Collection user
+		parameter	name	`ase-US-dictionary-public`	string	collection name
+		parameter	user	`slevinski`	string	user name
+		method	DELETE	Remove user from collection management
+			code	$err = invalidName($name);
+			code	if ($err){
+			code	  haltBadRequest($err);
+			code	}
+			code	$headers = getHeaders();
+			code	$pass = isset($headers['Pass'])?$headers['Pass']:'';
+			code	collectionManageRemove($name,$user,$pass);
+			code	$app->response->setStatus(204);
+			request	the removal of a user from collection management
+				header	Pass	5ffab638bde372b4fa63bb6f8484595d
+				response	204
+	route	/collection/{name}/request/{source}	Collection Request Copy
+		parameter	name	`es-US-interface-sp3`	required,string	The name of the new collection
+		parameter	source	`en-US-interface-sp3`	required,string	The name of the source collection
+		method	POST	request the creation of a new collection
+			code	$headers = getHeaders();
+			code	$pass = isset($headers['Pass'])?$headers['Pass']:'';
+			code	$user = userVerified($pass);
+			code	if (!$user) haltForbidden();
+			code	rightscheck($source,$pass,SP_VIEW);
+			code	$err = invalidName($source);
+			code	if ($err){
+			code	  haltBadRequest($err);
+			code	}
+			code	$parts = explode("-",$source);
+			code	$err = invalidName($name,$parts[2]);
+			code	if ($err){
+			code	  haltBadRequest($err);
+			code	}
+			code	$dir = 'data/db/';
+			code	$infile = $dir . $source . ".db";
+			code	$outfile = $dir . $name . ".db";
+			code	if (!file_exists($infile)) haltBadRequest('Source collection does not exist: ' . $source);
+			code	if (file_exists($outfile)) haltBadRequest('Collection already exists: ' . $name);
+			code	if (copy($infile,$outfile)){
+			code	  $data = array();
+			code	  $data["user"] = $user;
+			code	  $data["security"] = SP_EDIT;
+			code	  collectionManageUpdate($name,$data,$pass,true);
+			code	
+			code	  $data = $app->request->getbody();
+			code	  $data = json_decode($data,true);
+			code	  $title = isset($data['title'])?$data['title']:'New Collection';
+			code	  $data = array();
+			code	  $data["title"] = $title;
+			code	  $data["user"] = "admin";
+			code	  $data["view_pass"] = 0;
+			code	  $data["add_pass"] = 1;
+			code	  $data["edit_pass"] = 1;
+			code	  $data["register_level"] = 0;
+			code	  $data["upload_level"] = 4;
+			code	  collectionSecurityUpdate($name,$data,$pass,true);
+			code	  $app->response->setStatus(204);
+			code	  return;
+			code	} else {
+			code	  haltForbidden();
+			code	}
+			request	new collection from source
+				header	Pass	5ffab638bde372b4fa63bb6f8484595d
+				response	204
+group	interface	Resources related to interface collections
+	line	+ Source: [ApiTxt format](../src/interface.txt) and [JSON objects](../src/interface.json)
+	line	+ Documents: [API Blueprint](../doc/interface.md) and [Stand Alone HTML](../doc/interface.htm)
+	line	+ Live Page: [API Interface](../api/interface.html) and [JavaScript](../api/interface.js)
+	route	/interface{?name}	Interfaces available
+		parameter	name	sp3	string	partial interface name
+		method	GET	Get available interfaces
+			code	$dir = 'data/db/';
+			code	$ext = '.db';
+			code	$out = [];
+			code	if ($name){
+			code	  if (strpos($name,"interface")!==false){
+			code	    $interfaces = $dir . '*' . $name . '*' . $ext;
+			code	    $files = glob($interfaces);
+			code	  } else {
+			code	    $interfaces = $dir . '*interface*' . $name . '*' . $ext;
+			code	    $files = glob($interfaces);
+			code	    if (count($files)==0) {
+			code	      $interfaces = $dir . '*' . $name . '*interface*' . $ext;
+			code	      $files = glob($interfaces);
+			code	    }
+			code	  }
+			code	} else {
+			code	  $interfaces = $dir . '*interface*' . $ext;
+			code	  $files = glob($interfaces);
+			code	}
+			code	foreach ($files as $filename) {
+			code	  $out[] = str_replace($ext,'',str_replace($dir,'',$filename));
+			code	}
+			code	if (count($out)){
+			code	  echo json_pretty($out);
+			code	} else {
+			code	  $app->response->setStatus(204);
+			code	}
+			code	return;
+			response	200	text/plain
+				body	["en-US-interface-sp3"]
+	route	/interface/{name}{?update}	Interface resource	Access to available interfaces
+		parameter	name	`en-US-interface-sp3`	required,string	The name of an interface
+		parameter	update	1	optional,number	Forces a rewrite of the interface for json and txt formats
+		method	GET	retrieve interface or available interfaces
+			code	$headers = getHeaders();
+			code	$pass = isset($headers['Pass'])?$headers['Pass']:'';
+			code	rightscheck($name,$pass,SP_VIEW);
+			code	$check = isset($headers['If-Modified-Since'])?$headers['If-Modified-Since']:'';
+			code	if (strpos($name,'.')){
+			code	  $parts = explode('.',$name);
+			code	  $name = $parts[0];
+			code	  $format = $parts[1];
+			code	  if (!in_array($format,['db','txt','json'])){
+			code	    haltNotFound();
+			code	  }
+			code	} else {
+			code	  $format = 'json';
+			code	}
+			code	$dir = 'data/' . $format . '/';
+			code	$ext = '.' . $format;
+			code	$file = $dir . $name . $ext;
+			code	$err = invalidName($name);
+			code	if ($err){
+			code	  haltBadRequest($err);
+			code	}
+			code	$lastModified = lastModified($name);
+			code	if ($lastModified <= $check  && !$update){
+			code	  haltNotModified();
+			code	}
+			code	if ($format=='json' && (!file_exists($file) || $update)) {
+			code	  $json = interface2json($name);
+			code	  file_put_contents($file,$json);
+			code	} else if ($format=='txt' && (!file_exists($file) || $update)) {
+			code	  $txt = interface2txt($name);
+			code	  file_put_contents($file,$txt);
+			code	}
+			code	if(file_exists($file)) {
+			code	  $app->response->headers->set('Last-Modified', $lastModified);
+			code	  getFile($file);
+			code	} else {
+			code	  haltNotFound();
+			code	}
+			request	interface text
+				header	If-Modified-Since	2019-01-16T16:56:19.175Z
+				response	200	text/plain
+					body	print.buttons.main<TAB>message<TAB>description<TAB>icon
+	route	/interface/{name}/key	Interface keys	Access to interface keys
+		parameter	name	`en-US-interface-sp3`	required,string	The name of an interface
+		method	GET	retrieve interface keys
+			code	$headers = getHeaders();
+			code	$pass = isset($headers['Pass'])?$headers['Pass']:'';
+			code	$check = isset($headers['If-Modified-Since'])?$headers['If-Modified-Since']:'';
+			code	$err = invalidName($name);
+			code	if ($err){
+			code	  haltBadRequest($err);
+			code	}
+			code	$lastModified = lastModified($name);
+			code	if ($lastModified <= $check){
+			code	  haltNotModified();
+			code	}
+			code	$app->response->headers->set('Last-Modified', $lastModified);
+			code	echo json_pretty(interfaceKeys($name,$pass));
+			request	interface keys
+				header	If-Modified-Since	2019-01-16T16:56:19.175Z
+				header	Pass	5ffab638bde372b4fa63bb6f8484595d
+				response	200	text/plain
+					body	["print.buttons.main"]
+	route	/interface/{name}/search/{text}	Interface entries search	Search interface for text
+		parameter	name	`en-US-interface-sp3`	required,string	The name of an interface
+		parameter	text	`SignPuddle`	required,string	The text for searching
+		method	GET	retrieve matching entries
+			code	$headers = getHeaders();
+			code	$pass = isset($headers['Pass'])?$headers['Pass']:'';
+			code	$err = invalidName($name);
+			code	if ($err){
+			code	  haltBadRequest($err);
+			code	}
+			code	echo json_pretty(interfaceSearch($name,$text,$pass));
+			request	matching interface entries
+				header	Pass	5ffab638bde372b4fa63bb6f8484595d
+				response	200	text/plain
+					body	[
+					body	  {
+					body	    "key": "print.buttons.main",
+					body	    "message": "Print it!"
+					body	  }
+					body	]
+	route	/interface/{name}/entry	Interface entry resource	Entries for interface
+		parameter	name	`en-US-interface-sp3`	string	The name of an interface
+		method	POST	add interface entry
+			code	$headers = getHeaders();
+			code	$pass = isset($headers['Pass'])?$headers['Pass']:'';
+			code	if (!$pass){
+			code	  haltForbidden();
+			code	}
+			code	$err = invalidName($name);
+			code	if ($err){
+			code	  haltBadRequest($err);
+			code	}
+			code	$data = $app->request->getbody();
+			code	$data = json_decode($data,true);
+			code	interfaceKeyNew($name,$data,$pass);
+			code	$app->response->setStatus(201);
+			code	return;
+			request	add new interface entry	application/json
+				header	Pass	5ffab638bde372b4fa63bb6f8484595d
+				body	{"key":"new.key.one", "message":"UI text","description":"about the text","icon":"search"}
+				response	201	text/plain
+					body	...
+	route	/interface/{name}/entry/{key}	Interface entry resource for key	Specific entries for interface
+		parameter	name	`en-US-interface-sp3`	string	The name of an interface
+		parameter	key	system.button.open	string	The name of an interface key
+		method	GET	retrieve interface entry
+			code	$headers = getHeaders();
+			code	$pass = isset($headers['Pass'])?$headers['Pass']:'';
+			code	$check = isset($headers['If-Modified-Since'])?$headers['If-Modified-Since']:'';
+			code	$err = invalidName($name);
+			code	if ($err){
+			code	  haltBadRequest($err);
+			code	}
+			code	$entries = interfaceKeyEntry($name,$key,$pass);
+			code	if (!$entries){
+			code	  haltNoContent();
+			code	}
+			code	$lastModified = max(array_map(function($o) {return $o->updated_at;},$entries));
+			code	if ($lastModified <= $check){
+			code	  haltNotModified();
+			code	}
+			code	$app->response->headers->set('Last-Modified', $lastModified);
+			code	echo json_pretty($entries);
+			request	an interface entry
+				header	If-Modified-Since	2019-01-16T16:56:19.175Z
+				header	Pass	5ffab638bde372b4fa63bb6f8484595d
+				response	200	text/plain
+					body	...
+		method	PUT	update interface entry
+			code	$err = invalidName($name);
+			code	if ($err){
+			code	  haltBadRequest($err);
+			code	}
+			code	$headers = getHeaders();
+			code	$pass = isset($headers['Pass'])?$headers['Pass']:'';
+			code	$data = $app->request->getbody();
+			code	$data = json_decode($data,true);
+			code	interfaceKeyUpdate($name,$key,$data,$pass);
+			code	$app->response->setStatus(204);
+			code	return;
+			request	an update for an existing entry
+				header	Pass	5ffab638bde372b4fa63bb6f8484595d
+				body	{"key":"new.key.one", "message":"UI text","description":"about the text","icon":"search"}
+				response	204
+		method	DELETE	remove interface entry
+			code	$err = invalidName($name);
+			code	if ($err){
+			code	  haltBadRequest($err);
+			code	}
+			code	$headers = getHeaders();
+			code	$pass = isset($headers['Pass'])?$headers['Pass']:'';
+			code	interfaceKeyDelete($name,$key,$pass);
+			code	$app->response->setStatus(204);
+			request	the removal of an interface entry
+				header	Pass	5ffab638bde372b4fa63bb6f8484595d
+				response	204
 group	tools	Resources related to tools
 	line	+ Source: [ApiTxt format](../src/tools.txt) and [JSON objects](../src/tools.json)
 	line	+ Documents: [API Blueprint](../doc/tools.md) and [Stand Alone HTML](../doc/tools.htm)
@@ -315,153 +898,6 @@ group	swu	Resources related to Formal SignWriting in ASCII (SWU)
 					body	  <g transform="translate(510,500)"><text class="sym-fill" style="pointer-events:none;font-family:'SuttonSignWritingFill';font-size:30px;fill:white;">􋚥</text><text class="sym-line" style="pointer-events:none;font-family:'SuttonSignWritingLine';font-size:30px;fill:black;">󻚥</text></g>
 					body	  <g transform="translate(476,475)"><text class="sym-fill" style="pointer-events:none;font-family:'SuttonSignWritingFill';font-size:30px;fill:white;">􀀚</text><text class="sym-line" style="pointer-events:none;font-family:'SuttonSignWritingLine';font-size:30px;fill:black;">󰀚</text></g>
 					body	</svg>
-group	user	SignPuddle 3 collections are organized by country and language codes
-	line	+ Source: [ApiTxt format](../src/user.txt) and [JSON objects](../src/user.json)
-	line	+ Documents: [API Blueprint](../doc/user.md) and [Stand Alone HTML](../doc/user.htm)
-	line	+ Live Page: [API Interface](../api/user.html) and [JavaScript](../api/user.js)
-	line	
-	line	### Country code
-	line	The country codes are from ISO-3166.
-	line	Each country is coded with two uppercase letters.
-	line	
-	line	### Language code
-	line	The language codes are from ISO-639-1 for spoken languages and ISO-639-3 for sign languages.
-	line	Each spoken language is coded with two lowercase letters.
-	line	Each sign language is coded with three lowercase letters.
-	route	/user/who/	Who uses SignWriting?	List of countries with size and activity.
-		method	GET	Retrieve country list	The available countries where signs are available.
-			request	user-who
-				response	200	text/plain
-					body	BR
-					body	US
-	route	/user/pass	User pass	A string for accounting and validation
-		method	POST	String for accounting and validation
-			code	  echo userPass();
-			request	user pass
-				response	200	text/plain
-					body	e3bedc9e9f83cb9dd7ae61250b9e6921
-	route	/user/login	User login	Validation of user with validated password
-		method	PUT	Process log in to server
-			code	  $data = $app->request->getbody();
-			code	  $data = json_decode($data,true);
-			code	  try {
-			code	    $results = userVerify($data['username'],$data['pass'],$data['validated']);
-			code	    $return = array();
-			code	    $return['meta']=array();
-			code	    $return['results']=$results;
-			code	    $return['meta']['method']='POST';
-			code	    $return['meta']['location']='/user/login';
-			code	    $return['meta']['searchTime'] = searchtime($timein);
-			code	    echo json_pretty($return);
-			code	  } catch (Exception $e) {
-			code	    //echo json_pretty($e);
-			code	    haltValidation($e->getCode() . ' ' . $e->getMessage());
-			code	  }
-			request	verify user	application/json
-				line	+ Even a list
-				line	+ name `Name` of the metaproperty, should be alphanumeric only. Uneditable.
-				body	{"username":"anonymous","pass":"af77...","validated":"2793f..."}
-				response	200	application/json
-					line	response text here
-					body	{"user-profile":""}
-group	collection	Resources related to making collections
-	line	+ Source: [ApiTxt format](../src/collection.txt) and [JSON objects](../src/collection.json)
-	line	+ Documents: [API Blueprint](../doc/collection.md) and [Stand Alone HTML](../doc/collection.htm)
-	line	+ Live Page: [API Interface](../api/collection.html) and [JavaScript](../api/collection.js)
-	route	/collection	Available collections
-		method	GET	Get available languages
-			code	  echo "en\nase";
-			response	200	text/plain
-				body	en
-				body	ase
-	route	/collection/{name}	Collection resource	Access to available collections
-		parameter	name	en-US-interface-sp3	string	The name of a collection
-		method	GET	retrieve collection or available collections
-			code	$check = $app->request->headers->get('If-None-Match');
-			code	$dir = 'data/txt/';
-			code	$ext = '.txt';
-			code	$file = $dir . $name . $ext;
-			code	$err = invalidName($name);
-			code	if ($err){
-			code	  haltBadRequest($err);
-			code	}
-			code	if(file_exists($file)) {
-			code	  $md5 = md5_file($file);
-			code	  $app->response->headers->set('ETag', $md5);
-			code	  if ($md5 == $check){
-			code	    haltNotModified();
-			code	  }
-			code	  getFile($file);
-			code	} else {
-			code	  $out = [];
-			code	  foreach (glob($file) as $filename) {
-			code	    $out[] = str_replace($ext,'',str_replace($dir,'',$filename));
-			code	  }
-			code	  if (count($out)){
-			code	    haltMultipleChoices(implode($out,"\n"));
-			code	  } else {
-			code	    haltNoContent();
-			code	  }
-			code	}
-			request	collection text
-				response	200	text/plain
-					body	print.buttons.main<TAB>message<TAB>description<TAB>icon
-	route	/collection/{name}/md5	Collection resource md5 hash	MD5 hash of collection
-		parameter	name	en-US-interface-sp3	string	The name of a collection
-		method	GET	retrieve collection md5 hash
-			code	$dir = 'data/txt/';
-			code	$ext = '.txt';
-			code	$file = $dir . $name . $ext;
-			code	if (strpos($name,"*")!==false) {
-			code	  $err = invalidNameWild($name);
-			code	  if($err){
-			code	    haltBadRequest($err);
-			code	  }
-			code	  $out = [];
-			code	  foreach (glob($file) as $filename) {
-			code	    $out[] = str_replace($ext,'',str_replace($dir,'',$filename));
-			code	  }
-			code	  if (count($out)){
-			code	    if (count($out)==1) {
-			code	      $app->request->headers->set('Location','/location/' . $out[0] . '/md5');
-			code	      haltSeeOther($out[0]);
-			code	    } else {
-			code	      haltMultipleChoices(implode($out,"\n"));
-			code	    }
-			code	  } else {
-			code	    haltBadRequest("No choices available");
-			code	  }
-			code	} else {
-			code	  $err = invalidName($name);
-			code	  if ($err){
-			code	    haltBadRequest($err);
-			code	  }
-			code	  if(file_exists($file)) {
-			code	    $md5 = md5_file($file);
-			code	    echo $md5;
-			code	  } else {
-			code	    halting(202, md5($name));
-			code	  }
-			code	}
-			request	the md5 hash of a collection
-				header	If-None-Match	af779785a5c3ffd166bc95e6dd530889
-				response	200	text/plain
-					body	9785a5c3ffd166bc95e6dd5308894691
-		method	POST	retrieve collection md5 hash
-			request	the md5 hash of a collection
-				header	If-None-Match	af779785a5c3ffd166bc95e6dd530889
-				response	200	text/plain
-					body	9785a5c3ffd166bc95e6dd5308894691
-		method	PUT	retrieve collection md5 hash
-			request	the md5 hash of a collection
-				header	If-None-Match	af779785a5c3ffd166bc95e6dd530889
-				response	200	text/plain
-					body	9785a5c3ffd166bc95e6dd5308894691
-		method	DELETE	retrieve collection md5 hash
-			request	the md5 hash of a collection
-				header	If-None-Match	af779785a5c3ffd166bc95e6dd530889
-				response	200	text/plain
-					body	9785a5c3ffd166bc95e6dd5308894691
 group	apitxt	ApiTxt uses eleven types of element to define an API.
 	line	root, group, route, parameter, method, request, response, header, line, code, and body.
 	line	

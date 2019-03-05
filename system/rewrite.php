@@ -7,19 +7,73 @@ $_SERVER['SCRIPT_FILENAME'] = str_replace("\\","/",$_SERVER['SCRIPT_FILENAME']);
 
 chdir ("..");
 
-$dir = substr($_SERVER['REQUEST_URI'],0,7);
-if ($dir == "/server") {
-  
-  chdir("server");
-  $_SERVER['DOCUMENT_ROOT'] .= "/server";
-  $_SERVER['REQUEST_URI'] = substr($_SERVER['REQUEST_URI'],7);
-  $_SERVER['SCRIPT_NAME'] = substr($_SERVER['SCRIPT_NAME'],7);
-  $_SERVER['PHP_SELF'] = substr($_SERVER['PHP_SELF'],7);
-
-  $url_parts = parse_url($_SERVER["REQUEST_URI"]);
-  $_req = rtrim($_SERVER['DOCUMENT_ROOT'] . $url_parts['path'], '/' . DIRECTORY_SEPARATOR);
-  include $_SERVER['DOCUMENT_ROOT'] . '/index.php';
+if (substr($_SERVER['SCRIPT_NAME'],0,21) == "/server/data/security") {
+  http_response_code(404);
+  echo "Not Found";
   die();
+}
+
+if (substr($_SERVER['SCRIPT_NAME'],0,7) == "/server"){
+  //fix for dot in url
+  $_SERVER['SCRIPT_NAME'] = '/index.php';
+  $_SERVER['PATH_INFO'] = $_SERVER['REQUEST_URI'];
+  $_SERVER['PHP_SELF'] = $_SERVER['SCRIPT_NAME'] . ($_SERVER['REQUEST_URI'] === '/' ? '' : $_SERVER['REQUEST_URI']);
+  //fix
+
+  if (substr($_SERVER['SCRIPT_NAME'],0,12) == "/server/data"){
+    $file = $_SERVER['DOCUMENT_ROOT'] . $_SERVER['PHP_SELF'];
+
+    if (is_dir($file)){
+      header('Content-Type:text/plain');
+      $files = scandir($file);
+      foreach ($files as $file) {
+        if ($file!='.' && $file!='..' && $file[0]!='.' && substr($file,0,8) !='security') print $file . "\n";
+      }
+      die();
+    }
+    if (file_exists($file)){
+      $parts = pathinfo($file);
+      switch ($parts['extension']){
+        case 'css':
+        header('Content-Type:text/css');
+        break;
+        case 'svg':
+        header('Content-Type:image/svg+xml');
+        break;
+      case 'png':
+        header('Content-Type:image/png');
+        break;
+      case 'gif':
+        header('Content-Type:image/gif');
+        break;
+      case 'htm':
+      case 'html':
+        header('Content-Type:text/html; charset=utf-8');
+        break;
+      case 'js':
+        header('Content-Type:application/javascript');
+        break;
+      case 'json':
+        header('Content-Type:application/json');
+        break;
+      default:
+        header('Content-Type:text/plain; charset=utf-8');
+      }
+      readfile($file);
+      die();
+    }
+  } else {
+    chdir("server");
+    $_SERVER['DOCUMENT_ROOT'] .= "/server";
+    $_SERVER['REQUEST_URI'] = substr($_SERVER['REQUEST_URI'],7);
+    $_SERVER['SCRIPT_NAME'] = substr($_SERVER['SCRIPT_NAME'],7);
+    $_SERVER['PHP_SELF'] = substr($_SERVER['PHP_SELF'],7);
+
+    $url_parts = parse_url($_SERVER["REQUEST_URI"]);
+    $_req = rtrim($_SERVER['DOCUMENT_ROOT'] . $url_parts['path'], '/' . DIRECTORY_SEPARATOR);
+    include $_SERVER['DOCUMENT_ROOT'] . '/index.php';
+    die();
+  }
 }
 
 if ($_SERVER['REQUEST_URI'] =='/source') {

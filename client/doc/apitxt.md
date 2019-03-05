@@ -195,7 +195,6 @@ root &lt;TAB> apitxt &lt;TAB> ApiTxt &lt;TAB> https://signpuddle.com/apitxt
             }
             ```
 
-
 ### group [/apitxt/group]
 
 #### Get group definition [GET]
@@ -271,7 +270,6 @@ group &lt;TAB> Section name &lt;TAB> an example section
               "lines": []
             }
             ```
-
 
 ### route [/apitxt/route]
 
@@ -357,7 +355,6 @@ route &lt;TAB> /example &lt;TAB> an example route &lt;TAB> a description of the 
             }
             ```
 
-
 ### parameter [/apitxt/parameter]
 
 #### Get parameter definition [GET]
@@ -439,7 +436,6 @@ parameter lines are added to a parameters array
               ]
             }
             ```
-
 
 ### method [/apitxt/method]
 
@@ -539,7 +535,6 @@ method &lt;TAB> GET &lt;TAB> Get an example &lt;TAB> This method retrieves an ex
             }
             ```
 
-
 ### request [/apitxt/request]
 
 #### Get request definition [GET]
@@ -621,7 +616,6 @@ request &lt;TAB> matching text within request body &lt;TAB> plain/text
               "body" : []
             }
             ```
-
 
 ### response [/apitxt/response]
 
@@ -705,7 +699,6 @@ response &lt;TAB> 200 &lt;TAB> plain/text
             }
             ```
 
-
 ### header [/apitxt/header]
 
 #### Get header definition [GET]
@@ -758,7 +751,6 @@ header &lt;TAB> X-Powered-By &lt;TAB> ApiTxt
             { field[1] : field[2] }
             ```
 
-
 ### body [/apitxt/body]
 
 #### Get body definition [GET]
@@ -779,7 +771,6 @@ The text of the body is everything after the string "body &lt;TAB>".
             The body element adds contents to a preceding request or response.
             
             The text of the body is everything after the string "body <TAB>"
-
 
 ### line [/apitxt/line]
 
@@ -806,7 +797,6 @@ The text of the line is everything after the string "line &lt;TAB>".
             
             The text of the line is everything after the string "line <TAB>".
 
-
 ### code [/apitxt/code]
 
 #### Get code definition [GET]
@@ -831,5 +821,4 @@ The text of the code is everything after the string "code &lt;TAB>".
             The code element contains programming text.  ApiTxt comes integrated with the PHP project the Slim Framework v2.  The conversion to working PHP adds boilerplate details for routes and method, with named parameters and query parameters available as functional variables.
             
             The text of the code is everything after the string "code <TAB>".
-
 

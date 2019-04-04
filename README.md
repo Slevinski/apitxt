@@ -59,6 +59,7 @@ MIT
 ** onupdate needs to fire oninit without infinite updates
 
 ## Version History
+* v3.0.0-alpha.8 - Apr 4th, 2019: data and link fix
 * v3.0.0-alpha.7 - Apr 4th, 2019: dictionary section preview
 * v3.0.0-alpha.6 - Jan 5th, 2019: interface system
 * v3.0.0-alpha.5 - Oct 18th, 2018: user login system framework

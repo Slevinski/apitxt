@@ -1,7 +1,7 @@
 <?php
 
-function TimestampNow(){
-  $dt = new DateTime("now");
+function Timestamp($value="now"){
+  $dt = new DateTime($value);
   $dt->setTimezone(new DateTimeZone('UTC'));
   return $dt->format('Y-m-d\TH:i:s\Z');
 }
@@ -38,6 +38,48 @@ function _sqliteRegex($string, $pattern, $ci) {
   }
 }
 
+function entry_orderby($sort,$default){
+  $orderby = ' order by ' . $default;
+  if ($sort){
+    if ($sort[0]=='-') {
+      $desc = 1; 
+      $sort = substr($sort,1);
+    } else {
+      $desc = 0;
+    }
+    $orderby = ' order by entry.' . $sort;
+    if ($desc) {
+      $orderby .= ' desc'; 
+    }
+  }
+  return $orderby;
+}
+
+function filter($filter,$valids){
+  $params = array();
+  if ($filter){
+    $ops = ["<=",">=","!=","<",">","="];
+    $filters = explode(',',$filter);
+    foreach ($filters as $filter){
+      foreach ($ops as $op){
+        if (strpos($filter,$op)){
+          $param = explode($op,$filter);
+          if (in_array($param[0],$valids)){
+            if ($op=="=" and strpos($filter,"%")){
+              $op = "like";
+            }
+            $num = count($params);
+//            $sel .= " and " . $param[0] . " " . $op . " :" . $param[0] . $num;
+            $params[] =[$param[0] . ' ' .$op, ':' . $param[0] . $num, $param[1]];
+          }
+          break;
+        }
+      }
+    }
+  }
+  return $params;
+}
+
 $collection_dbs = array();
 function collection_db($collection){
   global $db0,$collection_dbs;
@@ -47,7 +89,7 @@ function collection_db($collection){
 
     $collection_file = dirname(__FILE__) . '/../data/db/' . $collection . '.db';
     if (file_exists($collection_file)){
-      $collection_db = new PDO('sqlite:' . $collection_file );
+      $collection_db = new PDO('sqlite:' . $collection_file);
       $collection_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
       $collection_db->sqliteCreateFunction('regex', '_sqliteRegex', 3);
       $collection_dbs[$collection] = $collection_db;
@@ -119,6 +161,37 @@ function collectionListing($name){
   return $out;
 }
 
+function collectionStats($collection){
+  $db = collection_db($collection);
+  $return = array();
+
+  $sel = 'SELECT count(*) from entry;';
+  $results=$db->query($sel);
+  $return['entries'] = $results->fetch(PDO::FETCH_COLUMN);
+
+  $sel = 'SELECT count(distinct user) from entry;';
+  $results=$db->query($sel);
+  $return['users'] = $results->fetch(PDO::FETCH_COLUMN);
+
+  $sel = 'SELECT count(*) from entry where updated_at>="' . Timestamp("-1 day") . '";';
+  $results=$db->query($sel);
+  $return['day'] = $results->fetch(PDO::FETCH_COLUMN);
+
+  $sel = 'SELECT count(*) from entry where updated_at>="' . Timestamp("-1 week") . '";';
+  $results=$db->query($sel);
+  $return['week'] = $results->fetch(PDO::FETCH_COLUMN);
+
+  $sel = 'SELECT count(*) from entry where updated_at>="' . Timestamp("-1 month") . '";';
+  $results=$db->query($sel);
+  $return['month'] = $results->fetch(PDO::FETCH_COLUMN);
+
+  $sel = 'SELECT count(*) from entry where updated_at>="' . Timestamp("-1 year") . '";';
+  $results=$db->query($sel);
+  $return['year'] = $results->fetch(PDO::FETCH_COLUMN);
+
+  return $return;
+}
+
 function collectionsSecurity(){
   global $db0;
   $sel = 'SELECT * from collection;';
@@ -164,7 +237,7 @@ function collectionSecurityInsert($collection,$data,$pass,$force=false){
   if (!$user) {
     haltForbidden();
   }
-  $dt = TimestampNow();
+  $dt = Timestamp();
   global $db0;
 
   $stmt = $db0->prepare("INSERT into collection (name, title, user, view_pass, add_pass, edit_pass, register_level, upload_level, created_at, updated_at) values (:name, :title, :user, :view_pass, :add_pass, :edit_pass, :register_level, :upload_level, :dt, :dt);");
@@ -185,11 +258,11 @@ function collectionSecurityInsert($collection,$data,$pass,$force=false){
 }
 
 function collectionSecurityUpdate($collection,$data,$pass,$force=false){
-  if (!$force) {rightscheck($collection,$pass,SP_MANAGE);}
+  if (!$force) {rightsCheck($collection,$pass,SP_MANAGE);}
 
   global $db0;
 
-  $dt = TimestampNow();
+  $dt = Timestamp();
   if ($stmt = $db0->prepare("UPDATE collection set title=:title, view_pass=:view_pass, add_pass=:add_pass, edit_pass=:edit_pass, register_level=:register_level, upload_level=:upload_level, updated_at=:updated_at where name=:name;")) {
     $stmt->bindValue(':title',$data["title"], PDO::PARAM_STR);
     $stmt->bindValue(':view_pass',$data["view_pass"], PDO::PARAM_STR);
@@ -211,7 +284,7 @@ function collectionSecurityUpdate($collection,$data,$pass,$force=false){
 }
 
 function collectionSecurityDelete($collection,$pass){
-  rightscheck($collection,$pass,SP_MANAGE);
+  rightsCheck($collection,$pass,SP_MANAGE);
   global $db0;
   if ($stmt = $db0->prepare("DELETE FROM collection where name=:name;")) {
     $stmt->bindValue(':name',$collection, PDO::PARAM_STR);
@@ -240,7 +313,7 @@ function collectionUsers($collection){
 }
 
 function collectionUsersDetail($collection,$pass){
-  rightscheck($collection,$pass,SP_MANAGE);
+  rightsCheck($collection,$pass,SP_MANAGE);
   global $db0;
   $sel = 'SELECT name, display, email, usercollection.security from user left join usercollection on name = user and collection = :collection order by name;';
   try {
@@ -273,7 +346,7 @@ function collectionManageUnknown(){
 }
 
 function collectionManageUpdate($collection,$data,$pass,$force=false){
-  if (!$force) {rightscheck($collection,$pass,SP_MANAGE);}
+  if (!$force) {rightsCheck($collection,$pass,SP_MANAGE);}
 
   global $db0;
   if ($stmt = $db0->prepare("UPDATE usercollection set security=:security where collection=:collection and user=:user;")) {
@@ -299,7 +372,7 @@ function collectionManageUpdate($collection,$data,$pass,$force=false){
 }
 
 function collectionManageRemove($collection,$user,$pass){
-  rightscheck($collection,$pass,SP_MANAGE);
+  rightsCheck($collection,$pass,SP_MANAGE);
   global $db0;
   if ($stmt = $db0->prepare("DELETE from usercollection where collection=:collection and user=:user;")) {
     $stmt->bindValue(':collection',$collection, PDO::PARAM_STR);
@@ -313,7 +386,7 @@ function collectionManageRemove($collection,$user,$pass){
 }
 
 function collectionManageDelete($collection,$pass){
-  rightscheck($collection,$pass,SP_MANAGE);
+  rightsCheck($collection,$pass,SP_MANAGE);
   global $db0;
   if ($stmt = $db0->prepare("DELETE from usercollection where collection=:collection;")) {
     $stmt->bindValue(':collection',$collection, PDO::PARAM_STR);
@@ -326,7 +399,7 @@ function collectionManageDelete($collection,$pass){
 }
 
 function collectionDelete($collection,$pass){
-  rightscheck($collection,$pass,SP_MANAGE);
+  rightsCheck($collection,$pass,SP_MANAGE);
   $dir = realpath('data');
 
   $ext = 'db';
@@ -348,131 +421,8 @@ function collectionDelete($collection,$pass){
   @unlink($file);
 }
 
-function interfaceKeys($interface,$pass){
-  rightscheck($interface,$pass,SP_VIEW);
-  $db = collection_db($interface);
-  try {
-    $sel = 'SELECT key from entry order by key;';
-    $results=$db->query($sel);
-    $entries = $results->fetchAll(PDO::FETCH_COLUMN);
-    return $entries;
-  } catch (PDOException $e) {
-    haltBadRequest($e->getCode() . ' ' . $e->getMessage());
-  }  
-}
-
-function interfaceSearch($interface,$text,$pass){
-  rightscheck($interface,$pass,SP_VIEW);
-  $db = collection_db($interface);
-  $text = "%" . $text . "%";
-  try {
-    $sql = 'SELECT key, message from entry where message like :message order by message;';
-    $stmt = $db->prepare($sql);
-    $stmt->bindParam(':message', $text, PDO::PARAM_STR);
-    $stmt->execute();
-    $entries = $stmt->fetchAll(PDO::FETCH_CLASS);
-    return $entries;
-  } catch (PDOException $e) {
-    haltBadRequest($e->getCode() . ' ' . $e->getMessage());
-  }  
-
-}
-
-function interfaceKeyEntry($interface,$key,$pass){
-  rightscheck($interface,$pass,SP_VIEW);
-  $db = collection_db($interface);
-  try {
-    $sql = 'SELECT key, message, description, icon, user, created_at, updated_at from entry where key like :key order by key;';
-    $stmt = $db->prepare($sql);
-    $stmt->bindParam(':key', $key, PDO::PARAM_STR);
-    $stmt->execute();
-    $entries = $stmt->fetchAll(PDO::FETCH_CLASS);
-    return $entries;
-  } catch (PDOException $e) {
-    haltBadRequest($e->getCode() . ' ' . $e->getMessage());
-  }  
-}
-
-function interfaceKeyNew($interface,$data,$pass){
-  rightscheck($interface,$pass,SP_ADD);
-  $user = userVerified($pass,true);
-
-  $db = collection_db($interface);
-  try {
-    $key = $data['key'];
-  } catch (Exception $e) {
-    haltBadRequest($e->getCode() . ' ' . $e->getMessage());
-  }
-  $err = invalidKey($key);
-  if ($err){
-    haltBadRequest($err);
-  }
-  $dt = TimestampNow();
-  if ($stmt = $db->prepare("INSERT INTO entry (key,message, description, icon, user, created_at, updated_at) VALUES ('$key',:message, :description, :icon, :user, :created_at, :updated_at)")) {
-    $stmt->bindValue(':message',$data["message"], PDO::PARAM_STR);
-    $stmt->bindValue(':description',$data["description"], PDO::PARAM_STR);
-    $stmt->bindValue(':icon',$data["icon"], PDO::PARAM_STR);
-    $stmt->bindValue(':user',$user, PDO::PARAM_STR);
-    $stmt->bindValue(':created_at',$dt, PDO::PARAM_STR);
-    $stmt->bindValue(':updated_at',$dt, PDO::PARAM_STR);
-    try {
-      $stmt->execute();
-    } catch(PDOException $exception){ 
-      haltBadRequest($exception->getCode() . ' ' . $exception->getMessage()); 
-    } 
-  }
-}
-
-function interfaceKeyUpdate($interface,$key,$data,$pass){
-  rightscheck($interface,$pass,SP_EDIT,$key);
-
-  $db = collection_db($interface);
-
-  try {
-    $newkey = $data['key'];
-  } catch (Exception $e) {
-    haltBadRequest($e->getCode() . ' ' . $e->getMessage());
-  }
-  $err = invalidKey($newkey);
-  if ($err){
-    haltBadRequest($err);
-  }
-
-  $dt = TimestampNow();
-
-  if ($stmt = $db->prepare("UPDATE entry set key=:newkey, message=:message, description=:description, icon=:icon, updated_at=:updated_at where key=:key;")) {
-    $stmt->bindValue(':newkey',$data["key"], PDO::PARAM_STR);
-    $stmt->bindValue(':message',$data["message"], PDO::PARAM_STR);
-    $stmt->bindValue(':description',$data["description"], PDO::PARAM_STR);
-    $stmt->bindValue(':icon',$data["icon"], PDO::PARAM_STR);
-    $stmt->bindValue(':updated_at',$dt, PDO::PARAM_STR);
-    $stmt->bindValue(':key',$key, PDO::PARAM_STR);
-    try {
-      $stmt->execute();
-    } catch(PDOException $exception){ 
-      haltBadRequest($exception->getCode() . ' ' . $exception->getMessage()); 
-    } 
-  }
-}
-
-function interfaceKeyDelete($interface,$key,$pass){
-  rightscheck($interface,$pass,SP_EDIT,$key);
-  $db = collection_db($interface);
-  $err = invalidKey($key);
-  if ($err){
-    haltBadRequest($err);
-  }
-  if ($stmt = $db->prepare("DELETE FROM entry where key='$key';")) {
-    try {
-      $stmt->execute();
-    } catch(PDOException $exception){ 
-      haltBadRequest($exception->getCode() . ' ' . $exception->getMessage()); 
-    } 
-  }
-}
-
 function interface2json($interface,$pass=""){
-  //  rightscheck($interface,$pass,SP_VIEW);
+  //  rightsCheck($interface,$pass,SP_VIEW);
   $db = collection_db($interface);
   try {
     $sel = 'SELECT key, message, description, icon, user, created_at, updated_at from entry;';
@@ -495,7 +445,7 @@ function interface2json($interface,$pass=""){
 }
 
 function interface2txt($interface,$pass=""){
-  //  rightscheck($interface,$pass,SP_VIEW);
+  //  rightsCheck($interface,$pass,SP_VIEW);
   $db = collection_db($interface);
   try {
     $sel = 'SELECT key, message, description, icon, user, created_at, updated_at from entry;';
@@ -513,100 +463,447 @@ function interface2txt($interface,$pass=""){
   }  
 }
 
-function entry_orderby($sort,$default){
-  $orderby = ' order by ' . $default;
-  if ($sort){
-    if ($sort[0]=='-') {
-      $desc = 1; 
-      $sort = substr($sort,1);
-    } else {
-      $desc = 0;
-    }
-    $orderby = ' order by entry.' . $sort;
-    if ($desc) {
-      $orderby .= ' desc'; 
-    }
-  }
-  return $orderby;
+function interfaceKeys($interface,$pass){
+  rightsCheck($interface,$pass,SP_VIEW);
+  $db = collection_db($interface);
+  try {
+    $sel = 'SELECT key from entry order by key;';
+    $results=$db->query($sel);
+    $entries = $results->fetchAll(PDO::FETCH_COLUMN);
+    return $entries;
+  } catch (PDOException $e) {
+    haltBadRequest($e->getCode() . ' ' . $e->getMessage());
+  }  
 }
 
-function collection_list($lang='',$code=''){
-  global $db0;
-
-  $sql = 'SELECT code,alt from collection_alt;';
-  $results=$db0->query($sql);
-  $rows = $results->fetchAll(PDO::FETCH_ASSOC);
-  $alt = '';
-  $alts = array();
-  foreach ($rows as $row){
-    $alts[$row['code']][] = $row['alt'];
-    if ($row['alt']==$code){
-      $alt = $row['code'];
-    }
-  }
-  
-  $sql = 'SELECT code, language, namespace, subspace, qqq, name, icon, user, created_at from collection';
-  if ($lang) {
-    $sql .= ' where language=:lang';
-  }
-  if ($code) {
-    $sql .= ' where code=:code';
-  }
-  $sql .= ';';
-
+function interfaceSearch($interface,$text,$pass){
+  rightsCheck($interface,$pass,SP_VIEW);
+  $db = collection_db($interface);
+  $text = "%" . $text . "%";
   try {
-    $stmt = $db0->prepare($sql);
-    if ($lang){
-      $stmt->bindParam(':lang', $lang, PDO::PARAM_STR);
-    }
-    if ($code){
-      $stmt->bindParam(':code', $code, PDO::PARAM_STR);
-    }
+    $sql = 'SELECT key, message from entry where message like :message order by message;';
+    $stmt = $db->prepare($sql);
+    $stmt->bindParam(':message', $text, PDO::PARAM_STR);
     $stmt->execute();
     $entries = $stmt->fetchAll(PDO::FETCH_CLASS);
-    
-    if ($code && count($entries)==0){
-      if ($alt){
-        return collection_list('',$alt);
+    return $entries;
+  } catch (PDOException $e) {
+    haltBadRequest($e->getCode() . ' ' . $e->getMessage());
+  }  
+
+}
+
+function interfaceKeySearch($interface,$key,$pass){
+  rightsCheck($interface,$pass,SP_VIEW);
+  $db = collection_db($interface);
+  try {
+    $sql = 'SELECT key, message, description, icon, user, created_at, updated_at from entry where key like :key order by key;';
+    $stmt = $db->prepare($sql);
+    $stmt->bindParam(':key', $key, PDO::PARAM_STR);
+    $stmt->execute();
+    $entries = $stmt->fetchAll(PDO::FETCH_CLASS);
+    return $entries;
+  } catch (PDOException $e) {
+    haltBadRequest($e->getCode() . ' ' . $e->getMessage());
+  }  
+}
+
+function interfaceEntryNew($interface,$data,$pass){
+  rightsCheck($interface,$pass,SP_ADD);
+  $user = userVerified($pass,true);
+
+  $db = collection_db($interface);
+  try {
+    $key = $data['key'];
+  } catch (Exception $e) {
+    haltBadRequest($e->getCode() . ' ' . $e->getMessage());
+  }
+  $err = invalidKey($key);
+  if ($err){
+    haltBadRequest($err);
+  }
+  $dt = Timestamp();
+  if ($stmt = $db->prepare("INSERT INTO entry (key,message, description, icon, user, created_at, updated_at) VALUES ('$key',:message, :description, :icon, :user, :created_at, :updated_at)")) {
+    $stmt->bindValue(':message',$data["message"], PDO::PARAM_STR);
+    $stmt->bindValue(':description',$data["description"], PDO::PARAM_STR);
+    $stmt->bindValue(':icon',$data["icon"], PDO::PARAM_STR);
+    $stmt->bindValue(':user',$user, PDO::PARAM_STR);
+    $stmt->bindValue(':created_at',$dt, PDO::PARAM_STR);
+    $stmt->bindValue(':updated_at',$dt, PDO::PARAM_STR);
+    try {
+      $stmt->execute();
+    } catch(PDOException $exception){ 
+      haltBadRequest($exception->getCode() . ' ' . $exception->getMessage()); 
+    } 
+  }
+}
+
+function interfaceEntryUpdate($interface,$key,$data,$pass){
+  rightsCheck($interface,$pass,SP_EDIT,$key);
+
+  $db = collection_db($interface);
+
+  try {
+    $newkey = $data['key'];
+  } catch (Exception $e) {
+    haltBadRequest($e->getCode() . ' ' . $e->getMessage());
+  }
+  $err = invalidKey($newkey);
+  if ($err){
+    haltBadRequest($err);
+  }
+
+  $dt = Timestamp();
+
+  if ($stmt = $db->prepare("UPDATE entry set key=:newkey, message=:message, description=:description, icon=:icon, updated_at=:updated_at where key=:key;")) {
+    $stmt->bindValue(':newkey',$data["key"], PDO::PARAM_STR);
+    $stmt->bindValue(':message',$data["message"], PDO::PARAM_STR);
+    $stmt->bindValue(':description',$data["description"], PDO::PARAM_STR);
+    $stmt->bindValue(':icon',$data["icon"], PDO::PARAM_STR);
+    $stmt->bindValue(':updated_at',$dt, PDO::PARAM_STR);
+    $stmt->bindValue(':key',$key, PDO::PARAM_STR);
+    try {
+      $stmt->execute();
+    } catch(PDOException $exception){ 
+      haltBadRequest($exception->getCode() . ' ' . $exception->getMessage()); 
+    } 
+  }
+}
+
+function interfaceEntryDelete($interface,$key,$pass){
+  rightsCheck($interface,$pass,SP_EDIT,$key);
+  $db = collection_db($interface);
+  $err = invalidKey($key);
+  if ($err){
+    haltBadRequest($err);
+  }
+  if ($stmt = $db->prepare("DELETE FROM entry where key='$key';")) {
+    try {
+      $stmt->execute();
+    } catch(PDOException $exception){ 
+      haltBadRequest($exception->getCode() . ' ' . $exception->getMessage()); 
+    } 
+  }
+}
+
+function dictionary2json($dictionary,$pass=""){
+  //  rightsCheck($dictionary,$pass,SP_VIEW);
+  $db = collection_db($dictionary);
+  try {
+    $sel = 'SELECT id, sign, terms, lower, signtext, text, source, detail, user, created_at, updated_at from entry;';
+    $results=$db->query($sel);
+    $entries = $results->fetchAll(PDO::FETCH_ASSOC);
+    $return = array();
+    $return['name'] = $dictionary;
+    $return['data'] = array();
+    if($entries){
+      foreach ($entries as $i=>$entry){
+        $entries[$i]['terms'] = explode("|",$entry['terms']);
+        $entries[$i]['lower'] = explode("|",$entry['lower']);
+        $entries[$i]['detail'] = json_decode($entry['detail']);
       }
-      haltBadRequest('invalid collection code');
+      $return['data'] = $entries;
     }
-    foreach ($entries as $i=>$entry){
-      if(array_key_exists($entry->code,$alts)){
-        $entries[$i]->alt=$alts[$entry->code];
-      } else {
-        $entries[$i]->alt=array();
+    return json_pretty($return);
+  } catch (PDOException $e) {
+    haltBadRequest($e->getCode() . ' ' . $e->getMessage());
+  }  
+}
+
+function dictionary2txt($dictionary,$pass=""){
+  //  rightsCheck($dictionary,$pass,SP_VIEW);
+  $db = collection_db($dictionary);
+  try {
+    $sel = 'SELECT id, sign, terms, lower, signtext, text, source, detail, user, created_at, updated_at from entry;';
+    $results=$db->query($sel);
+    $entries = $results->fetchAll(PDO::FETCH_ASSOC);
+    $lines = array();
+    if($entries){
+      foreach ($entries as $entry){
+        foreach ($entry as $key=>$val){
+          $entry[$key] = wrapit($val);
+        }
+        $lines[] = implode($entry,"\t");
       }
+    }
+    return implode($lines,"\n");
+  } catch (PDOException $e) {
+    haltBadRequest($e->getCode() . ' ' . $e->getMessage());
+  }  
+}
+
+function dictionarySigns($collection){
+  $collection_db = collection_db($collection);
+  try {
+    $sel = 'SELECT sign from entry where sign!="";';
+    $stmt = $collection_db->prepare($sel);
+    $stmt->execute();
+    $entries = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    return implode(" ", $entries);
+  } catch (PDOException $e) {
+    haltBadRequest($e->getCode() . ' ' . $e->getMessage());
+  }  
+}
+
+function dictionarySigntexts($collection){
+  $collection_db = collection_db($collection);
+  try {
+    $sel = 'SELECT signtext from entry where signtext!="";';
+    $stmt = $collection_db->prepare($sel);
+    $stmt->execute();
+    $entries = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    return implode("\n",$entries);
+  } catch (PDOException $e) {
+    haltBadRequest($e->getCode() . ' ' . $e->getMessage());
+  }  
+}
+
+function dictionaryISWA(){
+  $groups = ['S100','S10e','S11e','S144','S14c','S186','S1a4','S1ba','S1cd','S1f5','S205','S216','S22a','S255','S265','S288','S2a6','S2b7','S2d5','S2e3','S2f7','S2ff','S30a','S32a','S33b','S359','S36d','S376','S37f','S387'];
+  $alphabet = ["name"=>"iswa-2010","data"=>[]];
+  foreach ($groups as $i=>$group){
+    $j = $i +1;
+    $start = SignWriting\key2char($group . '00');
+    $egroup = $j==count($groups)?"S38C":$groups[$j];
+    $end = SignWriting\key2char($egroup . '00',-1);
+    $cursor = 1;
+    do {
+      $from = SignWriting\key2char($group . '00',96*($cursor-1));
+      $to = SignWriting\key2char($group . '00',96*$cursor-1);
+      if (SignWriting\swu2key($from)<"S20500" && $from!=$start){
+        $from = SignWriting\key2char($group . '00',96*($cursor-1)+16);
+      }
+      $alphabet['data'][$start][] = $from;
+      $cursor++;
+    } while ($to < $end);
+  }
+  return $alphabet;
+}
+
+function dictionaryAlphabet($collection,$lastModified=""){
+  $groups = ['S100','S10e','S11e','S144','S14c','S186','S1a4','S1ba','S1cd','S1f5','S205','S216','S22a','S255','S265','S288','S2a6','S2b7','S2d5','S2e3','S2f7','S2ff','S30a','S32a','S33b','S359','S36d','S376','S37f','S387'];
+  if (!$lastModified){
+    $lastModified = lastModified($collection);
+  }
+  $name = str_replace('-dictionary-','-alphabet-',$collection);
+  $alphabet = ["name"=>$name,"last-modified"=>$lastModified,"data"=>[]];
+  $signs = dictionarySigns($collection);
+  foreach ($groups as $i=>$group){
+    $j = $i +1;
+    $start = SignWriting\key2char($group . '00');
+    $egroup = $j==count($groups)?"S38C":$groups[$j];
+    $end = SignWriting\key2char($egroup . '00',-1);
+    $cursor = 1;
+    do {
+      $from = SignWriting\key2char($group . '00',96*($cursor-1));
+      $to = SignWriting\key2char($group . '00',96*$cursor-1);
+      $regex = '/[' . SignWriting\char2utf32($from) . '-' . SignWriting\char2utf32($to) . ']/u';
+      if (preg_match($regex, $signs)) {
+        if (SignWriting\swu2key($from)<"S20500" && $from!=$start){
+          $from = SignWriting\key2char($group . '00',96*($cursor-1)+16);
+        }
+        $alphabet['data'][$start][] = $from;
+      };
+      $cursor++;
+    } while ($to < $end);
+  }
+  return $alphabet;
+}
+
+function dictionaryResults($entries,$results,$offset,$limit,$sort){
+  $offset = $offset?:0;
+  switch ($results){
+    case "sign":
+      $entries = array_filter($entries, function($entry) {
+        return isset($entry["sign"])?$entry["sign"]:false;
+      });
+      break;
+    case "signtext":
+      $entries = array_filter($entries, function($entry) {
+        return isset($entry["signtext"])?$entry["signtext"]:false;
+      });
+      break;
+    case "term":
+    case "terms":
+      $entries = array_filter($entries, function($entry) {
+        return isset($entry["terms"])?$entry["terms"]:false;
+      });
+      break;
+  }
+  switch ($results){
+    case "sign": 
+    case "signtext": 
+      $total = count($entries);
+      if ($limit>0){
+        $entries = array_slice($entries,$offset,$limit);
+      } else {
+        $entries = array_slice($entries,$offset);
+      }
+      $data = array();
+      if($entries){
+        foreach ($entries as $i=>$entry){
+          $data[] = [$entry['id'],$entry[$results]];
+        }
+      }
+      break;
+    case "term":
+      $total = count($entries);
+      if ($limit>0){
+        $entries = array_slice($entries,$offset,$limit);
+      } else {
+        $entries = array_slice($entries,$offset);
+      }
+      $data = array();
+      if($entries){
+        foreach ($entries as $i=>$entry){
+          $terms = explode('|',$entry['terms']);
+          $data[] = [$entry['id'],$terms[0]];
+        }
+      }
+      break;
+    case "terms":
+      $idStr = "";
+      $termStr = "";
+      $lowerStr = "";
+      $ids = array();
+      $terms = array();
+      $lowers = array();
+      if($entries){
+        foreach ($entries as $i=>$entry){
+          $term = $entry['terms'];
+          if ($termStr) { $termStr .= "|"; }
+          $termStr .= $term;
+
+          if (substr($sort,-5)=="lower"){
+            $lower = $entry['lower'];
+            if ($lowerStr) { $lowerStr .= "|"; }
+            $lowerStr .= $lower;
+          }
+
+          $id = $entry['id'];
+          if ($idStr) { $idStr .= "|"; }
+          $idStr .= $id;
+          $num = substr_count($term, "|");
+          while($num--){$idStr .= '|' . $id;}
+        }
+
+        $terms = explode('|',$termStr);
+        if (substr($sort,-5)=="lower"){
+          $lowers = explode('|',$lowerStr);
+        }
+        $ids = explode('|',$idStr);
+
+        $total = count($terms);
+        switch ($sort){
+          case "terms":
+            array_multisort($terms,$ids);
+            break;
+          case "-terms":
+            array_multisort($terms,SORT_DESC,$ids);
+            break;
+          case "lower":
+            array_multisort($lowers,$terms,$ids);
+            break;
+          case "-lower":
+            array_multisort($lowers,SORT_DESC,$terms,$ids);
+            break;
+        }
+        if ($limit>0){
+          $ids = array_slice($ids,$offset,$limit);
+          $terms = array_slice($terms,$offset,$limit);
+        } else {
+          $ids = array_slice($ids,$offset);
+          $terms = array_slice($terms,$offset);
+        }
+        $data = array();
+        if($terms){
+          foreach ($terms as $i=>$term){
+            $data[] = [$ids[$i],$term];
+          }
+        }
+      }
+      break;
+    default:
+      $total = count($entries);
+      if ($limit>0){
+        $data = array_slice($entries,$offset,$limit);
+      } else {
+        $data = array_slice($entries,$offset);
+      }
+      if($data){
+        foreach ($data as $i=>$entry){
+          $data[$i]['terms'] = array_filter(explode('|',$entry['terms']));
+          $data[$i]['lower'] = array_filter(explode('|',$entry['lower']));
+          $data[$i]['detail'] = json_decode($entry['detail']);
+        }
+      }
+  }
+  $return = array();
+  $return ['total'] = $total;
+  $return ['data'] = $data;
+  return $return;
+}
+
+function dictionarySearch($collection,$offset,$limit,$filter,$sort,$results){
+  $collection_db = collection_db($collection);
+  try {
+    $sel = 'SELECT id, sign, terms, lower, signtext, text, source, detail, user, created_at, updated_at from entry';
+    $valids = ["id","user","created_at","updated_at","sign","signtext","terms","lower","text","source","detail"];
+    $params = filter($filter,$valids);
+    $where = array();
+    if (count($params)){
+      foreach ($params as $param){
+        $where[] = $param[0] . " " . $param[1];
+      }
+    }
+    if (count($where)){
+      $sel .= " where " . implode(" and ",$where);
     }
 
-    $return['total'] = count($entries);
-    $return['data'] = $entries;
+    $sel .= entry_orderby($sort,'sign') . ';';
+    $stmt = $collection_db->prepare($sel);
+    if (count($params)){
+      foreach ($params as $param){
+        $stmt->bindValue($param[1], $param[2], PDO::PARAM_STR);
+      }
+    }
+    $stmt->execute();
+    $entries = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $return = dictionaryResults($entries, $results, $offset, $limit, $sort);
+
     return $return;
   } catch (PDOException $e) {
     haltBadRequest($e->getCode() . ' ' . $e->getMessage());
   }  
-  
 }
 
-function collection_query($collection,$query,$offset,$limit,$sort){
+function dictionarySearchSign($collection,$query,$offset,$limit,$filter,$sort,$results){
   $collection_db = collection_db($collection);
-  $regex = SignWriting\query2regex($query);
+  $regex = SignWriting\queryu2regex($query);
   if (!$regex){
     haltBadRequest('invalid query string');
   }
-  // $collection_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
   foreach ($regex as $i=>$re){
     $re = str_replace('/',"",$re);
-    $re = "'/^" . $re . "$/'";
+    $re = "'/^" . $re . "$/u'";
     $regex[$i] = $re;
   }
   try {
-    $sel = 'SELECT entry.id, user, created_at, updated_at, sign, signtext, group_concat(term,"|") as terms, text, source, detail from entry LEFT JOIN term on entry.id=term.id where REGEX(sign,' . $regex[0] . ',0)';
+    $sel = 'SELECT id, sign, terms, lower, signtext, text, source, detail, user, created_at, updated_at from entry where REGEX(sign,' . $regex[0] . ',0)';
+    $valids = ["id","user","created_at","updated_at","sign","signtext","terms","lower","text","source","detail"];
+    $params = filter($filter,$valids);
+    if (count($params)){
+      foreach ($params as $param){
+        $sel .= " and " . $param[0] . " " . $param[1];
+      }
+    }
     $cnt = count($regex);
     $end = '';
     $part = '';
     for ($i=1;$i<$cnt;$i++) {
-      $part = ' and entry.id in (select id from entry where REGEX(sign,' . $regex[$i] . ',0)';
+      $part = ' and id in (select id from entry where REGEX(sign,' . $regex[$i] . ',0)';
       $part .= 'END)';
       if ($end) {
         $end = str_replace('END)',$part . ')',$end);
@@ -616,53 +913,61 @@ function collection_query($collection,$query,$offset,$limit,$sort){
     }
     $end = str_replace('END)',')',$end);
     $sel .= $end;
-    
-    $sel .= ' group by entry.id ';
 
-    $sel .= entry_orderby($sort,'sign');
-    $results=$collection_db->query($sel);
-    $entries = $results->fetchAll(PDO::FETCH_ASSOC);
-    $total = count($entries);
-    if ($limit>0){
-      $data = array_slice($entries,$offset,$limit);
-    } else {
-      $data = array_slice($entries,$offset);
-    }
-    $return = array();
-    if($data){
-      foreach ($data as $i=>$entry){
-        $data[$i]['terms'] = array_filter(explode('|',$entry['terms']));
-        $data[$i]['detail'] = json_decode($entry['detail']);
+    $sel .= entry_orderby($sort,'sign') . ';';
+    $stmt = $collection_db->prepare($sel);
+    if (count($params)){
+      foreach ($params as $param){
+        $stmt->bindValue($param[1], $param[2], PDO::PARAM_STR);
       }
     }
-    $return['total'] = $total;
-    $return['data'] = $data;
+    $stmt->execute();
+    $entries = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $return = dictionaryResults($entries, $results, $offset, $limit, $sort);
+
     return $return;
   } catch (PDOException $e) {
     haltBadRequest($e->getCode() . ' ' . $e->getMessage());
   }  
 }
 
-function collection_query_signtext($collection,$query,$offset,$limit,$sort){
+function dictionarySearchSigntext($collection,$query,$offset,$limit,$filter,$sort,$results){
   $collection_db = collection_db($collection);
-  $regex = SignWriting\query2regex($query);
+  $regex = SignWriting\queryu2regex($query);
   if (!$regex){
     haltBadRequest('invalid query string');
   }
-  
-  $orderby = entry_orderby($sort,'sign');
+ 
+  foreach ($regex as $i=>$re){
+    $regex[$i] = $re . "u";
+  }
+
+  $orderby = entry_orderby($sort,'signtext');
 
   try {
-    $sel = 'SELECT entry.id, user, created_at, updated_at, sign, signtext, group_concat(term,"|") as terms, text, source, detail from entry LEFT JOIN term on entry.id=term.id where REGEX(signtext,"' . $regex[0] . '",0) group by entry.id ' . $orderby . ';';
-    $results=$collection_db->query($sel);
-    $entries = $results->fetchAll(PDO::FETCH_ASSOC);
+    $sel = 'SELECT id, sign, terms, lower, signtext, text, source, detail, user, created_at, updated_at from entry where REGEX(signtext,"' . $regex[0] . '",0)';
+    $valids = ["id","user","created_at","updated_at","sign","signtext","terms","lower","text","source","detail"];
+    $params = filter($filter,$valids);
+    if (count($params)){
+      foreach ($params as $param){
+        $sel .= " and " . $param[0] . " " . $param[1];
+      }
+    }
+    $sel .= $orderby;
+    $stmt = $collection_db->prepare($sel);
+    if (count($params)){
+      foreach ($params as $param){
+        $stmt->bindValue($param[1], $param[2], PDO::PARAM_STR);
+      }
+    }
+    $stmt->execute();
+    $entries = $stmt->fetchAll(PDO::FETCH_ASSOC);
     $cnt = count($regex);
     if ($cnt>1 && count($entries)){
       $signtext = '';
       for ($i=0;$i<count($entries);$i++) {
         $signtext .= $entries[$i]['signtext'];
       }
-
       foreach ($regex as $pattern){
         $count = preg_match_all($pattern, $signtext, $matches);
         $signtext = implode(array_unique($matches[0]),' ');
@@ -677,228 +982,209 @@ function collection_query_signtext($collection,$query,$offset,$limit,$sort){
         foreach ($words as $i=>$word){
           $words[$i] = '(signtext LIKE "%' . $word . '%")';
         }
-        $sel = 'SELECT entry.id, user, created_at, updated_at, sign, signtext, group_concat(term,"|") as terms, text, source, detail from entry LEFT JOIN term on entry.id=term.id where ' . implode($words,' or ') . ' group by entry.id ' . $orderby . ';';
-        $results=$collection_db->query($sel);
-        $entries = $results->fetchAll(PDO::FETCH_ASSOC);
+        $sel = 'SELECT id, sign, terms, lower, signtext, text, source, detail, user, created_at, updated_at from entry where ' . implode($words,' or ');
+        if (count($params)){
+          foreach ($params as $param){
+            $sel .= " and " . $param[0] . " " . $param[1];
+          }
+        }
+        $stmt = $collection_db->prepare($sel);
+        if (count($params)){
+          foreach ($params as $param){
+            $stmt->bindValue($param[1], $param[2], PDO::PARAM_STR);
+          }
+        }
+        $stmt->execute();
+        $entries = $stmt->fetchAll(PDO::FETCH_ASSOC);
       } else {
         $entries = array(); 
       }
     }
 
-    $total = count($entries);
-    if ($limit>0){
-      $data = array_slice($entries,$offset,$limit);
-    } else {
-      $data = array_slice($entries,$offset);
-    }
-    $return = array();
-    if($data){
-      foreach ($data as $i=>$entry){
-        $data[$i]['terms'] = array_filter(explode('|',$entry['terms']));
-        $data[$i]['detail'] = json_decode($entry['detail']);
-      }
-    }
-    $return['total'] = $total;
-    $return['data'] = $data;
+    $return = dictionaryResults($entries, $results, $offset, $limit, $sort);
+
     return $return;
   } catch (PDOException $e) {
     haltBadRequest($e->getCode() . ' ' . $e->getMessage());
   }  
 }
 
-function collection_search($collection,$search,$type,$ci,$offset,$limit,$sort){
-  //  (^|\|)
-  if ($ci) {
+function dictionarySearchId($dictionary,$id,$pass){
+  rightsCheck($dictionary,$pass,SP_VIEW);
+  $db = collection_db($dictionary);
+  $list = array();
+  $parts = explode(',',$id);
+  foreach ($parts as $part) {
+    $vals = explode('-',$part);
+    if (count($vals)==1){
+      $list[] = intval($vals[0]);
+    } else if (count($vals)==2){
+      for ($i=intval($vals[0]);$i<=intval($vals[1]);$i++){
+        $list[] = $i;
+      }
+    }
+  }
+  $list = implode(",",$list);
+  try {
+    $sql = 'SELECT id, sign, terms, lower, signtext, text, source, detail, user, created_at, updated_at from entry where id in (' . $list . ') order by id;';
+    $stmt = $db->prepare($sql);
+    $stmt->execute();
+    $entries = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    if($entries){
+      foreach ($entries as $i=>$entry){
+        $entries[$i]['terms'] = explode("|",$entry['terms']);
+        $entries[$i]['lower'] = explode("|",$entry['lower']);
+        $entries[$i]['detail'] = json_decode($entry['detail']);
+      }
+    }
+    return $entries;
+  } catch (PDOException $e) {
+    haltBadRequest($e->getCode() . ' ' . $e->getMessage());
+  }  
+}
+
+function dictionarySearchTerms($collection,$search,$type,$case,$offset,$limit,$filter,$sort,$results){
+  $collection_db = collection_db($collection);
+  if (!$case) {
     $search = mb_strtolower($search,'UTF-8');
     $col = 'lower'; 
   } else {
-    $col = 'term'; 
+    $col = 'terms'; 
   }
   
   if ($type == 'start' || $type == 'exact'){
-    $search = "^" . $search; 
+    $search = "(^|\|)" . $search; 
   }
   if ($type == 'end' || $type == 'exact'){
-    $search = $search . "$" ; 
+    $search = $search . "(\||$)" ; 
   }
   $search = "/" . $search . "/";
-  $collection_db = collection_db($collection);
-  if (!$search){
-    haltBadRequest('missing search string');
-  }
-  $orderby = entry_orderby($sort,'sign');
-  $sel = 'select entry.id, user, created_at, updated_at, sign, signtext, group_concat(term,"|") as terms, text, source, detail from entry LEFT JOIN term on entry.id=term.id where entry.id in (select id from term where REGEX(' . $col . ',:search,0)) group by entry.id ' . $orderby . ';';
-  $collection_db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE,
-  PDO::FETCH_ASSOC);
-  $collection_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
   try {
-    $stmt = $collection_db->prepare($sel);
-    $stmt->bindParam(':search', $search, PDO::PARAM_STR);
-    $stmt->execute();
-    $entries = $stmt->fetchAll();
-
-    $total = count($entries);
-    if ($limit>0){
-      $data = array_slice($entries,$offset,$limit);
-    } else {
-      $data = array_slice($entries,$offset);
-    }
-    $return = array();
-    if($data){
-      foreach ($data as $i=>$entry){
-        $data[$i]['terms'] = explode('|',$entry['terms']);
-        $data[$i]['detail'] = json_decode($entry['detail']);
+    $sel = 'SELECT id, sign, terms, lower, signtext, text, source, detail, user, created_at, updated_at from entry ';
+    $sel .= 'where REGEX(' . $col . ',:search,0)';
+    $valids = ["id","user","created_at","updated_at","sign","signtext","terms","lower","text","source","detail"];
+    $params = filter($filter,$valids);
+    $where = array();
+    if (count($params)){
+      foreach ($params as $param){
+        $where[] = $param[0] . " " . $param[1];
       }
     }
-    $return['total'] = $total;
-    $return['data'] = $data;
+    if (count($where)){
+      $sel .= " and " . implode(" and ",$where);
+    }
+
+    $sel .= entry_orderby($sort,'sign') . ';';
+    $stmt = $collection_db->prepare($sel);
+    $stmt->bindValue(':search',$search, PDO::PARAM_STR);
+    if (count($params)){
+      foreach ($params as $param){
+        $stmt->bindValue($param[1], $param[2], PDO::PARAM_STR);
+      }
+    }
+    $stmt->execute();
+    $entries = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $return = dictionaryResults($entries, $results, $offset, $limit, $sort);
+
     return $return;
   } catch (PDOException $e) {
     haltBadRequest($e->getCode() . ' ' . $e->getMessage());
   }  
 }
 
-function collection_date($collection,$date,$before,$after,$offset,$limit,$sort){
-  $collection_db = collection_db($collection);
-  $col = $date . '_at';
-  $orderby = entry_orderby($sort,$col);
-  $sel = 'select entry.id, user, created_at, updated_at, sign, signtext, group_concat(term,"|") as terms, text, source, detail from entry LEFT JOIN term on entry.id=term.id ';
-  $where = array();
-  if ($before){
-    $where[] = $col . ' < :before';
-  }
-  if ($after){
-    $where[] = $col . ' > :after';
-  }
 
-  if (count($where)){
-    $where = implode(' and ',$where);
-    $sel .= 'where ' . $where . ' ';
-  }
-  $sel .= ' group by entry.id ' . $orderby . ';';
-  $collection_db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE,
-  PDO::FETCH_ASSOC);
-  $collection_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-  try {
-    $stmt = $collection_db->prepare($sel);
-    if ($before){
-      $stmt->bindParam(':before', $before, PDO::PARAM_STR);
-    }
-    if ($after){
-      $stmt->bindParam(':after', $after, PDO::PARAM_STR);
-    }
-    $stmt->execute();
-    $entries = $stmt->fetchAll();
+function dictionaryEntryNew($dictionary,$data,$pass){
+  rightsCheck($dictionary,$pass,SP_ADD);
+  $user = userVerified($pass,true);
+  if (!$user){ haltForbidden();}
+  $data['user'] = $user;
 
-    $total = count($entries);
-    if ($limit>0){
-      $data = array_slice($entries,$offset,$limit);
-    } else {
-      $data = array_slice($entries,$offset);
-    }
-    $return = array();
-    if($data){
-      foreach ($data as $i=>$entry){
-        $data[$i]['terms'] = explode('|',$entry['terms']);
-        $data[$i]['detail'] = json_decode($entry['detail']);
-      }
-    }
-    $return['total'] = $total;
-    $return['data'] = $data;
-    return $return;
-  } catch (PDOException $e) {
-    haltBadRequest($e->getCode() . ' ' . $e->getMessage());
-  }  
-}
+  $db = collection_db($dictionary);
+  $dt = Timestamp();
+  $data['created_at'] = $dt;
+  $data['updated_at'] = $dt;
 
-function collection_entry($collection,$id,$sort){
-  $collection_db = collection_db($collection);
-  $orderby = entry_orderby($sort,'sign');
-  preg_match_all('/[0-9]+/', $id, $matches);
-  $ids = implode(array_unique($matches[0]),',');
-  if (!$ids) {
-    haltBadRequest('invalid entry id');
-  }
-  $sel = 'select entry.id, user, created_at, updated_at, sign, signtext, group_concat(term,"|") as terms, text, source, detail from entry LEFT JOIN term on entry.id=term.id where entry.id in (' . $ids . ')';
-  $sel .= ' group by entry.id ' . $orderby . ';';
-  $results=$collection_db->query($sel);
-  $data = $results->fetchAll(PDO::FETCH_ASSOC);
-  $total = count($data);
-  $return = array();
-  if($data){
-    foreach ($data as $i=>$entry){
-      $data[$i]['terms'] = array_filter(explode('|',$entry['terms']));
-      $data[$i]['detail'] = json_decode($entry['detail']);
-    }
-  }
-  $return['total'] = $total;
-  $return['data'] = $data;
-  return $return;
-}
-
-function collection_sign($collection,$term,$text,$query,$source,$offset,$limit,$sort){
-  $collection_db = collection_db($collection);
-  $sql = 'SELECT id, sign from entry ';
-  $where = array();
-  
-  $where[] = 'sign <> ""';
-
-  if ($term){
-    $where[] = 'id in (select id from term where REGEX(lower,"/' . mb_strtolower($term) . '/",0))';
-  }
-  
-  if ($text){
-    $where[] = 'id in (select id from entry where REGEX(text,"/' . mb_strtolower($text) . '/",1))';
-  }
-
-  if ($source){
-    $where[] = 'id in (select id from entry where REGEX(source,"/' . mb_strtolower($source) . '/",1))';
-  }
-
-  
-  
-  $regex = SignWriting\query2regex($query);
-  if ($regex){
-    foreach ($regex as $i=>$re){
-      $re = str_replace('/',"",$re);
-      $re = "'/^" . $re . "$/'";
-      $regex[$i] = $re;
-    }
-    $sel = 'id in (select id from entry where REGEX(sign,' . $regex[0] . ',0)';
-    $cnt = count($regex);
-    $end = '';
-    $part = '';
-    for ($i=1;$i<$cnt;$i++) {
-      $part = ' and id in (select id from entry where REGEX(sign,' . $regex[$i] . ',0)';
-      $part .= 'END)';
-      if ($end) {
-        $end = str_replace('END)',$part . ')',$end);
-      } else {
-        $end = $part;
-      }
-    }
-    $end = str_replace('END)',')',$end);
-    $sel .= $end . ')';
-    $where[] = $sel;
-  }
-
-  if (count($where)){
-    $sql .= 'where ' . implode($where, ' and '); 
-  }
-
-  $sql .= entry_orderby($sort,'sign');
-  $results=$collection_db->query($sql);
-  $entries = $results->fetchAll(PDO::FETCH_ASSOC);
-  $total = count($entries);
-  if ($limit>0){
-    $data = array_slice($entries,$offset,$limit);
+  if(!isset($data['terms'])){
+    $data['terms'] = '';
   } else {
-    $data = array_slice($entries,$offset);
+    $data['terms'] = implode("|",$data['terms']);
   }
-  $return = array();
-  $return['total'] = $total;
-  $return['data'] = $data;
-  return $return;
+  $data['lower'] = mb_strtolower($data['terms'],"UTF-8");
+
+  if(!isset($data['detail'])){
+    $data['detail'] = '{}';
+  } else {
+    $json = json_encode($data['detail'],JSON_NUMERIC_CHECK);
+    $data['detail'] = $json=="[]"?"{}":$json;
+  }
+ 
+  if ($stmt = $db->prepare("INSERT INTO entry (sign, terms, lower, signtext, text, source, detail, user, created_at, updated_at) VALUES (:sign, :terms, :lower, :signtext, :text, :source, :detail, :user, :created_at, :updated_at)")) {
+    $fields = ["sign","terms","lower","signtext","text","source","detail","user","created_at","updated_at"];
+    foreach ($fields as $field){
+      if (!isset($data[$field])){
+        $data[$field] = '';
+      }
+      $stmt->bindValue(':' . $field,$data[$field], PDO::PARAM_STR);
+    }
+    try {
+      $stmt->execute();
+      return $db->lastInsertId(); 
+    } catch(PDOException $exception){
+      haltBadRequest($exception->getCode() . ' ' . $exception->getMessage()); 
+    } 
+  }
+}
+
+function dictionaryEntryUpdate($dictionary,$id,$data,$pass){
+  rightsCheck($dictionary,$pass,SP_EDIT,$id);
+
+  $db = collection_db($dictionary);
+
+  $data['id'] = $id;
+  $dt = Timestamp();
+  $data['updated_at'] = $dt;
+
+  if(!isset($data['terms'])){
+    $data['terms'] = '';
+  } else {
+    $data['terms'] = implode("|",$data['terms']);
+  }
+  $data['lower'] = mb_strtolower($data['terms'],"UTF-8");
+
+  if(!isset($data['detail'])){
+    $data['detail'] = '{}';
+  } else {
+    $json = json_encode($data['detail'],JSON_NUMERIC_CHECK);
+    $data['detail'] = $json=="[]"?"{}":$json;
+  }
+  if ($stmt = $db->prepare("UPDATE entry set sign=:sign, terms=:terms, lower=:lower, signtext=:signtext, text=:text, source=:source, detail=:detail, updated_at=:updated_at where id=:id;")) {
+    $fields = ["id", "sign","terms","lower","signtext","text","source","detail","updated_at"];
+    foreach ($fields as $field){
+      if (!isset($data[$field])){
+        $data[$field] = '';
+      }
+      $stmt->bindValue(':' . $field,$data[$field], PDO::PARAM_STR);
+    }
+    try {
+      $stmt->execute();
+    } catch(PDOException $exception){ 
+      haltBadRequest($exception->getCode() . ' ' . $exception->getMessage()); 
+    } 
+  }
+}
+
+function dictionaryEntryDelete($dictionary,$id,$pass){
+  rightsCheck($dictionary,$pass,SP_EDIT,$id);
+  $db = collection_db($dictionary);
+  $id = intval($id);
+  if ($stmt = $db->prepare("DELETE FROM entry where id='$id';")) {
+    try {
+      $stmt->execute();
+    } catch(PDOException $exception){ 
+      haltBadRequest($exception->getCode() . ' ' . $exception->getMessage()); 
+    } 
+  }
 }
 
 function collection_term($collection,$term,$text,$query,$source,$offset,$limit,$sort){
@@ -971,115 +1257,6 @@ function collection_term($collection,$term,$text,$query,$source,$offset,$limit,$
   return $return;
 }
 
-function getCountries(){
-  global $db;
-
-  $countries = array();
-  $sql = 'SELECT code, qqq, name, svg, x1, y1, x2, y2 from country;';
-  $results=$db->query($sql);
-  $countries = $results->fetchAll(PDO::FETCH_CLASS);
-  if($countries){
-    return $countries;
-  } else {
-    return array();
-  }
-}
-
-function getCountryLanguageOther($cc){
-  global $db;
-  $cc = preg_replace("/[^A-Za-z0-9\-,]/", '', $cc);
-  $collections = array();
-  $sql = 'select language.code, language.qqq, language.name, collection.code collection from language LEFT JOIN collection on language.code=collection.language where signed=1 and collection.code is null and language.code in (select language from language_country where country="' . $cc . '") order by language.code;';
-  $results=$db->query($sql);
-  $return = $results->fetchAll(PDO::FETCH_NAMED);
-  return $return;
-}
-
-function getCountryLanguagePuddles($cc){
-  global $db;
-  $cc = preg_replace("/[^A-Za-z0-9\-,]/", '', $cc);
-  $collections = array();
-  $sql = 'select language.code, language.qqq, language.name, collection.code, collection.namespace, collection.qqq, collection.name, collection.icon from language INNER JOIN collection on language.code=collection.language where language.code in (select language from language_country where country="' . $cc . '") order by language.code, collection.position, collection.name;';
-  $results=$db->query($sql);
-  $collections = $results->fetchAll(PDO::FETCH_NAMED);
-  $languages = array();
-  if($collections){
-    foreach ($collections as $i=>$row){
-      $language=array();
-      $language['code'] = $row['code'][0];
-      $language['qqq'] = $row['qqq'][0];
-      $language['name'] = $row['name'][0];
-      $language['collections'] = array();
-      $languages[$row['code'][0]] = $language;
-    }
-    foreach ($collections as $i=>$row){
-      $collection=array();
-      $collection['code'] = $row['code'][1];
-      $collection['qqq'] = $row['qqq'][1];
-      $collection['name'] = $row['name'][1];
-      $collection['icon'] = $row['icon'];
-      $collection['namespace'] = $row['namespace'];
-      $languages[$row['code'][0]]['collections'][] = $collection;
-    }
-    $return = array();
-    foreach ($languages as $language){
-      $return[] = $language; 
-    }
-    return $return;
-  } else {
-    return array();
-  }
-}
-
-function getCountriesLanguagesPuddles(){
-  global $db;
-  $collections = array();
-  $sql = 'select country,group_concat(distinct language_country.language) languages,group_concat(collection.code) collections from language_country inner join language on language_country.language = language.code left join collection on language_country.language = collection.language where signed=1 group by country;';
-  //  $sql = 'select country,language_country.language,group_concat(collection.code) collections from language_country inner join language on language_country.language = language.code left join collection on language_country.language = collection.language where signed=1 group by country,language_country.language;';
-  $results=$db->query($sql);
-  $return = $results->fetchAll(PDO::FETCH_NAMED);
-  
-  return $return;
-}
-
-function getTranslations($lang){
-  global $db;
-  $trans = array();
-  $sql = 'SELECT qqq, name from translate where lang="' . $lang . '";';
-  $results=$db->query($sql);
-  $trans = $results->fetchAll(PDO::FETCH_CLASS);
-  if($trans){
-    return $trans;
-  } else {
-    return array();
-  }
-}
-
-function getFlags($cc=''){
-  global $db;
-  $cc = preg_replace("/[^A-Za-z0-9\-,]/", '', $cc);
-  if ($cc){
-    $countries = explode(",",$cc);
-    $sql = 'SELECT code,qqq,name,flag from country where code in ("' . implode('","',$countries) . '") order by code;';
-  } else {
-    $sql = 'SELECT code,qqq,name,flag from country where code in (select country from language_country where language in (select code from language where signed=1)) order by code;';
-  }
-
-  $results=$db->query($sql);
-  $countries = $results->fetchAll(PDO::FETCH_ASSOC);
-  $lines = array();
-  foreach ($countries as $country){
-    $line = $country['code'] . "\t" . $country['flag'];
-    $lines[] = $line;
-  }
-  
-  if(count($lines)){
-    return implode($lines,"\n");
-  } else {
-    return '';
-  }
-}
-
 function getSymbols($keys) {
   global $db;
   if (!$db) { haltNoDatabase();}
@@ -1128,84 +1305,6 @@ function json_check() {
   }
 }
 
-function json_pretty($object) {
-    $json = json_encode($object,JSON_NUMERIC_CHECK);
-    $tab = "  ";
-    $new_json = "";
-    $indent_level = 0;
-    $in_string = false;
-
-    $json_obj = json_decode($json);
-
-    if($json_obj === false)
-        return false;
-
-    if (defined("JSON_UNESCAPED_SLASHES")){
-      $json = json_encode($json_obj,JSON_UNESCAPED_SLASHES);
-    } else {
-      $json = str_replace('\\/', '/',json_encode($json_obj));
-    }
-    $len = strlen($json);
-
-    for($c = 0; $c < $len; $c++)
-    {
-        $char = $json[$c];
-        switch($char)
-        {
-            case '{':
-            case '[':
-                if(!$in_string)
-                {
-                    $new_json .= $char . "\n" . str_repeat($tab, $indent_level+1);
-                    $indent_level++;
-                }
-                else
-                {
-                    $new_json .= $char;
-                }
-                break;
-            case '}':
-            case ']':
-                if(!$in_string)
-                {
-                    $indent_level--;
-                    $new_json .= "\n" . str_repeat($tab, $indent_level) . $char;
-                }
-                else
-                {
-                    $new_json .= $char;
-                }
-                break;
-            case ',':
-                if(!$in_string)
-                {
-                    $new_json .= ",\n" . str_repeat($tab, $indent_level);
-                }
-                else
-                {
-                    $new_json .= $char;
-                }
-                break;
-            case ':':
-                if(!$in_string)
-                {
-                    $new_json .= ": ";
-                }
-                else
-                {
-                    $new_json .= $char;
-                }
-                break;
-            case '"':
-                if($c > 0 && $json[$c-1] != '\\')
-                {
-                    $in_string = !$in_string;
-                }
-            default:
-                $new_json .= $char;
-                break;
-        }
-    }
-
-    return $new_json;
+function json_pretty($object){
+  return json_encode($object, JSON_PRETTY_PRINT, JSON_NUMERIC_CHECK);
 }

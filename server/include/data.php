@@ -1306,5 +1306,5 @@ function json_check() {
 }
 
 function json_pretty($object){
-  return json_encode($object, JSON_PRETTY_PRINT, JSON_NUMERIC_CHECK);
+  return json_encode($object, JSON_PRETTY_PRINT | JSON_NUMERIC_CHECK);
 }

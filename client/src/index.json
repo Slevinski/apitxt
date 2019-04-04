@@ -1957,7 +1957,7 @@
     "name": "retrieve dictionary results of searching"
   }, 
   {
-    "route": "/dictionary/{name}/search/id/{id}", 
+    "route": "/dictionary/{name}/search/id/{id}{?offset,limit,filter,sort,results}", 
     "name": "Search dictionary with ids", 
     "parameters": [
       {
@@ -1971,6 +1971,36 @@
         "type": "string", 
         "name": "id", 
         "example": "1-4,5"
+      }, 
+      {
+        "description": "Start of search results", 
+        "type": "number", 
+        "name": "offset", 
+        "example": "0"
+      }, 
+      {
+        "description": "Number of search results", 
+        "type": "number", 
+        "name": "limit", 
+        "example": "10"
+      }, 
+      {
+        "description": "restrict search results", 
+        "type": "string", 
+        "name": "filter", 
+        "example": "user=Val"
+      }, 
+      {
+        "description": "Field for sorting results", 
+        "type": "string", 
+        "name": "sort", 
+        "example": "created_at"
+      }, 
+      {
+        "description": "Type of results: entries, sign, term, terms", 
+        "type": "string", 
+        "name": "results", 
+        "example": "sign"
       }
     ], 
     "description": "Specific entries for dictionary"
@@ -1985,16 +2015,13 @@
       "if ($err){", 
       "  haltBadRequest($err);", 
       "}", 
-      "$entries = dictionarySearchId($name,$id,$pass);", 
-      "if (!$entries){", 
-      "  haltNoContent();", 
-      "}", 
-      "$lastModified = max(array_map(function($o) {return $o['updated_at'];},$entries));", 
+      "$lastModified = lastModified($name);", 
       "if ($lastModified <= $check){", 
       "  haltNotModified();", 
       "}", 
+      "$output = json_pretty(dictionarySearchId($name,$id,$offset,$limit,$filter,$sort,$results));", 
       "header('Last-Modified: ' . $lastModified);", 
-      "echo json_pretty($entries);"
+      "echo $output;"
     ], 
     "method": "GET", 
     "dialog": [

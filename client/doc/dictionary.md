@@ -277,13 +277,18 @@ Searching dictionary signs
               ]
             }
 
-### Search dictionary with ids [/dictionary/{name}/search/id/{id}]
+### Search dictionary with ids [/dictionary/{name}/search/id/{id}{?offset,limit,filter,sort,results}]
 Specific entries for dictionary
 
 + Parameters
 
      + name: `ase-US-dictionary-public` (string) - The name of an dictionary
      + id: 1-4,5 (string) - A list of one or more id numbers
+     + offset: 0 (number) - Start of search results
+     + limit: 10 (number) - Number of search results
+     + filter: user=Val (string) - restrict search results
+     + sort: created_at (string) - Field for sorting results
+     + results: sign (string) - Type of results: entries, sign, term, terms
 
 #### retrieve dictionary entry [GET]
 

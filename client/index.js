@@ -196,7 +196,7 @@ statefn.restore();
 
 var InterfaceFront = {
   "init": function(){
-    loadJSON ("config/interface-sp3.json",{},function(xhr){
+    loadJSON ("config/interface-sp3.json?v=20190404",{},function(xhr){
       InterfaceFront.ui = JSON.parse(xhr.responseText);
       m.redraw();
     });
@@ -994,12 +994,14 @@ var AlphabetPages = {
 
 var DictionaryBack = {
   "name": "",
+  "page": "",
   "search": {
     "section": "",
     "display": "",
     "sort": "",
     "results":{},
     "select": function(id){
+      id =parseInt(id);
       var i = DictionaryBack.search.selection.indexOf(id);
       if (i==-1){
         DictionaryBack.search.selection.push(id);
@@ -1009,6 +1011,7 @@ var DictionaryBack = {
       m.redraw();
     },
     "selected": function(id){
+      id = parseInt(id);
       return DictionaryBack.search.selection.indexOf(id)>-1;
     },
     "selection": [],
@@ -1031,7 +1034,7 @@ var DictionaryBack = {
       }
       DictionaryBack.search.display = display;
       DictionaryBack.search.results={};
-      DictionaryBack.page = 1;
+      DictionaryBack.search.page = 1;
       DictionaryBack.search.fn(collection);
     },
     "fn": function(collection){
@@ -1039,12 +1042,26 @@ var DictionaryBack = {
       var connection = s("connection");
       var server = connection.server;
       var pass = connection.pass;
-      var method = "GET";  
+      var method = "GET";
       var route = server + "/dictionary/" + collection + "/search";
-      route += "?results=" + DictionaryBack.search.display;
-      route += "&sort=" + DictionaryBack.search.sort;
-      route += "&offset=" + (DictionaryBack.search.page-1) * DictionaryBack.search.limit;
-      route += "&limit=" + DictionaryBack.search.limit;
+      switch (DictionaryBack.page){
+        case "searchAll":
+          route += "?results=" + DictionaryBack.search.display;
+          route += "&sort=" + DictionaryBack.search.sort;
+          route += "&offset=" + (DictionaryBack.search.page-1) * DictionaryBack.search.limit;
+          route += "&limit=" + DictionaryBack.search.limit;
+          break;
+        case "selection":
+          var ids = DictionaryBack.search.selection.join(",");
+          route += "/id/" + (ids?ids:0);
+          route += "?results=" + DictionaryBack.search.display;
+          route += "&sort=" + DictionaryBack.search.sort;
+          route += "&offset=" + (DictionaryBack.search.page-1) * DictionaryBack.search.limit;
+          route += "&limit=" + DictionaryBack.search.limit;
+          break;
+        default:
+          return;
+      }
       m.request({
         headers: {Pass: pass},
         background:true,
@@ -1085,7 +1102,7 @@ var DictionaryBack = {
       .then(function(response) {
         if (response.status && response.status == 200){
           try {
-            DictionaryBack.entry.data = JSON.parse(response.body)[0];
+            DictionaryBack.entry.data = JSON.parse(response.body).data[0];
             m.redraw();
           } catch(e){
             console.log(e);
@@ -1183,11 +1200,12 @@ var DictionaryPages = {
   "side" :{
     view: function(vnode){
       return m("nav.dictionary",[
-        m(CommonPages["button"],{class: "tall outline", key:'collection.search.all', onclick: function(e){e.preventDefault();routesfn.set('/dictionary/' + vnode.attrs.name + '/search'); }}),
-        m(CommonPages["button"],{class: "tall outline", key:'collection.search.id', onclick: function(e){e.preventDefault();routesfn.set('/dictionary/' + vnode.attrs.name + '/search/id'); }}),
-        m(CommonPages["button"],{class: "tall outline", key:'collection.search.terms', onclick: function(e){e.preventDefault();routesfn.set('/dictionary/' + vnode.attrs.name + '/search/terms'); }}),
-        m(CommonPages["button"],{class: "tall outline", key:'collection.search.sign', onclick: function(e){e.preventDefault();routesfn.set('/dictionary/' + vnode.attrs.name + '/search/sign'); }}),
-        m(CommonPages["button"],{class: "tall outline", key:'collection.search.signtext', onclick: function(e){e.preventDefault();routesfn.set('/dictionary/' + vnode.attrs.name + '/search/signtext'); }})
+        m(CommonPages["button"],{class: "tall " + (DictionaryBack.page=="searchAll"?"primary":"outline"), key:'collection.search.all', onclick: function(e){e.preventDefault();routesfn.set('/dictionary/' + vnode.attrs.name + '/search'); }}),
+        DictionaryBack.search.selection.length?m(CommonPages["button"],{class: "tall " + (DictionaryBack.page=="selection"?"primary":"outline"), key:'collection.search.selection', onclick: function(e){e.preventDefault();routesfn.set('/dictionary/' + vnode.attrs.name + '/selection'); }}):""
+//        m(CommonPages["button"],{class: "tall outline", key:'collection.search.id', onclick: function(e){e.preventDefault();routesfn.set('/dictionary/' + vnode.attrs.name + '/search/id'); }}),
+//        m(CommonPages["button"],{class: "tall outline", key:'collection.search.terms', onclick: function(e){e.preventDefault();routesfn.set('/dictionary/' + vnode.attrs.name + '/search/terms'); }}),
+//        m(CommonPages["button"],{class: "tall outline", key:'collection.search.sign', onclick: function(e){e.preventDefault();routesfn.set('/dictionary/' + vnode.attrs.name + '/search/sign'); }}),
+//        m(CommonPages["button"],{class: "tall outline", key:'collection.search.signtext', onclick: function(e){e.preventDefault();routesfn.set('/dictionary/' + vnode.attrs.name + '/search/signtext'); }})
       ])
     }
   },
@@ -1305,6 +1323,7 @@ var DictionaryPages = {
     oninit: function(vnode){
       window.scrollTo(0,0);
       CollectionBack.getStats(vnode.attrs.name);
+      DictionaryBack.page="main";
     },
     view: function(vnode) {
       return [
@@ -1383,7 +1402,32 @@ var DictionaryPages = {
   },
   "searchAll": {
     oninit: function(vnode){
-      DictionaryBack.search.section = "searchAll";
+      DictionaryBack.page = "searchAll";
+      DictionaryBack.search.sort = "-sign";
+      DictionaryBack.search.setDisplay(vnode.attrs.name,"sign");
+    },
+    view: function(vnode){
+      return [
+        m("div.dictionary",[
+          m(CommonPages['header']),
+          DictionaryBack.entry.data.id?m(DictionaryPages[DictionaryBack.entry.display],vnode.attrs)
+          :[
+            m(DictionaryPages['side'],vnode.attrs),
+            m("section.boxed", [
+              m("h2",InterfaceFront.collection(vnode.attrs.name)),
+              m(DictionaryPages['display'],vnode.attrs),
+              m(DictionaryPages['results'],vnode.attrs)
+            ])
+          ]
+        ]),
+        m(AlphabetPages['palette'])
+      ];
+    }
+  },
+  "selection": {
+    oninit: function(vnode){
+      DictionaryBack.page = "selection";
+      DictionaryBack.search.sort = "-sign";
       DictionaryBack.search.setDisplay(vnode.attrs.name,"sign");
     },
     view: function(vnode){
@@ -3611,6 +3655,7 @@ m.route(document.body, routes.default, {
   "/dictionary/:name/search/terms": DictionaryPages['searchTerms'],
   "/dictionary/:name/search/sign": DictionaryPages['searchSign'],
   "/dictionary/:name/search/signtext": DictionaryPages['searchSigntext'],
+  "/dictionary/:name/selection": DictionaryPages['selection'],
   "/user/login": UserPages['login'],
   "/user/profile": UserPages['profile'],
   "/user/register": UserPages['register'],

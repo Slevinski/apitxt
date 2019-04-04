@@ -884,6 +884,11 @@ $app->get('/dictionary/:name/search', function ($name) use ($app) {
 
 $app->options('/dictionary/:name/search/id/:id', function (){});
 $app->get('/dictionary/:name/search/id/:id', function ($name,$id) use ($app) {
+  $offset = $app->request()->get('offset');
+  $limit = $app->request()->get('limit');
+  $filter = $app->request()->get('filter');
+  $sort = $app->request()->get('sort');
+  $results = $app->request()->get('results');
   $timein = microtime(true);
   $app->contentType('text/plain');
   $headers = getHeaders();
@@ -894,16 +899,13 @@ $app->get('/dictionary/:name/search/id/:id', function ($name,$id) use ($app) {
   if ($err){
     haltBadRequest($err);
   }
-  $entries = dictionarySearchId($name,$id,$pass);
-  if (!$entries){
-    haltNoContent();
-  }
-  $lastModified = max(array_map(function($o) {return $o['updated_at'];},$entries));
+  $lastModified = lastModified($name);
   if ($lastModified <= $check){
     haltNotModified();
   }
+  $output = json_pretty(dictionarySearchId($name,$id,$offset,$limit,$filter,$sort,$results));
   header('Last-Modified: ' . $lastModified);
-  echo json_pretty($entries);
+  echo $output;
 });
 
 $app->options('/dictionary/:name/search/sign/:query', function (){});

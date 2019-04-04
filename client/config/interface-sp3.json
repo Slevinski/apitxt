@@ -936,6 +936,14 @@
             "user": "slevinski",
             "created_at": "2019-04-04T14:30:36Z",
             "updated_at": "2019-04-04T14:30:36Z"
+        },
+        "collection.search.selection": {
+            "message": "Selection",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-04T18:13:20Z",
+            "updated_at": "2019-04-04T18:13:20Z"
         }
     }
 }

@@ -603,16 +603,13 @@ var data = {
                 "if ($err){", 
                 "  haltBadRequest($err);", 
                 "}", 
-                "$entries = dictionarySearchId($name,$id,$pass);", 
-                "if (!$entries){", 
-                "  haltNoContent();", 
-                "}", 
-                "$lastModified = max(array_map(function($o) {return $o['updated_at'];},$entries));", 
+                "$lastModified = lastModified($name);", 
                 "if ($lastModified <= $check){", 
                 "  haltNotModified();", 
                 "}", 
+                "$output = json_pretty(dictionarySearchId($name,$id,$offset,$limit,$filter,$sort,$results));", 
                 "header('Last-Modified: ' . $lastModified);", 
-                "echo json_pretty($entries);"
+                "echo $output;"
               ], 
               "method": "GET", 
               "dialog": [
@@ -658,7 +655,7 @@ var data = {
               "name": "retrieve dictionary entry"
             }
           ], 
-          "route": "/dictionary/{name}/search/id/{id}", 
+          "route": "/dictionary/{name}/search/id/{id}{?offset,limit,filter,sort,results}", 
           "name": "Search dictionary with ids", 
           "parameters": [
             {
@@ -672,6 +669,36 @@ var data = {
               "type": "string", 
               "description": "A list of one or more id numbers", 
               "name": "id"
+            }, 
+            {
+              "example": "0", 
+              "type": "number", 
+              "description": "Start of search results", 
+              "name": "offset"
+            }, 
+            {
+              "example": "10", 
+              "type": "number", 
+              "description": "Number of search results", 
+              "name": "limit"
+            }, 
+            {
+              "example": "user=Val", 
+              "type": "string", 
+              "description": "restrict search results", 
+              "name": "filter"
+            }, 
+            {
+              "example": "created_at", 
+              "type": "string", 
+              "description": "Field for sorting results", 
+              "name": "sort"
+            }, 
+            {
+              "example": "sign", 
+              "type": "string", 
+              "description": "Type of results: entries, sign, term, terms", 
+              "name": "results"
             }
           ], 
           "description": "Specific entries for dictionary"

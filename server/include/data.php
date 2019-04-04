@@ -1009,9 +1009,8 @@ function dictionarySearchSigntext($collection,$query,$offset,$limit,$filter,$sor
   }  
 }
 
-function dictionarySearchId($dictionary,$id,$pass){
-  rightsCheck($dictionary,$pass,SP_VIEW);
-  $db = collection_db($dictionary);
+function dictionarySearchId($dictionary,$id,$offset,$limit,$filter,$sort,$results){
+  $collection_db = collection_db($dictionary);
   $list = array();
   $parts = explode(',',$id);
   foreach ($parts as $part) {
@@ -1026,18 +1025,33 @@ function dictionarySearchId($dictionary,$id,$pass){
   }
   $list = implode(",",$list);
   try {
-    $sql = 'SELECT id, sign, terms, lower, signtext, text, source, detail, user, created_at, updated_at from entry where id in (' . $list . ') order by id;';
-    $stmt = $db->prepare($sql);
-    $stmt->execute();
-    $entries = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    if($entries){
-      foreach ($entries as $i=>$entry){
-        $entries[$i]['terms'] = explode("|",$entry['terms']);
-        $entries[$i]['lower'] = explode("|",$entry['lower']);
-        $entries[$i]['detail'] = json_decode($entry['detail']);
+    $sel = 'SELECT id, sign, terms, lower, signtext, text, source, detail, user, created_at, updated_at from entry where id in (' . $list . ')';
+    $valids = ["id","user","created_at","updated_at","sign","signtext","terms","lower","text","source","detail"];
+    $params = filter($filter,$valids);
+    $where = array();
+    if (count($params)){
+      foreach ($params as $param){
+        $where[] = $param[0] . " " . $param[1];
       }
     }
-    return $entries;
+    if (count($where)){
+      $sel .= " and " . implode(" and ",$where);
+    }
+
+    $sel .= entry_orderby($sort,'id') . ';';
+    $stmt = $collection_db->prepare($sel);
+    if (count($params)){
+      foreach ($params as $param){
+        $stmt->bindValue($param[1], $param[2], PDO::PARAM_STR);
+      }
+    }
+    $stmt->execute();
+    $entries = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $return = dictionaryResults($entries, $results, $offset, $limit, $sort);
+
+    return $return;
+
   } catch (PDOException $e) {
     haltBadRequest($e->getCode() . ' ' . $e->getMessage());
   }  

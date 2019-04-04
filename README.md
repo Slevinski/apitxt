@@ -34,9 +34,6 @@ MIT
 
 ## To Do
 
-* Utilities
-** Searching for SignWriting in Unicode (SWU) with SQLite
-
 * General
 ** update flags
 ** standardize error responses in JSON
@@ -44,7 +41,6 @@ MIT
 
 * Interface
 ** request blank
-** pull updates
 ** server side only manager can update interface keys
 
 * Initial UI
@@ -53,7 +49,17 @@ MIT
 * User
 ** register new user
 
+* server/data
+** needs to be writable
+
+* security db
+** update default files
+
+* Country page
+** onupdate needs to fire oninit without infinite updates
+
 ## Version History
+* v3.0.0-alpha.7 - Apr 4th, 2019: dictionary section preview
 * v3.0.0-alpha.6 - Jan 5th, 2019: interface system
 * v3.0.0-alpha.5 - Oct 18th, 2018: user login system framework
 * v3.0.0-alpha.4 - Sept 20th, 2018: documents for system and tools

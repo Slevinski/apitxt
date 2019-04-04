@@ -19,13 +19,11 @@ group	tools	Resources related to tools
 	route	/tools/define	Character definition tree
 		line	The definition tree for character mapping
 		method	GET	Get main define
-			code	$timein = microtime(true);
-			code	$app->contentType('text/plain;charset=utf-8');
 			code	$define = SignWriting\define();
 			code	$searchTime = searchtime($timein);
 			code	header("Search-Time: " . $searchTime);
 			code	echo json_pretty($define);
-			response	200	text/plain
+			response	200	text/plain;charset=utf-8
 				body	{
 				body	  "utf-8": {},
 				body	  "utf-16": {},
@@ -46,13 +44,11 @@ group	tools	Resources related to tools
 			code	if ($section == "sample"){
 			code	  return $sample_define();
 			code	}
-			code	$timein = microtime(true);
-			code	$app->contentType('text/plain;charset=utf-8');
 			code	$define = SignWriting\define($section);
 			code	$searchTime = searchtime($timein);
 			code	header("Search-Time: " . $searchTime);
 			code	echo json_pretty($define);
-			response	200	text/plain
+			response	200	text/plain;charset=utf-8
 				body	{
 				body	  "sign": [],
 				body	  "spatial": [],
@@ -67,13 +63,11 @@ group	tools	Resources related to tools
 		parameter	section	swu	string	The name of section
 		parameter	part	symbol	string	The part of the definition
 		method	GET	Get part define
-			code	$timein = microtime(true);
-			code	$app->contentType('text/plain;charset=utf-8');
 			code	$define = SignWriting\define($section,$part);
 			code	$searchTime = searchtime($timein);
 			code	header("Search-Time: " . $searchTime);
 			code	echo json_pretty($define);
-			response	200	text/plain
+			response	200	text/plain;charset=utf-8
 				body	[
 				body	  "individual symbol",
 				body	  "S10000",
@@ -84,64 +78,55 @@ group	tools	Resources related to tools
 		parameter	text	S10000	string	The text to parse
 		parameter	utf	32	string	The UTF number of 8, 16, 32 or 'x'
 		method	GET	Get parse results
-			code	$timein = microtime(true);
 			code	if (!in_array($utf,[8,16,32,'x'])){
 			code	  $utf = 16;
 			code	}
-			code	$app->contentType('text/plain;charset=utf-8');
 			code	$parse = SignWriting\parse($text);
 			code	$searchTime = searchtime($timein);
 			code	header("Search-Time: " . $searchTime);
 			code	$json = json_pretty($parse);
 			code	echo SignWriting\cast($json,$utf);
-			response	200	text/plain
+			response	200	text/plain;charset=utf-8
 				body	parse results of text
 	route	/tools/encode{?text,slash}	Encode text
 		line	A function to encode SignWriting in Unicode (SWU) as UTF-16
 		parameter	text	\x{1D800}	string	The text to encode
 		parameter	slash	1	number	The number of slashes for escaping
 		method	GET	Get encoded query string
-			code	$timein = microtime(true);
-			code	$app->contentType('text/plain;charset=utf-8');
 			code	$encode = SignWriting\encode($text,$slash);
 			code	$searchTime = searchtime($timein);
 			code	header("Search-Time: " . $searchTime);
 			code	echo $encode;
-			response	200	text/plain
+			response	200	text/plain;charset=utf-8
 				body	\uD836\uDC00
 	route	/tools/decode{?text}	Decode text
 		line	A function to decode SignWriting in Unicode (SWU) from UTF-16
 		parameter	text	\\uD836\\uDC00	string	The text to decode
 		method	GET	Get decoded query string
-			code	$timein = microtime(true);
-			code	$app->contentType('text/plain;charset=utf-8');
 			code	$decode = SignWriting\decode($text);
 			code	$searchTime = searchtime($timein);
 			code	header("Search-Time: " . $searchTime);
 			code	echo $decode;
-			response	200	text/plain
+			response	200	text/plain;charset=utf-8
 				body	\x{1D800}
 	route	/tools/utf8{?text}	UTF-8 encode text
 		parameter	text	\x{1D800}	string	The text to encode
 		method	GET	Get utf-8 encoded query string
-			code	$timein = microtime(true);
-			code	$app->contentType('text/plain;charset=utf-8');
-			code	
 			code	$encode = SignWriting\utf8($text);
 			code	$searchTime = searchtime($timein);
 			code	header("Search-Time: " . $searchTime);
 			code	echo $encode;
-			response	200	text/plain
+			response	200	text/plain;charset=utf-8
 				body	%F0%9D%A0%80
-	route	/tools/test{?text}	Test with input
+	route	/tools/test{?text,opt1,opt2}	Test with input
 		line	A general purpose function for testing
 		parameter	text	S10000	string	Input for testing
+		parameter	opt1	AS	string	Option one for testing
+		parameter	opt2	AS	string	Option two for testing
 		method	GET	Get test results
-			code	$timein = microtime(true);
-			code	$app->contentType('text/plain;charset=utf-8');
-			code	$test = SignWriting\test($text);
+			code	$test = SignWriting\test($text,$opt1,$opt2);
 			code	$searchTime = searchtime($timein);
 			code	header("Search-Time: " . $searchTime);
 			code	echo $test;
-			response	200	text/plain
+			response	200	text/plain;charset=utf-8
 				body	test output

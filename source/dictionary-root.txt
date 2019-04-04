@@ -1,0 +1,60 @@
+root	dictionary	SignPuddle 3 Dictionary API	https://signpuddle.com/server
+	line	## Dictionary
+	line	
+	line	SignPuddle 3 organizes user dictionary elements into dictionary collections.
+	line	Dictionary collections are available in three different forms: database, plain text files, and JSON objects
+	line	
+	line	### Databases
+	line	
+	line	Each collection is available as an SQLite database.
+	line	These databases are the primary source and all edits are directly applied to the database.
+	line	
+	line	table entry  
+	line	+ id  
+	line	+ sign  
+	line	+ terms  
+	line	+ lower  
+	line	+ signtext  
+	line	+ text  
+	line	+ source  
+	line	+ detail  
+	line	+ user  
+	line	+ created_at  
+	line	+ updated_at  
+	line	
+	line	### Plain Text Files
+	line	
+	line	Each collection is available as a plain text field where each entry occupies its own line.
+	line	Each entry contains multiple fields that are divided by tab characters.
+	line	The plain text files are designed for easy import and export from the databases.
+	line	
+	line	id /t sign /t terms /t lower /t signtext /t text /t source /t detail /t user /t updated_at
+	line	
+	line	### JSON Data files
+	line	
+	line	The dictionary JSON data file is an object.
+	line	Each key contains an object with three properties: message, description, icon, and updated_at.
+	line	
+	line	{  
+	line	  "name": "xml-MY-dictionary-public",  
+	line	  "data": [  
+	line	    {  
+	line	      "id": "2",  
+	line	      "sign": "\ud836\udc03\ud836\udd44\ud836\udd19\ud8ef\udfa1\ud836\udcf4\ud836\udcf4\ud8dd\udc54\ud836\udcc8\ud836\udcfc\ud8dd\udc42\ud836\udd26\ud836\udcfa\ud8c8\uddd2\ud836\udd15\ud836\udcee\ud8c8\uddda\ud836\udce0\ud836\udcef",  
+	line	      "terms": [  
+	line	        "Malaysia"  
+	line	      ],  
+	line	      "lower": [  
+	line	        "malaysia"  
+	line	      ],  
+	line	      "signtext": "",  
+	line	      "text": "",  
+	line	      "source": "Conference Maastricht",  
+	line	      "detail": {},  
+	line	      "user": "admin",  
+	line	      "created_at": "2007-03-29T19:09:37Z",  
+	line	      "updated_at": "2007-03-29T19:09:37Z"  
+	line	    }  
+	line	  ]  
+	line	}  
+	line	

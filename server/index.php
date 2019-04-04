@@ -268,6 +268,29 @@ $app->delete('/collection/:name', function ($name) use ($app) {
   $app->response->setStatus(204);
 });
 
+$app->options('/collection/:name/stats', function (){});
+$app->get('/collection/:name/stats', function ($name) use ($app) {
+  $timein = microtime(true);
+  $app->contentType('text/plain');
+  $headers = getHeaders();
+  $pass = isset($headers['Pass'])?$headers['Pass']:'';
+  rightsCheck($name,$pass,SP_VIEW);
+  $check = isset($headers['If-Modified-Since'])?$headers['If-Modified-Since']:'';
+  $err = invalidName($name);
+  if ($err){
+    haltBadRequest($err);
+  }
+  $lastModified = lastModified($name);
+  if ($lastModified <= $check){
+    haltNotModified();
+  }
+  header('Last-Modified: ' . $lastModified);
+  $output = json_pretty(collectionStats($name));
+  $searchTime = searchtime($timein);
+  header("Search-Time: " . $searchTime);
+  echo $output;
+});
+
 $app->options('/collection/security', function (){});
 $app->get('/collection/security', function () use ($app) {
   $timein = microtime(true);
@@ -278,7 +301,7 @@ $app->get('/collection/security', function () use ($app) {
   if ($lastModified <= $check){
     haltNotModified();
   }
-  $app->response->headers->set('Last-Modified', $lastModified);
+  header('Last-Modified: ' . $lastModified);
   echo json_pretty(collectionsSecurity());
 });
 
@@ -402,7 +425,7 @@ $app->post('/collection/:name/request/:source', function ($name,$source) use ($a
   $pass = isset($headers['Pass'])?$headers['Pass']:'';
   $user = userVerified($pass);
   if (!$user) haltForbidden();
-  rightscheck($source,$pass,SP_VIEW);
+  rightsCheck($source,$pass,SP_VIEW);
   $err = invalidName($source);
   if ($err){
     haltBadRequest($err);
@@ -499,7 +522,7 @@ $app->get('/interface/:name', function ($name) use ($app) {
   $app->contentType('text/plain');
   $headers = getHeaders();
   $pass = isset($headers['Pass'])?$headers['Pass']:'';
-  rightscheck($name,$pass,SP_VIEW);
+  rightsCheck($name,$pass,SP_VIEW);
   $check = isset($headers['If-Modified-Since'])?$headers['If-Modified-Since']:'';
   if (strpos($name,'.')){
     $parts = explode('.',$name);
@@ -530,7 +553,9 @@ $app->get('/interface/:name', function ($name) use ($app) {
     file_put_contents($file,$txt);
   }
   if(file_exists($file)) {
-    $app->response->headers->set('Last-Modified', $lastModified);
+    header('Last-Modified: ' . $lastModified);
+    $searchTime = searchtime($timein);
+    header("Search-Time: " . $searchTime);
     getFile($file);
   } else {
     haltNotFound();
@@ -552,7 +577,7 @@ $app->get('/interface/:name/key', function ($name) use ($app) {
   if ($lastModified <= $check){
     haltNotModified();
   }
-  $app->response->headers->set('Last-Modified', $lastModified);
+  header('Last-Modified: ' . $lastModified);
   echo json_pretty(interfaceKeys($name,$pass));
 });
 
@@ -584,7 +609,7 @@ $app->post('/interface/:name/entry', function ($name) use ($app) {
   }
   $data = $app->request->getbody();
   $data = json_decode($data,true);
-  interfaceKeyNew($name,$data,$pass);
+  interfaceEntryNew($name,$data,$pass);
   $app->response->setStatus(201);
   return;
 });
@@ -600,7 +625,7 @@ $app->get('/interface/:name/entry/:key', function ($name,$key) use ($app) {
   if ($err){
     haltBadRequest($err);
   }
-  $entries = interfaceKeyEntry($name,$key,$pass);
+  $entries = interfaceKeySearch($name,$key,$pass);
   if (!$entries){
     haltNoContent();
   }
@@ -608,7 +633,7 @@ $app->get('/interface/:name/entry/:key', function ($name,$key) use ($app) {
   if ($lastModified <= $check){
     haltNotModified();
   }
-  $app->response->headers->set('Last-Modified', $lastModified);
+  header('Last-Modified: ' . $lastModified);
   echo json_pretty($entries);
 });
 
@@ -623,7 +648,7 @@ $app->put('/interface/:name/entry/:key', function ($name,$key) use ($app) {
   $pass = isset($headers['Pass'])?$headers['Pass']:'';
   $data = $app->request->getbody();
   $data = json_decode($data,true);
-  interfaceKeyUpdate($name,$key,$data,$pass);
+  interfaceEntryUpdate($name,$key,$data,$pass);
   $app->response->setStatus(204);
   return;
 });
@@ -637,7 +662,7 @@ $app->delete('/interface/:name/entry/:key', function ($name,$key) use ($app) {
   }
   $headers = getHeaders();
   $pass = isset($headers['Pass'])?$headers['Pass']:'';
-  interfaceKeyDelete($name,$key,$pass);
+  interfaceEntryDelete($name,$key,$pass);
   $app->response->setStatus(204);
 });
 
@@ -651,6 +676,377 @@ $app->get('/interface/', function () use ($app) {
   $timein = microtime(true);
   $app->contentType('text/plain');
   getFile('api/interface.html');
+});
+
+/**********/
+// ## Group dictionary
+// Resources related to dictionary collections
+$app->options('/dictionary', function (){});
+$app->get('/dictionary', function () use ($app) {
+  $name = $app->request()->get('name');
+  $timein = microtime(true);
+  $app->contentType('text/plain');
+  $dir = 'data/db/';
+  $ext = '.db';
+  $out = [];
+  if ($name){
+    if (strpos($name,"dictionary")!==false){
+      $dictionaries = $dir . '*' . $name . '*' . $ext;
+      $files = glob($dictionaries);
+    } else {
+      $dictionaries = $dir . '*dictionary*' . $name . '*' . $ext;
+      $files = glob($dictionaries);
+      if (count($files)==0) {
+        $dictionaries = $dir . '*' . $name . '*dictionary*' . $ext;
+        $files = glob($dictionaries);
+      }
+    }
+  } else {
+    $dictionaries = $dir . '*dictionary*' . $ext;
+    $files = glob($dictionaries);
+  }
+  foreach ($files as $filename) {
+    $out[] = str_replace($ext,'',str_replace($dir,'',$filename));
+  }
+  if (count($out)){
+    echo json_pretty($out);
+  } else {
+    $app->response->setStatus(204);
+  }
+  return;
+});
+
+$app->options('/dictionary/:name', function (){});
+$app->get('/dictionary/:name', function ($name) use ($app) {
+  $update = $app->request()->get('update');
+  $timein = microtime(true);
+  $app->contentType('text/plain');
+  $headers = getHeaders();
+  $pass = isset($headers['Pass'])?$headers['Pass']:'';
+  rightsCheck($name,$pass,SP_VIEW);
+  $check = isset($headers['If-Modified-Since'])?$headers['If-Modified-Since']:'';
+  if (strpos($name,'.')){
+    $parts = explode('.',$name);
+    $name = $parts[0];
+    $format = $parts[1];
+    if (!in_array($format,['db','txt','json'])){
+      haltNotFound();
+    }
+  } else {
+    $format = 'json';
+  }
+  $dir = 'data/' . $format . '/';
+  $ext = '.' . $format;
+  $file = $dir . $name . $ext;
+  $err = invalidName($name);
+  if ($err){
+    haltBadRequest($err);
+  }
+  $lastModified = lastModified($name);
+  if ($lastModified <= $check  && !$update){
+    haltNotModified();
+  }
+  if ($format=='json' && (!file_exists($file) || $update)) {
+    $json = dictionary2json($name);
+    file_put_contents($file,$json);
+  } else if ($format=='txt' && (!file_exists($file) || $update)) {
+    $txt = dictionary2txt($name);
+    file_put_contents($file,$txt);
+  }
+  if(file_exists($file)) {
+    header('Last-Modified: ' . $lastModified);
+    $searchTime = searchtime($timein);
+    header("Search-Time: " . $searchTime);
+    getFile($file);
+  } else {
+    haltNotFound();
+  }
+});
+
+$app->options('/dictionary/:name/signs', function (){});
+$app->get('/dictionary/:name/signs', function ($name) use ($app) {
+  $timein = microtime(true);
+  $app->contentType('text/plain');
+  $headers = getHeaders();
+  $pass = isset($headers['Pass'])?$headers['Pass']:'';
+  rightsCheck($name,$pass,SP_VIEW);
+  $check = isset($headers['If-Modified-Since'])?$headers['If-Modified-Since']:'';
+  $err = invalidName($name);
+  if ($err){
+    haltBadRequest($err);
+  }
+  $lastModified = lastModified($name);
+  if ($lastModified <= $check){
+    haltNotModified();
+  }
+  header('Last-Modified: ' . $lastModified);
+  $output = dictionarySigns($name);
+  $searchTime = searchtime($timein);
+  header("Search-Time: " . $searchTime);
+  echo $output;
+});
+
+$app->options('/dictionary/:name/signtexts', function (){});
+$app->get('/dictionary/:name/signtexts', function ($name) use ($app) {
+  $timein = microtime(true);
+  $app->contentType('text/plain');
+  $headers = getHeaders();
+  $pass = isset($headers['Pass'])?$headers['Pass']:'';
+  rightsCheck($name,$pass,SP_VIEW);
+  $check = isset($headers['If-Modified-Since'])?$headers['If-Modified-Since']:'';
+  $err = invalidName($name);
+  if ($err){
+    haltBadRequest($err);
+  }
+  $lastModified = lastModified($name);
+  if ($lastModified <= $check){
+    haltNotModified();
+  }
+  header('Last-Modified: ' . $lastModified);
+  $output = dictionarySigntexts($name);
+  $searchTime = searchtime($timein);
+  header("Search-Time: " . $searchTime);
+  echo $output;
+});
+
+$app->options('/dictionary/:name/entry', function (){});
+$app->post('/dictionary/:name/entry', function ($name) use ($app) {
+  $timein = microtime(true);
+  $app->contentType('text/plain');
+  $headers = getHeaders();
+  $pass = isset($headers['Pass'])?$headers['Pass']:'';
+  $err = invalidName($name);
+  if ($err){
+    haltBadRequest($err);
+  }
+  $data = $app->request->getbody();
+  $data = json_decode($data,true);
+  echo dictionaryEntryNew($name,$data,$pass);
+  return;
+});
+
+$app->options('/dictionary/:name/entry/:id', function (){});
+$app->put('/dictionary/:name/entry/:id', function ($name,$id) use ($app) {
+  $timein = microtime(true);
+  $err = invalidName($name);
+  if ($err){
+    haltBadRequest($err);
+  }
+  $headers = getHeaders();
+  $pass = isset($headers['Pass'])?$headers['Pass']:'';
+  $data = $app->request->getbody();
+  $data = json_decode($data,true);
+  dictionaryEntryUpdate($name,$id,$data,$pass);
+  $app->response->setStatus(204);
+  return;
+});
+
+$app->options('/dictionary/:name/entry/:id', function (){});
+$app->delete('/dictionary/:name/entry/:id', function ($name,$id) use ($app) {
+  $timein = microtime(true);
+  $err = invalidName($name);
+  if ($err){
+    haltBadRequest($err);
+  }
+  $headers = getHeaders();
+  $pass = isset($headers['Pass'])?$headers['Pass']:'';
+  dictionaryEntryDelete($name,$id,$pass);
+  $app->response->setStatus(204);
+});
+
+$app->options('/dictionary/:name/search', function (){});
+$app->get('/dictionary/:name/search', function ($name) use ($app) {
+  $offset = $app->request()->get('offset');
+  $limit = $app->request()->get('limit');
+  $filter = $app->request()->get('filter');
+  $sort = $app->request()->get('sort');
+  $results = $app->request()->get('results');
+  $timein = microtime(true);
+  $app->contentType('text/plain');
+  $headers = getHeaders();
+  $pass = isset($headers['Pass'])?$headers['Pass']:'';
+  rightsCheck($name,$pass,SP_VIEW);
+  $check = isset($headers['If-Modified-Since'])?$headers['If-Modified-Since']:'';
+  $err = invalidName($name);
+  if ($err){
+    haltBadRequest($err);
+  }
+  $lastModified = lastModified($name);
+  if ($lastModified <= $check){
+    haltNotModified();
+  }
+  $output = json_pretty(dictionarySearch($name,$offset,$limit,$filter,$sort,$results));
+  header('Last-Modified: ' . $lastModified);
+  $searchTime = searchtime($timein);
+  header("Search-Time: " . $searchTime);
+  echo $output;
+});
+
+$app->options('/dictionary/:name/search/id/:id', function (){});
+$app->get('/dictionary/:name/search/id/:id', function ($name,$id) use ($app) {
+  $timein = microtime(true);
+  $app->contentType('text/plain');
+  $headers = getHeaders();
+  $pass = isset($headers['Pass'])?$headers['Pass']:'';
+  rightsCheck($name,$pass,SP_VIEW);
+  $check = isset($headers['If-Modified-Since'])?$headers['If-Modified-Since']:'';
+  $err = invalidName($name);
+  if ($err){
+    haltBadRequest($err);
+  }
+  $entries = dictionarySearchId($name,$id,$pass);
+  if (!$entries){
+    haltNoContent();
+  }
+  $lastModified = max(array_map(function($o) {return $o['updated_at'];},$entries));
+  if ($lastModified <= $check){
+    haltNotModified();
+  }
+  header('Last-Modified: ' . $lastModified);
+  echo json_pretty($entries);
+});
+
+$app->options('/dictionary/:name/search/sign/:query', function (){});
+$app->get('/dictionary/:name/search/sign/:query', function ($name,$query) use ($app) {
+  $offset = $app->request()->get('offset');
+  $limit = $app->request()->get('limit');
+  $filter = $app->request()->get('filter');
+  $sort = $app->request()->get('sort');
+  $results = $app->request()->get('results');
+  $timein = microtime(true);
+  $app->contentType('text/plain');
+  $headers = getHeaders();
+  $pass = isset($headers['Pass'])?$headers['Pass']:'';
+  rightsCheck($name,$pass,SP_VIEW);
+  $check = isset($headers['If-Modified-Since'])?$headers['If-Modified-Since']:'';
+  $err = invalidName($name);
+  if ($err){
+    haltBadRequest($err);
+  }
+  $lastModified = lastModified($name);
+  if ($lastModified <= $check){
+    haltNotModified();
+  }
+  header('Last-Modified: ' . $lastModified);
+  $output = json_pretty(dictionarySearchSign($name,$query,$offset,$limit,$filter,$sort,$results));
+  $searchTime = searchtime($timein);
+  header("Search-Time: " . $searchTime);
+  echo $output;
+});
+
+$app->options('/dictionary/:name/search/signtext/:query', function (){});
+$app->get('/dictionary/:name/search/signtext/:query', function ($name,$query) use ($app) {
+  $offset = $app->request()->get('offset');
+  $limit = $app->request()->get('limit');
+  $filter = $app->request()->get('filter');
+  $sort = $app->request()->get('sort');
+  $results = $app->request()->get('results');
+  $timein = microtime(true);
+  $app->contentType('text/plain');
+  $headers = getHeaders();
+  $pass = isset($headers['Pass'])?$headers['Pass']:'';
+  rightsCheck($name,$pass,SP_VIEW);
+  $check = isset($headers['If-Modified-Since'])?$headers['If-Modified-Since']:'';
+  $err = invalidName($name);
+  if ($err){
+    haltBadRequest($err);
+  }
+  $lastModified = lastModified($name);
+  if ($lastModified <= $check){
+    haltNotModified();
+  }
+  header('Last-Modified: ' . $lastModified);
+  $output = json_pretty(dictionarySearchSigntext($name,$query,$offset,$limit,$filter,$sort,$results));
+  $searchTime = searchtime($timein);
+  header("Search-Time: " . $searchTime);
+  echo $output;
+});
+
+$app->options('/dictionary/:name/search/terms/:text', function (){});
+$app->get('/dictionary/:name/search/terms/:text', function ($name,$text) use ($app) {
+  $type = $app->request()->get('type');
+  $case = $app->request()->get('case');
+  $offset = $app->request()->get('offset');
+  $limit = $app->request()->get('limit');
+  $filter = $app->request()->get('filter');
+  $sort = $app->request()->get('sort');
+  $results = $app->request()->get('results');
+  $timein = microtime(true);
+  $app->contentType('text/plain');
+  $headers = getHeaders();
+  $pass = isset($headers['Pass'])?$headers['Pass']:'';
+  rightsCheck($name,$pass,SP_VIEW);
+  $err = invalidName($name);
+  if ($err){
+    haltBadRequest($err);
+  }
+  $output = json_pretty(dictionarySearchTerms($name,$text,$type,$case, $offset, $limit, $filter, $sort,$results));
+  $searchTime = searchtime($timein);
+  header("Search-Time: " . $searchTime);
+  echo $output;
+});
+
+$app->options('/dictionary/:name/alphabet', function (){});
+$app->get('/dictionary/:name/alphabet', function ($name) use ($app) {
+  $update = $app->request()->get('update');
+  $timein = microtime(true);
+  $app->contentType('text/plain');
+  $headers = getHeaders();
+  $pass = isset($headers['Pass'])?$headers['Pass']:'';
+  rightsCheck($name,$pass,SP_VIEW);
+  $check = isset($headers['If-Modified-Since'])?$headers['If-Modified-Since']:'';
+  if ($name=="iswa-2010"){
+    echo json_pretty(dictionaryISWA());
+    return;
+  }
+  $err = invalidName($name);
+  if ($err){
+    haltBadRequest($err);
+  }
+  $lastModified = lastModified($name);
+  if ($lastModified <= $check  && !$update){
+    haltNotModified();
+  }
+  
+  $alphabet = str_replace('-dictionary-','-alphabet-',$name);
+  $file = 'data/json/' . $alphabet . '.json';
+  if (!$update){
+    if (!file_exists($file)) {
+      $update = 1;
+    } else {
+      $check = date ("Y-m-d\TH:i:s", filemtime($file));
+      $check =  new DateTime($check);
+      $check->setTimezone(new DateTimeZone('UTC'));
+      $check = $check->format('Y-m-d\TH:i:s\Z');
+      if ($lastModified>$check){
+        $update = 1;
+      }
+    }
+  }
+  if ($update) {
+    $json = json_pretty(dictionaryAlphabet($name,$lastModified));
+    file_put_contents($file,$json);
+  }
+  if(file_exists($file)) {
+    header('Last-Modified: ' . $lastModified);
+    $searchTime = searchtime($timein);
+    header("Search-Time: " . $searchTime);
+    getFile($file);
+  } else {
+    haltNotFound();
+  }
+});
+
+/**********/
+// ## Group dictionaryfiles
+$app->get('/dictionary', function () use ($app) {
+  $app->redirect('dictionary/');
+});
+$app->options('/dictionary/', function (){});
+$app->get('/dictionary/', function () use ($app) {
+  $timein = microtime(true);
+  $app->contentType('text/plain');
+  getFile('api/dictionary.html');
 });
 
 /**********/
@@ -679,8 +1075,6 @@ $app->get('/tools/', function () use ($app) {
 $app->options('/tools/define', function (){});
 $app->get('/tools/define', function () use ($app) {
   $timein = microtime(true);
-  $app->contentType('text/plain');
-  $timein = microtime(true);
   $app->contentType('text/plain;charset=utf-8');
   $define = SignWriting\define();
   $searchTime = searchtime($timein);
@@ -691,7 +1085,7 @@ $app->get('/tools/define', function () use ($app) {
 $app->options('/tools/define/:section', function (){});
 $app->get('/tools/define/:section', function ($section) use ($app) {
   $timein = microtime(true);
-  $app->contentType('text/plain');
+  $app->contentType('text/plain;charset=utf-8');
   global $regex_define;
   if ($section == "regex"){
     return $regex_define();
@@ -700,8 +1094,6 @@ $app->get('/tools/define/:section', function ($section) use ($app) {
   if ($section == "sample"){
     return $sample_define();
   }
-  $timein = microtime(true);
-  $app->contentType('text/plain;charset=utf-8');
   $define = SignWriting\define($section);
   $searchTime = searchtime($timein);
   header("Search-Time: " . $searchTime);
@@ -710,8 +1102,6 @@ $app->get('/tools/define/:section', function ($section) use ($app) {
 
 $app->options('/tools/define/:section/:part', function (){});
 $app->get('/tools/define/:section/:part', function ($section,$part) use ($app) {
-  $timein = microtime(true);
-  $app->contentType('text/plain');
   $timein = microtime(true);
   $app->contentType('text/plain;charset=utf-8');
   $define = SignWriting\define($section,$part);
@@ -725,12 +1115,10 @@ $app->get('/tools/parse', function () use ($app) {
   $text = $app->request()->get('text');
   $utf = $app->request()->get('utf');
   $timein = microtime(true);
-  $app->contentType('text/plain');
-  $timein = microtime(true);
+  $app->contentType('text/plain;charset=utf-8');
   if (!in_array($utf,[8,16,32,'x'])){
     $utf = 16;
   }
-  $app->contentType('text/plain;charset=utf-8');
   $parse = SignWriting\parse($text);
   $searchTime = searchtime($timein);
   header("Search-Time: " . $searchTime);
@@ -743,8 +1131,6 @@ $app->get('/tools/encode', function () use ($app) {
   $text = $app->request()->get('text');
   $slash = $app->request()->get('slash');
   $timein = microtime(true);
-  $app->contentType('text/plain');
-  $timein = microtime(true);
   $app->contentType('text/plain;charset=utf-8');
   $encode = SignWriting\encode($text,$slash);
   $searchTime = searchtime($timein);
@@ -755,8 +1141,6 @@ $app->get('/tools/encode', function () use ($app) {
 $app->options('/tools/decode', function (){});
 $app->get('/tools/decode', function () use ($app) {
   $text = $app->request()->get('text');
-  $timein = microtime(true);
-  $app->contentType('text/plain');
   $timein = microtime(true);
   $app->contentType('text/plain;charset=utf-8');
   $decode = SignWriting\decode($text);
@@ -769,10 +1153,7 @@ $app->options('/tools/utf8', function (){});
 $app->get('/tools/utf8', function () use ($app) {
   $text = $app->request()->get('text');
   $timein = microtime(true);
-  $app->contentType('text/plain');
-  $timein = microtime(true);
   $app->contentType('text/plain;charset=utf-8');
-  
   $encode = SignWriting\utf8($text);
   $searchTime = searchtime($timein);
   header("Search-Time: " . $searchTime);
@@ -782,11 +1163,11 @@ $app->get('/tools/utf8', function () use ($app) {
 $app->options('/tools/test', function (){});
 $app->get('/tools/test', function () use ($app) {
   $text = $app->request()->get('text');
-  $timein = microtime(true);
-  $app->contentType('text/plain');
+  $opt1 = $app->request()->get('opt1');
+  $opt2 = $app->request()->get('opt2');
   $timein = microtime(true);
   $app->contentType('text/plain;charset=utf-8');
-  $test = SignWriting\test($text);
+  $test = SignWriting\test($text,$opt1,$opt2);
   $searchTime = searchtime($timein);
   header("Search-Time: " . $searchTime);
   echo $test;
@@ -813,7 +1194,6 @@ $app->get('/fsw', function () use ($app) {
   $style = $app->request()->get('style');
   $timein = microtime(true);
   $app->contentType('text/plain;charset=utf-8');
-  $timein = microtime(true);
   $fsw = SignWriting\fsw($text,$style);
   $searchTime = searchtime($timein);
   header("Search-Time: " . $searchTime);
@@ -826,7 +1206,6 @@ $app->get('/fsw/all', function () use ($app) {
   $style = $app->request()->get('style');
   $timein = microtime(true);
   $app->contentType('text/plain;charset=utf-8');
-  $timein = microtime(true);
   $fsw = SignWriting\fswAll($text,$style);
   $searchTime = searchtime($timein);
   header("Search-Time: " . $searchTime);
@@ -838,9 +1217,7 @@ $app->get('/fsw/swu', function () use ($app) {
   $text = $app->request()->get('text');
   $timein = microtime(true);
   $app->contentType('text/plain;charset=utf-8');
-  $timein = microtime(true);
   $swu = SignWriting\fsw2swu($text);
-  $app->contentType('text/plain;charset=utf-8');
   $searchTime = searchtime($timein);
   header("Search-Time: " . $searchTime);
   echo $swu;
@@ -850,10 +1227,8 @@ $app->options('/fsw/svg/:text', function (){});
 $app->get('/fsw/svg/:text', function ($text) use ($app) {
   $timein = microtime(true);
   $app->contentType('image/svg+xml;charset=utf-8');
-  $timein = microtime(true);
   $req = $app->request();
   if ($req->get('throwStatus')=='500') {haltNoDatabase();}
-  $app->contentType('image/svg+xml;charset=utf-8');
   $svg = SignWriting\svg($text);
   $searchTime = searchtime($timein);
   header("Search-Time: " . $searchTime);
@@ -864,10 +1239,8 @@ $app->options('/fsw/svg/font/:text', function (){});
 $app->get('/fsw/svg/font/:text', function ($text) use ($app) {
   $timein = microtime(true);
   $app->contentType('image/svg+xml;charset=utf-8');
-  $timein = microtime(true);
   $req = $app->request();
   if ($req->get('throwStatus')=='500') {haltNoDatabase();}
-  $app->contentType('image/svg+xml;charset=utf-8');
   $svg = SignWriting\svg($text,true);
   $searchTime = searchtime($timein);
   header("Search-Time: " . $searchTime);
@@ -922,7 +1295,6 @@ $app->get('/swu/fsw', function () use ($app) {
   $app->contentType('text/plain;charset=utf-8');
   $timein = microtime(true);
   $fsw = SignWriting\swu2fsw($text);
-  $app->contentType('text/plain;charset=utf-8');
   $searchTime = searchtime($timein);
   header("Search-Time: " . $searchTime);
   echo $fsw;
@@ -935,7 +1307,6 @@ $app->get('/swu/svg/:text', function ($text) use ($app) {
   $timein = microtime(true);
   $req = $app->request();
   if ($req->get('throwStatus')=='500') {haltNoDatabase();}
-  $app->contentType('image/svg+xml;charset=utf-8');
   $svg = SignWriting\svg($text);
   $searchTime = searchtime($timein);
   header("Search-Time: " . $searchTime);
@@ -949,7 +1320,6 @@ $app->get('/swu/svg/font/:text', function ($text) use ($app) {
   $timein = microtime(true);
   $req = $app->request();
   if ($req->get('throwStatus')=='500') {haltNoDatabase();}
-  $app->contentType('image/svg+xml;charset=utf-8');
   $svg = SignWriting\svg($text,true);
   $searchTime = searchtime($timein);
   header("Search-Time: " . $searchTime);

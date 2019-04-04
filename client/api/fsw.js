@@ -38,7 +38,6 @@ var data = {
           "methods": [
             {
               "code": [
-                "$timein = microtime(true);", 
                 "$fsw = SignWriting\\fsw($text,$style);", 
                 "$searchTime = searchtime($timein);", 
                 "header(\"Search-Time: \" . $searchTime);", 
@@ -85,7 +84,6 @@ var data = {
           "methods": [
             {
               "code": [
-                "$timein = microtime(true);", 
                 "$fsw = SignWriting\\fswAll($text,$style);", 
                 "$searchTime = searchtime($timein);", 
                 "header(\"Search-Time: \" . $searchTime);", 
@@ -126,9 +124,7 @@ var data = {
           "methods": [
             {
               "code": [
-                "$timein = microtime(true);", 
                 "$swu = SignWriting\\fsw2swu($text);", 
-                "$app->contentType('text/plain;charset=utf-8');", 
                 "$searchTime = searchtime($timein);", 
                 "header(\"Search-Time: \" . $searchTime);", 
                 "echo $swu;"
@@ -180,10 +176,8 @@ var data = {
           "methods": [
             {
               "code": [
-                "$timein = microtime(true);", 
                 "$req = $app->request();", 
                 "if ($req->get('throwStatus')=='500') {haltNoDatabase();}", 
-                "$app->contentType('image/svg+xml;charset=utf-8');", 
                 "$svg = SignWriting\\svg($text);", 
                 "$searchTime = searchtime($timein);", 
                 "header(\"Search-Time: \" . $searchTime);", 
@@ -233,10 +227,8 @@ var data = {
           "methods": [
             {
               "code": [
-                "$timein = microtime(true);", 
                 "$req = $app->request();", 
                 "if ($req->get('throwStatus')=='500') {haltNoDatabase();}", 
-                "$app->contentType('image/svg+xml;charset=utf-8');", 
                 "$svg = SignWriting\\svg($text,true);", 
                 "$searchTime = searchtime($timein);", 
                 "header(\"Search-Time: \" . $searchTime);", 

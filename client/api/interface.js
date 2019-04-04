@@ -128,7 +128,7 @@ var data = {
               "code": [
                 "$headers = getHeaders();", 
                 "$pass = isset($headers['Pass'])?$headers['Pass']:'';", 
-                "rightscheck($name,$pass,SP_VIEW);", 
+                "rightsCheck($name,$pass,SP_VIEW);", 
                 "$check = isset($headers['If-Modified-Since'])?$headers['If-Modified-Since']:'';", 
                 "if (strpos($name,'.')){", 
                 "  $parts = explode('.',$name);", 
@@ -159,7 +159,9 @@ var data = {
                 "  file_put_contents($file,$txt);", 
                 "}", 
                 "if(file_exists($file)) {", 
-                "  $app->response->headers->set('Last-Modified', $lastModified);", 
+                "  header('Last-Modified: ' . $lastModified);", 
+                "  $searchTime = searchtime($timein);", 
+                "  header(\"Search-Time: \" . $searchTime);", 
                 "  getFile($file);", 
                 "} else {", 
                 "  haltNotFound();", 
@@ -185,7 +187,7 @@ var data = {
                   ]
                 }
               ], 
-              "name": "retrieve interface or available interfaces"
+              "name": "retrieve interface"
             }
           ], 
           "route": "/interface/{name}{?update}", 
@@ -221,7 +223,7 @@ var data = {
                 "if ($lastModified <= $check){", 
                 "  haltNotModified();", 
                 "}", 
-                "$app->response->headers->set('Last-Modified', $lastModified);", 
+                "header('Last-Modified: ' . $lastModified);", 
                 "echo json_pretty(interfaceKeys($name,$pass));"
               ], 
               "method": "GET", 
@@ -230,7 +232,7 @@ var data = {
                   "request": {
                     "headers": {
                       "If-Modified-Since": "2019-01-16T16:56:19.175Z", 
-                      "Pass": "5ffab638bde372b4fa63bb6f8484595d"
+                      "Pass": "724fd4b4438fba9d0c5ab89d0833e5c9"
                     }, 
                     "name": "interface keys"
                   }, 
@@ -277,7 +279,7 @@ var data = {
                 {
                   "request": {
                     "headers": {
-                      "Pass": "5ffab638bde372b4fa63bb6f8484595d"
+                      "Pass": "724fd4b4438fba9d0c5ab89d0833e5c9"
                     }, 
                     "name": "matching interface entries"
                   }, 
@@ -333,7 +335,7 @@ var data = {
                 "}", 
                 "$data = $app->request->getbody();", 
                 "$data = json_decode($data,true);", 
-                "interfaceKeyNew($name,$data,$pass);", 
+                "interfaceEntryNew($name,$data,$pass);", 
                 "$app->response->setStatus(201);", 
                 "return;"
               ], 
@@ -345,7 +347,7 @@ var data = {
                       "{\"key\":\"new.key.one\", \"message\":\"UI text\",\"description\":\"about the text\",\"icon\":\"search\"}"
                     ], 
                     "headers": {
-                      "Pass": "5ffab638bde372b4fa63bb6f8484595d"
+                      "Pass": "724fd4b4438fba9d0c5ab89d0833e5c9"
                     }, 
                     "type": "application/json", 
                     "name": "add new interface entry"
@@ -387,7 +389,7 @@ var data = {
                 "if ($err){", 
                 "  haltBadRequest($err);", 
                 "}", 
-                "$entries = interfaceKeyEntry($name,$key,$pass);", 
+                "$entries = interfaceKeySearch($name,$key,$pass);", 
                 "if (!$entries){", 
                 "  haltNoContent();", 
                 "}", 
@@ -395,7 +397,7 @@ var data = {
                 "if ($lastModified <= $check){", 
                 "  haltNotModified();", 
                 "}", 
-                "$app->response->headers->set('Last-Modified', $lastModified);", 
+                "header('Last-Modified: ' . $lastModified);", 
                 "echo json_pretty($entries);"
               ], 
               "method": "GET", 
@@ -404,7 +406,7 @@ var data = {
                   "request": {
                     "headers": {
                       "If-Modified-Since": "2019-01-16T16:56:19.175Z", 
-                      "Pass": "5ffab638bde372b4fa63bb6f8484595d"
+                      "Pass": "724fd4b4438fba9d0c5ab89d0833e5c9"
                     }, 
                     "name": "an interface entry"
                   }, 
@@ -431,7 +433,7 @@ var data = {
                 "$pass = isset($headers['Pass'])?$headers['Pass']:'';", 
                 "$data = $app->request->getbody();", 
                 "$data = json_decode($data,true);", 
-                "interfaceKeyUpdate($name,$key,$data,$pass);", 
+                "interfaceEntryUpdate($name,$key,$data,$pass);", 
                 "$app->response->setStatus(204);", 
                 "return;"
               ], 
@@ -443,7 +445,7 @@ var data = {
                       "{\"key\":\"new.key.one\", \"message\":\"UI text\",\"description\":\"about the text\",\"icon\":\"search\"}"
                     ], 
                     "headers": {
-                      "Pass": "5ffab638bde372b4fa63bb6f8484595d"
+                      "Pass": "724fd4b4438fba9d0c5ab89d0833e5c9"
                     }, 
                     "name": "an update for an existing entry"
                   }, 
@@ -464,7 +466,7 @@ var data = {
                 "}", 
                 "$headers = getHeaders();", 
                 "$pass = isset($headers['Pass'])?$headers['Pass']:'';", 
-                "interfaceKeyDelete($name,$key,$pass);", 
+                "interfaceEntryDelete($name,$key,$pass);", 
                 "$app->response->setStatus(204);"
               ], 
               "method": "DELETE", 
@@ -472,7 +474,7 @@ var data = {
                 {
                   "request": {
                     "headers": {
-                      "Pass": "5ffab638bde372b4fa63bb6f8484595d"
+                      "Pass": "724fd4b4438fba9d0c5ab89d0833e5c9"
                     }, 
                     "name": "the removal of an interface entry"
                   }, 

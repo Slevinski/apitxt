@@ -61,8 +61,6 @@ var data = {
           "methods": [
             {
               "code": [
-                "$timein = microtime(true);", 
-                "$app->contentType('text/plain;charset=utf-8');", 
                 "$define = SignWriting\\define();", 
                 "$searchTime = searchtime($timein);", 
                 "header(\"Search-Time: \" . $searchTime);", 
@@ -84,7 +82,7 @@ var data = {
                         "  \"style\": {}", 
                         "}"
                       ], 
-                      "type": "text/plain"
+                      "type": "text/plain;charset=utf-8"
                     }
                   ]
                 }
@@ -119,8 +117,6 @@ var data = {
                 "if ($section == \"sample\"){", 
                 "  return $sample_define();", 
                 "}", 
-                "$timein = microtime(true);", 
-                "$app->contentType('text/plain;charset=utf-8');", 
                 "$define = SignWriting\\define($section);", 
                 "$searchTime = searchtime($timein);", 
                 "header(\"Search-Time: \" . $searchTime);", 
@@ -143,7 +139,7 @@ var data = {
                         "  \"query\": []", 
                         "}"
                       ], 
-                      "type": "text/plain"
+                      "type": "text/plain;charset=utf-8"
                     }
                   ]
                 }
@@ -176,8 +172,6 @@ var data = {
           "methods": [
             {
               "code": [
-                "$timein = microtime(true);", 
-                "$app->contentType('text/plain;charset=utf-8');", 
                 "$define = SignWriting\\define($section,$part);", 
                 "$searchTime = searchtime($timein);", 
                 "header(\"Search-Time: \" . $searchTime);", 
@@ -196,7 +190,7 @@ var data = {
                         "  \"[\\\\x{40000}-\\\\x{4F428}]\"", 
                         "]"
                       ], 
-                      "type": "text/plain"
+                      "type": "text/plain;charset=utf-8"
                     }
                   ]
                 }
@@ -229,11 +223,9 @@ var data = {
           "methods": [
             {
               "code": [
-                "$timein = microtime(true);", 
                 "if (!in_array($utf,[8,16,32,'x'])){", 
                 "  $utf = 16;", 
                 "}", 
-                "$app->contentType('text/plain;charset=utf-8');", 
                 "$parse = SignWriting\\parse($text);", 
                 "$searchTime = searchtime($timein);", 
                 "header(\"Search-Time: \" . $searchTime);", 
@@ -249,7 +241,7 @@ var data = {
                       "body": [
                         "parse results of text"
                       ], 
-                      "type": "text/plain"
+                      "type": "text/plain;charset=utf-8"
                     }
                   ]
                 }
@@ -282,8 +274,6 @@ var data = {
           "methods": [
             {
               "code": [
-                "$timein = microtime(true);", 
-                "$app->contentType('text/plain;charset=utf-8');", 
                 "$encode = SignWriting\\encode($text,$slash);", 
                 "$searchTime = searchtime($timein);", 
                 "header(\"Search-Time: \" . $searchTime);", 
@@ -298,7 +288,7 @@ var data = {
                       "body": [
                         "\\uD836\\uDC00"
                       ], 
-                      "type": "text/plain"
+                      "type": "text/plain;charset=utf-8"
                     }
                   ]
                 }
@@ -325,8 +315,6 @@ var data = {
           "methods": [
             {
               "code": [
-                "$timein = microtime(true);", 
-                "$app->contentType('text/plain;charset=utf-8');", 
                 "$decode = SignWriting\\decode($text);", 
                 "$searchTime = searchtime($timein);", 
                 "header(\"Search-Time: \" . $searchTime);", 
@@ -341,7 +329,7 @@ var data = {
                       "body": [
                         "\\x{1D800}"
                       ], 
-                      "type": "text/plain"
+                      "type": "text/plain;charset=utf-8"
                     }
                   ]
                 }
@@ -364,9 +352,6 @@ var data = {
           "methods": [
             {
               "code": [
-                "$timein = microtime(true);", 
-                "$app->contentType('text/plain;charset=utf-8');", 
-                "", 
                 "$encode = SignWriting\\utf8($text);", 
                 "$searchTime = searchtime($timein);", 
                 "header(\"Search-Time: \" . $searchTime);", 
@@ -381,7 +366,7 @@ var data = {
                       "body": [
                         "%F0%9D%A0%80"
                       ], 
-                      "type": "text/plain"
+                      "type": "text/plain;charset=utf-8"
                     }
                   ]
                 }
@@ -398,9 +383,21 @@ var data = {
               "type": "string", 
               "description": "Input for testing", 
               "name": "text"
+            }, 
+            {
+              "example": "AS", 
+              "type": "string", 
+              "description": "Option one for testing", 
+              "name": "opt1"
+            }, 
+            {
+              "example": "AS", 
+              "type": "string", 
+              "description": "Option two for testing", 
+              "name": "opt2"
             }
           ], 
-          "route": "/tools/test{?text}", 
+          "route": "/tools/test{?text,opt1,opt2}", 
           "lines": [
             "A general purpose function for testing"
           ], 
@@ -408,9 +405,7 @@ var data = {
           "methods": [
             {
               "code": [
-                "$timein = microtime(true);", 
-                "$app->contentType('text/plain;charset=utf-8');", 
-                "$test = SignWriting\\test($text);", 
+                "$test = SignWriting\\test($text,$opt1,$opt2);", 
                 "$searchTime = searchtime($timein);", 
                 "header(\"Search-Time: \" . $searchTime);", 
                 "echo $test;"
@@ -424,7 +419,7 @@ var data = {
                       "body": [
                         "test output"
                       ], 
-                      "type": "text/plain"
+                      "type": "text/plain;charset=utf-8"
                     }
                   ]
                 }

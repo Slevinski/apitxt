@@ -94,6 +94,31 @@ Specific collection
 
 + Response 204
 
+### Collection statistics [/collection/{name}/stats]
+Statistics about the collection
+
++ Parameters
+
+     + name: `ase-US-dictionary-public` (required,string) - The name of a dictionary
+
+#### Get collection statistics [GET]
+
++ Request collections statistics
+
+     + Headers
+
+            If-Modified-Since: 2019-01-16T16:56:19.175Z
+
+     + Body
+
+            null
+
++ Response 200 (text/plain)
+
+     + Body
+
+            [{"name": "en-US-interface-sp3","code": "ui1","title": "English Interface for SignPuddle 3","user": "slevinski","created_at": "","view_pass": 0,"add_pass": 1,"edit_pass": 1,"register_level": 0,"upload_level": 4}]
+
 ### Collections security [/collection/security]
 Security settings for all collections
 

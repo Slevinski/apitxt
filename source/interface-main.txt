@@ -38,10 +38,10 @@ group	interface	Resources related to interface collections
 	route	/interface/{name}{?update}	Interface resource	Access to available interfaces
 		parameter	name	`en-US-interface-sp3`	required,string	The name of an interface
 		parameter	update	1	optional,number	Forces a rewrite of the interface for json and txt formats
-		method	GET	retrieve interface or available interfaces
+		method	GET	retrieve interface
 			code	$headers = getHeaders();
 			code	$pass = isset($headers['Pass'])?$headers['Pass']:'';
-			code	rightscheck($name,$pass,SP_VIEW);
+			code	rightsCheck($name,$pass,SP_VIEW);
 			code	$check = isset($headers['If-Modified-Since'])?$headers['If-Modified-Since']:'';
 			code	if (strpos($name,'.')){
 			code	  $parts = explode('.',$name);
@@ -72,7 +72,9 @@ group	interface	Resources related to interface collections
 			code	  file_put_contents($file,$txt);
 			code	}
 			code	if(file_exists($file)) {
-			code	  $app->response->headers->set('Last-Modified', $lastModified);
+			code	  header('Last-Modified: ' . $lastModified);
+			code	  $searchTime = searchtime($timein);
+			code	  header("Search-Time: " . $searchTime);
 			code	  getFile($file);
 			code	} else {
 			code	  haltNotFound();
@@ -95,11 +97,11 @@ group	interface	Resources related to interface collections
 			code	if ($lastModified <= $check){
 			code	  haltNotModified();
 			code	}
-			code	$app->response->headers->set('Last-Modified', $lastModified);
+			code	header('Last-Modified: ' . $lastModified);
 			code	echo json_pretty(interfaceKeys($name,$pass));
 			request	interface keys
 				header	If-Modified-Since	2019-01-16T16:56:19.175Z
-				header	Pass	5ffab638bde372b4fa63bb6f8484595d
+				header	Pass	724fd4b4438fba9d0c5ab89d0833e5c9
 				response	200	text/plain
 					body	["print.buttons.main"]
 	route	/interface/{name}/search/{text}	Interface entries search	Search interface for text
@@ -114,7 +116,7 @@ group	interface	Resources related to interface collections
 			code	}
 			code	echo json_pretty(interfaceSearch($name,$text,$pass));
 			request	matching interface entries
-				header	Pass	5ffab638bde372b4fa63bb6f8484595d
+				header	Pass	724fd4b4438fba9d0c5ab89d0833e5c9
 				response	200	text/plain
 					body	[
 					body	  {
@@ -136,11 +138,11 @@ group	interface	Resources related to interface collections
 			code	}
 			code	$data = $app->request->getbody();
 			code	$data = json_decode($data,true);
-			code	interfaceKeyNew($name,$data,$pass);
+			code	interfaceEntryNew($name,$data,$pass);
 			code	$app->response->setStatus(201);
 			code	return;
 			request	add new interface entry	application/json
-				header	Pass	5ffab638bde372b4fa63bb6f8484595d
+				header	Pass	724fd4b4438fba9d0c5ab89d0833e5c9
 				body	{"key":"new.key.one", "message":"UI text","description":"about the text","icon":"search"}
 				response	201	text/plain
 					body	...
@@ -155,7 +157,7 @@ group	interface	Resources related to interface collections
 			code	if ($err){
 			code	  haltBadRequest($err);
 			code	}
-			code	$entries = interfaceKeyEntry($name,$key,$pass);
+			code	$entries = interfaceKeySearch($name,$key,$pass);
 			code	if (!$entries){
 			code	  haltNoContent();
 			code	}
@@ -163,11 +165,11 @@ group	interface	Resources related to interface collections
 			code	if ($lastModified <= $check){
 			code	  haltNotModified();
 			code	}
-			code	$app->response->headers->set('Last-Modified', $lastModified);
+			code	header('Last-Modified: ' . $lastModified);
 			code	echo json_pretty($entries);
 			request	an interface entry
 				header	If-Modified-Since	2019-01-16T16:56:19.175Z
-				header	Pass	5ffab638bde372b4fa63bb6f8484595d
+				header	Pass	724fd4b4438fba9d0c5ab89d0833e5c9
 				response	200	text/plain
 					body	...
 		method	PUT	update interface entry
@@ -179,11 +181,11 @@ group	interface	Resources related to interface collections
 			code	$pass = isset($headers['Pass'])?$headers['Pass']:'';
 			code	$data = $app->request->getbody();
 			code	$data = json_decode($data,true);
-			code	interfaceKeyUpdate($name,$key,$data,$pass);
+			code	interfaceEntryUpdate($name,$key,$data,$pass);
 			code	$app->response->setStatus(204);
 			code	return;
 			request	an update for an existing entry
-				header	Pass	5ffab638bde372b4fa63bb6f8484595d
+				header	Pass	724fd4b4438fba9d0c5ab89d0833e5c9
 				body	{"key":"new.key.one", "message":"UI text","description":"about the text","icon":"search"}
 				response	204
 		method	DELETE	remove interface entry
@@ -193,8 +195,8 @@ group	interface	Resources related to interface collections
 			code	}
 			code	$headers = getHeaders();
 			code	$pass = isset($headers['Pass'])?$headers['Pass']:'';
-			code	interfaceKeyDelete($name,$key,$pass);
+			code	interfaceEntryDelete($name,$key,$pass);
 			code	$app->response->setStatus(204);
 			request	the removal of an interface entry
-				header	Pass	5ffab638bde372b4fa63bb6f8484595d
+				header	Pass	724fd4b4438fba9d0c5ab89d0833e5c9
 				response	204

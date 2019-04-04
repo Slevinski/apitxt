@@ -184,7 +184,7 @@ majaX = function (data, successcallback, errorcallback) {
       }
     }
   } else {
-    if (method !== 'POST') {
+    if (method !== 'POST' && method!=='PUT') {
       if (sendstring !== '') {
         if (urlparts.clean.query !== '') {
           url = url + '&' + sendstring;
@@ -194,13 +194,8 @@ majaX = function (data, successcallback, errorcallback) {
       }
     }
 
-    if (method === 'GET') {
-      ajax.open('GET', url, true);
-      majax.overrideMime(ajax, mimetype);
-      majax.setReqHeaders(ajax, header);
-      ajax.send();
-    } else if (method === 'POST') {
-      ajax.open('POST', url, true);
+    if (method === 'PUT' || method === 'POST') {
+      ajax.open(method, url, true);
       majax.overrideMime(ajax, mimetype);
       majax.setReqHeaders(ajax, header);
       ajax.send(sendstring);
@@ -472,10 +467,14 @@ function dataRequest(iG, iR, iM){
       url = url.replace("{"+segment + "}",replace);
     }
   }
+  url = encodeURI(url);
   var headers = Object.assign((req.headers||{}),{
     "Description":data["groups"][iG]["routes"][iR]['methods'][iM]['name'],
     "Location": url
   });
+  if (req.type){
+    headers['Content-Type'] = req.type;
+  }
   data["groups"][iG]["routes"][iR]['methods'][iM]["dialog"] = [
     {
       "request":{

@@ -76,7 +76,7 @@ Access to available interfaces
      + name: `en-US-interface-sp3` (required,string) - The name of an interface
      + update: 1 (optional,number) - Forces a rewrite of the interface for json and txt formats
 
-#### retrieve interface or available interfaces [GET]
+#### retrieve interface [GET]
 
 + Request interface text
 
@@ -108,7 +108,7 @@ Access to interface keys
      + Headers
 
             If-Modified-Since: 2019-01-16T16:56:19.175Z
-            Pass: 5ffab638bde372b4fa63bb6f8484595d
+            Pass: 724fd4b4438fba9d0c5ab89d0833e5c9
 
      + Body
 
@@ -134,7 +134,7 @@ Search interface for text
 
      + Headers
 
-            Pass: 5ffab638bde372b4fa63bb6f8484595d
+            Pass: 724fd4b4438fba9d0c5ab89d0833e5c9
 
      + Body
 
@@ -164,7 +164,7 @@ Entries for interface
 
      + Headers
 
-            Pass: 5ffab638bde372b4fa63bb6f8484595d
+            Pass: 724fd4b4438fba9d0c5ab89d0833e5c9
 
      + Body
 
@@ -191,7 +191,7 @@ Specific entries for interface
      + Headers
 
             If-Modified-Since: 2019-01-16T16:56:19.175Z
-            Pass: 5ffab638bde372b4fa63bb6f8484595d
+            Pass: 724fd4b4438fba9d0c5ab89d0833e5c9
 
      + Body
 
@@ -209,7 +209,7 @@ Specific entries for interface
 
      + Headers
 
-            Pass: 5ffab638bde372b4fa63bb6f8484595d
+            Pass: 724fd4b4438fba9d0c5ab89d0833e5c9
 
      + Body
 
@@ -223,7 +223,7 @@ Specific entries for interface
 
      + Headers
 
-            Pass: 5ffab638bde372b4fa63bb6f8484595d
+            Pass: 724fd4b4438fba9d0c5ab89d0833e5c9
 
      + Body
 

@@ -329,7 +329,7 @@ for line in lines:
 						errors.append({"error":"Line " + str(num) + ": dialog exchange responses is empty"})
 				elif "request" in method["dialog"][-1]:
 					if "body" in method["dialog"][-1]["request"]:
-						method["dialog"][-1]["request"]["body"].append(newLine)
+						method["dialog"][-1]["request"]["body"].append(newline)
 					else:
 						method["dialog"][-1]["request"]["body"] = [newline]
 				else:

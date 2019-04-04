@@ -511,6 +511,61 @@
     "name": "delete collection"
   }, 
   {
+    "route": "/collection/{name}/stats", 
+    "name": "Collection statistics", 
+    "parameters": [
+      {
+        "description": "The name of a dictionary", 
+        "type": "required,string", 
+        "name": "name", 
+        "example": "`ase-US-dictionary-public`"
+      }
+    ], 
+    "description": "Statistics about the collection"
+  }, 
+  {
+    "code": [
+      "$headers = getHeaders();", 
+      "$pass = isset($headers['Pass'])?$headers['Pass']:'';", 
+      "rightsCheck($name,$pass,SP_VIEW);", 
+      "$check = isset($headers['If-Modified-Since'])?$headers['If-Modified-Since']:'';", 
+      "$err = invalidName($name);", 
+      "if ($err){", 
+      "  haltBadRequest($err);", 
+      "}", 
+      "$lastModified = lastModified($name);", 
+      "if ($lastModified <= $check){", 
+      "  haltNotModified();", 
+      "}", 
+      "header('Last-Modified: ' . $lastModified);", 
+      "$output = json_pretty(collectionStats($name));", 
+      "$searchTime = searchtime($timein);", 
+      "header(\"Search-Time: \" . $searchTime);", 
+      "echo $output;"
+    ], 
+    "method": "GET", 
+    "dialog": [
+      {
+        "request": {
+          "headers": {
+            "If-Modified-Since": "2019-01-16T16:56:19.175Z"
+          }, 
+          "name": "collections statistics"
+        }, 
+        "responses": [
+          {
+            "status": 200, 
+            "body": [
+              "[{\"name\": \"en-US-interface-sp3\",\"code\": \"ui1\",\"title\": \"English Interface for SignPuddle 3\",\"user\": \"slevinski\",\"created_at\": \"\",\"view_pass\": 0,\"add_pass\": 1,\"edit_pass\": 1,\"register_level\": 0,\"upload_level\": 4}]"
+            ], 
+            "type": "text/plain"
+          }
+        ]
+      }
+    ], 
+    "name": "Get collection statistics"
+  }, 
+  {
     "route": "/collection/security", 
     "name": "Collections security", 
     "description": "Security settings for all collections"
@@ -523,7 +578,7 @@
       "if ($lastModified <= $check){", 
       "  haltNotModified();", 
       "}", 
-      "$app->response->headers->set('Last-Modified', $lastModified);", 
+      "header('Last-Modified: ' . $lastModified);", 
       "echo json_pretty(collectionsSecurity());"
     ], 
     "method": "GET", 
@@ -892,7 +947,7 @@
       "$pass = isset($headers['Pass'])?$headers['Pass']:'';", 
       "$user = userVerified($pass);", 
       "if (!$user) haltForbidden();", 
-      "rightscheck($source,$pass,SP_VIEW);", 
+      "rightsCheck($source,$pass,SP_VIEW);", 
       "$err = invalidName($source);", 
       "if ($err){", 
       "  haltBadRequest($err);", 
@@ -1040,7 +1095,7 @@
     "code": [
       "$headers = getHeaders();", 
       "$pass = isset($headers['Pass'])?$headers['Pass']:'';", 
-      "rightscheck($name,$pass,SP_VIEW);", 
+      "rightsCheck($name,$pass,SP_VIEW);", 
       "$check = isset($headers['If-Modified-Since'])?$headers['If-Modified-Since']:'';", 
       "if (strpos($name,'.')){", 
       "  $parts = explode('.',$name);", 
@@ -1071,7 +1126,9 @@
       "  file_put_contents($file,$txt);", 
       "}", 
       "if(file_exists($file)) {", 
-      "  $app->response->headers->set('Last-Modified', $lastModified);", 
+      "  header('Last-Modified: ' . $lastModified);", 
+      "  $searchTime = searchtime($timein);", 
+      "  header(\"Search-Time: \" . $searchTime);", 
       "  getFile($file);", 
       "} else {", 
       "  haltNotFound();", 
@@ -1097,7 +1154,7 @@
         ]
       }
     ], 
-    "name": "retrieve interface or available interfaces"
+    "name": "retrieve interface"
   }, 
   {
     "route": "/interface/{name}/key", 
@@ -1125,7 +1182,7 @@
       "if ($lastModified <= $check){", 
       "  haltNotModified();", 
       "}", 
-      "$app->response->headers->set('Last-Modified', $lastModified);", 
+      "header('Last-Modified: ' . $lastModified);", 
       "echo json_pretty(interfaceKeys($name,$pass));"
     ], 
     "method": "GET", 
@@ -1133,7 +1190,7 @@
       {
         "request": {
           "headers": {
-            "Pass": "5ffab638bde372b4fa63bb6f8484595d", 
+            "Pass": "724fd4b4438fba9d0c5ab89d0833e5c9", 
             "If-Modified-Since": "2019-01-16T16:56:19.175Z"
           }, 
           "name": "interface keys"
@@ -1185,7 +1242,7 @@
       {
         "request": {
           "headers": {
-            "Pass": "5ffab638bde372b4fa63bb6f8484595d"
+            "Pass": "724fd4b4438fba9d0c5ab89d0833e5c9"
           }, 
           "name": "matching interface entries"
         }, 
@@ -1233,7 +1290,7 @@
       "}", 
       "$data = $app->request->getbody();", 
       "$data = json_decode($data,true);", 
-      "interfaceKeyNew($name,$data,$pass);", 
+      "interfaceEntryNew($name,$data,$pass);", 
       "$app->response->setStatus(201);", 
       "return;"
     ], 
@@ -1245,7 +1302,7 @@
             "{\"key\":\"new.key.one\", \"message\":\"UI text\",\"description\":\"about the text\",\"icon\":\"search\"}"
           ], 
           "headers": {
-            "Pass": "5ffab638bde372b4fa63bb6f8484595d"
+            "Pass": "724fd4b4438fba9d0c5ab89d0833e5c9"
           }, 
           "type": "application/json", 
           "name": "add new interface entry"
@@ -1291,7 +1348,7 @@
       "if ($err){", 
       "  haltBadRequest($err);", 
       "}", 
-      "$entries = interfaceKeyEntry($name,$key,$pass);", 
+      "$entries = interfaceKeySearch($name,$key,$pass);", 
       "if (!$entries){", 
       "  haltNoContent();", 
       "}", 
@@ -1299,7 +1356,7 @@
       "if ($lastModified <= $check){", 
       "  haltNotModified();", 
       "}", 
-      "$app->response->headers->set('Last-Modified', $lastModified);", 
+      "header('Last-Modified: ' . $lastModified);", 
       "echo json_pretty($entries);"
     ], 
     "method": "GET", 
@@ -1307,7 +1364,7 @@
       {
         "request": {
           "headers": {
-            "Pass": "5ffab638bde372b4fa63bb6f8484595d", 
+            "Pass": "724fd4b4438fba9d0c5ab89d0833e5c9", 
             "If-Modified-Since": "2019-01-16T16:56:19.175Z"
           }, 
           "name": "an interface entry"
@@ -1335,7 +1392,7 @@
       "$pass = isset($headers['Pass'])?$headers['Pass']:'';", 
       "$data = $app->request->getbody();", 
       "$data = json_decode($data,true);", 
-      "interfaceKeyUpdate($name,$key,$data,$pass);", 
+      "interfaceEntryUpdate($name,$key,$data,$pass);", 
       "$app->response->setStatus(204);", 
       "return;"
     ], 
@@ -1347,7 +1404,7 @@
             "{\"key\":\"new.key.one\", \"message\":\"UI text\",\"description\":\"about the text\",\"icon\":\"search\"}"
           ], 
           "headers": {
-            "Pass": "5ffab638bde372b4fa63bb6f8484595d"
+            "Pass": "724fd4b4438fba9d0c5ab89d0833e5c9"
           }, 
           "name": "an update for an existing entry"
         }, 
@@ -1368,7 +1425,7 @@
       "}", 
       "$headers = getHeaders();", 
       "$pass = isset($headers['Pass'])?$headers['Pass']:'';", 
-      "interfaceKeyDelete($name,$key,$pass);", 
+      "interfaceEntryDelete($name,$key,$pass);", 
       "$app->response->setStatus(204);"
     ], 
     "method": "DELETE", 
@@ -1376,7 +1433,7 @@
       {
         "request": {
           "headers": {
-            "Pass": "5ffab638bde372b4fa63bb6f8484595d"
+            "Pass": "724fd4b4438fba9d0c5ab89d0833e5c9"
           }, 
           "name": "the removal of an interface entry"
         }, 
@@ -1388,6 +1445,993 @@
       }
     ], 
     "name": "remove interface entry"
+  }, 
+  {
+    "lines": [
+      "+ Source: [ApiTxt format](../src/dictionary.txt) and [JSON objects](../src/dictionary.json)", 
+      "+ Documents: [API Blueprint](../doc/dictionary.md) and [Stand Alone HTML](../doc/dictionary.htm)", 
+      "+ Live Page: [API Dictionary](../api/dictionary.html) and [JavaScript](../api/dictionary.js)"
+    ], 
+    "group": "dictionary", 
+    "description": "Resources related to dictionary collections"
+  }, 
+  {
+    "route": "/dictionary{?name}", 
+    "name": "Dictionaries available", 
+    "parameters": [
+      {
+        "description": "partial dictionary name", 
+        "type": "string", 
+        "name": "name", 
+        "example": "public"
+      }
+    ]
+  }, 
+  {
+    "code": [
+      "$dir = 'data/db/';", 
+      "$ext = '.db';", 
+      "$out = [];", 
+      "if ($name){", 
+      "  if (strpos($name,\"dictionary\")!==false){", 
+      "    $dictionaries = $dir . '*' . $name . '*' . $ext;", 
+      "    $files = glob($dictionaries);", 
+      "  } else {", 
+      "    $dictionaries = $dir . '*dictionary*' . $name . '*' . $ext;", 
+      "    $files = glob($dictionaries);", 
+      "    if (count($files)==0) {", 
+      "      $dictionaries = $dir . '*' . $name . '*dictionary*' . $ext;", 
+      "      $files = glob($dictionaries);", 
+      "    }", 
+      "  }", 
+      "} else {", 
+      "  $dictionaries = $dir . '*dictionary*' . $ext;", 
+      "  $files = glob($dictionaries);", 
+      "}", 
+      "foreach ($files as $filename) {", 
+      "  $out[] = str_replace($ext,'',str_replace($dir,'',$filename));", 
+      "}", 
+      "if (count($out)){", 
+      "  echo json_pretty($out);", 
+      "} else {", 
+      "  $app->response->setStatus(204);", 
+      "}", 
+      "return;"
+    ], 
+    "method": "GET", 
+    "dialog": [
+      {
+        "responses": [
+          {
+            "status": 200, 
+            "body": [
+              "[\"ase-US-dictionary-public\"]"
+            ], 
+            "type": "text/plain"
+          }
+        ]
+      }
+    ], 
+    "name": "Get available dictionaries"
+  }, 
+  {
+    "route": "/dictionary/{name}{?update}", 
+    "name": "Dictionary resource", 
+    "parameters": [
+      {
+        "description": "The name of an dictionary", 
+        "type": "required,string", 
+        "name": "name", 
+        "example": "`ase-US-dictionary-public`"
+      }, 
+      {
+        "description": "Forces a rewrite of the dictionary for json and txt formats", 
+        "type": "optional,number", 
+        "name": "update", 
+        "example": "1"
+      }
+    ], 
+    "description": "Access to available dictionaries"
+  }, 
+  {
+    "code": [
+      "$headers = getHeaders();", 
+      "$pass = isset($headers['Pass'])?$headers['Pass']:'';", 
+      "rightsCheck($name,$pass,SP_VIEW);", 
+      "$check = isset($headers['If-Modified-Since'])?$headers['If-Modified-Since']:'';", 
+      "if (strpos($name,'.')){", 
+      "  $parts = explode('.',$name);", 
+      "  $name = $parts[0];", 
+      "  $format = $parts[1];", 
+      "  if (!in_array($format,['db','txt','json'])){", 
+      "    haltNotFound();", 
+      "  }", 
+      "} else {", 
+      "  $format = 'json';", 
+      "}", 
+      "$dir = 'data/' . $format . '/';", 
+      "$ext = '.' . $format;", 
+      "$file = $dir . $name . $ext;", 
+      "$err = invalidName($name);", 
+      "if ($err){", 
+      "  haltBadRequest($err);", 
+      "}", 
+      "$lastModified = lastModified($name);", 
+      "if ($lastModified <= $check  && !$update){", 
+      "  haltNotModified();", 
+      "}", 
+      "if ($format=='json' && (!file_exists($file) || $update)) {", 
+      "  $json = dictionary2json($name);", 
+      "  file_put_contents($file,$json);", 
+      "} else if ($format=='txt' && (!file_exists($file) || $update)) {", 
+      "  $txt = dictionary2txt($name);", 
+      "  file_put_contents($file,$txt);", 
+      "}", 
+      "if(file_exists($file)) {", 
+      "  header('Last-Modified: ' . $lastModified);", 
+      "  $searchTime = searchtime($timein);", 
+      "  header(\"Search-Time: \" . $searchTime);", 
+      "  getFile($file);", 
+      "} else {", 
+      "  haltNotFound();", 
+      "}"
+    ], 
+    "method": "GET", 
+    "dialog": [
+      {
+        "request": {
+          "headers": {
+            "If-Modified-Since": "2019-01-16T16:56:19.175Z"
+          }, 
+          "name": "dictionary text"
+        }, 
+        "responses": [
+          {
+            "status": 200, 
+            "body": [
+              "1\t\ud836\udc00\ud8cb\udc61\ud8c8\uddd9\ud8db\udfc3\ud836\udc03\ud836\udd1d\ud836\udd14\ud8c8\uddd9\ud836\udcf0\ud836\udcf9\ud8db\udfc3\ud836\udd0e\ud836\udd01\ud8cb\udc61\ud836\udcfd\ud836\udd00\ttest zero\ttest zero\twe are testing SignPuddle 1.6\tVal ;-)\t{\"video\":\"<iframe width=\\\"425\\\" height=\\\"349\\\" src=\\\"http:\\/\\/www.youtube.com\\/embed\\/RTniYA1lTDM\\\" frameborder=\\\"0\\\" allowfullscreen><\\/iframe>\"}\tVal\t2011-07-20T17:39:02Z\t2011-07-20T17:42:09Z"
+            ], 
+            "type": "text/plain"
+          }
+        ]
+      }
+    ], 
+    "name": "retrieve dictionary"
+  }, 
+  {
+    "route": "/dictionary/{name}/signs", 
+    "name": "List of dictionary signs", 
+    "parameters": [
+      {
+        "description": "The name of an dictionary", 
+        "type": "string", 
+        "name": "name", 
+        "example": "`ase-US-dictionary-public`"
+      }
+    ], 
+    "description": "The signs in the dictionary"
+  }, 
+  {
+    "code": [
+      "$headers = getHeaders();", 
+      "$pass = isset($headers['Pass'])?$headers['Pass']:'';", 
+      "rightsCheck($name,$pass,SP_VIEW);", 
+      "$check = isset($headers['If-Modified-Since'])?$headers['If-Modified-Since']:'';", 
+      "$err = invalidName($name);", 
+      "if ($err){", 
+      "  haltBadRequest($err);", 
+      "}", 
+      "$lastModified = lastModified($name);", 
+      "if ($lastModified <= $check){", 
+      "  haltNotModified();", 
+      "}", 
+      "header('Last-Modified: ' . $lastModified);", 
+      "$output = dictionarySigns($name);", 
+      "$searchTime = searchtime($timein);", 
+      "header(\"Search-Time: \" . $searchTime);", 
+      "echo $output;"
+    ], 
+    "method": "GET", 
+    "dialog": [
+      {
+        "request": {
+          "headers": {
+            "If-Modified-Since": "2019-01-16T16:56:19.175Z"
+          }, 
+          "name": "dictionary text"
+        }, 
+        "responses": [
+          {
+            "status": 200, 
+            "body": [
+              "\ud836\udc00\ud8cb\udc61\ud8c8\uddd9\ud8db\udfc3\ud836\udc03\ud836\udd1d\ud836\udd14\ud8c8\uddd9\ud836\udcf0\ud836\udcf9\ud8db\udfc3\ud836\udd0e\ud836\udd01\ud8cb\udc61\ud836\udcfd\ud836\udd00"
+            ], 
+            "type": "text/plain"
+          }
+        ]
+      }
+    ], 
+    "name": "retrieve dictionary signs"
+  }, 
+  {
+    "route": "/dictionary/{name}/signtexts", 
+    "name": "List of dictionary signtexts", 
+    "parameters": [
+      {
+        "description": "The name of an dictionary", 
+        "type": "string", 
+        "name": "name", 
+        "example": "`ase-US-dictionary-public`"
+      }
+    ], 
+    "description": "The signtexts in the dictionary"
+  }, 
+  {
+    "code": [
+      "$headers = getHeaders();", 
+      "$pass = isset($headers['Pass'])?$headers['Pass']:'';", 
+      "rightsCheck($name,$pass,SP_VIEW);", 
+      "$check = isset($headers['If-Modified-Since'])?$headers['If-Modified-Since']:'';", 
+      "$err = invalidName($name);", 
+      "if ($err){", 
+      "  haltBadRequest($err);", 
+      "}", 
+      "$lastModified = lastModified($name);", 
+      "if ($lastModified <= $check){", 
+      "  haltNotModified();", 
+      "}", 
+      "header('Last-Modified: ' . $lastModified);", 
+      "$output = dictionarySigntexts($name);", 
+      "$searchTime = searchtime($timein);", 
+      "header(\"Search-Time: \" . $searchTime);", 
+      "echo $output;"
+    ], 
+    "method": "GET", 
+    "dialog": [
+      {
+        "request": {
+          "headers": {
+            "If-Modified-Since": "2019-01-16T16:56:19.175Z"
+          }, 
+          "name": "dictionary text"
+        }, 
+        "responses": [
+          {
+            "status": 200, 
+            "body": [
+              "\ud836\udc00\ud8cb\udc61\ud8c8\uddd9\ud8db\udfc3\ud836\udc03\ud836\udd1d\ud836\udd14\ud8c8\uddd9\ud836\udcf0\ud836\udcf9\ud8db\udfc3\ud836\udd0e\ud836\udd01\ud8cb\udc61\ud836\udcfd\ud836\udd00"
+            ], 
+            "type": "text/plain"
+          }
+        ]
+      }
+    ], 
+    "name": "retrieve dictionary signtexts"
+  }, 
+  {
+    "route": "/dictionary/{name}/entry", 
+    "name": "Dictionary entry resource", 
+    "parameters": [
+      {
+        "description": "The name of an dictionary", 
+        "type": "string", 
+        "name": "name", 
+        "example": "`ase-US-dictionary-public`"
+      }
+    ], 
+    "description": "Entries for dictionary"
+  }, 
+  {
+    "code": [
+      "$headers = getHeaders();", 
+      "$pass = isset($headers['Pass'])?$headers['Pass']:'';", 
+      "$err = invalidName($name);", 
+      "if ($err){", 
+      "  haltBadRequest($err);", 
+      "}", 
+      "$data = $app->request->getbody();", 
+      "$data = json_decode($data,true);", 
+      "echo dictionaryEntryNew($name,$data,$pass);", 
+      "return;"
+    ], 
+    "method": "POST", 
+    "dialog": [
+      {
+        "request": {
+          "body": [
+            "{", 
+            "  \"sign\": \"\\ud836\\udc03\\ud836\\udd44\\ud836\\udd19\\ud8ef\\udfa1\\ud836\\udcf4\\ud836\\udcf4\\ud8dd\\udc54\\ud836\\udcc8\\ud836\\udcfc\\ud8dd\\udc42\\ud836\\udd26\\ud836\\udcfa\\ud8c8\\uddd2\\ud836\\udd15\\ud836\\udcee\\ud8c8\\uddda\\ud836\\udce0\\ud836\\udcef\",", 
+            "  \"terms\": [", 
+            "    \"Malaysia\"", 
+            "  ],", 
+            "  \"signtext\": \"\",", 
+            "  \"text\": \"\",", 
+            "  \"source\": \"Conference Maastricht\",", 
+            "  \"detail\": {}", 
+            "}  "
+          ], 
+          "headers": {
+            "Pass": "724fd4b4438fba9d0c5ab89d0833e5c9"
+          }, 
+          "type": "application/json", 
+          "name": "add new dictionary entry"
+        }, 
+        "responses": [
+          {
+            "status": 200, 
+            "body": [
+              "777"
+            ], 
+            "type": "text/plain"
+          }
+        ]
+      }
+    ], 
+    "name": "add dictionary entry"
+  }, 
+  {
+    "route": "/dictionary/{name}/entry/{id}", 
+    "name": "Dictionary entry resource for id", 
+    "parameters": [
+      {
+        "description": "The name of an dictionary", 
+        "type": "string", 
+        "name": "name", 
+        "example": "`ase-US-dictionary-public`"
+      }, 
+      {
+        "description": "An id numbers", 
+        "type": "string", 
+        "name": "id", 
+        "example": "11244"
+      }
+    ], 
+    "description": "Specific entries for dictionary"
+  }, 
+  {
+    "code": [
+      "$err = invalidName($name);", 
+      "if ($err){", 
+      "  haltBadRequest($err);", 
+      "}", 
+      "$headers = getHeaders();", 
+      "$pass = isset($headers['Pass'])?$headers['Pass']:'';", 
+      "$data = $app->request->getbody();", 
+      "$data = json_decode($data,true);", 
+      "dictionaryEntryUpdate($name,$id,$data,$pass);", 
+      "$app->response->setStatus(204);", 
+      "return;"
+    ], 
+    "method": "PUT", 
+    "dialog": [
+      {
+        "request": {
+          "body": [
+            "{", 
+            "  \"sign\": \"\\ud836\\udc03\\ud836\\udd44\\ud836\\udd19\\ud8ef\\udfa1\\ud836\\udcf4\\ud836\\udcf4\\ud8dd\\udc54\\ud836\\udcc8\\ud836\\udcfc\\ud8dd\\udc42\\ud836\\udd26\\ud836\\udcfa\\ud8c8\\uddd2\\ud836\\udd15\\ud836\\udcee\\ud8c8\\uddda\\ud836\\udce0\\ud836\\udcef\",", 
+            "  \"terms\": [", 
+            "    \"Malaysia\"", 
+            "  ],", 
+            "  \"signtext\": \"\",", 
+            "  \"text\": \"\",", 
+            "  \"source\": \"Conference Maastricht\",", 
+            "  \"detail\": {}", 
+            "}  "
+          ], 
+          "headers": {
+            "Pass": "724fd4b4438fba9d0c5ab89d0833e5c9"
+          }, 
+          "type": "application/json", 
+          "name": "an update for an existing dictionary entry"
+        }, 
+        "responses": [
+          {
+            "status": 204
+          }
+        ]
+      }
+    ], 
+    "name": "update dictionary entry"
+  }, 
+  {
+    "code": [
+      "$err = invalidName($name);", 
+      "if ($err){", 
+      "  haltBadRequest($err);", 
+      "}", 
+      "$headers = getHeaders();", 
+      "$pass = isset($headers['Pass'])?$headers['Pass']:'';", 
+      "dictionaryEntryDelete($name,$id,$pass);", 
+      "$app->response->setStatus(204);"
+    ], 
+    "method": "DELETE", 
+    "dialog": [
+      {
+        "request": {
+          "headers": {
+            "Pass": "724fd4b4438fba9d0c5ab89d0833e5c9"
+          }, 
+          "name": "the removal of an dictionary entry"
+        }, 
+        "responses": [
+          {
+            "status": 204
+          }
+        ]
+      }
+    ], 
+    "name": "remove dictionary entry"
+  }, 
+  {
+    "route": "/dictionary/{name}/search{?offset,limit,filter,sort,results}", 
+    "name": "Search dictionary", 
+    "parameters": [
+      {
+        "description": "The name of a dictionary", 
+        "type": "required,string", 
+        "name": "name", 
+        "example": "`ase-US-dictionary-public`"
+      }, 
+      {
+        "description": "Start of search results", 
+        "type": "number", 
+        "name": "offset", 
+        "example": "0"
+      }, 
+      {
+        "description": "Number of search results", 
+        "type": "number", 
+        "name": "limit", 
+        "example": "10"
+      }, 
+      {
+        "description": "restrict search results", 
+        "type": "string", 
+        "name": "filter", 
+        "example": "user=Val"
+      }, 
+      {
+        "description": "Field for sorting results", 
+        "type": "string", 
+        "name": "sort", 
+        "example": "created_at"
+      }, 
+      {
+        "description": "Type of results: entries, sign, term, terms", 
+        "type": "string", 
+        "name": "results", 
+        "example": "sign"
+      }
+    ], 
+    "description": "Searching dictionary signs"
+  }, 
+  {
+    "code": [
+      "$headers = getHeaders();", 
+      "$pass = isset($headers['Pass'])?$headers['Pass']:'';", 
+      "rightsCheck($name,$pass,SP_VIEW);", 
+      "$check = isset($headers['If-Modified-Since'])?$headers['If-Modified-Since']:'';", 
+      "$err = invalidName($name);", 
+      "if ($err){", 
+      "  haltBadRequest($err);", 
+      "}", 
+      "$lastModified = lastModified($name);", 
+      "if ($lastModified <= $check){", 
+      "  haltNotModified();", 
+      "}", 
+      "$output = json_pretty(dictionarySearch($name,$offset,$limit,$filter,$sort,$results));", 
+      "header('Last-Modified: ' . $lastModified);", 
+      "$searchTime = searchtime($timein);", 
+      "header(\"Search-Time: \" . $searchTime);", 
+      "echo $output;"
+    ], 
+    "method": "GET", 
+    "dialog": [
+      {
+        "request": {
+          "headers": {
+            "Pass": "724fd4b4438fba9d0c5ab89d0833e5c9", 
+            "If-Modified-Since": "2019-01-16T16:56:19.175Z"
+          }, 
+          "name": "dictionary query results"
+        }, 
+        "responses": [
+          {
+            "status": 200, 
+            "body": [
+              "{", 
+              "  \"total\": 1,", 
+              "  \"data\": [", 
+              "    [", 
+              "      \"1\",", 
+              "      \"\\ud836\\udc00\\ud8cb\\udc61\\ud8c8\\uddd9\\ud8db\\udfc3\\ud836\\udc03\\ud836\\udd1d\\ud836\\udd14\\ud8c8\\uddd9\\ud836\\udcf0\\ud836\\udcf9\\ud8db\\udfc3\\ud836\\udd0e\\ud836\\udd01\\ud8cb\\udc61\\ud836\\udcfd\\ud836\\udd00\"", 
+              "    ]", 
+              "  ]", 
+              "}"
+            ], 
+            "type": "text/plain"
+          }
+        ]
+      }
+    ], 
+    "name": "retrieve dictionary results of searching"
+  }, 
+  {
+    "route": "/dictionary/{name}/search/id/{id}", 
+    "name": "Search dictionary with ids", 
+    "parameters": [
+      {
+        "description": "The name of an dictionary", 
+        "type": "string", 
+        "name": "name", 
+        "example": "`ase-US-dictionary-public`"
+      }, 
+      {
+        "description": "A list of one or more id numbers", 
+        "type": "string", 
+        "name": "id", 
+        "example": "1-4,5"
+      }
+    ], 
+    "description": "Specific entries for dictionary"
+  }, 
+  {
+    "code": [
+      "$headers = getHeaders();", 
+      "$pass = isset($headers['Pass'])?$headers['Pass']:'';", 
+      "rightsCheck($name,$pass,SP_VIEW);", 
+      "$check = isset($headers['If-Modified-Since'])?$headers['If-Modified-Since']:'';", 
+      "$err = invalidName($name);", 
+      "if ($err){", 
+      "  haltBadRequest($err);", 
+      "}", 
+      "$entries = dictionarySearchId($name,$id,$pass);", 
+      "if (!$entries){", 
+      "  haltNoContent();", 
+      "}", 
+      "$lastModified = max(array_map(function($o) {return $o['updated_at'];},$entries));", 
+      "if ($lastModified <= $check){", 
+      "  haltNotModified();", 
+      "}", 
+      "header('Last-Modified: ' . $lastModified);", 
+      "echo json_pretty($entries);"
+    ], 
+    "method": "GET", 
+    "dialog": [
+      {
+        "request": {
+          "headers": {
+            "Pass": "724fd4b4438fba9d0c5ab89d0833e5c9", 
+            "If-Modified-Since": "2019-01-16T16:56:19.175Z"
+          }, 
+          "name": "an dictionary entry"
+        }, 
+        "responses": [
+          {
+            "status": 200, 
+            "body": [
+              "[", 
+              "  {", 
+              "    \"id\": \"1\",", 
+              "    \"sign\": \"\\ud836\\udc00\\ud8cb\\udc61\\ud8c8\\uddd9\\ud8db\\udfc3\\ud836\\udc03\\ud836\\udd1d\\ud836\\udd14\\ud8c8\\uddd9\\ud836\\udcf0\\ud836\\udcf9\\ud8db\\udfc3\\ud836\\udd0e\\ud836\\udd01\\ud8cb\\udc61\\ud836\\udcfd\\ud836\\udd00\",", 
+              "    \"terms\": [", 
+              "      \"test zero\"", 
+              "    ],", 
+              "    \"lower\": [", 
+              "      \"test zero\"", 
+              "    ],", 
+              "    \"signtext\": \"\",", 
+              "    \"text\": \"we are testing SignPuddle 1.6\",", 
+              "    \"source\": \"Val ;-)\",", 
+              "    \"detail\": {", 
+              "      \"video\": \"<iframe width=\\\"425\\\" height=\\\"349\\\" src=\\\"http:\\/\\/www.youtube.com\\/embed\\/RTniYA1lTDM\\\" frameborder=\\\"0\\\" allowfullscreen><\\/iframe>\"", 
+              "    },", 
+              "    \"user\": \"Val\",", 
+              "    \"created_at\": \"2011-07-20T17:39:02Z\",", 
+              "    \"updated_at\": \"2011-07-20T17:42:09Z\"", 
+              "  }", 
+              "]"
+            ], 
+            "type": "text/plain"
+          }
+        ]
+      }
+    ], 
+    "name": "retrieve dictionary entry"
+  }, 
+  {
+    "route": "/dictionary/{name}/search/sign/{query}{?offset,limit,filter,sort,results}", 
+    "name": "Search signs with query string", 
+    "parameters": [
+      {
+        "description": "The name of a dictionary", 
+        "type": "required,string", 
+        "name": "name", 
+        "example": "`ase-US-dictionary-public`"
+      }, 
+      {
+        "description": "A query string", 
+        "type": "required,string", 
+        "name": "query", 
+        "example": "Q"
+      }, 
+      {
+        "description": "Start of search results", 
+        "type": "number", 
+        "name": "offset", 
+        "example": "0"
+      }, 
+      {
+        "description": "Number of search results", 
+        "type": "number", 
+        "name": "limit", 
+        "example": "10"
+      }, 
+      {
+        "description": "restrict search results", 
+        "type": "string", 
+        "name": "filter", 
+        "example": "user=Val"
+      }, 
+      {
+        "description": "Field for sorting results", 
+        "type": "string", 
+        "name": "sort", 
+        "example": "created_at"
+      }, 
+      {
+        "description": "Type of results: entries, sign, term, terms", 
+        "type": "string", 
+        "name": "results", 
+        "example": "sign"
+      }
+    ], 
+    "description": "Query string access to dictionary signs"
+  }, 
+  {
+    "code": [
+      "$headers = getHeaders();", 
+      "$pass = isset($headers['Pass'])?$headers['Pass']:'';", 
+      "rightsCheck($name,$pass,SP_VIEW);", 
+      "$check = isset($headers['If-Modified-Since'])?$headers['If-Modified-Since']:'';", 
+      "$err = invalidName($name);", 
+      "if ($err){", 
+      "  haltBadRequest($err);", 
+      "}", 
+      "$lastModified = lastModified($name);", 
+      "if ($lastModified <= $check){", 
+      "  haltNotModified();", 
+      "}", 
+      "header('Last-Modified: ' . $lastModified);", 
+      "$output = json_pretty(dictionarySearchSign($name,$query,$offset,$limit,$filter,$sort,$results));", 
+      "$searchTime = searchtime($timein);", 
+      "header(\"Search-Time: \" . $searchTime);", 
+      "echo $output;"
+    ], 
+    "method": "GET", 
+    "dialog": [
+      {
+        "request": {
+          "headers": {
+            "Pass": "724fd4b4438fba9d0c5ab89d0833e5c9", 
+            "If-Modified-Since": "2019-01-16T16:56:19.175Z"
+          }, 
+          "name": "dictionary query results"
+        }, 
+        "responses": [
+          {
+            "status": 200, 
+            "body": [
+              "{", 
+              "  \"total\": 1,", 
+              "  \"data\": [", 
+              "    [", 
+              "      \"1\",", 
+              "      \"\\ud836\\udc00\\ud8cb\\udc61\\ud8c8\\uddd9\\ud8db\\udfc3\\ud836\\udc03\\ud836\\udd1d\\ud836\\udd14\\ud8c8\\uddd9\\ud836\\udcf0\\ud836\\udcf9\\ud8db\\udfc3\\ud836\\udd0e\\ud836\\udd01\\ud8cb\\udc61\\ud836\\udcfd\\ud836\\udd00\"", 
+              "    ]", 
+              "  ]", 
+              "}"
+            ], 
+            "type": "text/plain"
+          }
+        ]
+      }
+    ], 
+    "name": "retrieve dictionary results of searching signs with query string"
+  }, 
+  {
+    "route": "/dictionary/{name}/search/signtext/{query}{?offset,limit,filter,sort,results}", 
+    "name": "Search signtexts with query string", 
+    "parameters": [
+      {
+        "description": "The name of a dictionary", 
+        "type": "required,string", 
+        "name": "name", 
+        "example": "`ase-US-dictionary-public`"
+      }, 
+      {
+        "description": "A query string", 
+        "type": "required,string", 
+        "name": "query", 
+        "example": "Q"
+      }, 
+      {
+        "description": "Start of search results", 
+        "type": "number", 
+        "name": "offset", 
+        "example": "0"
+      }, 
+      {
+        "description": "Number of search results", 
+        "type": "number", 
+        "name": "limit", 
+        "example": "10"
+      }, 
+      {
+        "description": "restrict search results", 
+        "type": "string", 
+        "name": "filter", 
+        "example": "user=Val"
+      }, 
+      {
+        "description": "Field for sorting results", 
+        "type": "string", 
+        "name": "sort", 
+        "example": "created_at"
+      }, 
+      {
+        "description": "Type of results: entries, signtext, term, terms", 
+        "type": "string", 
+        "name": "results", 
+        "example": "sign"
+      }
+    ], 
+    "description": "Query string access to dictionary signtexts"
+  }, 
+  {
+    "code": [
+      "$headers = getHeaders();", 
+      "$pass = isset($headers['Pass'])?$headers['Pass']:'';", 
+      "rightsCheck($name,$pass,SP_VIEW);", 
+      "$check = isset($headers['If-Modified-Since'])?$headers['If-Modified-Since']:'';", 
+      "$err = invalidName($name);", 
+      "if ($err){", 
+      "  haltBadRequest($err);", 
+      "}", 
+      "$lastModified = lastModified($name);", 
+      "if ($lastModified <= $check){", 
+      "  haltNotModified();", 
+      "}", 
+      "header('Last-Modified: ' . $lastModified);", 
+      "$output = json_pretty(dictionarySearchSigntext($name,$query,$offset,$limit,$filter,$sort,$results));", 
+      "$searchTime = searchtime($timein);", 
+      "header(\"Search-Time: \" . $searchTime);", 
+      "echo $output;"
+    ], 
+    "method": "GET", 
+    "dialog": [
+      {
+        "request": {
+          "headers": {
+            "Pass": "724fd4b4438fba9d0c5ab89d0833e5c9", 
+            "If-Modified-Since": "2019-01-16T16:56:19.175Z"
+          }, 
+          "name": "dictionary query results"
+        }, 
+        "responses": [
+          {
+            "status": 200, 
+            "body": [
+              "{", 
+              "  \"total\": 1,", 
+              "  \"data\": [", 
+              "    [", 
+              "      \"1\",", 
+              "      \"\\ud836\\udc00\\ud8cb\\udc61\\ud8c8\\uddd9\\ud8db\\udfc3\\ud836\\udc03\\ud836\\udd1d\\ud836\\udd14\\ud8c8\\uddd9\\ud836\\udcf0\\ud836\\udcf9\\ud8db\\udfc3\\ud836\\udd0e\\ud836\\udd01\\ud8cb\\udc61\\ud836\\udcfd\\ud836\\udd00\"", 
+              "    ]", 
+              "  ]", 
+              "}"
+            ], 
+            "type": "text/plain"
+          }
+        ]
+      }
+    ], 
+    "name": "retrieve dictionary results of searching signtexts with query string"
+  }, 
+  {
+    "route": "/dictionary/{name}/search/terms/{text}{?type,case,offset,limit,filter,sort,results}", 
+    "name": "Dictionary terms search", 
+    "parameters": [
+      {
+        "description": "The name of an dictionary", 
+        "type": "required,string", 
+        "name": "name", 
+        "example": "`ase-US-dictionary-public`"
+      }, 
+      {
+        "description": "The text for searching", 
+        "type": "required,string", 
+        "name": "text", 
+        "example": "`SignPuddle`"
+      }, 
+      {
+        "description": "Type of search of start, end, or exact", 
+        "type": "string", 
+        "name": "type", 
+        "example": "exact"
+      }, 
+      {
+        "description": "Case sensitive search", 
+        "type": "number", 
+        "name": "case", 
+        "example": "0"
+      }, 
+      {
+        "description": "Start of search results", 
+        "type": "number", 
+        "name": "offset", 
+        "example": "0"
+      }, 
+      {
+        "description": "Number of search results", 
+        "type": "number", 
+        "name": "limit", 
+        "example": "10"
+      }, 
+      {
+        "description": "restrict search results", 
+        "type": "string", 
+        "name": "filter", 
+        "example": "user=Val"
+      }, 
+      {
+        "description": "Field for sorting results", 
+        "type": "string", 
+        "name": "sort", 
+        "example": "created_at"
+      }, 
+      {
+        "description": "Type of results: entries, sign, term, terms", 
+        "type": "string", 
+        "name": "results", 
+        "example": "sign"
+      }
+    ], 
+    "description": "Search dictionary terms for text"
+  }, 
+  {
+    "code": [
+      "$headers = getHeaders();", 
+      "$pass = isset($headers['Pass'])?$headers['Pass']:'';", 
+      "rightsCheck($name,$pass,SP_VIEW);", 
+      "$err = invalidName($name);", 
+      "if ($err){", 
+      "  haltBadRequest($err);", 
+      "}", 
+      "$output = json_pretty(dictionarySearchTerms($name,$text,$type,$case, $offset, $limit, $filter, $sort,$results));", 
+      "$searchTime = searchtime($timein);", 
+      "header(\"Search-Time: \" . $searchTime);", 
+      "echo $output;"
+    ], 
+    "method": "GET", 
+    "dialog": [
+      {
+        "request": {
+          "headers": {
+            "Pass": "724fd4b4438fba9d0c5ab89d0833e5c9"
+          }, 
+          "name": "matching dictionary entries"
+        }, 
+        "responses": [
+          {
+            "status": 200, 
+            "body": [
+              "{", 
+              "  \"total\": 1,", 
+              "  \"data\": [", 
+              "    [", 
+              "      \"1\",", 
+              "      \"\\ud836\\udc00\\ud8cb\\udc61\\ud8c8\\uddd9\\ud8db\\udfc3\\ud836\\udc03\\ud836\\udd1d\\ud836\\udd14\\ud8c8\\uddd9\\ud836\\udcf0\\ud836\\udcf9\\ud8db\\udfc3\\ud836\\udd0e\\ud836\\udd01\\ud8cb\\udc61\\ud836\\udcfd\\ud836\\udd00\"", 
+              "    ]", 
+              "  ]", 
+              "}"
+            ], 
+            "type": "text/plain"
+          }
+        ]
+      }
+    ], 
+    "name": "retrieve matching entries"
+  }, 
+  {
+    "route": "/dictionary/{name}/alphabet{?update}", 
+    "name": "Dictionary symbol subset", 
+    "parameters": [
+      {
+        "description": "The name of an dictionary", 
+        "type": "required,string", 
+        "name": "name", 
+        "example": "`ase-US-dictionary-public`"
+      }, 
+      {
+        "description": "Forces a rewrite of the alphabet", 
+        "type": "optional,number", 
+        "name": "update", 
+        "example": "1"
+      }
+    ], 
+    "description": "Create alphabet from dictionary signs"
+  }, 
+  {
+    "code": [
+      "$headers = getHeaders();", 
+      "$pass = isset($headers['Pass'])?$headers['Pass']:'';", 
+      "rightsCheck($name,$pass,SP_VIEW);", 
+      "$check = isset($headers['If-Modified-Since'])?$headers['If-Modified-Since']:'';", 
+      "if ($name==\"iswa-2010\"){", 
+      "  echo json_pretty(dictionaryISWA());", 
+      "  return;", 
+      "}", 
+      "$err = invalidName($name);", 
+      "if ($err){", 
+      "  haltBadRequest($err);", 
+      "}", 
+      "$lastModified = lastModified($name);", 
+      "if ($lastModified <= $check  && !$update){", 
+      "  haltNotModified();", 
+      "}", 
+      "", 
+      "$alphabet = str_replace('-dictionary-','-alphabet-',$name);", 
+      "$file = 'data/json/' . $alphabet . '.json';", 
+      "if (!$update){", 
+      "  if (!file_exists($file)) {", 
+      "    $update = 1;", 
+      "  } else {", 
+      "    $check = date (\"Y-m-d\\TH:i:s\", filemtime($file));", 
+      "    $check =  new DateTime($check);", 
+      "    $check->setTimezone(new DateTimeZone('UTC'));", 
+      "    $check = $check->format('Y-m-d\\TH:i:s\\Z');", 
+      "    if ($lastModified>$check){", 
+      "      $update = 1;", 
+      "    }", 
+      "  }", 
+      "}", 
+      "if ($update) {", 
+      "  $json = json_pretty(dictionaryAlphabet($name,$lastModified));", 
+      "  file_put_contents($file,$json);", 
+      "}", 
+      "if(file_exists($file)) {", 
+      "  header('Last-Modified: ' . $lastModified);", 
+      "  $searchTime = searchtime($timein);", 
+      "  header(\"Search-Time: \" . $searchTime);", 
+      "  getFile($file);", 
+      "} else {", 
+      "  haltNotFound();", 
+      "}"
+    ], 
+    "method": "GET", 
+    "dialog": [
+      {
+        "request": {
+          "headers": {
+            "Pass": "724fd4b4438fba9d0c5ab89d0833e5c9", 
+            "If-Modified-Since": "2019-01-16T16:56:19.175Z"
+          }, 
+          "name": "dictionary query results"
+        }, 
+        "responses": [
+          {
+            "status": 200, 
+            "body": [
+              "{\"name\": \"ase-US-alphabet-public\",\"data\": []}"
+            ], 
+            "type": "text/plain"
+          }
+        ]
+      }
+    ], 
+    "name": "generate alphabet from dictionary contents"
   }, 
   {
     "lines": [
@@ -1438,8 +2482,6 @@
   }, 
   {
     "code": [
-      "$timein = microtime(true);", 
-      "$app->contentType('text/plain;charset=utf-8');", 
       "$define = SignWriting\\define();", 
       "$searchTime = searchtime($timein);", 
       "header(\"Search-Time: \" . $searchTime);", 
@@ -1461,7 +2503,7 @@
               "  \"style\": {}", 
               "}"
             ], 
-            "type": "text/plain"
+            "type": "text/plain;charset=utf-8"
           }
         ]
       }
@@ -1493,8 +2535,6 @@
       "if ($section == \"sample\"){", 
       "  return $sample_define();", 
       "}", 
-      "$timein = microtime(true);", 
-      "$app->contentType('text/plain;charset=utf-8');", 
       "$define = SignWriting\\define($section);", 
       "$searchTime = searchtime($timein);", 
       "header(\"Search-Time: \" . $searchTime);", 
@@ -1517,7 +2557,7 @@
               "  \"query\": []", 
               "}"
             ], 
-            "type": "text/plain"
+            "type": "text/plain;charset=utf-8"
           }
         ]
       }
@@ -1547,8 +2587,6 @@
   }, 
   {
     "code": [
-      "$timein = microtime(true);", 
-      "$app->contentType('text/plain;charset=utf-8');", 
       "$define = SignWriting\\define($section,$part);", 
       "$searchTime = searchtime($timein);", 
       "header(\"Search-Time: \" . $searchTime);", 
@@ -1567,7 +2605,7 @@
               "  \"[\\\\x{40000}-\\\\x{4F428}]\"", 
               "]"
             ], 
-            "type": "text/plain"
+            "type": "text/plain;charset=utf-8"
           }
         ]
       }
@@ -1597,11 +2635,9 @@
   }, 
   {
     "code": [
-      "$timein = microtime(true);", 
       "if (!in_array($utf,[8,16,32,'x'])){", 
       "  $utf = 16;", 
       "}", 
-      "$app->contentType('text/plain;charset=utf-8');", 
       "$parse = SignWriting\\parse($text);", 
       "$searchTime = searchtime($timein);", 
       "header(\"Search-Time: \" . $searchTime);", 
@@ -1617,7 +2653,7 @@
             "body": [
               "parse results of text"
             ], 
-            "type": "text/plain"
+            "type": "text/plain;charset=utf-8"
           }
         ]
       }
@@ -1647,8 +2683,6 @@
   }, 
   {
     "code": [
-      "$timein = microtime(true);", 
-      "$app->contentType('text/plain;charset=utf-8');", 
       "$encode = SignWriting\\encode($text,$slash);", 
       "$searchTime = searchtime($timein);", 
       "header(\"Search-Time: \" . $searchTime);", 
@@ -1663,7 +2697,7 @@
             "body": [
               "\\uD836\\uDC00"
             ], 
-            "type": "text/plain"
+            "type": "text/plain;charset=utf-8"
           }
         ]
       }
@@ -1687,8 +2721,6 @@
   }, 
   {
     "code": [
-      "$timein = microtime(true);", 
-      "$app->contentType('text/plain;charset=utf-8');", 
       "$decode = SignWriting\\decode($text);", 
       "$searchTime = searchtime($timein);", 
       "header(\"Search-Time: \" . $searchTime);", 
@@ -1703,7 +2735,7 @@
             "body": [
               "\\x{1D800}"
             ], 
-            "type": "text/plain"
+            "type": "text/plain;charset=utf-8"
           }
         ]
       }
@@ -1724,9 +2756,6 @@
   }, 
   {
     "code": [
-      "$timein = microtime(true);", 
-      "$app->contentType('text/plain;charset=utf-8');", 
-      "", 
       "$encode = SignWriting\\utf8($text);", 
       "$searchTime = searchtime($timein);", 
       "header(\"Search-Time: \" . $searchTime);", 
@@ -1741,7 +2770,7 @@
             "body": [
               "%F0%9D%A0%80"
             ], 
-            "type": "text/plain"
+            "type": "text/plain;charset=utf-8"
           }
         ]
       }
@@ -1749,7 +2778,7 @@
     "name": "Get utf-8 encoded query string"
   }, 
   {
-    "route": "/tools/test{?text}", 
+    "route": "/tools/test{?text,opt1,opt2}", 
     "lines": [
       "A general purpose function for testing"
     ], 
@@ -1760,14 +2789,24 @@
         "type": "string", 
         "name": "text", 
         "example": "S10000"
+      }, 
+      {
+        "description": "Option one for testing", 
+        "type": "string", 
+        "name": "opt1", 
+        "example": "AS"
+      }, 
+      {
+        "description": "Option two for testing", 
+        "type": "string", 
+        "name": "opt2", 
+        "example": "AS"
       }
     ]
   }, 
   {
     "code": [
-      "$timein = microtime(true);", 
-      "$app->contentType('text/plain;charset=utf-8');", 
-      "$test = SignWriting\\test($text);", 
+      "$test = SignWriting\\test($text,$opt1,$opt2);", 
       "$searchTime = searchtime($timein);", 
       "header(\"Search-Time: \" . $searchTime);", 
       "echo $test;"
@@ -1781,7 +2820,7 @@
             "body": [
               "test output"
             ], 
-            "type": "text/plain"
+            "type": "text/plain;charset=utf-8"
           }
         ]
       }
@@ -1817,7 +2856,6 @@
   }, 
   {
     "code": [
-      "$timein = microtime(true);", 
       "$fsw = SignWriting\\fsw($text,$style);", 
       "$searchTime = searchtime($timein);", 
       "header(\"Search-Time: \" . $searchTime);", 
@@ -1862,7 +2900,6 @@
   }, 
   {
     "code": [
-      "$timein = microtime(true);", 
       "$fsw = SignWriting\\fswAll($text,$style);", 
       "$searchTime = searchtime($timein);", 
       "header(\"Search-Time: \" . $searchTime);", 
@@ -1901,9 +2938,7 @@
   }, 
   {
     "code": [
-      "$timein = microtime(true);", 
       "$swu = SignWriting\\fsw2swu($text);", 
-      "$app->contentType('text/plain;charset=utf-8');", 
       "$searchTime = searchtime($timein);", 
       "header(\"Search-Time: \" . $searchTime);", 
       "echo $swu;"
@@ -1950,10 +2985,8 @@
   }, 
   {
     "code": [
-      "$timein = microtime(true);", 
       "$req = $app->request();", 
       "if ($req->get('throwStatus')=='500') {haltNoDatabase();}", 
-      "$app->contentType('image/svg+xml;charset=utf-8');", 
       "$svg = SignWriting\\svg($text);", 
       "$searchTime = searchtime($timein);", 
       "header(\"Search-Time: \" . $searchTime);", 
@@ -2000,10 +3033,8 @@
   }, 
   {
     "code": [
-      "$timein = microtime(true);", 
       "$req = $app->request();", 
       "if ($req->get('throwStatus')=='500') {haltNoDatabase();}", 
-      "$app->contentType('image/svg+xml;charset=utf-8');", 
       "$svg = SignWriting\\svg($text,true);", 
       "$searchTime = searchtime($timein);", 
       "header(\"Search-Time: \" . $searchTime);", 
@@ -2149,7 +3180,6 @@
     "code": [
       "$timein = microtime(true);", 
       "$fsw = SignWriting\\swu2fsw($text);", 
-      "$app->contentType('text/plain;charset=utf-8');", 
       "$searchTime = searchtime($timein);", 
       "header(\"Search-Time: \" . $searchTime);", 
       "echo $fsw;"
@@ -2193,7 +3223,6 @@
       "$timein = microtime(true);", 
       "$req = $app->request();", 
       "if ($req->get('throwStatus')=='500') {haltNoDatabase();}", 
-      "$app->contentType('image/svg+xml;charset=utf-8');", 
       "$svg = SignWriting\\svg($text);", 
       "$searchTime = searchtime($timein);", 
       "header(\"Search-Time: \" . $searchTime);", 
@@ -2243,7 +3272,6 @@
       "$timein = microtime(true);", 
       "$req = $app->request();", 
       "if ($req->get('throwStatus')=='500') {haltNoDatabase();}", 
-      "$app->contentType('image/svg+xml;charset=utf-8');", 
       "$svg = SignWriting\\svg($text,true);", 
       "$searchTime = searchtime($timein);", 
       "header(\"Search-Time: \" . $searchTime);", 

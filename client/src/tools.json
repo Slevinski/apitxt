@@ -57,8 +57,6 @@
   }, 
   {
     "code": [
-      "$timein = microtime(true);", 
-      "$app->contentType('text/plain;charset=utf-8');", 
       "$define = SignWriting\\define();", 
       "$searchTime = searchtime($timein);", 
       "header(\"Search-Time: \" . $searchTime);", 
@@ -80,7 +78,7 @@
               "  \"style\": {}", 
               "}"
             ], 
-            "type": "text/plain"
+            "type": "text/plain;charset=utf-8"
           }
         ]
       }
@@ -112,8 +110,6 @@
       "if ($section == \"sample\"){", 
       "  return $sample_define();", 
       "}", 
-      "$timein = microtime(true);", 
-      "$app->contentType('text/plain;charset=utf-8');", 
       "$define = SignWriting\\define($section);", 
       "$searchTime = searchtime($timein);", 
       "header(\"Search-Time: \" . $searchTime);", 
@@ -136,7 +132,7 @@
               "  \"query\": []", 
               "}"
             ], 
-            "type": "text/plain"
+            "type": "text/plain;charset=utf-8"
           }
         ]
       }
@@ -166,8 +162,6 @@
   }, 
   {
     "code": [
-      "$timein = microtime(true);", 
-      "$app->contentType('text/plain;charset=utf-8');", 
       "$define = SignWriting\\define($section,$part);", 
       "$searchTime = searchtime($timein);", 
       "header(\"Search-Time: \" . $searchTime);", 
@@ -186,7 +180,7 @@
               "  \"[\\\\x{40000}-\\\\x{4F428}]\"", 
               "]"
             ], 
-            "type": "text/plain"
+            "type": "text/plain;charset=utf-8"
           }
         ]
       }
@@ -216,11 +210,9 @@
   }, 
   {
     "code": [
-      "$timein = microtime(true);", 
       "if (!in_array($utf,[8,16,32,'x'])){", 
       "  $utf = 16;", 
       "}", 
-      "$app->contentType('text/plain;charset=utf-8');", 
       "$parse = SignWriting\\parse($text);", 
       "$searchTime = searchtime($timein);", 
       "header(\"Search-Time: \" . $searchTime);", 
@@ -236,7 +228,7 @@
             "body": [
               "parse results of text"
             ], 
-            "type": "text/plain"
+            "type": "text/plain;charset=utf-8"
           }
         ]
       }
@@ -266,8 +258,6 @@
   }, 
   {
     "code": [
-      "$timein = microtime(true);", 
-      "$app->contentType('text/plain;charset=utf-8');", 
       "$encode = SignWriting\\encode($text,$slash);", 
       "$searchTime = searchtime($timein);", 
       "header(\"Search-Time: \" . $searchTime);", 
@@ -282,7 +272,7 @@
             "body": [
               "\\uD836\\uDC00"
             ], 
-            "type": "text/plain"
+            "type": "text/plain;charset=utf-8"
           }
         ]
       }
@@ -306,8 +296,6 @@
   }, 
   {
     "code": [
-      "$timein = microtime(true);", 
-      "$app->contentType('text/plain;charset=utf-8');", 
       "$decode = SignWriting\\decode($text);", 
       "$searchTime = searchtime($timein);", 
       "header(\"Search-Time: \" . $searchTime);", 
@@ -322,7 +310,7 @@
             "body": [
               "\\x{1D800}"
             ], 
-            "type": "text/plain"
+            "type": "text/plain;charset=utf-8"
           }
         ]
       }
@@ -343,9 +331,6 @@
   }, 
   {
     "code": [
-      "$timein = microtime(true);", 
-      "$app->contentType('text/plain;charset=utf-8');", 
-      "", 
       "$encode = SignWriting\\utf8($text);", 
       "$searchTime = searchtime($timein);", 
       "header(\"Search-Time: \" . $searchTime);", 
@@ -360,7 +345,7 @@
             "body": [
               "%F0%9D%A0%80"
             ], 
-            "type": "text/plain"
+            "type": "text/plain;charset=utf-8"
           }
         ]
       }
@@ -368,7 +353,7 @@
     "name": "Get utf-8 encoded query string"
   }, 
   {
-    "route": "/tools/test{?text}", 
+    "route": "/tools/test{?text,opt1,opt2}", 
     "lines": [
       "A general purpose function for testing"
     ], 
@@ -379,14 +364,24 @@
         "type": "string", 
         "name": "text", 
         "example": "S10000"
+      }, 
+      {
+        "description": "Option one for testing", 
+        "type": "string", 
+        "name": "opt1", 
+        "example": "AS"
+      }, 
+      {
+        "description": "Option two for testing", 
+        "type": "string", 
+        "name": "opt2", 
+        "example": "AS"
       }
     ]
   }, 
   {
     "code": [
-      "$timein = microtime(true);", 
-      "$app->contentType('text/plain;charset=utf-8');", 
-      "$test = SignWriting\\test($text);", 
+      "$test = SignWriting\\test($text,$opt1,$opt2);", 
       "$searchTime = searchtime($timein);", 
       "header(\"Search-Time: \" . $searchTime);", 
       "echo $test;"
@@ -400,7 +395,7 @@
             "body": [
               "test output"
             ], 
-            "type": "text/plain"
+            "type": "text/plain;charset=utf-8"
           }
         ]
       }

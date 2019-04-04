@@ -3,28 +3,10 @@ namespace SignWriting;
 ini_set('memory_limit', '2048M');
 ini_set('max_execution_time', 300);
 
-function test($text){
-  global $define;
-  return json_pretty($define['style']['id']);
-}
-
-function json_decode_utf16($json) {
-  $comment = false;
-  $out = '$x=';
-  for ($i=0; $i<strlen($json); $i++) {
-       if (!$comment) {
-           if (($json[$i] == '{') || ($json[$i] == '[')) $out .= ' array('; else if (($json[$i] == '}') || ($json[$i] == ']')) $out .= ')'; else if ($json[$i] == ':') $out .= '=>';
-  else
-  $out .= $json[$i];
-  }
-  else
-  $out .= $json[$i];
-  if ($json[$i] == '"' && $json[($i-1)]!="\\")
-  $comment = !$comment;
-  }
-  eval($out . ';');
-  return $x;
-}
+$structure = ["kind"=>['S100','S37f','S387'],
+  "category"=>['S100','S205','S2f7','S2ff','S36d','S37f','S387'],
+  "group"=>['S100','S10e','S11e','S144','S14c','S186','S1a4','S1ba','S1cd','S1f5','S205','S216','S22a','S255','S265','S288','S2a6','S2b7','S2d5','S2e3','S2f7','S2ff','S30a','S32a','S33b','S359','S36d','S376','S37f','S387']
+];
 
 $define = (array) [
   "utf-8" => [
@@ -33,94 +15,161 @@ $define = (array) [
       "\\xF0\\x9D\\xA0\\x80",
       "(\\\\x[fF][01](\\\\x[0-9a-fA-F]{2}){3})+"
     ]
-    ],
+  ],
   "utf-16" => [
     "character" => [
-        "a sign written as a word",
-        "\\uD836\\uDC00",
-        "(\\\\u[dD]8[0-9a-fA-F]{2}\\\\u[dD][c-fC-F][0-9a-fA-F]{2})+"
-      ]
-    ],
+      "a sign written as a word",
+      "\\uD836\\uDC00",
+      "(\\\\u[dD]8[0-9a-fA-F]{2}\\\\u[dD][c-fC-F][0-9a-fA-F]{2})+"
+    ]
+  ],
   "utf-32" => [
     "character" => [
-        "a sign written as a word",
-        "\\x{1D800}",
-        "(\\\\x\{[14][0-9a-fA-F]{4}\})+"
-      ]
-    ],
+      "a sign written as a word",
+      "\\x{1D800}",
+      "(\\\\x\{[14][0-9a-fA-F]{4}\})+"
+    ]
+  ],
   "fsw" => [
     "sign" => [
-        "a sign written as a word",
-        "AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520",
-        "(A(S[123][0-9a-f]{2}[0-5][0-9a-f])+)?[BLMR]([0-9]{3}x[0-9]{3})(S[123][0-9a-f]{2}[0-5][0-9a-f][0-9]{3}x[0-9]{3})*"
-      ],
+      "a sign written as a word",
+      "AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520",
+      "({sort}({symbol})+)?{box}{coord}({spatial})*"
+    ],
+    "term" => [
+      "a sign with a sorting previx",
+      "AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520",
+      "{sort}({symbol})+{box}{coord}({spatial})*"
+    ],
     "spatial" => [
-        "symbol with coordinate",
-        "S10000500x500",
-        "S[123][0-9a-f]{2}[0-5][0-9a-f][0-9]{3}x[0-9]{3}"
-      ],
+      "symbol with coordinate",
+      "S10000500x500",
+      "{symbol}{coord}"
+    ],
     "symbol" => [
-        "individual symbol",
-        "S10000",
-        "S[123][0-9a-f]{2}[0-5][0-9a-f]"
-      ],
+      "individual symbol",
+      "S10000",
+      "S[123][0-9a-f]{2}[0-5][0-9a-f]"
+    ],
     "coord" => [
-        "coordinate",
-        "500x500",
-        "[0-9]{3}x[0-9]{3}"
-      ],
-    "prefix" => [
-        "sort prefix marker",
-        "A",
-        "A"
-      ],
+      "coordinate",
+      "500x500",
+      "[0-9]{3}x[0-9]{3}"
+    ],
+    "sort" => [
+      "sort prefix marker",
+      "A",
+      "A"
+    ],
     "box" => [
-        "sign box marker",
-        "B",
-        "[BLMR]"
-      ],
-    "query" => [
-        "query string for searching",
-        "QS20310S26b02S33100",
-        "Q((A(S[123][0-9a-f]{2}[0-5u][0-9a-fu]|R[123][0-9a-f]{2}t[123][0-9a-f]{2})+)?T)?((R[123][0-9a-f]{2}t[123][0-9a-f]{2}([0-9]{3}x[0-9]{3})?)|(S[123][0-9a-f]{2}[0-5u][0-9a-fu]([0-9]{3}x[0-9]{3})?))*(V[0-9]+)?-?"
-      ]
+      "sign box marker",
+      "B",
+      "[BLMR]"
+    ]
+  ],
+  "query" => [
+    "full" => [
+      "query string for searching",
+      "QS20310S26b02S33100",
+      "Q((A({symbol}|{range})+)?T)?(({symbol}{coord})|({range}{coord}))*({var})?-?"
+    ],
+    "base" => [
+      "symbol base definition",
+      "100",
+      "[123][0-9a-f]{2}",
+      "([RSt])[123][0-9a-f]{2}"
+    ],
+    "symbol" => [
+      "symbol search definition",
+      "S100uu",
+      "S{base}[0-5u][0-9a-fu]"
+    ],
+    "range" => [
+      "symbol range",
+      "RS100tS104",
+      "R{base}t{base}"
+    ],
+    "coord" => [
+      "coordinate",
+      "500x500",
+      "([0-9]{3}x[0-9]{3})?",
+      "()[0-9]{3}x[0-9]{3}"
+    ],
+    "var" => [
+      "variance",
+      "V5",
+      "V[0-9]+"
+    ]
   ],
   "swu" => [
     "sign" => [
-        "a sign written as a word",
-        "AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520",
-        "(\x{1D800}([\x{40000}-\x{4F428}])+)?[\x{1D801}-\x{1D804}][\x{1D80C}-\x{1D9FF}]{2}([\x{40000}-\x{4F428}][\x{1D80C}-\x{1D9FF}]{2})*"
-      ],
+      "a sign written as a word",
+      "𝠀񂱡񂇙񆿃𝠃𝤝𝤔񂇙𝣰𝣹񆿃𝤎𝤁񂱡𝣽𝤀",
+      "({sort}({symbol})+)?{box}{coord}({spatial})*"
+    ],
+    "term" => [
+      "a sign with a sorting prefix",
+      "𝠀񂱡񂇙񆿃𝠃𝤝𝤔񂇙𝣰𝣹񆿃𝤎𝤁񂱡𝣽𝤀",
+      "{sort}({symbol})+{box}{coord}({spatial})*"
+    ],
     "spatial" => [
-        "symbol with coordinate",
-        "S10000500x500",
-        "[\x{40000}-\x{4F428}][\x{1D80C}-\x{1D9FF}]{2}"
-      ],
+      "symbol with coordinate",
+      "񂱡𝣽𝤀",
+      "{symbol}{coord}"
+    ],
     "symbol" => [
-        "individual symbol",
-        "S10000",
-        "[\x{40000}-\x{4F428}]"
-      ],
+      "individual symbol",
+      "񂱡",
+      "[\x{40000}-\x{4F428}]"
+    ],
     "coord" => [
-        "coordinate",
-        "500x500",
-        "[\x{1D80C}-\x{1D9FF}]{2}"
-      ],
+      "coordinate",
+      "𝣽𝤀",
+      "[\x{1D80C}-\x{1D9FF}]{2}"
+    ],
     "sort" => [
-        "sort prefix marker",
-        "A",
-        "\x{1D800}"
-      ],
+      "sort prefix marker",
+      "𝠀",
+      "\x{1D800}"
+    ],
     "box" => [
-        "sign box marker",
-        "B",
-        "[\x{1D801}-\x{1D804}]"
-      ],
-    "query" => [
-        "query string for searching",
-        "QS20310S26b02S33100",
-        "Q((A([\x{40000}-\x{4F428}]f?r?|R([\x{40000}-\x{4F428}]f?r?){2})+)?T)?((R([\x{40000}-\x{4F428}]f?r?){2}([\x{1D80C}-\x{1D9FF}]{2})?)|([\x{40000}-\x{4F428}]f?r?([\x{1D80C}-\x{1D9FF}]{2})?))*(V[0-9]+)?-?"
-      ]
+      "sign box marker",
+      "𝠃",
+      "[\x{1D801}-\x{1D804}]"
+    ]
+  ],
+  "queryu" => [
+    "full" => [
+      "query string for searching",
+      "QA񂱡T",
+      "Q((A({symbol}|{range})+)?T)?(({symbol}{coord})|({range}{coord}))*({var})?-?"
+    ],
+    "base" => [
+      "symbol base definition",
+      "񂱡",
+      "[\x{40000}-\x{4F428}]"
+    ],
+    "symbol" => [
+      "symbol search definition",
+      "񂱡f",
+      "{base}f?r?"
+    ],
+    "range" => [
+      "symbol range",
+      "R񂇙񂱡",
+      "R{base}{2}"
+    ],
+    "coord" => [
+      "coordinate",
+      "𝣽𝤀",
+      "([\x{1D80C}-\x{1D9FF}]{2})?",
+      "()[\x{1D80C}-\x{1D9FF}]{2}"
+    ],
+    "var" => [
+      "variance",
+      "V5",
+      "V[0-9]+"
+    ]
   ],
   "style" => [
     "full" => [
@@ -241,7 +290,7 @@ foreach ($define as $s=>$section){
       $matches = array_unique($matches[0]);
       $find = [];
       $replace = [];
-        foreach ($matches as $match){
+      foreach ($matches as $match){
         $find[] = $match;
         $match = substr($match,1,-1);
         $replace[] = $section[$match][2];
@@ -252,50 +301,51 @@ foreach ($define as $s=>$section){
 }
 
 function define($section='',$part=''){
-    global $define;
-    if (array_key_exists($section,$define)){
-      if (array_key_exists($part,$define[$section])){
-        return $define[$section][$part];
-      } else {
-        return $define[$section];
-      }
+  global $define;
+  if (array_key_exists($section,$define)){
+    if (array_key_exists($part,$define[$section])){
+      return $define[$section][$part];
     } else {
-      return $define;
+      return $define[$section];
     }
+  } else {
+    return $define;
+  }
 }
-function parse($text){
-    global $define;
-    $text = str_replace ('\\\\', '\\', $text);
-    $matched = array();
-    foreach ($define as $s=>$section){
-      foreach ($section as $p=>$part){
-        if (isset($part[3])) {
-          $pattern = '/' . $part[3] . '/';
-        } else {
-          $pattern = '/' . $part[2] . '/';
 
-        }
-        if (strpos($pattern,"\\x{")) {
-          $pattern .= 'u';
-        }
-        $result = @preg_match_all($pattern,$text,$matches);
-        if ($result) {
-          foreach ($matches[0] as $i=>$match){
-            if (isset($part[3])) {
-              $matched[$s][$p][] = str_replace($matches[1][$i],'',$match);
-            } else {
-              $matched[$s][$p][] = $match;
-            }
+function parse($text){
+  global $define;
+  $text = str_replace ('\\\\', '\\', $text);
+  $matched = array();
+  foreach ($define as $s=>$section){
+    foreach ($section as $p=>$part){
+      if (isset($part[3])) {
+        $pattern = '/' . $part[3] . '/';
+      } else {
+        $pattern = '/' . $part[2] . '/';
+      }
+      if (strpos($pattern,"\\x{")) {
+        $pattern .= 'u';
+      }
+      $result = @preg_match_all($pattern,$text,$matches);
+      if ($result) {
+        foreach ($matches[0] as $i=>$match){
+          if (isset($part[3])) {
+            $matched[$s][$p][] = str_replace($matches[1][$i],'',$match);
+          } else {
+            $matched[$s][$p][] = $match;
           }
         }
-        $err = preg_last_error();
-        if ($err){
-          return $part;
-        }
+      }
+      $err = preg_last_error();
+      if ($err){
+        return $part;
       }
     }
-    return $matched;
+  }
+  return $matched;
 }
+
 function cast($text,$utf){
   if ($utf==16) return $text;
   global $define;
@@ -340,6 +390,10 @@ function utf8($text){
     $text = str_replace($find,$replace,$text);
   }
   return $text;
+}
+
+function char2utf32($char){
+  return '\x{' . strtoupper(dechex(char2code($char))) . '}';
 }
 
 function utf32($text){
@@ -403,7 +457,6 @@ function dec2utf($code,$plane){
   return pack("N",hexdec($utf8));
 }
 
-
 function decode($text){
     $text = str_replace(array('"','\\\u') , array('\\"','\u'), $text);
     $text = json_decode('"' . $text . '"');
@@ -433,7 +486,6 @@ function encode($text,$slash){
     return $out;
 }
 
-
 function getKeys($text){
   global $define;
   $fsw_pattern = '/' . $define['fsw']['symbol'][2] . '/';
@@ -452,8 +504,8 @@ function key2code($key){
   $code =((hexdec(substr($key,0,3)) - 256) * 96) + ((hexdec(substr($key,3,1)))*16) + hexdec(substr($key,4,1))+1;
   return $code;
 }
-function key2char($key){
-  $code = key2code($key);
+function key2char($key,$adj=0){
+  $code = key2code($key) + $adj;
   return dec2utf($code,4);
 }
 function key2line($key){
@@ -479,7 +531,7 @@ function stylingArray($styling){
     $parts = explode("-",$styling . '-');
 
     if ($parts[1]){ /* general sign */
-      if(preg_match("/C/",$parts[1],$matches) == true){
+      if(preg_match("/^C/",$parts[1],$matches) == true){
         $options['colorize'] = true;
       }
 
@@ -761,13 +813,6 @@ function isHead($key){
   return inHexRange("2ff","36c",$char);
 }
 
-function hasHead($text){
-  $re_sym = 'S(2ff|3[0-5][0-9a-f]|36[0-9a-c])';
-  $re_pattern = '/' . $re_sym . '/i';
-  $result = preg_match_all($re_pattern,$text,$matches);
-  return count($matches[0])>0;
-}
-
 function isTrunk($key){
   $char = substr($key,1,3);
   return inHexRange("36d","375",$char);
@@ -788,9 +833,9 @@ function isPunc($key){
   return inHexRange("387","38b",$char);
 }
 
-
 function styling($text) {
-  $fsw_styling = '-C?(P[0-9]{2})?(G_([0-9a-fA-F]{3}([0-9a-fA-F]{3})?|[a-zA-Z]+)_)?(D_([0-9a-fA-F]{3}([0-9a-fA-F]{3})?|[a-zA-Z]+)(,([0-9a-fA-F]{3}([0-9a-fA-F]{3})?|[a-zA-Z]+))?_)?(Z([0-9]+(\.[0-9]+)?|x))?(-(D[0-9]{2}_([0-9a-fA-F]{3}([0-9a-fA-F]{3})?|[a-zA-Z]+)(,([0-9a-fA-F]{3}([0-9a-fA-F]{3})?|[a-zA-Z]+))?_)*(Z[0-9]{2},[0-9]+(\.[0-9]+)?(,[0-9]{3}x[0-9]{3})?)*)?';
+  global $define;
+  $fsw_styling = $define['style']['full'][2];
   $fsw_pattern = '/' . $fsw_styling . '/';
   $result = preg_match($fsw_pattern,$text,$matches);
   if ($result) {
@@ -798,7 +843,6 @@ function styling($text) {
   }
   return '';
 }
-
 
 function fsw($text,$styling=0){
   global $define;
@@ -858,22 +902,6 @@ function swuAll($text,$styling=0){
   }
 }
 
-function fswText($text){
-  $fsw_sym = 'S[123][0-9a-f]{2}[0-5][0-9a-f]';
-  $fsw_coord = '[0-9]{3}x[0-9]{3}';
-  $fsw_word = '(A(' . $fsw_sym. ')+)?[BLMR](' . $fsw_coord . ')(' . $fsw_sym . $fsw_coord . ')*';
-  $fsw_punc = 'S38[7-9ab][0-5][0-9a-f]' . $fsw_coord;
-  $fsw_pattern = '/^(' . $fsw_word . '|' . $fsw_punc . ')( ' . $fsw_word . '| ' . $fsw_punc .')*$/i';
-
-  $result = preg_match($fsw_pattern,$text,$matches);
-  if ($result) {
-    if ($text == $matches[0]) {
-      return true;
-    }
-  }
-  return false;
-}
-
 function fswQuery($text){
   $fsw_range = 'R[123][0-9a-f]{2}t[123][0-9a-f]{2}';
   $fsw_sym = 'S[123][0-9a-f]{2}[0-5u][0-9a-fu]';
@@ -890,20 +918,16 @@ function fswQuery($text){
   return false;
 }
 
-function fsw2query($fsw){
-  if (!fswText($fsw)) return;
-  $fsw_sym = 'S[123][0-9a-f]{2}[0-5][0-9a-f]';
-  $fsw_coord = '[0-9]{3}x[0-9]{3}';
-  $fsw_query = $fsw_sym . $fsw_coord;
-  $fsw_pattern = '/' . $fsw_query . '/i';
-
-  $result = preg_match_all($fsw_pattern,$fsw,$matches);
-  $query = 'Q';
-  foreach ($matches[0] as $part){
-    $query .= $part;
+function swuQuery($text){
+  global $define;
+  $swu_pattern = '/^' . $define['queryu']['full'][2] . '$/u';
+  $result = preg_match($swu_pattern,$text,$matches);
+  if ($result) {
+    if ($text == $matches[0]) {
+      return true;
+    }
   }
-
-  return $query;
+  return false;
 }
 
 function convertFlags($flags){
@@ -924,12 +948,13 @@ function convertFlags($flags){
   return $rflags;
 }
 
-function convert($fsw,$flags){
+function fswConvert($fsw,$flags){
   $flags = convertFlags($flags);
   if (!$flags) {
     return '';
   }
-  if (!fswText($fsw)) return;
+  $fsw = fsw($fsw);
+  if (!$fsw) return;
 
   $fsw_sym = 'S[123][0-9a-f]{2}[0-5][0-9a-f]';
   $fsw_coord = '[0-9]{3}x[0-9]{3}';
@@ -981,8 +1006,61 @@ function convert($fsw,$flags){
   }
 }
 
-function rangeu2regex($min,$max){
+function swuConvert($swu,$flags){
+  global $define;
+  $flags = convertFlags($flags);
+  if (!$flags) {
+    return '';
+  }
+  $swu = swu($swu);
+  if (!$swu) return;
+  $swu_sym = $define['swu']['symbol'][2];
+  $swu_coord = $define['swu']['coord'][2];
+  $re_sequence = '/' . $define['swu']['sort'][2] . '(' . $swu_sym . ')+/u';
+  $re_spatial = '/' . $swu_sym . $swu_coord . '/u';
 
+  $A = (strpos($flags,'A') !== false);
+  $a = (strpos($flags,'a') !== false);
+  $S = (strpos($flags,'S') !== false);
+  $s = (strpos($flags,'s') !== false);
+  $L = (strpos($flags,'L') !== false);
+
+  $query = '';
+  if ($a || $A) {
+    if(preg_match($re_sequence,$swu,$matches) == true){
+      $syms = str_split(substr($matches[0],4),4);
+      foreach ($syms as $sym){
+        if ($a) {
+          $sym = $sym . 'fr';
+        }
+        $query .= $sym;
+      }
+    }
+    if ($query){
+      $query = 'A' . $query . 'T';
+    }
+  }
+
+  if ($s || $S) {
+    if(preg_match_all($re_spatial,$swu,$matches) == true){
+      foreach ($matches[0] as $spatial){
+        $sym = substr($spatial,0,4);
+        if ($s) {
+          $sym .= 'fr';
+        }
+        if ($L){
+          $sym .= substr($spatial,-8);
+        }
+        $query .= $sym;
+      }
+    }
+  }
+
+  if ($query){
+    return 'Q' . $query;
+  } else {
+    return '';
+  }
 }
 
 function range2regex($min,$max,$hex='',$test=''){
@@ -1585,6 +1663,157 @@ function query2regex ($query,$fuzz='',$boundry='/'){
   return $segments;
 }
 
+function symfr2regex($symfr){
+  $sym = substr($symfr,0,4);
+  $f = strpos($symfr,'f');
+  $r = strpos($symfr,'r');
+  if ($f && $r){
+    $base = substr(swu2fsw($sym),0,4);
+    $min = fsw2swu($base . '00');
+    $max = fsw2swu($base . '5f');
+    return '[' . utf32($min) . '-' . utf32($max) . ']';
+  } else if ($r) {
+    $base = substr(swu2fsw($sym),0,5);
+    $min = fsw2swu($base . '0');
+    $max = fsw2swu($base . 'f');
+    return '[' . utf32($min) . '-' . utf32($max) . ']';
+  } else if ($f) {
+    $key = swu2fsw($sym);
+    $base = substr(swu2fsw($sym),0,4);
+    $tail = substr(swu2fsw($sym),5,1);
+    $list = array();
+    for ($i=0;$i<6;$i++){
+      $list[] = utf32(fsw2swu($base . $i . $tail));
+    }
+    return "(" . implode("|",$list) . ")";
+  } else {
+    return utf32($sym);
+  }
+}
+
+function rangeu2regex($range){
+  $from = swu2fsw(substr($range,1,4));
+  $to = swu2fsw(substr($range,5,4));
+  $min = fsw2swu(substr($from,0,4) . '00');
+  $max = fsw2swu(substr($to,0,4) . '5f');
+  return '[' . utf32($min) . '-' . utf32($max) . ']';
+}
+
+function coordu2regex($coord,$fuzz){
+  if ($fuzz){
+    $x = swu2num(substr($coord,0,4));
+    $minX = num2swu($x - $fuzz);
+    $maxX = num2swu($x + $fuzz);
+    $y = swu2num(substr($coord,4,4));
+    $minY = num2swu($y - $fuzz);
+    $maxY = num2swu($y + $fuzz);
+    return '[' . utf32($minX) . '-' . utf32($maxX) . '][' . utf32($minY) . '-' . utf32($maxY) . ']';
+  } else {
+    return utf32($coord);
+  }
+}
+
+function queryu2regex ($query,$fuzz='',$boundry='/'){
+  global $define;
+  if ($fuzz=='') $fuzz = 20;
+  if (!swuQuery($query)) {
+    if (fswQuery($query)){
+      $query = query2queryu($query);
+    } else {
+      return;
+    }
+  }
+  if (!$query || $query=='Q'){
+    return array($boundry . $define['swu']['sign'][2] . $boundry);
+  }
+  if (!$query || $query=='QT'){
+    return array($boundry . $define['swu']['term'][2] . $boundry);
+  }
+  $segments = array();
+  $term = strpos($query,'T');
+  if ($term){
+    $q_term = $define['swu']['sort'][2];
+    $query_t = substr($query,0,$term);
+    $query = substr($query,$term+1);
+    //this gets all symbols and ranges
+    $swu_pattern = '/(' . $define['queryu']['symbol'][2] . '|' . $define['queryu']['range'][2] . ')/u';
+    $result = preg_match_all($swu_pattern,$query_t,$matches);
+    if ($result) {
+      foreach ($matches[0] as $part){
+        //if symbol...
+        $swu_pattern = '/^' . $define['queryu']['symbol'][2] . '$/u';
+        $result = preg_match($swu_pattern,$part,$matched);
+        if ($result) {
+          $q_term .= symfr2regex($part);
+        } else {
+          $q_term .= rangeu2regex($part);
+        }
+      }
+      $q_term .= $define['swu']['symbol'][2]. '*';
+    } else {
+      $q_term .= '(' . $define['swu']['symbol'][2]. ')+';
+    }
+  }
+
+  //get the variance
+  $swu_pattern = '/V[0-9]+/';
+  $result = preg_match($swu_pattern,$query,$matches);
+  if ($result) $fuzz = substr($matches[0],1);
+  //this gets all symbols with or without location
+  $swu_pattern = '/(' . $define['queryu']['symbol'][2] . $define['queryu']['coord'][2] . '|' . $define['queryu']['range'][2] . $define['queryu']['coord'][2] . ')/u';
+  $result = preg_match_all($swu_pattern,$query,$matches);
+  if ($result) {
+    foreach ($matches[0] as $part){
+      if ($part[0] != 'R'){
+        $segment = symfr2regex($part);
+        if (strlen($part)>6){
+          $coord = substr($part,-8);
+          $segment .= coordu2regex($coord,$fuzz);
+        } else {
+          $segment .= $define['swu']['coord'][2];
+        }
+        //now I have the specific search symbol
+        // add to general swu word
+        $segment = $define['swu']['box'][2] . $define['swu']['coord'][2] . '(' . $define['swu']['spatial'][2] . ')*' . $segment . '(' . $define['swu']['spatial'][2] . ')*';
+        if ($term) {
+          $segment = $q_term . $segment;
+        } else {
+          $segment = '(' . $define['swu']['sort'][2] . $define['swu']['symbol'][2] . '+)?' . $segment;
+        }
+        $segment= '/' . $segment . '/';
+        $segments[]= $segment;
+      } else {
+        $segment = rangeu2regex($part);
+        if (strlen($part)>9){
+          $coord = substr($part,-8);
+          $segment .= coordu2regex($coord,$fuzz);
+        } else {
+          $segment .= $define['swu']['coord'][2];
+        }
+        // add to general swu word
+        $segment = $define['swu']['box'][2] . $define['swu']['coord'][2] . '(' . $define['swu']['spatial'][2] . ')*' . $segment . '(' . $define['swu']['spatial'][2] . ')*';
+        if ($term) {
+          $segment = $q_term . $segment;
+        } else {
+          $segment = '(' . $define['swu']['sort'][2] . $define['swu']['symbol'][2] . '+)?' . $segment;
+        }
+        $segment= $boundry . $segment . $boundry;
+        $segments[]= $segment;
+      }
+    }
+  }
+  if (count($segments)==0){
+    if ($term){
+      $segment = $q_term;
+      $segment .= $define['swu']['box'][2] . $define['swu']['coord'][2] . '(' . $define['swu']['spatial'][2] . ')*';
+      $segments[] = $boundry . $segment . $boundry;
+    } else {
+      $segments[] = $boundry . $define['swu']['sign'][2] . $boundry;
+    }
+  }
+  return $segments;
+}
+
 function fsw2swu($text){
   global $define;
   $pattern = "/(" . $define['fsw']['sign'][2] . "|" . $define['fsw']['spatial'][2] . "|" . $define['fsw']['symbol'][2] . ")/";
@@ -1666,4 +1895,77 @@ function swu2key($c){
   $f = ($fr - $r)/16;
   $base = dechex(($code - $fr)/96 + 256);
   return "S" . $base . $f . dechex($r);
+}
+
+function query2queryu($query){
+  global $define;
+  $pattern = '/' . $define['fsw']['coord'][2] . '/u';
+  preg_match_all($pattern,$query, $matches);
+  foreach($matches[0] as $match){
+    $query = str_replace($match,num2swu(substr($match,0,3)) . num2swu(substr($match,4)) ,$query);
+  }
+  $pattern = '/' . $define['query']['symbol'][2] . '/u';
+  preg_match_all($pattern,$query, $matches);
+  foreach($matches[0] as $match){
+    $sym = substr($match,0,4);
+    $f = substr($match,4,1);
+    $r = substr($match,5,1);
+    if ($f == "u"){
+      $sym .= "0";
+      $f = "f";
+    } else {
+      $sym .= $f;
+      $f = "";
+    }
+    if ($r == "u"){
+      $sym .= "0";
+      $r = "r";
+    } else {
+      $sym .= $r;
+      $r = "";
+    }
+    $query = str_replace($match,key2char($sym) . $f . $r,$query);
+  }
+  $pattern = '/' . $define['query']['range'][2] . '/u';
+  preg_match_all($pattern,$query, $matches);
+  foreach($matches[0] as $match){
+    $from = "S" . substr($match,1,3) . "00";
+    $to = "S" . substr($match,5,3) . "00";
+    $query = str_replace($match,"R" . key2char($from) . key2char($to),$query);
+  }
+  return $query;
+}
+
+function queryu2query($queryu){
+  global $define;
+  $pattern = '/' . $define['swu']['coord'][2] . '/u';
+  preg_match_all($pattern,$queryu, $matches);
+  foreach($matches[0] as $match){
+    $queryu = str_replace($match,swu2num(substr($match,0,4)) . 'x' . swu2num(substr($match,4)) ,$queryu);
+  }
+  $pattern = '/' . $define['queryu']['range'][2] . '/u';
+  preg_match_all($pattern,$queryu, $matches);
+  foreach($matches[0] as $match){
+    $from = swu2key(substr($match,1,4));
+    $to = swu2key(substr($match,5,4));
+    $queryu = str_replace($match,"R" . substr($from,1,3) . 't' . substr($to,1,3) ,$queryu);
+  }
+  $pattern = '/' . $define['queryu']['symbol'][2] . '/u';
+  preg_match_all($pattern,$queryu, $matches);
+  foreach($matches[0] as $match){
+    $sym = swu2key(substr($match,0,4));
+    $f = strpos($match,"f")?'u':substr($sym,4,1);
+    $r = strpos($match,"r")?'u':substr($sym,5,1);
+    $sym = substr($sym,0,4) . $f . $r;
+    $queryu= str_replace($match,$sym,$queryu);
+  }
+  return $queryu;
+}
+
+
+function test($text,$opt1,$opt2){
+  $queryu = query2queryu($text);
+  $query = queryu2query($queryu);
+  $queryu2 = query2queryu($query);
+  return json_pretty([$text==$query,$text,$query,$queryu==$queryu2,$queryu,$queryu2]);
 }

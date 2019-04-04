@@ -37,7 +37,7 @@ The definition tree for character mapping
 
 #### Get main define [GET]
 
-+ Response 200 (text/plain)
++ Response 200 (text/plain;charset=utf-8)
 
      + Body
 
@@ -60,7 +60,7 @@ A section of the definition tree
 
 #### Get section define [GET]
 
-+ Response 200 (text/plain)
++ Response 200 (text/plain;charset=utf-8)
 
      + Body
 
@@ -85,7 +85,7 @@ A part of the section definition
 
 #### Get part define [GET]
 
-+ Response 200 (text/plain)
++ Response 200 (text/plain;charset=utf-8)
 
      + Body
 
@@ -106,7 +106,7 @@ A function to analyze text and parse it into individual components
 
 #### Get parse results [GET]
 
-+ Response 200 (text/plain)
++ Response 200 (text/plain;charset=utf-8)
 
      + Body
 
@@ -123,7 +123,7 @@ A function to encode SignWriting in Unicode (SWU) as UTF-16
 
 #### Get encoded query string [GET]
 
-+ Response 200 (text/plain)
++ Response 200 (text/plain;charset=utf-8)
 
      + Body
 
@@ -139,7 +139,7 @@ A function to decode SignWriting in Unicode (SWU) from UTF-16
 
 #### Get decoded query string [GET]
 
-+ Response 200 (text/plain)
++ Response 200 (text/plain;charset=utf-8)
 
      + Body
 
@@ -153,23 +153,25 @@ A function to decode SignWriting in Unicode (SWU) from UTF-16
 
 #### Get utf-8 encoded query string [GET]
 
-+ Response 200 (text/plain)
++ Response 200 (text/plain;charset=utf-8)
 
      + Body
 
             %F0%9D%A0%80
 
-### Test with input [/tools/test{?text}]
+### Test with input [/tools/test{?text,opt1,opt2}]
 
 A general purpose function for testing
 
 + Parameters
 
      + text: S10000 (string) - Input for testing
+     + opt1: AS (string) - Option one for testing
+     + opt2: AS (string) - Option two for testing
 
 #### Get test results [GET]
 
-+ Response 200 (text/plain)
++ Response 200 (text/plain;charset=utf-8)
 
      + Body
 

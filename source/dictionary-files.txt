@@ -1,0 +1,6 @@
+group	dictionaryfiles
+	route	/dictionary/	Root as dictionary.html
+		method	GET	Get the dictionary as HTML
+			code	getFile('api/dictionary.html');
+			response	200	text/plain
+				body	dictionary.html file contents here

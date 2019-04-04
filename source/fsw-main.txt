@@ -6,7 +6,6 @@ group	FSW	Resources related to Formal SignWriting in ASCII (FSW)
 		parameter	text	AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520	string	The name of sign
 		parameter	style	true	boolean,optional	Flag to include styling string
 		method	GET	First FSW string
-			code	$timein = microtime(true);
 			code	$fsw = SignWriting\fsw($text,$style);
 			code	$searchTime = searchtime($timein);
 			code	header("Search-Time: " . $searchTime);
@@ -18,7 +17,6 @@ group	FSW	Resources related to Formal SignWriting in ASCII (FSW)
 		parameter	text	AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520	string	The name of sign
 		parameter	style	1	number	Flag to include styling string
 		method	GET	All FSW strings
-			code	$timein = microtime(true);
 			code	$fsw = SignWriting\fswAll($text,$style);
 			code	$searchTime = searchtime($timein);
 			code	header("Search-Time: " . $searchTime);
@@ -29,9 +27,7 @@ group	FSW	Resources related to Formal SignWriting in ASCII (FSW)
 	route	/fsw/swu{?text}	FSW to SWU
 		parameter	text	AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520	string	The name of sign
 		method	GET	Text with FSW strings
-			code	$timein = microtime(true);
 			code	$swu = SignWriting\fsw2swu($text);
-			code	$app->contentType('text/plain;charset=utf-8');
 			code	$searchTime = searchtime($timein);
 			code	header("Search-Time: " . $searchTime);
 			code	echo $swu;
@@ -44,10 +40,8 @@ group	FSW	Resources related to Formal SignWriting in ASCII (FSW)
 		line	Create a stand-alone SVG image using Formal SignWriting in ASCII (FSW)
 		parameter	text	AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520	string	The name of sign
 		method	GET	Retrieve stand alone SVG image
-			code	$timein = microtime(true);
 			code	$req = $app->request();
 			code	if ($req->get('throwStatus')=='500') {haltNoDatabase();}
-			code	$app->contentType('image/svg+xml;charset=utf-8');
 			code	$svg = SignWriting\svg($text);
 			code	$searchTime = searchtime($timein);
 			code	header("Search-Time: " . $searchTime);
@@ -64,10 +58,8 @@ group	FSW	Resources related to Formal SignWriting in ASCII (FSW)
 		line	Create an SVG with font using Formal SignWriting in ASCII (FSW)
 		parameter	text	AS20310S26b02S33100M521x547S33100482x483S20310506x500S26b02503x520	string	The name of sign
 		method	GET	Retrieve SVG with font
-			code	$timein = microtime(true);
 			code	$req = $app->request();
 			code	if ($req->get('throwStatus')=='500') {haltNoDatabase();}
-			code	$app->contentType('image/svg+xml;charset=utf-8');
 			code	$svg = SignWriting\svg($text,true);
 			code	$searchTime = searchtime($timein);
 			code	header("Search-Time: " . $searchTime);

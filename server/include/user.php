@@ -66,7 +66,7 @@ function rightsCheck($collection,$pass,$right,$ik=false){
       $user = userVerified($pass,1);
       try {
         $sql = 'SELECT user from entry where user=:user and ';
-        if(is_int($ik)){
+        if (preg_match('/^\d+$/', $ik)) {
           $sql .= 'id=:id;';
           $stmt = $db->prepare($sql);
           $stmt->bindParam(':id', $ik, PDO::PARAM_INT);
@@ -104,7 +104,7 @@ function userPass(){
   global $db0;
   $ip = userIP();
   $pass = md5(uniqid());
-  $created = TimestampNow();
+  $created = Timestamp();
   if ($stmt = $db0->prepare("INSERT INTO VERIFY (pass,ip0,ip1,ip2,created_at) VALUES ('$pass',:ip0,:ip1,:ip2,'$created')")) {
     $stmt->bindValue(':ip0',$ip[0], PDO::PARAM_STR);
     $stmt->bindValue(':ip1',$ip[1], PDO::PARAM_STR);

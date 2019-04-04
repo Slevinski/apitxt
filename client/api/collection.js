@@ -157,12 +157,69 @@ var data = {
             {
               "code": [
                 "$headers = getHeaders();", 
+                "$pass = isset($headers['Pass'])?$headers['Pass']:'';", 
+                "rightsCheck($name,$pass,SP_VIEW);", 
+                "$check = isset($headers['If-Modified-Since'])?$headers['If-Modified-Since']:'';", 
+                "$err = invalidName($name);", 
+                "if ($err){", 
+                "  haltBadRequest($err);", 
+                "}", 
+                "$lastModified = lastModified($name);", 
+                "if ($lastModified <= $check){", 
+                "  haltNotModified();", 
+                "}", 
+                "header('Last-Modified: ' . $lastModified);", 
+                "$output = json_pretty(collectionStats($name));", 
+                "$searchTime = searchtime($timein);", 
+                "header(\"Search-Time: \" . $searchTime);", 
+                "echo $output;"
+              ], 
+              "method": "GET", 
+              "dialog": [
+                {
+                  "request": {
+                    "headers": {
+                      "If-Modified-Since": "2019-01-16T16:56:19.175Z"
+                    }, 
+                    "name": "collections statistics"
+                  }, 
+                  "responses": [
+                    {
+                      "status": 200, 
+                      "body": [
+                        "[{\"name\": \"en-US-interface-sp3\",\"code\": \"ui1\",\"title\": \"English Interface for SignPuddle 3\",\"user\": \"slevinski\",\"created_at\": \"\",\"view_pass\": 0,\"add_pass\": 1,\"edit_pass\": 1,\"register_level\": 0,\"upload_level\": 4}]"
+                      ], 
+                      "type": "text/plain"
+                    }
+                  ]
+                }
+              ], 
+              "name": "Get collection statistics"
+            }
+          ], 
+          "route": "/collection/{name}/stats", 
+          "name": "Collection statistics", 
+          "parameters": [
+            {
+              "example": "`ase-US-dictionary-public`", 
+              "type": "required,string", 
+              "description": "The name of a dictionary", 
+              "name": "name"
+            }
+          ], 
+          "description": "Statistics about the collection"
+        }, 
+        {
+          "methods": [
+            {
+              "code": [
+                "$headers = getHeaders();", 
                 "$check = isset($headers['If-Modified-Since'])?$headers['If-Modified-Since']:'';", 
                 "$lastModified = lastModifiedCollection();", 
                 "if ($lastModified <= $check){", 
                 "  haltNotModified();", 
                 "}", 
-                "$app->response->headers->set('Last-Modified', $lastModified);", 
+                "header('Last-Modified: ' . $lastModified);", 
                 "echo json_pretty(collectionsSecurity());"
               ], 
               "method": "GET", 
@@ -546,7 +603,7 @@ var data = {
                 "$pass = isset($headers['Pass'])?$headers['Pass']:'';", 
                 "$user = userVerified($pass);", 
                 "if (!$user) haltForbidden();", 
-                "rightscheck($source,$pass,SP_VIEW);", 
+                "rightsCheck($source,$pass,SP_VIEW);", 
                 "$err = invalidName($source);", 
                 "if ($err){", 
                 "  haltBadRequest($err);", 

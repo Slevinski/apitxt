@@ -31,7 +31,6 @@ group	swu	Resources related to Formal SignWriting in ASCII (SWU)
 		method	GET	text with SWU strings
 			code	$timein = microtime(true);
 			code	$fsw = SignWriting\swu2fsw($text);
-			code	$app->contentType('text/plain;charset=utf-8');
 			code	$searchTime = searchtime($timein);
 			code	header("Search-Time: " . $searchTime);
 			code	echo $fsw;
@@ -45,7 +44,6 @@ group	swu	Resources related to Formal SignWriting in ASCII (SWU)
 			code	$timein = microtime(true);
 			code	$req = $app->request();
 			code	if ($req->get('throwStatus')=='500') {haltNoDatabase();}
-			code	$app->contentType('image/svg+xml;charset=utf-8');
 			code	$svg = SignWriting\svg($text);
 			code	$searchTime = searchtime($timein);
 			code	header("Search-Time: " . $searchTime);
@@ -65,7 +63,6 @@ group	swu	Resources related to Formal SignWriting in ASCII (SWU)
 			code	$timein = microtime(true);
 			code	$req = $app->request();
 			code	if ($req->get('throwStatus')=='500') {haltNoDatabase();}
-			code	$app->contentType('image/svg+xml;charset=utf-8');
 			code	$svg = SignWriting\svg($text,true);
 			code	$searchTime = searchtime($timein);
 			code	header("Search-Time: " . $searchTime);

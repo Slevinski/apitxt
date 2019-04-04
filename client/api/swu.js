@@ -128,7 +128,6 @@ var data = {
               "code": [
                 "$timein = microtime(true);", 
                 "$fsw = SignWriting\\swu2fsw($text);", 
-                "$app->contentType('text/plain;charset=utf-8');", 
                 "$searchTime = searchtime($timein);", 
                 "header(\"Search-Time: \" . $searchTime);", 
                 "echo $fsw;"
@@ -175,7 +174,6 @@ var data = {
                 "$timein = microtime(true);", 
                 "$req = $app->request();", 
                 "if ($req->get('throwStatus')=='500') {haltNoDatabase();}", 
-                "$app->contentType('image/svg+xml;charset=utf-8');", 
                 "$svg = SignWriting\\svg($text);", 
                 "$searchTime = searchtime($timein);", 
                 "header(\"Search-Time: \" . $searchTime);", 
@@ -228,7 +226,6 @@ var data = {
                 "$timein = microtime(true);", 
                 "$req = $app->request();", 
                 "if ($req->get('throwStatus')=='500') {haltNoDatabase();}", 
-                "$app->contentType('image/svg+xml;charset=utf-8');", 
                 "$svg = SignWriting\\svg($text,true);", 
                 "$searchTime = searchtime($timein);", 
                 "header(\"Search-Time: \" . $searchTime);", 

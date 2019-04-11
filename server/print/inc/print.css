@@ -1,0 +1,74 @@
+@font-face {
+  font-family: "SuttonSignWritingLine";
+  src: 
+    local('SuttonSignWritingLine'),
+    url('https://cdn.rawgit.com/Slevinski/SuttonSignWriting/master/assets/SuttonSignWritingLine.ttf') format('truetype');
+}
+@font-face {
+  font-family: "SuttonSignWritingFill";
+  src: 
+    local('SuttonSignWritingFill'),
+    url('https://cdn.rawgit.com/Slevinski/SuttonSignWriting/master/assets/SuttonSignWritingFill.ttf') format('truetype');
+}
+
+p.thanks {
+  max-width: 600px;
+  margin: auto;
+  padding: 10px;
+  background-color: lightgray;
+  border: 1px solid black;
+}
+
+div.entry {
+  position: relative;
+  display: inline-block;
+  background: white;
+  vertical-align: middle;
+  border: 1px black solid;
+  padding: 5px;
+  margin: 5px;
+}
+div.entry.hidden{
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+div.entry.skip {
+  background: gray;
+  color: lightgray;
+  background: linear-gradient(to left top, transparent 47.75%, currentColor 49.5%, currentColor 50.5%, transparent 52.25%);
+}
+div.entry.skip svg text.sym-line { 
+  fill: lightgray !important; 
+} 
+div#dragger {
+  display: inline-block;
+  margin: 6px;
+}
+
+div#dragger.active {
+  border: 3px green solid;
+  background-color: rgba(255,255,255,0.01);
+  z-index: 10;
+}
+
+button.active {
+  font-size: 100%;
+}
+
+button.col {
+  background: lightgray;
+}
+button.col.selected {
+  background: white;
+
+}
+form {
+  display: inline-block;
+  border: 1px black solid;
+  padding: 5px;
+  margin: 5px;
+}
+iframe {
+  width: 95%;
+}

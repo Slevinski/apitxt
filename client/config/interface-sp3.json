@@ -944,6 +944,374 @@
             "user": "slevinski",
             "created_at": "2019-04-04T18:13:20Z",
             "updated_at": "2019-04-04T18:13:20Z"
+        },
+        "collection.search.select": {
+            "message": "Select Page",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-08T16:29:51Z",
+            "updated_at": "2019-04-08T16:29:51Z"
+        },
+        "collection.search.unselect": {
+            "message": "Unselect Page",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-08T16:30:07Z",
+            "updated_at": "2019-04-08T16:30:07Z"
+        },
+        "print.click.remove": {
+            "message": "Click to remove",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-09T16:55:58Z",
+            "updated_at": "2019-04-09T16:55:58Z"
+        },
+        "print.col.empty": {
+            "message": "Empty",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-09T16:55:58Z",
+            "updated_at": "2019-04-09T16:55:58Z"
+        },
+        "print.col.gesture": {
+            "message": "Gesture",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-09T16:55:58Z",
+            "updated_at": "2019-04-09T16:55:58Z"
+        },
+        "print.col.picture": {
+            "message": "Picture",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-09T16:55:58Z",
+            "updated_at": "2019-04-09T16:55:58Z"
+        },
+        "print.col.visual": {
+            "message": "Visual",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-09T16:55:58Z",
+            "updated_at": "2019-04-09T16:55:58Z"
+        },
+        "print.col.image": {
+            "message": "Image",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-09T16:55:58Z",
+            "updated_at": "2019-04-09T16:55:58Z"
+        },
+        "print.col.signwriting": {
+            "message": "SignWriting",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-09T16:55:58Z",
+            "updated_at": "2019-04-09T16:55:58Z"
+        },
+        "print.col.spoken": {
+            "message": "Spoken Word",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-09T16:55:58Z",
+            "updated_at": "2019-04-09T16:55:58Z"
+        },
+        "print.col.wide": {
+            "message": "Empty (wide)",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-09T16:55:58Z",
+            "updated_at": "2019-04-09T16:55:58Z"
+        },
+        "print.col.title": {
+            "message": "Column",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-09T16:55:58Z",
+            "updated_at": "2019-04-09T16:55:58Z"
+        },
+        "print.drag.reorder": {
+            "message": "Drag to reorder",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-09T16:55:58Z",
+            "updated_at": "2019-04-09T16:55:58Z"
+        },
+        "print.format.label": {
+            "message": "Paper format",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-09T16:55:58Z",
+            "updated_at": "2019-04-09T16:55:58Z"
+        },
+        "print.format.a4": {
+            "message": "A4",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-09T16:55:58Z",
+            "updated_at": "2019-04-09T16:55:58Z"
+        },
+        "print.format.usletter": {
+            "message": "US Letter",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-09T16:55:58Z",
+            "updated_at": "2019-04-09T16:55:58Z"
+        },
+        "print.to.html": {
+            "message": "HTML",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-09T16:55:58Z",
+            "updated_at": "2019-04-09T16:55:58Z"
+        },
+        "print.label.title": {
+            "message": "Title",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-09T16:55:58Z",
+            "updated_at": "2019-04-09T16:55:58Z"
+        },
+        "print.layout.title": {
+            "message": "Print Layout",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-09T16:55:58Z",
+            "updated_at": "2019-04-09T16:55:58Z"
+        },
+        "print.list.signwriting": {
+            "message": "SignWriting List",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-09T16:55:58Z",
+            "updated_at": "2019-04-09T16:55:58Z"
+        },
+        "print.list.spoken": {
+            "message": "Spoken Word List",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-09T16:55:58Z",
+            "updated_at": "2019-04-09T16:55:58Z"
+        },
+        "print.not.signwriting": {
+            "message": "In the SignWriting List section, no words are selected.",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-09T16:55:58Z",
+            "updated_at": "2019-04-09T16:55:58Z"
+        },
+        "print.not.spoken": {
+            "message": "In the Spoken Word List section, no words are selected.",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-09T16:55:58Z",
+            "updated_at": "2019-04-09T16:55:58Z"
+        },
+        "print.not.allcol": {
+            "message": "In the Print Layout section, not all column values are set.",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-09T16:55:58Z",
+            "updated_at": "2019-04-09T16:55:58Z"
+        },
+        "print.not.ready": {
+            "message": "Not ready to print",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-09T16:55:58Z",
+            "updated_at": "2019-04-09T16:55:58Z"
+        },
+        "print.num.col": {
+            "message": "Number of columns",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-09T16:55:58Z",
+            "updated_at": "2019-04-09T16:55:58Z"
+        },
+        "print.orient.label": {
+            "message": "Paper orientation",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-09T16:55:58Z",
+            "updated_at": "2019-04-09T16:55:58Z"
+        },
+        "print.orient.landscape": {
+            "message": "Landscape",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-09T16:55:58Z",
+            "updated_at": "2019-04-09T16:55:58Z"
+        },
+        "print.orient.portrait": {
+            "message": "Portrait",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-09T16:55:58Z",
+            "updated_at": "2019-04-09T16:55:58Z"
+        },
+        "print.to.pdf": {
+            "message": "PDF",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-09T16:55:58Z",
+            "updated_at": "2019-04-09T16:55:58Z"
+        },
+        "print.sort.random": {
+            "message": "Randomize",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-09T16:55:58Z",
+            "updated_at": "2019-04-09T16:55:58Z"
+        },
+        "print.select.label": {
+            "message": "Select",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-09T16:55:58Z",
+            "updated_at": "2019-04-09T16:55:58Z"
+        },
+        "print.select.all": {
+            "message": "All",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-09T16:55:58Z",
+            "updated_at": "2019-04-09T16:55:58Z"
+        },
+        "print.select.none": {
+            "message": "None",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-09T16:55:58Z",
+            "updated_at": "2019-04-09T16:55:58Z"
+        },
+        "print.settings.title": {
+            "message": "Print Settings",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-09T16:55:58Z",
+            "updated_at": "2019-04-09T16:55:58Z"
+        },
+        "print.show.label": {
+            "message": "Show",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-09T16:55:58Z",
+            "updated_at": "2019-04-09T16:55:58Z"
+        },
+        "print.show.all": {
+            "message": "All",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-09T16:55:58Z",
+            "updated_at": "2019-04-09T16:55:58Z"
+        },
+        "print.show.selected": {
+            "message": "Selected",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-09T16:55:58Z",
+            "updated_at": "2019-04-09T16:55:58Z"
+        },
+        "print.sort.signwriting": {
+            "message": "Sort by SignWriting",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-09T16:55:58Z",
+            "updated_at": "2019-04-09T16:55:58Z"
+        },
+        "print.sort.spoken": {
+            "message": "Sort by Spoken Word",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-09T16:55:58Z",
+            "updated_at": "2019-04-09T16:55:58Z"
+        },
+        "print.thanks.message": {
+            "message": "The development of \"SignWriting PDF printing\" was made possible thanks to the <a href=\"http:\/\/www.signecriture.org\/\">SignEcriture association<\/a>, which received financial support from <ul><li>The <a href=\"http:\/\/www.fg-jeunesse.org\/fr\/index.php\">Gandur Foundation for Youth<\/a><li>The Helga and Victor Bodif\u00e9e Foundation<li>The <a href=\"http:\/\/www.sgb-fss.ch\/fr\/\">Swiss Federation of the Deaf<\/a> (SGB-FSS)<\/ul>",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-09T16:55:58Z",
+            "updated_at": "2019-04-09T16:55:58Z"
+        },
+        "print.thanks.old": {
+            "message": "The SignWriting PDF Printing was made possible by a grant from the <a href=\"http:\/\/www.fg-jeunesse.org\">Fondation Gandur pour la Jeunesse<\/a> through the <a href=\"http:\/\/www.signecriture.org\">Association SignEcriture<\/a>.",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-09T16:55:58Z",
+            "updated_at": "2019-04-09T16:55:58Z"
+        },
+        "print.main.title": {
+            "message": "SignWriting Printing",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-09T16:55:58Z",
+            "updated_at": "2019-04-09T16:55:58Z"
+        },
+        "print.to.title": {
+            "message": "Print to...",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-09T16:55:58Z",
+            "updated_at": "2019-04-09T16:55:58Z"
+        },
+        "print.main.view": {
+            "message": "View by",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-09T16:55:58Z",
+            "updated_at": "2019-04-09T16:55:58Z"
+        },
+        "system.buttons.print": {
+            "message": "Print to PDF",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-11T19:15:38Z",
+            "updated_at": "2019-04-11T19:15:38Z"
         }
     }
 }

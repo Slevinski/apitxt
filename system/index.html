@@ -210,7 +210,20 @@ git stash pop
 <pre><code class="language-shell"># CONFIGURE
 cd SignPuddle3/server  
 unzip Slim.zip
+cd print
+unzip vendor.zip
 </code></pre>
+
+<p>For server side printing to PDF, Imagemagick is required with librsvg support</p>
+
+<p>For Mac OS, installing Imagemagick is cumbersome.
+1) Install Homebrew. <a href="https://brew.sh/">https://brew.sh/</a>
+2) brew install librsvg
+3) brew install ghostscript
+4) brew install <a href="https://github.com/Homebrew/homebrew-core/raw/46a2ef7c9f0380b8e19f8dfe37270caa27581353/Formula/imagemagick.rb">https://github.com/Homebrew/homebrew-core/raw/46a2ef7c9f0380b8e19f8dfe37270caa27581353/Formula/imagemagick.rb</a> &ndash;with-librsvg
+5) Install pecl
+6) Disable Mac SIP
+7) pecl install imagic</p>
 
     </div>
   </div>

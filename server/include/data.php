@@ -756,7 +756,7 @@ function dictionaryResults($entries,$results,$offset,$limit,$sort){
       $data = array();
       if($entries){
         foreach ($entries as $i=>$entry){
-          $terms = explode('|',$entry['terms']);
+          $terms = $entry['terms']?explode('|',$entry['terms']):[''];
           $data[] = [$entry['id'],$terms[0]];
         }
       }
@@ -768,6 +768,8 @@ function dictionaryResults($entries,$results,$offset,$limit,$sort){
       $ids = array();
       $terms = array();
       $lowers = array();
+      $total = 0;
+      $data = [];
       if($entries){
         foreach ($entries as $i=>$entry){
           $term = $entry['terms'];
@@ -787,9 +789,9 @@ function dictionaryResults($entries,$results,$offset,$limit,$sort){
           while($num--){$idStr .= '|' . $id;}
         }
 
-        $terms = explode('|',$termStr);
+        $terms = $termStr?explode('|',$termStr):[''];
         if (substr($sort,-5)=="lower"){
-          $lowers = explode('|',$lowerStr);
+          $lowers = $lowerStr?explode('|',$lowerStr):[''];
         }
         $ids = explode('|',$idStr);
 
@@ -832,8 +834,8 @@ function dictionaryResults($entries,$results,$offset,$limit,$sort){
       }
       if($data){
         foreach ($data as $i=>$entry){
-          $data[$i]['terms'] = array_filter(explode('|',$entry['terms']));
-          $data[$i]['lower'] = array_filter(explode('|',$entry['lower']));
+          $data[$i]['terms'] = $entry['terms']?explode('|',$entry['terms']):[''];
+          $data[$i]['lower'] = $entry['lower']?explode('|',$entry['lower']):[''];
           $data[$i]['detail'] = json_decode($entry['detail']);
         }
       }

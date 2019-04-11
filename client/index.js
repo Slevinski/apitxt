@@ -999,7 +999,8 @@ var DictionaryBack = {
     "section": "",
     "display": "",
     "sort": "",
-    "results":{},
+    "idlist": "",
+    "results":{total:0},
     "select": function(id){
       id =parseInt(id);
       var i = DictionaryBack.search.selection.indexOf(id);
@@ -1009,6 +1010,18 @@ var DictionaryBack = {
         DictionaryBack.search.selection.splice(i,1);
       }
       m.redraw();
+    },
+    "selectPage": function(add=true){
+      (DictionaryBack.search.results.data||[]).map(function(entry){
+        var id = parseInt(entry['id'] || entry[0]);
+        var i = DictionaryBack.search.selection.indexOf(id);
+        if (i==-1 && add){
+          DictionaryBack.search.selection.push(id);
+        }
+        if (i>-1 && !add){
+          DictionaryBack.search.selection.splice(i,1);
+        }
+      })
     },
     "selected": function(id){
       id = parseInt(id);
@@ -1033,7 +1046,7 @@ var DictionaryBack = {
           break;
       }
       DictionaryBack.search.display = display;
-      DictionaryBack.search.results={};
+      DictionaryBack.search.results={total:0};
       DictionaryBack.search.page = 1;
       DictionaryBack.search.fn(collection);
     },
@@ -1046,6 +1059,14 @@ var DictionaryBack = {
       var route = server + "/dictionary/" + collection + "/search";
       switch (DictionaryBack.page){
         case "searchAll":
+          route += "?results=" + DictionaryBack.search.display;
+          route += "&sort=" + DictionaryBack.search.sort;
+          route += "&offset=" + (DictionaryBack.search.page-1) * DictionaryBack.search.limit;
+          route += "&limit=" + DictionaryBack.search.limit;
+          break;
+        case "searchId":
+          var ids = DictionaryBack.search.idlist;
+          route += "/id/" + (ids?ids:0);
           route += "?results=" + DictionaryBack.search.display;
           route += "&sort=" + DictionaryBack.search.sort;
           route += "&offset=" + (DictionaryBack.search.page-1) * DictionaryBack.search.limit;
@@ -1076,7 +1097,7 @@ var DictionaryBack = {
             m.redraw();
           }
         } else {
-          DictionaryBack.search.results = {};
+          DictionaryBack.search.results = {total:0};
           var err = Messaging.parse("danger","system.response.problem",method,route,response);
           Messaging.add("DictionaryBack",err);
           m.redraw();
@@ -1200,12 +1221,12 @@ var DictionaryPages = {
   "side" :{
     view: function(vnode){
       return m("nav.dictionary",[
+        DictionaryBack.search.selection.length?m(CommonPages["button"],{class: "tall " + (DictionaryBack.page=="selection"?"primary":"outline"), key:'collection.search.selection', onclick: function(e){e.preventDefault();routesfn.set('/dictionary/' + vnode.attrs.name + '/selection'); }}):"",
         m(CommonPages["button"],{class: "tall " + (DictionaryBack.page=="searchAll"?"primary":"outline"), key:'collection.search.all', onclick: function(e){e.preventDefault();routesfn.set('/dictionary/' + vnode.attrs.name + '/search'); }}),
-        DictionaryBack.search.selection.length?m(CommonPages["button"],{class: "tall " + (DictionaryBack.page=="selection"?"primary":"outline"), key:'collection.search.selection', onclick: function(e){e.preventDefault();routesfn.set('/dictionary/' + vnode.attrs.name + '/selection'); }}):""
-//        m(CommonPages["button"],{class: "tall outline", key:'collection.search.id', onclick: function(e){e.preventDefault();routesfn.set('/dictionary/' + vnode.attrs.name + '/search/id'); }}),
-//        m(CommonPages["button"],{class: "tall outline", key:'collection.search.terms', onclick: function(e){e.preventDefault();routesfn.set('/dictionary/' + vnode.attrs.name + '/search/terms'); }}),
-//        m(CommonPages["button"],{class: "tall outline", key:'collection.search.sign', onclick: function(e){e.preventDefault();routesfn.set('/dictionary/' + vnode.attrs.name + '/search/sign'); }}),
-//        m(CommonPages["button"],{class: "tall outline", key:'collection.search.signtext', onclick: function(e){e.preventDefault();routesfn.set('/dictionary/' + vnode.attrs.name + '/search/signtext'); }})
+        m(CommonPages["button"],{class: "tall " + (DictionaryBack.page=="searchId"?"primary":"outline"), key:'collection.search.id', onclick: function(e){e.preventDefault();routesfn.set('/dictionary/' + vnode.attrs.name + '/search/id'); }})
+//        m(CommonPages["button"],{class: "tall " + (DictionaryBack.page=="searchTerms"?"primary":"outline"), key:'collection.search.terms', onclick: function(e){e.preventDefault();routesfn.set('/dictionary/' + vnode.attrs.name + '/search/terms'); }}),
+//        m(CommonPages["button"],{class: "tall " + (DictionaryBack.page=="searchSign"?"primary":"outline"), key:'collection.search.sign', onclick: function(e){e.preventDefault();routesfn.set('/dictionary/' + vnode.attrs.name + '/search/sign'); }}),
+//        m(CommonPages["button"],{class: "tall " + (DictionaryBack.page=="searchSigntext"?"primary":"outline"), key:'collection.search.signtext', onclick: function(e){e.preventDefault();routesfn.set('/dictionary/' + vnode.attrs.name + '/search/signtext'); }})
       ])
     }
   },
@@ -1241,13 +1262,34 @@ var DictionaryPages = {
       ])
     }
   },
+  "select": {
+    view: function(vnode) {
+      return m("nav.search",[
+        m(CommonPages["button"],{
+          onclick: function(e){
+            e.preventDefault();
+            DictionaryBack.search.selectPage();
+          },
+          key:"collection.search.select"
+        }),
+        m(CommonPages["button"],{
+          onclick: function(e){
+            e.preventDefault();
+            DictionaryBack.search.selectPage(false);
+          },
+          key:"collection.search.unselect"
+        })
+      ])
+    }
+  },
   "results": {
     view: function(vnode){
       return [
-        m(DictionaryPages['pages'],vnode.attrs),
+        DictionaryBack.search.results.total>DictionaryBack.search.limit?m(DictionaryPages['pages'],vnode.attrs):"",
+        DictionaryBack.search.results.data.length?m(DictionaryPages['select'],vnode.attrs):"",
         m("section.results",
           DictionaryBack.search.display=="list"?
-            m("table.dictionary",[
+            (DictionaryBack.search.results.data.length?m("table.dictionary",[
               m("tr", 
                 ["id","sign","lower","updated_at"].map(function(col){
                   return m("th",
@@ -1291,7 +1333,7 @@ var DictionaryPages = {
                   m("td",entry["updated_at"].replace("T"," ").replace("Z",""))
                 ]);
               })
-            ])
+            ]):"")
           :(DictionaryBack.search.results.data||[]).map(function(entry){
             var timer;
             return m("div.signed",{
@@ -1315,7 +1357,7 @@ var DictionaryPages = {
             DictionaryBack.search.display=="sign"?m.trust(ssw.svg(entry[1])):entry[1]);
           })
         ),
-        DictionaryBack.search.results.data.length?m(DictionaryPages['pages'],vnode.attrs):""
+        (DictionaryBack.search.results.total>DictionaryBack.search.limit) && DictionaryBack.search.results.data.length?m(DictionaryPages['pages'],vnode.attrs):""
       ]
     }
   },
@@ -1424,6 +1466,54 @@ var DictionaryPages = {
       ];
     }
   },
+  "searchId": {
+    oninit: function(vnode){
+      DictionaryBack.page = "searchId";
+      DictionaryBack.search.sort = "-sign";
+      DictionaryBack.search.setDisplay(vnode.attrs.name,"sign");
+    },
+    view: function(vnode){
+      return [
+        m("div.dictionary",[
+          m(CommonPages['header']),
+          DictionaryBack.entry.data.id?m(DictionaryPages[DictionaryBack.entry.display],vnode.attrs)
+          :[
+            m(DictionaryPages['side'],vnode.attrs),
+            m("section.boxed", [
+              m("h2",InterfaceFront.collection(vnode.attrs.name)),
+              m("label[for=username]",t('collection.search.id')),
+              m("input#idlist[type=text]",{value: DictionaryBack.search.idlist,oninput: function(e){
+                e.preventDefault();
+                var val = e.target.value.replace(/[^0-9,\- ]/g, '');
+                var val = e.target.value.match(/^[0-9]+(\-([0-9]+)?)?([, ]([0-9]+(\-([0-9]+)?)?)?)*/, '');
+                val = val?val[0]:"";
+                val = val.replace(/ /g, ',');
+                val = val.replace(/,,/g, ',');
+//                val = val.replace(/--/g, '-');
+//                val = val.replace(/^,/g, '');
+                DictionaryBack.search.idlist=val;
+              }}),
+              m("div.wide", [
+                m(CommonPages["button"],{
+                  class: "primary",
+                  onclick: function(e){
+                    e.preventDefault();
+                    //DictionaryBack.search.setSort(col);
+                    DictionaryBack.search.fn(vnode.attrs.name);                            
+                  },
+                  key: "system.buttons.search"
+                })
+              ]),
+              m("hr"),
+              m(DictionaryPages['display'],vnode.attrs),
+              m(DictionaryPages['results'],vnode.attrs)
+            ])
+          ]
+        ]),
+        m(AlphabetPages['palette'])
+      ];
+    }
+  },
   "selection": {
     oninit: function(vnode){
       DictionaryBack.page = "selection";
@@ -1439,6 +1529,21 @@ var DictionaryPages = {
             m(DictionaryPages['side'],vnode.attrs),
             m("section.boxed", [
               m("h2",InterfaceFront.collection(vnode.attrs.name)),
+              m("h3",t("collection.search.selection")),
+              m("div.wide", [
+                m(CommonPages["button"],{
+                  class: "primary",
+                  onclick: function(e){
+                    e.preventDefault();
+                    e.redraw=false;
+                    var connection = s("connection");
+                    var server = connection.server;
+                    window.open(server + "/print/?dictionary=" + vnode.attrs.name + "&ids=" + DictionaryBack.search.selection.join(','),"_blank");
+                  },
+                  key: "system.buttons.print"
+                })
+              ]),
+              m("hr"),
               m(DictionaryPages['display'],vnode.attrs),
               m(DictionaryPages['results'],vnode.attrs)
             ])

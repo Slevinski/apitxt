@@ -9,7 +9,7 @@ Welcome to the SignPuddle 3 alpha release.
 > SUPPORT: https://www.patreon.com/signwriting
 
 ## Group Status
-SignPuddle 3 is currently in alpha release.  It is under active development with rudimentary structures, basic outlines, and various functionality.  Some of the details will change.  This project is currently recommended for developers and power users.  
+SignPuddle 3 is currently in alpha release.  It is under active development with several working sections and various functionality.  Some of the details will change.  This project is currently recommended for developers and power users.  
 
 The SignPuddle 3 Development Project is divided into five sections.  The **tools** use the **source** to create the **client** and **server**.  The **system** is required if an Apache web server isn't available.
 
@@ -49,9 +49,6 @@ MIT
 * User
 ** register new user
 
-* server/data
-** needs to be writable
-
 * security db
 ** update default files
 
@@ -59,7 +56,7 @@ MIT
 ** onupdate needs to fire oninit without infinite updates
 
 ## Version History
-* v3.0.0-alpha.8 - Apr 4th, 2019: data and link fix
+* v3.0.0-alpha.11 - Apr 11th, 2019: server side PDF printing
 * v3.0.0-alpha.7 - Apr 4th, 2019: dictionary section preview
 * v3.0.0-alpha.6 - Jan 5th, 2019: interface system
 * v3.0.0-alpha.5 - Oct 18th, 2018: user login system framework

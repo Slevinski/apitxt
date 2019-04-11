@@ -54,7 +54,20 @@ The server requires some configuration.
 # CONFIGURE
 cd SignPuddle3/server  
 unzip Slim.zip
+cd print
+unzip vendor.zip
 ````
+
+For server side printing to PDF, Imagemagick is required with librsvg support
+
+For Mac OS, installing Imagemagick is cumbersome.
+1) Install Homebrew. https://brew.sh/ 
+2) brew install librsvg
+3) brew install ghostscript
+4) brew install https://github.com/Homebrew/homebrew-core/raw/46a2ef7c9f0380b8e19f8dfe37270caa27581353/Formula/imagemagick.rb --with-librsvg
+5) Install pecl
+6) Disable Mac SIP
+7) pecl install imagic
 
 
 ## Group Start the System

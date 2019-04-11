@@ -14,11 +14,6 @@ if (substr($_SERVER['SCRIPT_NAME'],0,21) == "/server/data/security") {
 }
 
 if (substr($_SERVER['SCRIPT_NAME'],0,7) == "/server"){
-  //fix for dot in url
-  $_SERVER['SCRIPT_NAME'] = '/index.php';
-  $_SERVER['PATH_INFO'] = $_SERVER['REQUEST_URI'];
-  $_SERVER['PHP_SELF'] = $_SERVER['SCRIPT_NAME'] . ($_SERVER['REQUEST_URI'] === '/' ? '' : $_SERVER['REQUEST_URI']);
-  //fix
 
   if (substr($_SERVER['SCRIPT_NAME'],0,12) == "/server/data"){
     $file = $_SERVER['DOCUMENT_ROOT'] . $_SERVER['PHP_SELF'];
@@ -62,7 +57,19 @@ if (substr($_SERVER['SCRIPT_NAME'],0,7) == "/server"){
       readfile($file);
       die();
     }
+  } else if (substr($_SERVER['SCRIPT_NAME'],0,13) == "/server/print"){
+    if (substr($_SERVER['REQUEST_URI'],0,14)=="/server/print?") {
+      header("Location:/server/print/?" . $_SERVER['QUERY_STRING']);
+      die();
+    } else {
+      return false;
+    }
   } else {
+    //fix for dot in url
+    $_SERVER['SCRIPT_NAME'] = '/index.php';
+    $_SERVER['PATH_INFO'] = $_SERVER['REQUEST_URI'];
+    $_SERVER['PHP_SELF'] = $_SERVER['SCRIPT_NAME'] . ($_SERVER['REQUEST_URI'] === '/' ? '' : $_SERVER['REQUEST_URI']);
+    //fix
     chdir("server");
     $_SERVER['DOCUMENT_ROOT'] .= "/server";
     $_SERVER['REQUEST_URI'] = substr($_SERVER['REQUEST_URI'],7);

@@ -857,6 +857,8 @@ div.signtext {
   border-left: 1px solid blue;
   height: 50vh;
   box-sizing: content-box;
+  overflow:auto;
+  width: 100%;
 }
 
 span.outside {
@@ -893,6 +895,47 @@ div.sequence div {
   padding: 1px;
 }
 
+div#signbox {
+  display: inline-block;
+  position: relative;
+  width: 250px;
+  margin: auto;
+  height: 250px;
+  border: solid black 1px;
+  margin-bottom: 10px;
+  vertical-align: top;
+}
+div#sbV {
+  position: relative;
+  top: 50%;
+  height: 1px;
+  width: 100%;
+  border-top: dashed black 1px;
+}
+div#sbH {
+  position: relative;
+  left: 50%;
+  height: 100%;
+  width: 1px;
+  border-left: dashed black 1px;
+}
+div.symbol {
+  position: absolute;
+}
+div.symbol.selected  svg g text.sym-line {
+  fill: blue !important;
+}
+div.vcmd{
+  display: inline-flex;
+  flex-direction: column;
+  vertical-align: top;
+}
+div.vcmd button {
+  margin: 5px;
+}
+input#query {
+  line-height: 1.6em;
+}
 div.btn{
   position: relative;
   float: left;

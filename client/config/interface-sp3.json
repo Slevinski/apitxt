@@ -1312,6 +1312,62 @@
             "user": "slevinski",
             "created_at": "2019-04-11T19:15:38Z",
             "updated_at": "2019-04-11T19:15:38Z"
+        },
+        "collection.search.any": {
+            "message": "Any part of word",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-17T15:00:56Z",
+            "updated_at": "2019-04-17T15:00:56Z"
+        },
+        "collection.search.start": {
+            "message": "Start of word",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-17T15:01:09Z",
+            "updated_at": "2019-04-17T15:01:09Z"
+        },
+        "collection.search.exact": {
+            "message": "Exact word",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-17T15:01:22Z",
+            "updated_at": "2019-04-17T15:01:22Z"
+        },
+        "collection.search.location": {
+            "message": "Location",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-18T15:19:20Z",
+            "updated_at": "2019-04-18T15:19:20Z"
+        },
+        "collection.search.fill": {
+            "message": "Fill",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-18T15:19:37Z",
+            "updated_at": "2019-04-18T15:19:37Z"
+        },
+        "collection.search.rotation": {
+            "message": "Rotation",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-18T15:19:46Z",
+            "updated_at": "2019-04-18T15:19:46Z"
+        },
+        "collection.search.query": {
+            "message": "Query string",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-04-18T21:31:17Z",
+            "updated_at": "2019-04-18T21:31:17Z"
         }
     }
 }

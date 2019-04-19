@@ -926,8 +926,8 @@ var AlphabetFront = {
     if (overlap(this.element,sb)){
       var offset1 = getOffset( this.element ),
         offset2 = getOffset( sb );
-      var symbol = {symbol:this.element.symbol,x: parseInt(500-signmaker.vm.midWidth+1+offset1.left-offset2.left),y: parseInt(500-signmaker.vm.midHeight+offset1.top-offset2.top)};
-      signmaker.vm.add(symbol);
+      var symbol = {symbol:this.element.symbol,x: parseInt(500-125+offset1.left-offset2.left),y: parseInt(500-125-1+offset1.top-offset2.top)};
+      DictionaryBack.search.addSymbol(symbol);
     } else {
       var seq = document.getElementById("sequence");
       if (overlap(this.element,seq)){
@@ -982,8 +982,8 @@ var AlphabetPages = {
   "symbol": {
     oncreate: function(vnode){
       var draggie = new Draggabilly(vnode.dom);
-      draggie.on( 'dragEnd', AlphabetFront.drop );
       draggie.on( 'staticClick', AlphabetFront.click );
+      draggie.on( 'dragEnd', AlphabetFront.drop );
       vnode.dom.symbol=vnode.attrs.symbol;
     },
     view: function(vnode){
@@ -1000,6 +1000,30 @@ var DictionaryBack = {
     "display": "",
     "sort": "",
     "idlist": "",
+    "term": "",
+    "type": "any",
+    "location": false,
+    "sbFill": false,
+    "sbRotation": false,
+    "sortFill": false,
+    "sortRotation": false,
+    "symbols": [],
+    "addSymbol": function(sym){
+      DictionaryBack.search.symbols.push(sym);
+      SignBox.select(DictionaryBack.search.symbols.length-1);
+      DictionaryBack.search.updateQuery();
+      m.redraw();
+    },
+    "query": "",
+    "updateQuery": function(){
+      var query = "Q";
+      DictionaryBack.search.symbols.map(function(sym){
+        query += sym.symbol + (DictionaryBack.search.sbFill?"":"f") + (DictionaryBack.search.sbRotation?"":"r");
+        query += DictionaryBack.search.location?ssw.fsw2swu(sym.x + 'x' + sym.y):'';
+
+      })
+      DictionaryBack.search.query = query;
+    },
     "results":{total:0},
     "select": function(id){
       id =parseInt(id);
@@ -1050,6 +1074,10 @@ var DictionaryBack = {
       DictionaryBack.search.page = 1;
       DictionaryBack.search.fn(collection);
     },
+    "again": function(collection){
+      DictionaryBack.search.page=1;
+      DictionaryBack.search.fn(collection);
+    },
     "fn": function(collection){
       DictionaryBack.search.results.data = [];
       var connection = s("connection");
@@ -1067,6 +1095,24 @@ var DictionaryBack = {
         case "searchId":
           var ids = DictionaryBack.search.idlist;
           route += "/id/" + (ids?ids:0);
+          route += "?results=" + DictionaryBack.search.display;
+          route += "&sort=" + DictionaryBack.search.sort;
+          route += "&offset=" + (DictionaryBack.search.page-1) * DictionaryBack.search.limit;
+          route += "&limit=" + DictionaryBack.search.limit;
+          break;
+        case "searchTerms":
+          var term = DictionaryBack.search.term;
+          route += "/terms/" + (term?term:'%25');
+          route += "?results=" + DictionaryBack.search.display;
+          route += "&type=" + DictionaryBack.search.type;
+          route += "&sort=" + DictionaryBack.search.sort;
+          route += "&offset=" + (DictionaryBack.search.page-1) * DictionaryBack.search.limit;
+          route += "&limit=" + DictionaryBack.search.limit;
+          break;
+        case "searchSign":
+          var query = DictionaryBack.search.query;
+          if (!query) return;
+          route += "/sign/" + query;
           route += "?results=" + DictionaryBack.search.display;
           route += "&sort=" + DictionaryBack.search.sort;
           route += "&offset=" + (DictionaryBack.search.page-1) * DictionaryBack.search.limit;
@@ -1217,16 +1263,81 @@ var DictionaryBack = {
   }
 }
 
+var SignBox = {
+  "symbol": {
+    oncreate: function(vnode){
+      var draggie = new Draggabilly(vnode.dom,{containment:"#signbox"});
+      draggie.on( 'staticClick', SignBox.click );
+      draggie.on( 'dragEnd', SignBox.drop );
+    },
+    view: function(vnode){
+      return m("div", {
+        "class": "symbol " + (vnode.attrs.selected ? "selected" : ""),
+        "style":{
+          left: (parseInt(vnode.attrs.x)-500+125).toString() + 'px',
+          top: (parseInt(vnode.attrs.y)-500+125).toString() + 'px'
+        },
+        "index": vnode.attrs.index
+      },m.trust(ssw.svg(vnode.attrs.symbol)));
+    }
+  },
+  "click": function(){
+    SignBox.select(this.element.getAttribute("index"));
+    m.redraw();
+  },
+  "select": function(index){
+    DictionaryBack.search.symbols.map(function(sym,i){
+      DictionaryBack.search.symbols[i].selected = (index == i);
+    });
+  },
+  "selected": function(){
+    for ( var i = 0; i < DictionaryBack.search.symbols.length; i++ ){
+      console.log(DictionaryBack.search.symbols[i]);
+      if (DictionaryBack.search.symbols[i].selected){
+        return i;
+      }
+    }
+    return false;
+  },
+  "clear": function(){
+    DictionaryBack.search.symbols = [];
+  },
+  "remove": function(){
+    var sel = SignBox.selected();
+    if (sel!==false){
+      DictionaryBack.search.symbols.splice(sel,1);
+    }
+  },
+  "fill": function(){
+    var sel = SignBox.selected();
+    if (sel!==false){
+      DictionaryBack.search.symbols[sel].symbol = ssw.fill(DictionaryBack.search.symbols[sel].symbol);
+    }
+  },
+  "rotate": function(direction){
+    var sel = SignBox.selected();
+    if (sel!==false){
+      DictionaryBack.search.symbols[sel].symbol = ssw.rotate(DictionaryBack.search.symbols[sel].symbol,direction);
+    }
+  },
+  "drop": function(){
+    var index = this.element.getAttribute("index");
+    DictionaryBack.search.symbols[index].x = 500 - 125 + parseInt(this.position.x);
+    DictionaryBack.search.symbols[index].y = 500 - 125 + parseInt(this.position.y);
+    DictionaryBack.search.updateQuery();
+  }
+}
+
 var DictionaryPages = {
   "side" :{
     view: function(vnode){
       return m("nav.dictionary",[
         DictionaryBack.search.selection.length?m(CommonPages["button"],{class: "tall " + (DictionaryBack.page=="selection"?"primary":"outline"), key:'collection.search.selection', onclick: function(e){e.preventDefault();routesfn.set('/dictionary/' + vnode.attrs.name + '/selection'); }}):"",
         m(CommonPages["button"],{class: "tall " + (DictionaryBack.page=="searchAll"?"primary":"outline"), key:'collection.search.all', onclick: function(e){e.preventDefault();routesfn.set('/dictionary/' + vnode.attrs.name + '/search'); }}),
-        m(CommonPages["button"],{class: "tall " + (DictionaryBack.page=="searchId"?"primary":"outline"), key:'collection.search.id', onclick: function(e){e.preventDefault();routesfn.set('/dictionary/' + vnode.attrs.name + '/search/id'); }})
-//        m(CommonPages["button"],{class: "tall " + (DictionaryBack.page=="searchTerms"?"primary":"outline"), key:'collection.search.terms', onclick: function(e){e.preventDefault();routesfn.set('/dictionary/' + vnode.attrs.name + '/search/terms'); }}),
-//        m(CommonPages["button"],{class: "tall " + (DictionaryBack.page=="searchSign"?"primary":"outline"), key:'collection.search.sign', onclick: function(e){e.preventDefault();routesfn.set('/dictionary/' + vnode.attrs.name + '/search/sign'); }}),
-//        m(CommonPages["button"],{class: "tall " + (DictionaryBack.page=="searchSigntext"?"primary":"outline"), key:'collection.search.signtext', onclick: function(e){e.preventDefault();routesfn.set('/dictionary/' + vnode.attrs.name + '/search/signtext'); }})
+        m(CommonPages["button"],{class: "tall " + (DictionaryBack.page=="searchId"?"primary":"outline"), key:'collection.search.id', onclick: function(e){e.preventDefault();routesfn.set('/dictionary/' + vnode.attrs.name + '/search/id'); }}),
+        m(CommonPages["button"],{class: "tall " + (DictionaryBack.page=="searchTerms"?"primary":"outline"), key:'collection.search.terms', onclick: function(e){e.preventDefault();routesfn.set('/dictionary/' + vnode.attrs.name + '/search/terms'); }}),
+        m(CommonPages["button"],{class: "tall " + (DictionaryBack.page=="searchSign"?"primary":"outline"), key:'collection.search.sign', onclick: function(e){e.preventDefault();routesfn.set('/dictionary/' + vnode.attrs.name + '/search/sign'); }}),
+        m(CommonPages["button"],{class: "tall " + (DictionaryBack.page=="searchSigntext"?"primary":"outline"), key:'collection.search.signtext', onclick: function(e){e.preventDefault();routesfn.set('/dictionary/' + vnode.attrs.name + '/search/signtext'); }})
       ])
     }
   },
@@ -1298,7 +1409,7 @@ var DictionaryPages = {
                       onclick: function(e){
                         e.preventDefault();
                         DictionaryBack.search.setSort(col);
-                        DictionaryBack.search.fn(vnode.attrs.name);                            
+                        DictionaryBack.search.again(vnode.attrs.name);                            
                       },
                       key:"collection.fields." + col.replace("_","").replace("lower","terms"),
                       icon:DictionaryBack.search.sort==col?"sort-desc":(DictionaryBack.search.sort=="-" + col?"sort-asc":undefined)
@@ -1481,7 +1592,7 @@ var DictionaryPages = {
             m(DictionaryPages['side'],vnode.attrs),
             m("section.boxed", [
               m("h2",InterfaceFront.collection(vnode.attrs.name)),
-              m("label[for=username]",t('collection.search.id')),
+              m("label[for=idlist]",t('collection.search.id')),
               m("input#idlist[type=text]",{value: DictionaryBack.search.idlist,oninput: function(e){
                 e.preventDefault();
                 var val = e.target.value.replace(/[^0-9,\- ]/g, '');
@@ -1493,13 +1604,205 @@ var DictionaryPages = {
 //                val = val.replace(/^,/g, '');
                 DictionaryBack.search.idlist=val;
               }}),
+              m("label"),
               m("div.wide", [
                 m(CommonPages["button"],{
-                  class: "primary",
+                  class: "success",
                   onclick: function(e){
                     e.preventDefault();
-                    //DictionaryBack.search.setSort(col);
-                    DictionaryBack.search.fn(vnode.attrs.name);                            
+                    DictionaryBack.search.again(vnode.attrs.name);                            
+                  },
+                  key: "system.buttons.search"
+                })
+              ]),
+              m("hr"),
+              m(DictionaryPages['display'],vnode.attrs),
+              m(DictionaryPages['results'],vnode.attrs)
+            ])
+          ]
+        ]),
+        m(AlphabetPages['palette'])
+      ];
+    }
+  },
+  "searchTerms": {
+    oninit: function(vnode){
+      DictionaryBack.page = "searchTerms";
+      DictionaryBack.search.sort = "-terms";
+      DictionaryBack.search.setDisplay(vnode.attrs.name,"terms");
+    },
+    view: function(vnode){
+      return [
+        m("div.dictionary",[
+          m(CommonPages['header']),
+          DictionaryBack.entry.data.id?m(DictionaryPages[DictionaryBack.entry.display],vnode.attrs)
+          :[
+            m(DictionaryPages['side'],vnode.attrs),
+            m("section.boxed", [
+              m("h2",InterfaceFront.collection(vnode.attrs.name)),
+              m("label[for=term]",t('collection.search.terms')),
+              m("input#term[type=text]",{value: DictionaryBack.search.term,oninput: function(e){
+                e.preventDefault();
+                DictionaryBack.search.term=e.target.value;
+              }}),
+              m("div.wide",[
+                m(CommonPages["button"],{
+                  class:DictionaryBack.search.type=="any"?"primary":"outline",
+                  onclick: function(e){
+                    e.preventDefault();
+                    DictionaryBack.search.type = "any";
+                  },
+                  key:"collection.search.any"
+                }),
+                m(CommonPages["button"],{
+                  class:DictionaryBack.search.type=="start"?"primary":"outline",
+                  onclick: function(e){
+                    e.preventDefault();
+                    DictionaryBack.search.type = "start";
+                  },
+                  key:"collection.search.start"
+                }),
+                m(CommonPages["button"],{
+                  class:DictionaryBack.search.type=="exact"?"primary":"outline",
+                  onclick: function(e){
+                    e.preventDefault();
+                    DictionaryBack.search.type = "exact";
+                  },
+                  key:"collection.search.exact"
+                })
+              ]),
+              m("label"),
+              m("div.wide", [
+                m(CommonPages["button"],{
+                  class: "success",
+                  onclick: function(e){
+                    e.preventDefault();
+                    DictionaryBack.search.again(vnode.attrs.name);                            
+                  },
+                  key: "system.buttons.search"
+                })
+              ]),
+              m("hr"),
+              m(DictionaryPages['display'],vnode.attrs),
+              m(DictionaryPages['results'],vnode.attrs)
+            ])
+          ]
+        ]),
+        m(AlphabetPages['palette'])
+      ];
+    }
+  },
+  "searchSign": {
+    oninit: function(vnode){
+      DictionaryBack.page = "searchSign";
+      DictionaryBack.search.sort = "-sign";
+      DictionaryBack.search.setDisplay(vnode.attrs.name,"sign");
+    },
+    view: function(vnode){
+      return [
+        m("div.dictionary",[
+          m(CommonPages['header']),
+          DictionaryBack.entry.data.id?m(DictionaryPages[DictionaryBack.entry.display],vnode.attrs)
+          :[
+            m(DictionaryPages['side'],vnode.attrs),
+            m("section.boxed", [
+              m("h2",InterfaceFront.collection(vnode.attrs.name)),
+              m("label",t('collection.search.sign')),
+              m("div#signbox", [
+                m("div#sbV"),
+                m("div#sbH"),
+                DictionaryBack.search.symbols.map(function(sym,i){
+                  return m(SignBox['symbol'], Object.assign(sym,{index:i}));
+                }),
+              ]),
+              m("div.vcmd",[
+                m(CommonPages["button"],{
+                  class:"danger",
+                  onclick: function(e){
+                    e.preventDefault();
+                    SignBox.clear();
+                    DictionaryBack.search.updateQuery();
+                  },
+                  icon:"plus-square-o"
+                }),
+                m(CommonPages["button"],{
+                  class:"warning",
+                  onclick: function(e){
+                    e.preventDefault();
+                    SignBox.remove();
+                    DictionaryBack.search.updateQuery();
+                  },
+                  icon:"remove"
+                }),
+                m(CommonPages["button"],{
+                  class:"primary",
+                  onclick: function(e){
+                    e.preventDefault();
+                    SignBox.fill();
+                    DictionaryBack.search.updateQuery();
+                  },
+                  icon:"adjust"
+                }),
+                m(CommonPages["button"],{
+                  class:"primary",
+                  onclick: function(e){
+                    e.preventDefault();
+                    SignBox.rotate(-1);
+                    DictionaryBack.search.updateQuery();
+                  },
+                  icon:"rotate-left"
+                }),
+                m(CommonPages["button"],{
+                  class:"primary",
+                  onclick: function(e){
+                    e.preventDefault();
+                    SignBox.rotate(1);
+                    DictionaryBack.search.updateQuery();
+                  },
+                  icon:"rotate-right"
+                })
+              ]),
+              m("div.wide",[
+                m(CommonPages["button"],{
+                  class:DictionaryBack.search.location?"primary":"outline",
+                  onclick: function(e){
+                    e.preventDefault();
+                    DictionaryBack.search.location = !DictionaryBack.search.location;
+                    DictionaryBack.search.updateQuery();
+                  },
+                  key:"collection.search.location"
+                }),
+                m(CommonPages["button"],{
+                  class:DictionaryBack.search.sbFill?"primary":"outline",
+                  onclick: function(e){
+                    e.preventDefault();
+                    DictionaryBack.search.sbFill = !DictionaryBack.search.sbFill;
+                    DictionaryBack.search.updateQuery();
+                  },
+                  key:"collection.search.fill"
+                }),
+                m(CommonPages["button"],{
+                  class:DictionaryBack.search.sbRotation?"primary":"outline",
+                  onclick: function(e){
+                    e.preventDefault();
+                    DictionaryBack.search.sbRotation = !DictionaryBack.search.sbRotation;
+                    DictionaryBack.search.updateQuery();
+                  },
+                  key:"collection.search.rotation"
+                }),
+              ]),
+              m("label[for=query]",t('collection.search.query')),
+              m("input#query[type=text]",{value: DictionaryBack.search.query,oninput: function(e){
+                e.preventDefault();
+                DictionaryBack.search.query=e.target.value;
+              }}),
+              m("label"),
+              m("div.wide", [
+                m(CommonPages["button"],{
+                  class: "success",
+                  onclick: function(e){
+                    e.preventDefault();
+                    DictionaryBack.search.again(vnode.attrs.name);                            
                   },
                   key: "system.buttons.search"
                 })

@@ -1337,7 +1337,7 @@ var DictionaryPages = {
         m(CommonPages["button"],{class: "tall " + (DictionaryBack.page=="searchId"?"primary":"outline"), key:'collection.search.id', onclick: function(e){e.preventDefault();routesfn.set('/dictionary/' + vnode.attrs.name + '/search/id'); }}),
         m(CommonPages["button"],{class: "tall " + (DictionaryBack.page=="searchTerms"?"primary":"outline"), key:'collection.search.terms', onclick: function(e){e.preventDefault();routesfn.set('/dictionary/' + vnode.attrs.name + '/search/terms'); }}),
         m(CommonPages["button"],{class: "tall " + (DictionaryBack.page=="searchSign"?"primary":"outline"), key:'collection.search.sign', onclick: function(e){e.preventDefault();routesfn.set('/dictionary/' + vnode.attrs.name + '/search/sign'); }}),
-        m(CommonPages["button"],{class: "tall " + (DictionaryBack.page=="searchSigntext"?"primary":"outline"), key:'collection.search.signtext', onclick: function(e){e.preventDefault();routesfn.set('/dictionary/' + vnode.attrs.name + '/search/signtext'); }})
+       // m(CommonPages["button"],{class: "tall " + (DictionaryBack.page=="searchSigntext"?"primary":"outline"), key:'collection.search.signtext', onclick: function(e){e.preventDefault();routesfn.set('/dictionary/' + vnode.attrs.name + '/search/signtext'); }})
       ])
     }
   },

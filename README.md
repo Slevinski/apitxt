@@ -56,6 +56,8 @@ MIT
 ** onupdate needs to fire oninit without infinite updates
 
 ## Version History
+* v3.0.0-alpha.15 - Apr 19th, 2019: detail view and images
+* v3.0.0-alpha.13 - Apr 19th, 2019: term and sign searching
 * v3.0.0-alpha.11 - Apr 11th, 2019: server side PDF printing
 * v3.0.0-alpha.7 - Apr 4th, 2019: dictionary section preview
 * v3.0.0-alpha.6 - Jan 5th, 2019: interface system

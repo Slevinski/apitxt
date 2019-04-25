@@ -816,6 +816,9 @@ div.signed {
   padding: 5px;
   margin: 5px;
 }
+table div.signed {
+  border: none;
+}
 
 div.signed.selected {
   background: #DDD;
@@ -931,10 +934,22 @@ div.vcmd{
   vertical-align: top;
 }
 div.vcmd button {
-  margin: 5px;
+  margin: 2px;
 }
 input#query {
   line-height: 1.6em;
+}
+div.images {
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  flex-flow: row wrap;
+  width: 100%;
+}
+div.images div {
+  margin: 10px;
+  padding: 5px;
+  border:  1px solid black;
 }
 div.btn{
   position: relative;

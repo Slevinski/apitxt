@@ -776,7 +776,7 @@ var InterfacePages = {
                 m("label[for=" + field + "]",t("sections.collection." + field)),
                 m("input#" + field + "[type=text]",{"class":field=="key"?key_class:'',"value":InterfaceBack.entry.new[field],oninput: function(e){
                   InterfaceBack.entry.new.dirty = true;
-                  if (field=="key"){e.target.value = e.target.value.toLowerCase().replace(/[^a-z.]/gi, '');}
+                  if (field=="key"){e.target.value = e.target.value.toLowerCase().replace(/[^a-z0-9.]/gi, '');}
                   InterfaceBack.entry.new[field] = e.target.value;
                 }}),
               ];
@@ -927,13 +927,14 @@ var AlphabetFront = {
       var offset1 = getOffset( this.element ),
         offset2 = getOffset( sb );
       var symbol = {symbol:this.element.symbol,x: parseInt(500-125+offset1.left-offset2.left),y: parseInt(500-125-1+offset1.top-offset2.top)};
-      DictionaryBack.search.addSymbol(symbol);
+      DictionaryFront.signbox.addSymbol(symbol);
     } else {
       var seq = document.getElementById("sequence");
       if (overlap(this.element,seq)){
-        var position = parseInt((this.startPoint.y+this.dragPoint.y) / (window.innerHeight/20));
-        var symbol = this.element.symbol;
-        signmaker.vm.addSeq(symbol,position);
+        var offset1 = getOffset( this.element ),
+        offset2 = getOffset( seq );
+        var symbol = {symbol:this.element.symbol};
+        DictionaryFront.sequence.addSymbol(symbol,parseInt((offset1.top-offset2.top)/28));
       }
     }
     this.element.style.top=0;
@@ -1003,19 +1004,17 @@ var DictionaryBack = {
     "idlist": "",
     "term": "",
     "type": "any",
-    "addSymbol": function(sym){
-      DictionaryFront.signbox.symbols.push(sym);
-      DictionaryFront.signbox.select(DictionaryFront.signbox.symbols.length-1);
-      DictionaryBack.search.updateQuery();
-      m.redraw();
-    },
     "query": "",
     "updateQuery": function(){
       var query = "Q";
+      var prefix = "";
+      DictionaryFront.sequence.symbols.map(function(sym){
+        prefix += sym.symbol + (DictionaryFront.search.seqFill?"":"f") + (DictionaryFront.search.seqRotation?"":"r");
+      })
+      query += prefix?"A" + prefix + "T":"";
       DictionaryFront.signbox.symbols.map(function(sym){
-        query += sym.symbol + (DictionaryFront.signbox.sbFill?"":"f") + (DictionaryFront.signbox.sbRotation?"":"r");
-        query += DictionaryFront.signbox.location?ssw.fsw2swu(sym.x + 'x' + sym.y):'';
-
+        query += sym.symbol + (DictionaryFront.search.sbFill?"":"f") + (DictionaryFront.search.sbRotation?"":"r");
+        query += DictionaryFront.search.location?ssw.fsw2swu(sym.x + 'x' + sym.y):'';
       })
       DictionaryBack.search.query = query;
     },
@@ -1072,6 +1071,23 @@ var DictionaryBack = {
       DictionaryBack.search.results={total:0};
       DictionaryBack.search.page = 1;
       DictionaryBack.search.fn(collection);
+    },
+    "setDisplay": function(id, display){
+      if (display=="editing"){
+        if (!DictionaryBack.entry.data.id) {
+          (DictionaryBack.search.results.data||[]).map(function(entry){
+            if (id == entry['id']) {
+              DictionaryBack.entry.data = JSON.parse(JSON.stringify(entry))
+            }
+          })
+        }
+        DictionaryBack.entry.data.terms.push('');
+      }
+      if (DictionaryBack.entry.data.id == id) {
+        DictionaryBack.entry.display = display;
+      } else {
+        DictionaryBack.search.display[id] = display;
+      }
     },
     "again": function(collection){
       DictionaryBack.search.page=1;
@@ -1170,6 +1186,7 @@ var DictionaryBack = {
         if (response.status && response.status == 200){
           try {
             DictionaryBack.entry.data = JSON.parse(response.body).data[0];
+            DictionaryBack.entry.display = "detail";
             m.redraw();
           } catch(e){
             console.log(e);
@@ -1180,39 +1197,35 @@ var DictionaryBack = {
       });
     },
     "data":{},
-    "update": function(subkey,i){
+    "update": function(id){
       var connection = s("connection");
       var server = connection.server;
       var pass = connection.pass;
-      var route = server + "/interface/" + InterfaceBack.name + "/entry/" + InterfaceBack.entry.data[subkey].data[i].original;
+      var route = server + "/dictionary/" + DictionaryBack.name + "/entry/" + id;
       var method = "PUT";
       m.request({
         headers: {Pass: pass},
         method: method,
         url: route,
         type: 'application/json',
-        data: InterfaceBack.entry.data[subkey].data[i],
+        data: DictionaryBack.entry.data,
         extract: function(xhr) {return {status: xhr.status, body: xhr.responseText}}
       })
       .then (function(response) {
         if (response.status && response.status == 204) {
-          var parts = InterfaceBack.entry.data[subkey].data[i].key.split('.');
-          Messaging.clear(InterfaceBack.entry.data[subkey].data[i].original);
-          delete InterfaceBack.entry.data[subkey];
-          routesfn.set("/interface/" + InterfaceBack.name + "/" + parts[0] + "/" + parts[1])
-          scrollIntoView("interface_" + parts.join('.'));
+          DictionaryBack.entry.get(DictionaryBack.name,id);
         } else {
           var err = Messaging.parse("warning", "system.response.problem",method,route,response);
-          Messaging.add("interface_" + InterfaceBack.entry.data[subkey].data[i].original,err);
+          Messaging.add("dictionary_" + id,err);
           m.redraw();
         }
       });
     },
-    "delete": function(subkey,i){
+    "delete": function(id){
       var connection = s("connection");
       var server = connection.server;
       var pass = connection.pass;
-      var route = server + "/interface/" + InterfaceBack.name + "/entry/" + InterfaceBack.entry.data[subkey].data[i].original;
+      var route = server + "/dictionary/" + DictionaryBack.name + "/entry/" + id;
       var method = "DELETE";
       m.request({
         headers: {Pass: pass},
@@ -1222,12 +1235,16 @@ var DictionaryBack = {
       })
       .then (function(response) {
         if (response.status && response.status == 204) {
-          InterfaceBack.key.mod="";
-          delete InterfaceBack.entry.data[subkey];
-          InterfaceBack.key.get(InterfaceBack.name);
+          if (DictionaryBack.entry.data.id==id){
+            DictionaryBack.entry.data = {};
+          }
+          (DictionaryBack.search.results.data||[]).map(function(entry,i){
+            if (id == (entry['id'] || entry[0]))
+            delete DictionaryBack.search.results.data[i];
+          });
         } else {
           var err = Messaging.parse("warning", "system.response.problem",method,route,response);
-          Messaging.add("interface_" + InterfaceBack.entry.data[subkey].data[i].original,err);
+          Messaging.add("dictionary_" + id,err);
           m.redraw();
         }
       });
@@ -1259,11 +1276,40 @@ var DictionaryBack = {
           m.redraw();
         }
       });
+    },
+    "updateSign": function() {
+      var prefix = "";
+      DictionaryFront.sequence.symbols.map(function(sym){
+        prefix += sym.symbol;
+      })
+      var sign = prefix?"𝠀" + prefix:"";
+      sign += "𝠃";
+      DictionaryFront.signbox.symbols.map(function(sym){
+        sign += sym.symbol;
+        sign += ssw.fsw2swu(sym.x + 'x' + sym.y);
+      })
+      DictionaryBack.entry.data.sign = ssw.norm(sign);
     }
   }
 }
 
 var DictionaryFront = {
+  "type": "",
+  "update": function() {
+    if (DictionaryFront.type == "search"){
+      DictionaryBack.search.updateQuery();
+    } else {
+      DictionaryBack.entry.updateSign();
+    }
+
+  },
+  "search": {
+    "location": false,
+    "sbFill": false,
+    "sbRotation": false,
+    "seqFill": false,
+    "seqRotation": false
+  },
   "signbox": {
     "symbol": {
       oncreate: function(vnode){
@@ -1283,6 +1329,12 @@ var DictionaryFront = {
       }
     },
     "symbols": [],
+    "addSymbol": function(sym){
+      DictionaryFront.signbox.symbols.push(sym);
+      DictionaryFront.signbox.select(DictionaryFront.signbox.symbols.length-1);
+      DictionaryFront.update();
+      m.redraw();
+    },
     "click": function(){
       DictionaryFront.signbox.select(this.element.getAttribute("index"));
       m.redraw();
@@ -1331,11 +1383,90 @@ var DictionaryFront = {
       var index = this.element.getAttribute("index");
       DictionaryFront.signbox.symbols[index].x = 500 - 125 + parseInt(this.position.x);
       DictionaryFront.signbox.symbols[index].y = 500 - 125 + parseInt(this.position.y);
-      DictionaryBack.search.updateQuery();
+      DictionaryFront.update();
+    }
+  },
+  "sequence": {
+    "symbol": {
+      oncreate: function(vnode){
+        var draggie = new Draggabilly(vnode.dom,{containment:"#sequence",revert:true});
+        draggie.on( 'staticClick', DictionaryFront.sequence.click );
+        draggie.on( 'dragEnd', DictionaryFront.sequence.drop );
+      },
+      view: function(vnode){
+        return m("div", {
+          "class": "symbol " + (vnode.attrs.selected ? "selected" : ""),
+          "index": vnode.attrs.index
+        }, m.trust(ssw.svg(vnode.attrs.symbol)));
+      }
     },
-    "location": false,
-    "sbFill": false,
-    "sbRotation": false
+    "symbols": [],
+    "addSymbol": function(sym,position){
+      if (position>DictionaryFront.sequence.symbols.length){
+        position = DictionaryFront.sequence.symbols.length
+      }
+      if (position<0){
+        position = 0;
+      }
+      DictionaryFront.sequence.symbols.splice((position), 0, sym);
+      DictionaryFront.sequence.select(position);
+      DictionaryFront.update();
+      m.redraw();
+    },
+    "click": function(){
+      DictionaryFront.sequence.select(this.element.getAttribute("index"));
+      m.redraw();
+    },
+    "select": function(index){
+      DictionaryFront.sequence.symbols.map(function(sym,i){
+        DictionaryFront.sequence.symbols[i].selected = (index == i);
+      });
+    },
+    "selected": function(){
+      for ( var i = 0; i < DictionaryFront.sequence.symbols.length; i++ ){
+        if (DictionaryFront.sequence.symbols[i].selected){
+          return i;
+        }
+      }
+      return false;
+    },
+    "clear": function(){
+      DictionaryFront.sequence.symbols = [];
+    },
+    "remove": function(){
+      var sel = DictionaryFront.sequence.selected();
+      if (sel!==false){
+        DictionaryFront.sequence.symbols.splice(sel,1);
+      }
+    },
+    "fill": function(){
+      var sel = DictionaryFront.sequence.selected();
+      if (sel!==false){
+        DictionaryFront.sequence.symbols[sel].symbol = ssw.fill(DictionaryFront.sequence.symbols[sel].symbol);
+      }
+    },
+    "rotate": function(direction){
+      var sel = DictionaryFront.sequence.selected();
+      if (sel!==false){
+        DictionaryFront.sequence.symbols[sel].symbol = ssw.rotate(DictionaryFront.sequence.symbols[sel].symbol,direction);
+      }
+    },
+    "mirror": function(){
+      var sel = DictionaryFront.sequence.selected();
+      if (sel!==false){
+        DictionaryFront.sequence.symbols[sel].symbol = ssw.mirror(DictionaryFront.sequence.symbols[sel].symbol);
+      }
+    },
+    "drop": function(){
+      var move = parseInt(this.position.y/28);
+      var index = parseInt(this.element.getAttribute("index"));
+      this.setPosition(0,0);
+      var element = DictionaryFront.sequence.symbols[index];
+      DictionaryFront.sequence.symbols.splice(index, 1);
+      DictionaryFront.sequence.symbols.splice((index+move), 0, element);
+      DictionaryFront.update();
+      m.redraw();
+    }
   }
 }
 
@@ -1616,6 +1747,7 @@ var DictionaryPages = {
   "searchAll": {
     oninit: function(vnode){
       DictionaryBack.name = vnode.attrs.name;
+      DictionaryBack.entry.data = {};
       DictionaryBack.page = "searchAll";
       DictionaryBack.search.sort = "-sign";
       DictionaryBack.search.setFormat(vnode.attrs.name,"sign");
@@ -1646,9 +1778,15 @@ var DictionaryPages = {
   "searchId": {
     oninit: function(vnode){
       DictionaryBack.name = vnode.attrs.name;
+      DictionaryBack.entry.data = {};
       DictionaryBack.page = "searchId";
       DictionaryBack.search.sort = "-sign";
       DictionaryBack.search.setFormat(vnode.attrs.name,"sign");
+    },
+    onupdate: function(vnode){
+      if (DictionaryBack.name != vnode.attrs.name){
+        DictionaryPages.searchId.oninit(vnode);
+      }
     },
     view: function(vnode){
       return [
@@ -1695,9 +1833,15 @@ var DictionaryPages = {
   "searchTerms": {
     oninit: function(vnode){
       DictionaryBack.name = vnode.attrs.name;
+      DictionaryBack.entry.data = {};
       DictionaryBack.page = "searchTerms";
       DictionaryBack.search.sort = "-terms";
       DictionaryBack.search.setFormat(vnode.attrs.name,"terms");
+    },
+    onupdate: function(vnode){
+      if (DictionaryBack.name != vnode.attrs.name){
+        DictionaryPages.searchTerms.oninit(vnode);
+      }
     },
     view: function(vnode){
       return [
@@ -1763,9 +1907,16 @@ var DictionaryPages = {
   "searchSign": {
     oninit: function(vnode){
       DictionaryBack.name = vnode.attrs.name;
+      DictionaryBack.entry.data = {};
+      DictionaryFront.type = "search";
       DictionaryBack.page = "searchSign";
       DictionaryBack.search.sort = "-sign";
       DictionaryBack.search.setFormat(vnode.attrs.name,"sign");
+    },
+    onupdate: function(vnode){
+      if (DictionaryBack.name != vnode.attrs.name){
+        DictionaryPages.searchSign.oninit(vnode);
+      }
     },
     view: function(vnode){
       return [
@@ -1777,97 +1928,183 @@ var DictionaryPages = {
             m("section.boxed", [
               m("h2",InterfaceFront.collection(vnode.attrs.name)),
               m("label",t('collection.search.sign')),
-              m("div#signbox", [
-                m("div#sbV"),
-                m("div#sbH"),
-                DictionaryFront.signbox.symbols.map(function(sym,i){
-                  return m(DictionaryFront.signbox['symbol'], Object.assign(sym,{index:i}));
-                }),
+              m("div.inline",[
+                m("div#signbox", [
+                  m("div#sbV"),
+                  m("div#sbH"),
+                  DictionaryFront.signbox.symbols.map(function(sym,i){
+                    return m(DictionaryFront.signbox['symbol'], Object.assign(sym,{index:i}));
+                  }),
+                ]),
+                m("div.vcmd",[
+                  m(CommonPages["button"],{
+                    class:"danger",
+                    onclick: function(e){
+                      e.preventDefault();
+                      DictionaryFront.signbox.clear();
+                      DictionaryFront.update();
+                    },
+                    icon:"plus-square-o"
+                  }),
+                  m(CommonPages["button"],{
+                    class:"warning",
+                    onclick: function(e){
+                      e.preventDefault();
+                      DictionaryFront.signbox.remove();
+                      DictionaryFront.update();
+                    },
+                    icon:"remove"
+                  }),
+                  m(CommonPages["button"],{
+                    class:"primary",
+                    onclick: function(e){
+                      e.preventDefault();
+                      DictionaryFront.signbox.fill();
+                      DictionaryFront.update();
+                    },
+                    icon:"adjust"
+                  }),
+                  m(CommonPages["button"],{
+                    class:"primary",
+                    onclick: function(e){
+                      e.preventDefault();
+                      DictionaryFront.signbox.rotate(-1);
+                      DictionaryFront.update();
+                    },
+                    icon:"rotate-left"
+                  }),
+                  m(CommonPages["button"],{
+                    class:"primary",
+                    onclick: function(e){
+                      e.preventDefault();
+                      DictionaryFront.signbox.rotate(1);
+                      DictionaryFront.update();
+                    },
+                    icon:"rotate-right"
+                  }),
+                  m(CommonPages["button"],{
+                    class:"primary",
+                    onclick: function(e){
+                      e.preventDefault();
+                      DictionaryFront.signbox.mirror();
+                      DictionaryFront.update();
+                    },
+                    icon:"arrows-h"
+                  })
+                ]),
+                m("div.cmd",[
+                  m(CommonPages["button"],{
+                    class:DictionaryFront.search.location?"primary":"outline",
+                    onclick: function(e){
+                      e.preventDefault();
+                      DictionaryFront.search.location = !DictionaryFront.search.location;
+                      DictionaryFront.update();
+                    },
+                    key:"collection.search.location"
+                  }),
+                  m(CommonPages["button"],{
+                    class:DictionaryFront.search.sbFill?"primary":"outline",
+                    onclick: function(e){
+                      e.preventDefault();
+                      DictionaryFront.search.sbFill = !DictionaryFront.search.sbFill;
+                      DictionaryFront.update();
+                    },
+                    key:"collection.search.fill"
+                  }),
+                  m(CommonPages["button"],{
+                    class:DictionaryFront.search.sbRotation?"primary":"outline",
+                    onclick: function(e){
+                      e.preventDefault();
+                      DictionaryFront.search.sbRotation = !DictionaryFront.search.sbRotation;
+                      DictionaryFront.update();
+                    },
+                    key:"collection.search.rotation"
+                  })
+                ])
               ]),
-              m("div.vcmd",[
-                m(CommonPages["button"],{
-                  class:"danger",
-                  onclick: function(e){
-                    e.preventDefault();
-                    DictionaryFront.signbox.clear();
-                    DictionaryBack.search.updateQuery();
-                  },
-                  icon:"plus-square-o"
-                }),
-                m(CommonPages["button"],{
-                  class:"warning",
-                  onclick: function(e){
-                    e.preventDefault();
-                    DictionaryFront.signbox.remove();
-                    DictionaryBack.search.updateQuery();
-                  },
-                  icon:"remove"
-                }),
-                m(CommonPages["button"],{
-                  class:"primary",
-                  onclick: function(e){
-                    e.preventDefault();
-                    DictionaryFront.signbox.fill();
-                    DictionaryBack.search.updateQuery();
-                  },
-                  icon:"adjust"
-                }),
-                m(CommonPages["button"],{
-                  class:"primary",
-                  onclick: function(e){
-                    e.preventDefault();
-                    DictionaryFront.signbox.rotate(-1);
-                    DictionaryBack.search.updateQuery();
-                  },
-                  icon:"rotate-left"
-                }),
-                m(CommonPages["button"],{
-                  class:"primary",
-                  onclick: function(e){
-                    e.preventDefault();
-                    DictionaryFront.signbox.rotate(1);
-                    DictionaryBack.search.updateQuery();
-                  },
-                  icon:"rotate-right"
-                }),
-                m(CommonPages["button"],{
-                  class:"primary",
-                  onclick: function(e){
-                    e.preventDefault();
-                    DictionaryFront.signbox.mirror();
-                    DictionaryBack.search.updateQuery();
-                  },
-                  icon:"arrows-h"
-                })
-              ]),
-              m("div.wide",[
-                m(CommonPages["button"],{
-                  class:DictionaryFront.signbox.location?"primary":"outline",
-                  onclick: function(e){
-                    e.preventDefault();
-                    DictionaryFront.signbox.location = !DictionaryFront.signbox.location;
-                    DictionaryBack.search.updateQuery();
-                  },
-                  key:"collection.search.location"
-                }),
-                m(CommonPages["button"],{
-                  class:DictionaryFront.signbox.sbFill?"primary":"outline",
-                  onclick: function(e){
-                    e.preventDefault();
-                    DictionaryFront.signbox.sbFill = !DictionaryFront.signbox.sbFill;
-                    DictionaryBack.search.updateQuery();
-                  },
-                  key:"collection.search.fill"
-                }),
-                m(CommonPages["button"],{
-                  class:DictionaryFront.signbox.sbRotation?"primary":"outline",
-                  onclick: function(e){
-                    e.preventDefault();
-                    DictionaryFront.signbox.sbRotation = !DictionaryFront.signbox.sbRotation;
-                    DictionaryBack.search.updateQuery();
-                  },
-                  key:"collection.search.rotation"
-                }),
+              m("div.inline", [
+                m("div#sequence",
+                  DictionaryFront.sequence.symbols.map(function(sym,i){
+                    return m(DictionaryFront.sequence['symbol'], Object.assign(sym,{index:i}));
+                  }),
+                  m("div.symbol")
+                ),
+                m("div.vcmd",[
+                  m(CommonPages["button"],{
+                    class:"danger",
+                    onclick: function(e){
+                      e.preventDefault();
+                      DictionaryFront.sequence.clear();
+                      DictionaryFront.update();
+                    },
+                    icon:"plus-square-o"
+                  }),
+                  m(CommonPages["button"],{
+                    class:"warning",
+                    onclick: function(e){
+                      e.preventDefault();
+                      DictionaryFront.sequence.remove();
+                      DictionaryFront.update();
+                    },
+                    icon:"remove"
+                  }),
+                  m(CommonPages["button"],{
+                    class:"primary",
+                    onclick: function(e){
+                      e.preventDefault();
+                      DictionaryFront.sequence.fill();
+                      DictionaryFront.update();
+                    },
+                    icon:"adjust"
+                  }),
+                  m(CommonPages["button"],{
+                    class:"primary",
+                    onclick: function(e){
+                      e.preventDefault();
+                      DictionaryFront.sequence.rotate(-1);
+                      DictionaryFront.update();
+                    },
+                    icon:"rotate-left"
+                  }),
+                  m(CommonPages["button"],{
+                    class:"primary",
+                    onclick: function(e){
+                      e.preventDefault();
+                      DictionaryFront.sequence.rotate(1);
+                      DictionaryFront.update();
+                    },
+                    icon:"rotate-right"
+                  }),
+                  m(CommonPages["button"],{
+                    class:"primary",
+                    onclick: function(e){
+                      e.preventDefault();
+                      DictionaryFront.sequence.mirror();
+                      DictionaryFront.update();
+                    },
+                    icon:"arrows-h"
+                  })
+                ]),
+                m("div.cmd",[
+                  m(CommonPages["button"],{
+                    class:DictionaryFront.search.seqFill?"primary":"outline",
+                    onclick: function(e){
+                      e.preventDefault();
+                      DictionaryFront.search.seqFill = !DictionaryFront.search.seqFill;
+                      DictionaryFront.update();
+                    },
+                    key:"collection.search.fill"
+                  }),
+                  m(CommonPages["button"],{
+                    class:DictionaryFront.search.seqRotation?"primary":"outline",
+                    onclick: function(e){
+                      e.preventDefault();
+                      DictionaryFront.search.seqRotation = !DictionaryFront.search.seqRotation;
+                      DictionaryFront.update();
+                    },
+                    key:"collection.search.rotation"
+                  })
+                ])
               ]),
               m("label[for=query]",t('collection.search.query')),
               m("input#query[type=text]",{value: DictionaryBack.search.query,oninput: function(e){
@@ -1898,9 +2135,15 @@ var DictionaryPages = {
   "selection": {
     oninit: function(vnode){
       DictionaryBack.name = vnode.attrs.name;
+      DictionaryBack.entry.data = {};
       DictionaryBack.page = "selection";
       DictionaryBack.search.sort = "-sign";
       DictionaryBack.search.setFormat(vnode.attrs.name,"sign");
+    },
+    onupdate: function(vnode){
+      if (DictionaryBack.name != vnode.attrs.name){
+        DictionaryPages.selection.oninit(vnode);
+      }
     },
     view: function(vnode){
       return [
@@ -1954,28 +2197,18 @@ var DictionaryPages = {
           }}),
           m(CommonPages["button"],{class: "primary", key:'system.buttons.view', onclick: function(e){
             e.preventDefault();
-            if (single){
-              DictionaryBack.entry.display = "detail";
-            } else {
-              DictionaryBack.search.display[entry.id] = "detail";
-            }
+            DictionaryBack.search.setDisplay(entry.id, "detail");
           }})
         ])
       ])
     }
   },
-  "detail": {
+  "view": {
     view: function (vnode){
       var entry = vnode.attrs.entry;
-      console.log(DictionaryBack.entry);
-      console.log(entry);
-      var single = (entry.id == DictionaryBack.entry.data.id);
-      var editable = CollectionBack.rightsCheck(vnode.attrs.name,SP_EDIT,entry.user);
-      var manager = CollectionBack.rightsCheck(vnode.attrs.name,SP_MANAGE);
       var sorting = entry['sign'].match(ssw.re.swu.sort + "(" + ssw.re.swu.symbol + ")+");
       sorting = sorting?sorting[0].slice(2):"";
-      var selected = DictionaryBack.search.selected(entry.id);
-      return m("section.entry.boxed",[
+      return [
         m("h2", entry['terms'][0]),
         m("p", (entry['terms']).slice(1).join(", ")),
         m("div.signed",m.trust(ssw.svg(entry['sign']))),
@@ -1985,8 +2218,8 @@ var DictionaryPages = {
         entry.detail.images?m("div.images",
           Object.keys(entry.detail.images).map(function(img){
             return m("div",[
-              m("p",t("collection.fields." + img)),
-              m("img",{src:s("connection","server") + "/data/img/" + vnode.attrs.name + "/" + entry.detail.images[img]})
+              m("p",t("print.col.image" + img)),
+              m("img.image",{src:s("connection","server") + "/data/img/" + vnode.attrs.name + "/" + entry.detail.images[img]})
             ]);
           })
         ):"",
@@ -1997,7 +2230,19 @@ var DictionaryPages = {
           entry['source']?m("li", t("collection.fields.source") + ": " + entry['source']):"",
           m("li", t("collection.fields.createdat") + ": " + entry['created_at'].replace("T"," ").replace("Z","")),
           m("li", t("collection.fields.updatedat") + ": " + entry['updated_at'].replace("T"," ").replace("Z",""))
-        ]),
+        ])
+      ];
+    }
+  },
+  "detail": {
+    view: function (vnode){
+      var entry = vnode.attrs.entry;
+      var single = (entry.id == DictionaryBack.entry.data.id);
+      var editable = CollectionBack.rightsCheck(vnode.attrs.name,SP_EDIT,entry.user);
+      var manager = CollectionBack.rightsCheck(vnode.attrs.name,SP_MANAGE);
+      var selected = DictionaryBack.search.selected(entry.id);
+      return m("section.entry.boxed",[
+        m(DictionaryPages['view'],{entry:entry,name:vnode.attrs.name}),
         m("div.wide", [
           single?m(CommonPages["button"],{class: "warning", key:'system.buttons.close', onclick: function(e){
             e.preventDefault();
@@ -2009,18 +2254,105 @@ var DictionaryPages = {
           }}),
           m(CommonPages["button"],{class: "primary", key:'system.buttons.data', onclick: function(e){
             e.preventDefault();
-            if (single){
-              DictionaryBack.entry.display = "data";
-            } else {
-              DictionaryBack.search.display[entry.id] = "data";
-            }
+            DictionaryBack.search.setDisplay(entry.id, "data");
+          }}),
+          editable?m(CommonPages["button"],{class: "primary", key:'system.buttons.edit', onclick: function(e){
+            e.preventDefault();
+            DictionaryBack.search.setDisplay(entry.id, "editing");
+          }}):"",
+          editable?m(CommonPages["button"],{class: "primary", key:'system.buttons.signmaker', onclick: function(e){
+            e.preventDefault();
+            DictionaryBack.search.setDisplay(entry.id, "signmaker");
+          }}):"",
+          editable?m(CommonPages["button"],{class: "warning", key:'system.buttons.delete', onclick: function(e){
+            e.preventDefault();
+            DictionaryBack.search.setDisplay(entry.id, "deleting");
+          }}):""
+        ])
+      ]);
+    },
+  },
+  "deleting": {
+    view: function (vnode){
+      var entry = vnode.attrs.entry;
+      var single = (entry.id == DictionaryBack.entry.data.id);
+      var editable = CollectionBack.rightsCheck(vnode.attrs.name,SP_EDIT,entry.user);
+      var manager = CollectionBack.rightsCheck(vnode.attrs.name,SP_MANAGE);
+      var selected = DictionaryBack.search.selected(entry.id);
+      return m("section.entry.boxed",[
+        m(DictionaryPages['view'],{entry:entry,name:vnode.attrs.name}),
+        m("div.wide", [
+          m(CommonPages["button"],{class: "warning", key:'system.buttons.cancel', onclick: function(e){
+            e.preventDefault();
+            DictionaryBack.search.setDisplay(entry.id, "detail");
+          }}),
+          m(CommonPages["button"],{class: "danger onRight", key:"system.buttons.delete",
+            onclick: function(e){e.preventDefault();
+              DictionaryBack.entry.delete(entry.id);
           }})
         ])
       ]);
     },
   },
-  "edit": {
+  "editing": {
     view: function (vnode){
+      var entry = vnode.attrs.entry;
+      var sorting = entry['sign'].match(ssw.re.swu.sort + "(" + ssw.re.swu.symbol + ")+");
+      sorting = sorting?sorting[0].slice(2):"";
+      return m("section.entry.boxed",[
+        m("div.signed",m.trust(ssw.svg(entry['sign']))),
+        m("div.sequence",(sorting.match(/.{2}/g)||[]).map(function(sym){
+          return m("div",sym);
+        })),
+        entry.detail.images?m("div.images",
+          Object.keys(entry.detail.images).map(function(img){
+            return m("div",[
+              m("p",t("print.col.image" + img)),
+              m("img.image",{src:s("connection","server") + "/data/img/" + vnode.attrs.name + "/" + entry.detail.images[img]})
+            ]);
+          })
+        ):"",
+        m("form", [
+          m("label[for=terms]",t('collection.fields.terms')),
+          entry['terms'].map(function(term,i){
+            return m("input#terms[type=text]",{value:term,oninput: function(e){
+              e.preventDefault();
+              DictionaryBack.entry.data.terms[i] = e.target.value;
+              if (DictionaryBack.entry.data.terms[DictionaryBack.entry.data.terms.length-1]!=""){
+                DictionaryBack.entry.data.terms.push('');
+              }
+            }})
+          }),
+          m("label[for=text]",t('collection.fields.text')),
+          m("textarea#text",{value:DictionaryBack.entry.data.text,oninput: function(e){
+            e.preventDefault();
+            DictionaryBack.entry.data.text = e.target.value;
+          }}),
+          m("label[for=text]",t('collection.fields.video')),
+          m("textarea#video",{value:DictionaryBack.entry.data.detail.video,oninput: function(e){
+            e.preventDefault();
+            DictionaryBack.entry.data.detail.video = e.target.value;
+          }}),
+          m("label[for=source]",t('collection.fields.source')),
+          m("input#source[type=text]",{value:DictionaryBack.entry.data.source,oninput: function(e){
+            e.preventDefault();
+            DictionaryBack.entry.data.source = e.target.value;
+          }}),
+          m("div.wide", [
+            m(CommonPages["button"],{class: "warning", key:'system.buttons.cancel', onclick: function(e){
+              e.preventDefault();
+              DictionaryBack.entry.data = {};
+            }}),
+            m(CommonPages["button"],{class: "success onRight", key:"system.buttons.save",
+              onclick: function(e){e.preventDefault();
+                DictionaryBack.entry.update(entry.id);
+            }})
+          ])
+        ])
+        //entry['text'], entry.detail.video,entry.source
+
+      ]);
+
       var editable = CollectionBack.rightsCheck(vnode.attrs.name,SP_EDIT,DictionaryBack.entry.data.user);
       var manager = CollectionBack.rightsCheck(vnode.attrs.name,SP_MANAGE);
       return m("section.entry.boxed",[
@@ -2047,6 +2379,178 @@ var DictionaryPages = {
       ]);
     },
   },
+  "signmaker": {
+    oninit: function(vnode){
+      DictionaryFront.type = "signmaker";
+      var sorting = DictionaryBack.entry.data.sign.match(ssw.re.swu.sort + "(" + ssw.re.swu.symbol + ")+");
+      sorting = sorting?sorting[0].slice(2):"";
+      var syms = sorting.match(/../g);
+      DictionaryFront.sequence.symbols=syms.map(function(sym,i){
+        return {symbol:sym,index:i};
+      });
+      var spatials = DictionaryBack.entry.data.sign.match(new RegExp(ssw.re.swu.spatial,"g"));
+      DictionaryFront.signbox.symbols = spatials.map(function(spatial,i){
+        var sym = spatial.substr(0,2);
+        var coord = ssw.swu2fsw(spatial.substr(2,4));
+        var x = parseInt(coord.substr(0,3));
+        var y = parseInt(coord.substr(4,3));
+        return {symbol:sym, x:x, y:y, index:i}
+      });
+    },
+    view: function(vnode){
+      return [
+            m("section.entry.boxed", [
+              m("h2",InterfaceFront.collection(vnode.attrs.name)),
+              m("label",DictionaryBack.entry.data.terms[0]),
+              m("div.inline",[
+                m("div#signbox", [
+                  m("div#sbV"),
+                  m("div#sbH"),
+                  DictionaryFront.signbox.symbols.map(function(sym,i){
+                    return m(DictionaryFront.signbox['symbol'], Object.assign(sym,{index:i}));
+                  }),
+                ]),
+                m("div.vcmd",[
+                  m(CommonPages["button"],{
+                    class:"danger",
+                    onclick: function(e){
+                      e.preventDefault();
+                      DictionaryFront.signbox.clear();
+                      DictionaryFront.update();
+                    },
+                    icon:"plus-square-o"
+                  }),
+                  m(CommonPages["button"],{
+                    class:"warning",
+                    onclick: function(e){
+                      e.preventDefault();
+                      DictionaryFront.signbox.remove();
+                      DictionaryFront.update();
+                    },
+                    icon:"remove"
+                  }),
+                  m(CommonPages["button"],{
+                    class:"primary",
+                    onclick: function(e){
+                      e.preventDefault();
+                      DictionaryFront.signbox.fill();
+                      DictionaryFront.update();
+                    },
+                    icon:"adjust"
+                  }),
+                  m(CommonPages["button"],{
+                    class:"primary",
+                    onclick: function(e){
+                      e.preventDefault();
+                      DictionaryFront.signbox.rotate(-1);
+                      DictionaryFront.update();
+                    },
+                    icon:"rotate-left"
+                  }),
+                  m(CommonPages["button"],{
+                    class:"primary",
+                    onclick: function(e){
+                      e.preventDefault();
+                      DictionaryFront.signbox.rotate(1);
+                      DictionaryFront.update();
+                    },
+                    icon:"rotate-right"
+                  }),
+                  m(CommonPages["button"],{
+                    class:"primary",
+                    onclick: function(e){
+                      e.preventDefault();
+                      DictionaryFront.signbox.mirror();
+                      DictionaryFront.update();
+                    },
+                    icon:"arrows-h"
+                  })
+                ])
+              ]),
+              m("div.inline", [
+                m("div#sequence",
+                  DictionaryFront.sequence.symbols.map(function(sym,i){
+                    return m(DictionaryFront.sequence['symbol'], Object.assign(sym,{index:i}));
+                  }),
+                  m("div.symbol")
+                ),
+                m("div.vcmd",[
+                  m(CommonPages["button"],{
+                    class:"danger",
+                    onclick: function(e){
+                      e.preventDefault();
+                      DictionaryFront.sequence.clear();
+                      DictionaryFront.update();
+                    },
+                    icon:"plus-square-o"
+                  }),
+                  m(CommonPages["button"],{
+                    class:"warning",
+                    onclick: function(e){
+                      e.preventDefault();
+                      DictionaryFront.sequence.remove();
+                      DictionaryFront.update();
+                    },
+                    icon:"remove"
+                  }),
+                  m(CommonPages["button"],{
+                    class:"primary",
+                    onclick: function(e){
+                      e.preventDefault();
+                      DictionaryFront.sequence.fill();
+                      DictionaryFront.update();
+                    },
+                    icon:"adjust"
+                  }),
+                  m(CommonPages["button"],{
+                    class:"primary",
+                    onclick: function(e){
+                      e.preventDefault();
+                      DictionaryFront.sequence.rotate(-1);
+                      DictionaryFront.update();
+                    },
+                    icon:"rotate-left"
+                  }),
+                  m(CommonPages["button"],{
+                    class:"primary",
+                    onclick: function(e){
+                      e.preventDefault();
+                      DictionaryFront.sequence.rotate(1);
+                      DictionaryFront.update();
+                    },
+                    icon:"rotate-right"
+                  }),
+                  m(CommonPages["button"],{
+                    class:"primary",
+                    onclick: function(e){
+                      e.preventDefault();
+                      DictionaryFront.sequence.mirror();
+                      DictionaryFront.update();
+                    },
+                    icon:"arrows-h"
+                  })
+                ])
+              ]),
+              m("label[for=query]",t('collection.fields.sign')),
+              m("input#query[type=text]",{value: DictionaryBack.entry.data.sign,oninput: function(e){
+                e.preventDefault();
+                DictionaryBack.entry.data.sign=e.target.value;
+              }}),
+              m("label"),
+              m("div.wide", [
+                m(CommonPages["button"],{class: "warning", key:'system.buttons.cancel', onclick: function(e){
+                  e.preventDefault();
+                  DictionaryBack.entry.data = {};
+                }}),
+                m(CommonPages["button"],{class: "success onRight", key:"system.buttons.save",
+                  onclick: function(e){e.preventDefault();
+                    DictionaryBack.entry.update(DictionaryBack.entry.data.id);
+                }})
+              ])
+            ])
+      ];
+    }
+  }
 }
 
 // m(CommonPages["button"],{class: "tight pseudo onLeft", disabled: routes.index<1,onclick: function(e){e.preventDefault();routesfn.index(routes.index-1);},icon:"arrow-left"}),
@@ -2999,7 +3503,7 @@ var CollectionPages = {
             output = InterfaceFront.ui.data;
           }
           return m("pre",Object.keys(output).map(function(val,i){
-            return val + "\t" + (output[val]["message"]?output[val]["message"]:"") + "\t" + (output[val]["description"]?output[val]["description"]:"") + "\t" + (output[val]["icon"]?output[val]["icon"]:"") + "\t" + (output[val]["image"]?output[val]["image"]:"") + "\t" + (output[val]["gesture"]?output[val]["gesture"]:"") + "\n";
+            return val + "\t" + (output[val]["message"]?output[val]["message"]:"") + "\t" + (output[val]["description"]?output[val]["description"]:"") + "\t" + (output[val]["icon"]?output[val]["icon"]:"") + "\n";
           }))
           break;
         default:

@@ -1164,14 +1164,29 @@ function dictionaryEntryUpdate($dictionary,$id,$data,$pass){
   if(!isset($data['terms'])){
     $data['terms'] = '';
   } else {
-    $data['terms'] = implode("|",$data['terms']);
+    $terms = array();
+    foreach ($data['terms'] as $term){
+      $term = str_replace("|","",$term);
+      $term = trim($term);
+      if ($term){
+        $terms[] = $term;
+      }
+    }
+    $data['terms'] = implode("|",$terms);
   }
   $data['lower'] = mb_strtolower($data['terms'],"UTF-8");
+
+  if(isset($data['text'])){
+    $data['text'] = html_check($data['text']);
+  }
 
   if(!isset($data['detail'])){
     $data['detail'] = '{}';
   } else {
-    $json = json_encode($data['detail'],JSON_NUMERIC_CHECK);
+    if(isset($data['detail']['video'])){
+      $data['detail']['video'] = html_check($data['detail']['video']);
+    }
+      $json = json_encode($data['detail'],JSON_NUMERIC_CHECK);
     $data['detail'] = $json=="[]"?"{}":$json;
   }
   if ($stmt = $db->prepare("UPDATE entry set sign=:sign, terms=:terms, lower=:lower, signtext=:signtext, text=:text, source=:source, detail=:detail, updated_at=:updated_at where id=:id;")) {

@@ -38,6 +38,9 @@ form {
   overflow: hidden;
   margin-bottom: 2em;
 }
+textarea {
+  height: 6em;
+}
 label.large,
 input.large,
 select.large,
@@ -729,7 +732,8 @@ div.wide {
   display: inline-flex;
   width: 100%;
 }
-header > span > button, div.wide > button {
+
+header > span > button, div.wide > button, div.cmd > button {
   margin-top: 0.2em;
   margin-left: 0.2em;
   margin-right: 0.2em;
@@ -928,13 +932,40 @@ div.symbol {
 div.symbol.selected  svg g text.sym-line {
   fill: blue !important;
 }
-div.vcmd{
+div.cmd {
+  display: flex;
+  vertical-align: top;
+}
+div.vcmd {
   display: inline-flex;
   flex-direction: column;
   vertical-align: top;
 }
 div.vcmd button {
   margin: 2px;
+}
+div#sequence {
+  display: inline-block;
+  position: relative;
+  width: 30px;
+  height: 250px;
+  border: 1px solid black;
+  margin-bottom: 10px;
+  vertical-align: top;
+}
+div#sequence div.symbol {
+  position: relative;
+  display: block;
+  height: 28px;
+  width: 28px;
+  border: 1px solid black;
+  padding: 1px;
+}
+div#sequence div.symbol svg{
+  display: block;
+  margin: 2.5% auto;
+  max-width: 95%;
+  height: 95%;
 }
 input#query {
   line-height: 1.6em;
@@ -950,6 +981,9 @@ div.images div {
   margin: 10px;
   padding: 5px;
   border:  1px solid black;
+}
+img.image {
+  max-width: 200px;
 }
 div.btn{
   position: relative;
@@ -1046,6 +1080,12 @@ section.boxed:after
     right:10px; 
     left:auto; 
     transform:skew(8deg) rotate(3deg);
+}
+div.inline {
+  display: inline-block;
+  margin: 10px;
+  padding: 10px;
+  border: 1px solid black;
 }
 
 section button.padded{

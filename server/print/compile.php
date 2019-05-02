@@ -183,12 +183,12 @@ foreach ($chunks as $i=>$part){
             $row .= '<td class="' . $colclass . '"> </td>';
           }
           break;
-        case 'gesture':
-        case 'visual':
-        case 'picture':
-        case 'image':
+        case "1":
+        case "2":
+        case "3":
+        case "4":
           $data = '';
-          if (array_key_exists('images',$entries[$id]['detail']) && array_key_exists($col,$entries[$id]['detail']->images)){
+          if (array_key_exists('images',$entries[$id]['detail']) && isset($entries[$id]['detail']->images->$col)){
             $file = "../data/img/" . $dictionary . "/" . $entries[$id]['detail']->images->$col;
             $data = @file_get_contents($file);
           }

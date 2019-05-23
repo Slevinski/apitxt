@@ -3,7 +3,7 @@ var config = {
     "status": "state.status.initial",
     "connection": {
       "server": "http://signpuddle.com/server",
-      "server": "http://192.168.254.1:8888/server"
+      "server": "http://192.168.254.7:8888/server"
     },
     "profile": {
       "user": "",

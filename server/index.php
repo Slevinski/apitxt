@@ -822,6 +822,7 @@ $app->post('/dictionary/:name/entry', function ($name) use ($app) {
   $data = $app->request->getbody();
   $data = json_decode($data,true);
   echo dictionaryEntryNew($name,$data,$pass);
+  $app->response->setStatus(201);
   return;
 });
 

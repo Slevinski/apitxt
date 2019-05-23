@@ -780,6 +780,9 @@ section {
   vertical-align: middle;
 }
 
+section.entry {
+  max-width: 100%;
+}
 div.dictionary {
   width: 70%;
   display: grid;
@@ -906,11 +909,19 @@ div#signbox {
   display: inline-block;
   position: relative;
   width: 250px;
-  margin: auto;
   height: 250px;
-  border: solid black 1px;
+  margin: auto;
   margin-bottom: 10px;
+  border: solid black 1px;
   vertical-align: top;
+}
+div#signbox div{
+  position: absolute;
+}
+div#signbox div svg {
+  display: block;
+  top:0;
+  left:0;
 }
 div#sbV {
   position: relative;
@@ -943,6 +954,18 @@ div.vcmd {
 }
 div.vcmd button {
   margin: 2px;
+}
+div.hcmd {
+  display: flex;
+  justify-content: center;
+  vertical-align: top;
+}
+div.hcmd button {
+  margin: 2px;
+}
+div.smcmd {
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
 }
 div#sequence {
   display: inline-block;
@@ -1086,6 +1109,7 @@ div.inline {
   margin: 10px;
   padding: 10px;
   border: 1px solid black;
+  vertical-align: top;
 }
 
 section button.padded{
@@ -1098,7 +1122,7 @@ button.long {
   padding: 0.1em;
 }
 
-@media (min-width: 40em) {
+@media (min-width: 60em) {
   button.long {display: inline-flex;}
   button.short {display: none;}
 }

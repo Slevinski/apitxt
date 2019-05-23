@@ -143,6 +143,7 @@ group	dictionary	Resources related to dictionary collections
 			code	$data = $app->request->getbody();
 			code	$data = json_decode($data,true);
 			code	echo dictionaryEntryNew($name,$data,$pass);
+			code	$app->response->setStatus(201);
 			code	return;
 			request	add new dictionary entry	application/json
 				header	Pass	724fd4b4438fba9d0c5ab89d0833e5c9
@@ -156,7 +157,7 @@ group	dictionary	Resources related to dictionary collections
 				body	  "source": "Conference Maastricht",
 				body	  "detail": {}
 				body	}  
-				response	200	text/plain
+				response	201	text/plain
 					body	777
 	route	/dictionary/{name}/entry/{id}	Dictionary entry resource for id	Specific entries for dictionary
 		parameter	name	`ase-US-dictionary-public`	string	The name of an dictionary

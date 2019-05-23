@@ -350,6 +350,7 @@ var data = {
                 "$data = $app->request->getbody();", 
                 "$data = json_decode($data,true);", 
                 "echo dictionaryEntryNew($name,$data,$pass);", 
+                "$app->response->setStatus(201);", 
                 "return;"
               ], 
               "method": "POST", 
@@ -376,7 +377,7 @@ var data = {
                   }, 
                   "responses": [
                     {
-                      "status": 200, 
+                      "status": 201, 
                       "body": [
                         "777"
                       ], 

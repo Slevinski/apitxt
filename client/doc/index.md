@@ -822,7 +822,7 @@ Entries for dictionary
               "detail": {}
             }  
 
-+ Response 200 (text/plain)
++ Response 201 (text/plain)
 
      + Body
 

@@ -1400,6 +1400,142 @@
             "user": "slevinski",
             "created_at": "2019-05-02T21:25:58Z",
             "updated_at": "2019-05-02T21:25:58Z"
+        },
+        "signmaker.buttons.copy": {
+            "message": "Copy",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-05-20T16:03:49Z",
+            "updated_at": "2019-05-20T16:03:49Z"
+        },
+        "signmaker.buttons.mirror": {
+            "message": "Mirror",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-05-20T16:03:58Z",
+            "updated_at": "2019-05-20T16:03:58Z"
+        },
+        "signmaker.buttons.center": {
+            "message": "Center",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-05-20T16:04:06Z",
+            "updated_at": "2019-05-20T16:04:06Z"
+        },
+        "signmaker.buttons.delete": {
+            "message": "Delete",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-05-20T16:04:15Z",
+            "updated_at": "2019-05-20T16:04:15Z"
+        },
+        "signmaker.buttons.next": {
+            "message": "Select Next",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-05-20T16:05:09Z",
+            "updated_at": "2019-05-20T16:05:09Z"
+        },
+        "signmaker.buttons.previous": {
+            "message": "Select Prev",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-05-20T16:05:32Z",
+            "updated_at": "2019-05-20T16:05:32Z"
+        },
+        "signmaker.buttons.undo": {
+            "message": "Undo",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-05-20T16:05:39Z",
+            "updated_at": "2019-05-20T16:05:39Z"
+        },
+        "signmaker.buttons.redo": {
+            "message": "Redo",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-05-20T16:05:45Z",
+            "updated_at": "2019-05-20T16:05:45Z"
+        },
+        "signmaker.buttons.fillminus": {
+            "message": "Fill -",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-05-20T16:06:05Z",
+            "updated_at": "2019-05-20T16:06:05Z"
+        },
+        "signmaker.buttons.fillplus": {
+            "message": "Fill +",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-05-20T16:06:17Z",
+            "updated_at": "2019-05-20T16:06:17Z"
+        },
+        "signmaker.buttons.rotateminus": {
+            "message": "Rotate -",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-05-20T16:06:39Z",
+            "updated_at": "2019-05-20T16:06:39Z"
+        },
+        "signmaker.buttons.rotateplus": {
+            "message": "Rotate +",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-05-20T16:06:47Z",
+            "updated_at": "2019-05-20T16:06:47Z"
+        },
+        "signmaker.buttons.over": {
+            "message": "Place Over",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-05-20T16:07:01Z",
+            "updated_at": "2019-05-20T16:07:01Z"
+        },
+        "signmaker.buttons.clear": {
+            "message": "Clear All",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-05-20T16:07:07Z",
+            "updated_at": "2019-05-20T16:07:07Z"
+        },
+        "signmaker.buttons.sizeplus": {
+            "message": "Size +",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-05-20T16:29:24Z",
+            "updated_at": "2019-05-20T16:29:24Z"
+        },
+        "signmaker.buttons.sizeminus": {
+            "message": "Size -",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-05-20T16:29:32Z",
+            "updated_at": "2019-05-20T16:29:32Z"
+        },
+        "collection.tools.signmaker": {
+            "message": "Sign Maker",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-05-22T15:24:07Z",
+            "updated_at": "2019-05-22T15:24:07Z"
         }
     }
 }

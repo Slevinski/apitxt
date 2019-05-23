@@ -2,7 +2,7 @@ var config = {
   "state": {
     "status": "state.status.initial",
     "connection": {
-      "server": "http://signpuddle.com/server"
+      "server": "https://signpuddle.com/server"
     },
     "profile": {
       "user": "",

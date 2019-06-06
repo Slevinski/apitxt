@@ -268,6 +268,35 @@ $app->delete('/collection/:name', function ($name) use ($app) {
   $app->response->setStatus(204);
 });
 
+$app->options('/collection/:name/entry/:ik/image/:num', function (){});
+$app->put('/collection/:name/entry/:ik/image/:num', function ($name,$ik,$num) use ($app) {
+  $timein = microtime(true);
+  $err = invalidName($name);
+  if ($err){
+    haltBadRequest($err);
+  }
+  $headers = getHeaders();
+  $pass = isset($headers['Pass'])?$headers['Pass']:'';
+  $data = $app->request->getbody();
+  $data = json_decode($data,true);
+  collectionImageUpdate($name,$ik,$num,$data,$pass);
+  $app->response->setStatus(204);
+  return;
+});
+
+$app->options('/collection/:name/entry/:ik/image/:num', function (){});
+$app->delete('/collection/:name/entry/:ik/image/:num', function ($name,$ik,$num) use ($app) {
+  $timein = microtime(true);
+  $err = invalidName($name);
+  if ($err){
+    haltBadRequest($err);
+  }
+  $headers = getHeaders();
+  $pass = isset($headers['Pass'])?$headers['Pass']:'';
+  collectionImageDelete($name,$ik,$num,$pass);
+  $app->response->setStatus(204);
+});
+
 $app->options('/collection/:name/stats', function (){});
 $app->get('/collection/:name/stats', function ($name) use ($app) {
   $timein = microtime(true);

@@ -10,7 +10,7 @@ date_default_timezone_set('UTC');
 
 function collectionRights($collection){
   global $db0;
-  $sel = 'select view_pass, add_pass, edit_pass from collection where name=:collection;';
+  $sel = 'select view_pass, add_pass, edit_pass, upload_level from collection where name=:collection;';
   try {
     $stmt = $db0->prepare($sel);
     $stmt->bindParam(':collection', $collection, PDO::PARAM_STR);
@@ -25,6 +25,7 @@ function collectionRights($collection){
   $return['view_pass'] = 0;
   $return['add_pass'] = 1;
   $return['edit_pass'] = 1;
+  $return['upload_level'] = SP_MANAGE;
   return $return;
 }
 
@@ -48,6 +49,15 @@ function passRequired($collection,$right){
   if ($right==SP_ADMIN) return SP_ADMIN;
   if ($right==SP_MANAGE) return SP_MANAGE;
   $rights = collectionRights($collection);
+  if ($right==SP_EDIT && !$rights['edit_pass']) $right--;
+  if ($right==SP_ADD && !$rights['add_pass']) $right--;
+  if ($right==SP_VIEW && !$rights['view_pass']) $right--;
+  return $right;
+}
+
+function uploadLevel($collection){
+  $rights = collectionRights($collection);
+  $right = $rights['upload_level'];
   if ($right==SP_EDIT && !$rights['edit_pass']) $right--;
   if ($right==SP_ADD && !$rights['add_pass']) $right--;
   if ($right==SP_VIEW && !$rights['view_pass']) $right--;

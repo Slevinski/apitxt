@@ -80,6 +80,41 @@ group	collection	Resources related to collections in general
 			request	the removal of a collection
 				header	Pass	5ffab638bde372b4fa63bb6f8484595d
 				response	204
+	route	/collection/{name}/entry/{ik}/image/{num}	Collection entry image resource	Specific image for collection entry
+		parameter	name	`ase-US-dictionary-public`	string	The name of an dictionary
+		parameter	ik	11244	string	An id number or key string
+		parameter	num	1	string	The image number of 1 thru 4
+		method	PUT	update image for collection entry
+			code	$err = invalidName($name);
+			code	if ($err){
+			code	  haltBadRequest($err);
+			code	}
+			code	$headers = getHeaders();
+			code	$pass = isset($headers['Pass'])?$headers['Pass']:'';
+			code	$data = $app->request->getbody();
+			code	$data = json_decode($data,true);
+			code	collectionImageUpdate($name,$ik,$num,$data,$pass);
+			code	$app->response->setStatus(204);
+			code	return;
+			request	an update for an existing dictionary entry	application/json
+				header	Pass	724fd4b4438fba9d0c5ab89d0833e5c9
+				body	{
+				body	  "file": "name.png",
+				body	  "data": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD..."
+				body	}
+				response	204
+		method	DELETE	remove dictionary entry
+			code	$err = invalidName($name);
+			code	if ($err){
+			code	  haltBadRequest($err);
+			code	}
+			code	$headers = getHeaders();
+			code	$pass = isset($headers['Pass'])?$headers['Pass']:'';
+			code	collectionImageDelete($name,$ik,$num,$pass);
+			code	$app->response->setStatus(204);
+			request	the removal of a collection entry image
+				header	Pass	724fd4b4438fba9d0c5ab89d0833e5c9
+				response	204
 	route	/collection/{name}/stats	Collection statistics	Statistics about the collection
 		parameter	name	`ase-US-dictionary-public`	required,string	The name of a dictionary
 		method	GET	Get collection statistics

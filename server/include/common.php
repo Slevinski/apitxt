@@ -47,7 +47,7 @@ function html_clean($html_str){
   return $xml->saveHTML();
 }
 
-function fixname($name,$id){
+function fixname($name,$id=0){
   $normalizeChars = array(
     'Š'=>'S', 'š'=>'s', 'Ð'=>'Dj','Ž'=>'Z', 'ž'=>'z', 'À'=>'A', 'Á'=>'A', 'Â'=>'
 A', 'Ã'=>'A', 'Ä'=>'A',

@@ -507,7 +507,7 @@ var InterfaceBack = {
         method: method,
         url: route,
         type: 'application/json',
-        data: InterfaceBack.entry.data[subkey].data[i],
+        body: InterfaceBack.entry.data[subkey].data[i],
         extract: function(xhr) {return {status: xhr.status, body: xhr.responseText}}
       })
       .then (function(response) {
@@ -559,7 +559,7 @@ var InterfaceBack = {
         method: method,
         url: route,
         type: 'application/json',
-        data: InterfaceBack.entry.new,
+        body: InterfaceBack.entry.new,
         extract: function(xhr) {return {status: xhr.status, body: xhr.responseText}}
       })
       .then (function(response) {
@@ -1075,7 +1075,7 @@ var DictionaryBack = {
           break;
         case "list":
         case "details":
-        DictionaryBack.search.sort = "-id";
+        DictionaryBack.search.sort = "id";
         DictionaryBack.search.setSort("id");
           break;
       }
@@ -1085,16 +1085,6 @@ var DictionaryBack = {
       DictionaryBack.search.fn(collection);
     },
     "setDisplay": function(id, display){
-      if (display=="editing"){
-        if (!DictionaryBack.entry.data.id) {
-          (DictionaryBack.search.results.data||[]).map(function(entry){
-            if (id == entry['id']) {
-              DictionaryBack.entry.data = JSON.parse(JSON.stringify(entry))
-            }
-          })
-        }
-        DictionaryBack.entry.data.terms.push('');
-      }
       if (DictionaryBack.entry.data.id == id) {
         DictionaryBack.entry.display = display;
       } else {
@@ -1214,27 +1204,32 @@ var DictionaryBack = {
       });
     },
     "data":{},
-    "update": function(id){
+    "backup":{},
+    "images":{
+      "status": {},
+      "data": {}
+    },
+    "update": function(entry){
       var connection = s("connection");
       var server = connection.server;
       var pass = connection.pass;
-      var route = server + "/dictionary/" + DictionaryBack.name + "/entry/" + id;
+      var route = server + "/dictionary/" + DictionaryBack.name + "/entry/" + entry.id;
       var method = "PUT";
       m.request({
         headers: {Pass: pass},
         method: method,
         url: route,
         type: 'application/json',
-        data: DictionaryBack.entry.data,
+        body: entry,
         extract: function(xhr) {return {status: xhr.status, body: xhr.responseText}}
       })
       .then (function(response) {
         if (response.status && response.status == 204) {
-          DictionaryBack.entry.get(DictionaryBack.name,id);
+          DictionaryBack.entry.get(DictionaryBack.name,entry.id);
           DictionaryBack.search.fn(DictionaryBack.name);
         } else {
           var err = Messaging.parse("warning", "system.response.problem",method,route,response);
-          Messaging.add("dictionary_" + id,err);
+          Messaging.add("dictionary_" + entry.id,err);
           m.redraw();
         }
       });
@@ -1278,7 +1273,7 @@ var DictionaryBack = {
         method: method,
         url: route,
         type: 'application/json',
-        data: DictionaryBack.entry.data,
+        body: DictionaryBack.entry.data,
         extract: function(xhr) {return {status: xhr.status, body: xhr.responseText}}
       })
       .then (function(response) {
@@ -1487,6 +1482,16 @@ var DictionaryFront = {
         DictionaryFront[section].symbols[sel].symbol = ssw.rotate(DictionaryFront[section].symbols[sel].symbol,direction);
       }
     },
+    "scroll": function(direction){
+      var section = DictionaryFront.signmaker.section;
+      if (!section){
+        return;
+      }
+      var sel = DictionaryFront[section].selected();
+      if (sel!==false){
+        DictionaryFront[section].symbols[sel].symbol = ssw.scroll(DictionaryFront[section].symbols[sel].symbol,direction);
+      }
+    }
   },
   "signbox": {
     "symbol": {
@@ -1610,7 +1615,7 @@ var DictionaryPages = {
         m(CommonPages["button"],{class: "tall " + (DictionaryBack.page=="searchId"?"primary":"outline"), key:'collection.search.id', onclick: function(e){e.preventDefault();routesfn.set('/dictionary/' + vnode.attrs.name + '/search/id'); }}),
         m(CommonPages["button"],{class: "tall " + (DictionaryBack.page=="searchTerms"?"primary":"outline"), key:'collection.search.terms', onclick: function(e){e.preventDefault();routesfn.set('/dictionary/' + vnode.attrs.name + '/search/terms'); }}),
         m(CommonPages["button"],{class: "tall " + (DictionaryBack.page=="searchSign"?"primary":"outline"), key:'collection.search.sign', onclick: function(e){e.preventDefault();routesfn.set('/dictionary/' + vnode.attrs.name + '/search/sign'); }}),
-        m(CommonPages["button"],{class: "tall " + (DictionaryBack.page=="signmaker"?"primary":"outline"), key:'collection.tools.signmaker', onclick: function(e){
+        m(CommonPages["button"],{class: "tall " + (DictionaryBack.page=="signmaker"?"primary":"outline"), key:'system.buttons.signmaker', onclick: function(e){
           e.preventDefault();
           DictionaryBack.entry.data={};
           routesfn.set('/dictionary/' + vnode.attrs.name + '/signmaker'); }
@@ -1804,9 +1809,15 @@ var DictionaryPages = {
   },
   "main": {
     oninit: function(vnode){
+      DictionaryBack.name = vnode.attrs.name;
       window.scrollTo(0,0);
       CollectionBack.getStats(vnode.attrs.name);
       DictionaryBack.page="main";
+    },
+    onupdate: function(vnode){
+      if (DictionaryBack.name != vnode.attrs.name){
+        DictionaryPages.main.oninit(vnode);
+      }
     },
     view: function(vnode) {
       return [
@@ -1888,8 +1899,8 @@ var DictionaryPages = {
       DictionaryBack.name = vnode.attrs.name;
       DictionaryBack.entry.data = {};
       DictionaryBack.page = "searchAll";
-      DictionaryBack.search.sort = "-sign";
-      DictionaryBack.search.setFormat(vnode.attrs.name,"sign");
+//      DictionaryBack.search.sort = "-sign";
+      DictionaryBack.search.setFormat(vnode.attrs.name,"list");
     },
     onupdate: function(vnode){
       if (DictionaryBack.name != vnode.attrs.name){
@@ -1919,8 +1930,7 @@ var DictionaryPages = {
       DictionaryBack.name = vnode.attrs.name;
       DictionaryBack.entry.data = {};
       DictionaryBack.page = "searchId";
-      DictionaryBack.search.sort = "-sign";
-      DictionaryBack.search.setFormat(vnode.attrs.name,"sign");
+      DictionaryBack.search.setFormat(vnode.attrs.name,"list");
     },
     onupdate: function(vnode){
       if (DictionaryBack.name != vnode.attrs.name){
@@ -1974,8 +1984,7 @@ var DictionaryPages = {
       DictionaryBack.name = vnode.attrs.name;
       DictionaryBack.entry.data = {};
       DictionaryBack.page = "searchTerms";
-      DictionaryBack.search.sort = "-terms";
-      DictionaryBack.search.setFormat(vnode.attrs.name,"terms");
+      DictionaryBack.search.setFormat(vnode.attrs.name,"list");
     },
     onupdate: function(vnode){
       if (DictionaryBack.name != vnode.attrs.name){
@@ -2048,8 +2057,7 @@ var DictionaryPages = {
       DictionaryBack.name = vnode.attrs.name;
       DictionaryBack.entry.data = {};
       DictionaryBack.page = "searchSign";
-      DictionaryBack.search.sort = "-sign";
-      DictionaryBack.search.setFormat(vnode.attrs.name,"sign");
+      DictionaryBack.search.setFormat(vnode.attrs.name,"list");
       DictionaryFront.type = "search";
       DictionaryFront.sequence.symbols = [];
       DictionaryFront.signbox.symbols = [];
@@ -2072,6 +2080,26 @@ var DictionaryPages = {
             m("section.boxed", [
               m("h2",InterfaceFront.collection(vnode.attrs.name)),
               m("label",t('collection.search.sign')),
+              m("div.wide", [
+                m(CommonPages["button"],{
+                  class:"outline",
+                  onclick: function(e){
+                    e.preventDefault();
+                    DictionaryFront.signmaker.resize(-1);
+                    DictionaryFront.update();
+                  },
+                  key:"signmaker.buttons.sizeminus"
+                }),
+                m(CommonPages["button"],{
+                  class:"outline",
+                  onclick: function(e){
+                    e.preventDefault();
+                    DictionaryFront.signmaker.resize(1);
+                    DictionaryFront.update();
+                  },
+                  key:"signmaker.buttons.sizeplus"
+                })
+              ]),
               m("div.inline",[
                 m("div#signbox", {style: "height: " + DictionaryFront.signmaker.size + "px; width: " + DictionaryFront.signmaker.size + "px;"}, [
                   m("div#sbV"),
@@ -2170,8 +2198,7 @@ var DictionaryPages = {
       DictionaryBack.name = vnode.attrs.name;
       DictionaryBack.entry.data = {};
       DictionaryBack.page = "selection";
-      DictionaryBack.search.sort = "-sign";
-      DictionaryBack.search.setFormat(vnode.attrs.name,"sign");
+      DictionaryBack.search.setFormat(vnode.attrs.name,"list");
     },
     onupdate: function(vnode){
       if (DictionaryBack.name != vnode.attrs.name){
@@ -2272,6 +2299,7 @@ var DictionaryPages = {
       var entry = vnode.attrs.entry;
       var single = (entry.id == DictionaryBack.entry.data.id);
       var editable = CollectionBack.rightsCheck(vnode.attrs.name,SP_EDIT,entry.user);
+      var imagable = CollectionBack.imagable(vnode.attrs.name);
       var manager = CollectionBack.rightsCheck(vnode.attrs.name,SP_MANAGE);
       var selected = DictionaryBack.search.selected(entry.id);
       return m("section.entry.boxed",[
@@ -2295,11 +2323,18 @@ var DictionaryPages = {
           }}),
           editable?m(CommonPages["button"],{class: "primary", key:'system.buttons.edit', onclick: function(e){
             e.preventDefault();
+            DictionaryBack.entry.backup[entry.id] = JSON.parse(JSON.stringify(entry));
             DictionaryBack.search.setDisplay(entry.id, "editing");
           }}):"",
           editable?m(CommonPages["button"],{class: "primary", key:'system.buttons.signmaker', onclick: function(e){
             e.preventDefault();
             DictionaryBack.search.setDisplay(entry.id, "signmaker");
+          }}):"",
+          imagable?m(CommonPages["button"],{class: "primary", key:'system.buttons.images', onclick: function(e){
+            e.preventDefault();
+            DictionaryBack.entry.images.status[entry.id] = {};
+            DictionaryBack.entry.images.data[entry.id] = {};
+            DictionaryBack.search.setDisplay(entry.id, "images");
           }}):"",
           editable?m(CommonPages["button"],{class: "warning", key:'system.buttons.delete', onclick: function(e){
             e.preventDefault();
@@ -2334,6 +2369,7 @@ var DictionaryPages = {
   "editing": {
     view: function (vnode){
       var entry = vnode.attrs.entry;
+      var imagable = CollectionBack.imagable(vnode.attrs.name);
       var sorting = entry['sign'].match(ssw.re.swu.sort + "(" + ssw.re.swu.symbol + ")+");
       sorting = sorting?sorting[0].slice(2):"";
       return m("section.entry.boxed",[
@@ -2341,80 +2377,181 @@ var DictionaryPages = {
         m("div.sequence",(sorting.match(/.{2}/g)||[]).map(function(sym){
           return m("div",sym);
         })),
-        entry.detail.images?m("div.images",
-          Object.keys(entry.detail.images).map(function(img){
-            return m("div",[
-              m("p",t("print.col.image" + img)),
-              m("img.image",{src:s("connection","server") + "/data/img/" + vnode.attrs.name + "/" + entry.detail.images[img]})
-            ]);
-          })
-        ):"",
         m("form", [
           m("label[for=terms]",t('collection.fields.terms')),
           entry['terms'].map(function(term,i){
             return m("input#terms[type=text]",{value:term,oninput: function(e){
               e.preventDefault();
-              DictionaryBack.entry.data.terms[i] = e.target.value;
-              if (DictionaryBack.entry.data.terms[DictionaryBack.entry.data.terms.length-1]!=""){
-                DictionaryBack.entry.data.terms.push('');
+              entry.terms[i] = e.target.value;
+              if (entry.terms[entry.terms.length-1]!=""){
+                entry.terms.push('');
               }
             }})
           }),
           m("label[for=text]",t('collection.fields.text')),
-          m("textarea#text",{value:DictionaryBack.entry.data.text,oninput: function(e){
+          m("textarea#text",{value:entry.text,oninput: function(e){
             e.preventDefault();
-            DictionaryBack.entry.data.text = e.target.value;
+            entry.text = e.target.value;
           }}),
           m("label[for=text]",t('collection.fields.video')),
-          m("textarea#video",{value:DictionaryBack.entry.data.detail.video,oninput: function(e){
+          m("textarea#video",{value:entry.detail.video,oninput: function(e){
             e.preventDefault();
-            DictionaryBack.entry.data.detail.video = e.target.value;
+            entry.detail.video = e.target.value;
           }}),
           m("label[for=source]",t('collection.fields.source')),
-          m("input#source[type=text]",{value:DictionaryBack.entry.data.source,oninput: function(e){
+          m("input#source[type=text]",{value:entry.source,oninput: function(e){
             e.preventDefault();
-            DictionaryBack.entry.data.source = e.target.value;
+            entry.source = e.target.value;
           }}),
+          imagable?m("div.images",
+            [1,2,3,4].map(function(img){
+              return m("div",[
+                m("p",t("print.col.image" + img)),
+                m("input#image" + img + "[type=text]",{value:entry.detail.images?entry.detail.images[img]:"",oninput: function(e){
+                e.preventDefault();
+                if (!entry.detail.images){
+                  entry.detail.images={};
+                }
+                if (e.target.value){
+                  entry.detail.images[img] = e.target.value;
+                } else {
+                  delete entry.detail.images[img];
+                  if (Object.keys(entry.detail.images).length==0){
+                    delete entry.detail.images;
+                  }
+                }
+                }}),
+                (entry.detail.images||{})[img]?m("img.image",{src:s("connection","server") + "/data/img/" + vnode.attrs.name + "/" + entry.detail.images[img]}):""
+              ]);
+            })
+          ):"",
           m("div.wide", [
             m(CommonPages["button"],{class: "warning", key:'system.buttons.cancel', onclick: function(e){
               e.preventDefault();
-              DictionaryBack.entry.data = {};
+              if (DictionaryBack.entry.data.id == entry.id){
+                DictionaryBack.entry.data = JSON.parse(JSON.stringify(DictionaryBack.entry.backup[entry.id]));
+              } else {
+                DictionaryBack.search.results.data.map(function(item,i){
+                  if (entry.id == item.id)
+                    DictionaryBack.search.results.data[i] = JSON.parse(JSON.stringify(DictionaryBack.entry.backup[entry.id]));
+                });
+              }
+              DictionaryBack.search.setDisplay(entry.id,"detail");
             }}),
             m(CommonPages["button"],{class: "success onRight", key:"system.buttons.save",
               onclick: function(e){e.preventDefault();
-                DictionaryBack.entry.update(entry.id);
+                DictionaryBack.entry.update(entry);
             }})
           ])
         ])
-        //entry['text'], entry.detail.video,entry.source
-
       ]);
-
-      var editable = CollectionBack.rightsCheck(vnode.attrs.name,SP_EDIT,DictionaryBack.entry.data.user);
-      var manager = CollectionBack.rightsCheck(vnode.attrs.name,SP_MANAGE);
+    }
+  },
+  "images": {
+    view: function (vnode){
+      var entry = vnode.attrs.entry;
+      var imagable = CollectionBack.imagable(vnode.attrs.name);
+      var sorting = entry['sign'].match(ssw.re.swu.sort + "(" + ssw.re.swu.symbol + ")+");
+      sorting = sorting?sorting[0].slice(2):"";
       return m("section.entry.boxed",[
-        m("h2", t("user.titles.login")),
-        m("form", [
-          m("label[for=username]",t('user.profile.username')),
-          m("input#username[type=text]"),
-          m("label[for=password]",t('user.profile.password')),
-          m("input#password[type=password]"),
-          m("label"),
-          m("div.wide", 
-            s('error')?
-              [
-                m(CommonPages["button"],{class: "danger", key:'system.buttons.error', onclick: function(e){e.preventDefault(); return false;}}),
-                m(CommonPages["button"],{class: "warning", key:'sections.server.reset', onclick: function(e){e.preventDefault(); return false;}})
-              ]
-              :[
-                m(CommonPages["button"],{class: "primary", onclick: function(e){e.preventDefault();serverfn.login();return false;}, key:'user.buttons.login'}),
-                m(CommonPages["button"],{class: "warning", onclick: function(e){e.preventDefault();routesfn.set("/user/reset");return false;}, key:'user.buttons.reset'}),
-                m(CommonPages["button"],{class: "outline", onclick: function(e){e.preventDefault();routesfn.set("/user/register");return false;}, key:'user.buttons.register'}),
-              ]
-          ),
-        ])
+        m("h2", entry['terms'][0]),
+        m("p", (entry['terms']).slice(1).join(", ")),
+        m("div.signed",m.trust(ssw.svg(entry['sign']))),
+        m("div.sequence",(sorting.match(/.{2}/g)||[]).map(function(sym){
+          return m("div",sym);
+        })),
+        imagable?m("div.uploads",
+          [1,2,3,4].map(function(img){
+            var buttons;
+            switch (DictionaryBack.entry.images.status[entry.id][img]){
+              case "delete":
+                buttons = m("div.wide", [
+                  m(CommonPages["button"],{class: "warning", key:'system.buttons.cancel', 
+                    onclick: function(e){
+                      e.preventDefault();
+                      DictionaryBack.entry.images.status[entry.id][img] = "";
+                    }
+                  }),
+                  m(CommonPages["button"],{class: "danger onRight", key:"system.buttons.delete",
+                    onclick: function(e){
+                      e.preventDefault();
+                      CollectionBack.deleteImage(DictionaryBack.name,entry.id,img);
+                    }
+                  })
+                ])
+                break;
+              case "upload":
+                buttons = [
+                    m("div", [
+                      m("input[type=file]#upload" + img, {
+                        onchange: function(e){
+                          if (e.target.files[0].type.match('image.*')){
+                            var reader = new FileReader();
+                            reader.onload = function() {
+                              DictionaryBack.entry.images.data[entry.id][img] = reader.result;
+                              m.redraw();
+                            };
+                            reader.readAsDataURL(e.target.files[0]);
+                          } else {
+                            delete DictionaryBack.entry.images.data[entry.id][img];
+                            e.target.value="";
+                          }
+                        }
+                      }),
+                    ]),
+                    DictionaryBack.entry.images.data[entry.id][img]?m("img.image",{src:DictionaryBack.entry.images.data[entry.id][img]}):"",
+                    m("div.wide", [
+                      m(CommonPages["button"],{class: "warning", key:'system.buttons.cancel', 
+                        onclick: function(e){
+                          e.preventDefault();
+                          DictionaryBack.entry.images.status[entry.id][img] = "";
+                          DictionaryBack.entry.images.data[entry.id][img] = "";
+                        }
+                      }),
+                      m(CommonPages["button"],{
+                        class: "success", 
+                        key:"system.buttons.upload",
+                        disabled: !DictionaryBack.entry.images.data[entry.id][img],
+                        onclick: function(e){
+                          e.preventDefault();
+                          CollectionBack.uploadImage(DictionaryBack.name,entry.id,img);
+                        }
+                      })
+                    ])
+                ];
+                break;
+              default:
+                buttons = m("div.wide", [
+                  m(CommonPages["button"],{class: "primary", key:'system.buttons.upload', 
+                    onclick: function(e){
+                      e.preventDefault();
+                      DictionaryBack.entry.images.status[entry.id][img] = "upload";
+                    }
+                  }),
+                  (entry.detail.images||{})[img]?m(CommonPages["button"],{class: "warning", key:"system.buttons.delete",
+                    onclick: function(e){
+                      e.preventDefault();
+                      DictionaryBack.entry.images.status[entry.id][img] = "delete";
+                    }
+                  }):""
+                ])
+            }
+            return m("div.wide",[
+              m("p",t("print.col.image" + img)),
+              (entry.detail.images||{})[img]?m("img.image",{src:s("connection","server") + "/data/img/" + vnode.attrs.name + "/" + entry.detail.images[img]})
+              :"",
+              buttons
+            ]);
+          })
+        ):"",
+        m("div.wide",
+          m(CommonPages["button"],{class: "warning", key:'system.buttons.cancel', onclick: function(e){
+            e.preventDefault();
+            DictionaryBack.search.setDisplay(entry.id,"detail");
+          }})
+        )
       ]);
-    },
+    }
   },
   "signmaker": {
     oninit: function(vnode){
@@ -2437,6 +2574,26 @@ var DictionaryPages = {
             m("section.entry.boxed", [
               m("h2",InterfaceFront.collection(vnode.attrs.name)),
               m("label",DictionaryBack.entry.data.terms[0]),
+              m("div.wide", [
+                m(CommonPages["button"],{
+                  class:"outline",
+                  onclick: function(e){
+                    e.preventDefault();
+                    DictionaryFront.signmaker.resize(-1);
+                    DictionaryFront.update();
+                  },
+                  key:"signmaker.buttons.sizeminus"
+                }),
+                m(CommonPages["button"],{
+                  class:"outline",
+                  onclick: function(e){
+                    e.preventDefault();
+                    DictionaryFront.signmaker.resize(1);
+                    DictionaryFront.update();
+                  },
+                  key:"signmaker.buttons.sizeplus"
+                })
+              ]),
               m("div.inline",[
                 m("div#signbox", {style: "height: " + DictionaryFront.signmaker.size + "px; width: " + DictionaryFront.signmaker.size + "px;"}, [
                   m("div#sbV"),
@@ -2453,7 +2610,7 @@ var DictionaryPages = {
                 )
               ]),
               m(DictionaryPages.commands),
-              m("label[for=query]",t('collection.fields.sign')),
+              m("label[for=query]",t('collection.fields.swu')),
               m("input#swu[type=text]",{value: DictionaryBack.entry.data.sign,onblur: function(e){
                 e.preventDefault();
                 DictionaryBack.entry.data.sign=ssw.norm(e.target.value);
@@ -2637,19 +2794,19 @@ var DictionaryPages = {
                     class:"outline",
                     onclick: function(e){
                       e.preventDefault();
-                      DictionaryFront.signmaker.resize(-1);
+                      DictionaryFront.signmaker.scroll(-1);
                       DictionaryFront.update();
                     },
-                    key:"signmaker.buttons.sizeminus"
+                    key:"signmaker.buttons.variationminus"
           }),
           m(CommonPages["button"],{
                     class:"outline",
                     onclick: function(e){
                       e.preventDefault();
-                      DictionaryFront.signmaker.resize(1);
+                      DictionaryFront.signmaker.scroll(1);
                       DictionaryFront.update();
                     },
-                    key:"signmaker.buttons.sizeplus"
+                    key:"signmaker.buttons.variationplus"
           }),
           m(CommonPages["button"],{
                     class:"outline",
@@ -2863,7 +3020,7 @@ var serverfn = {
       method: method,
       url: route,
       type: 'application/json',
-      data: {username: username, pass: pass, validated: md5(md5(password)+pass)},
+      body: {username: username, pass: pass, validated: md5(md5(password)+pass)},
       extract: function(xhr) {return {status: xhr.status, body: xhr.responseText}}
     })
     .then (function(response) {
@@ -2898,7 +3055,7 @@ var serverfn = {
       method: method,
       url: route,
       type: 'application/json',
-      data: {"user":user},
+      body: {"user":user},
       extract: function(xhr) {return {status: xhr.status, body: xhr.responseText}}
     })
     .then (function(response) {
@@ -2950,7 +3107,7 @@ var serverfn = {
       method: method,
       url: route,
       type: 'application/json',
-      data: {"old":oldPassword,"new":newPassword},
+      body: {"old":oldPassword,"new":newPassword},
       extract: function(xhr) {return {status: xhr.status, body: xhr.responseText}}
     })
     .then (function(response) {
@@ -2980,7 +3137,7 @@ var serverfn = {
       method: method,
       url: route,
       type: 'application/json',
-      data: profile,
+      body: profile,
       extract: function(xhr) {return {status: xhr.status, body: xhr.responseText}}
     })
     .then (function(response) {
@@ -3161,7 +3318,7 @@ var CollectionBack = {
       method: method,
       url: route,
       type: 'application/json',
-      data: CollectionBack.security[collection],
+      body: CollectionBack.security[collection],
       extract: function(xhr) {return {status: xhr.status, body: xhr.responseText}}
     })
     .then (function(response) {
@@ -3240,7 +3397,7 @@ var CollectionBack = {
       method: method,
       url: route,
       type: 'application/json',
-      data: {user:user.name, security:user.newsecurity},
+      body: {user:user.name, security:user.newsecurity},
       extract: function(xhr) {return {status: xhr.status, body: xhr.responseText}}
     })
     .then (function(response) {
@@ -3334,7 +3491,7 @@ var CollectionBack = {
       method: method,
       url: route,
       type: 'application/json',
-      data: {"title": title},
+      body: {"title": title},
       extract: function(xhr) {return {status: xhr.status, body: xhr.responseText}}
     })
     .then (function(response) {
@@ -3400,6 +3557,82 @@ var CollectionBack = {
     if (userrights >= adjusted) return true;
 
     return false;
+  },
+  "imagable": function(collection){
+    var profile = s("profile");
+    if ((collection in CollectionBack.security)) {
+      try {
+        var adjusted = CollectionBack.security[collection]['upload_level'];
+        if (adjusted==SP_EDIT && !(CollectionBack.security[collection].edit_pass)) adjusted--;
+        if (adjusted==SP_ADD && !(CollectionBack.security[collection].add_pass)) adjusted--;
+        if (adjusted==SP_VIEW && !(CollectionBack.security[collection].view_pass)) adjusted--;
+      }  catch (err){
+        console.log(err);
+        return false;
+      }
+    }
+    var userrights = 0;
+    try {
+      userrights = Math.max(profile.security,profile.collections[collection]||0);
+    }  catch (err){
+      userrights = profile.security;
+    }
+    if (userrights >= adjusted) return true;
+
+    return false;
+  },
+  "uploadImage": function(collection,id,num){
+   var connection = s("connection");
+   var server = connection.server;
+   var pass = connection.pass;
+   var route = server + "/collection/" + collection + "/entry/" + id + "/image/" + num;
+   var method = "PUT";
+   var filedata = {
+     "file": document.getElementById("upload" + num).files[0].name,
+     "data": DictionaryBack.entry.images.data[id][num]
+   }
+   m.request({
+     headers: {Pass: pass},
+     method: method,
+     url: route,
+     type: 'application/json',
+     body: {
+      "file": document.getElementById("upload" + num).files[0].name,
+      "data": DictionaryBack.entry.images.data[id][num]
+     },
+     extract: function(xhr) {return {status: xhr.status, body: xhr.responseText}}
+   })
+   .then (function(response) {
+     if (response.status && response.status == 204) {
+      DictionaryBack.entry.get(collection,id);
+    } else {
+       var err = Messaging.parse("warning", "system.response.problem",method,route,response);
+       Messaging.add("collection_" + collection,err);
+       m.redraw();
+     }
+   });
+  },
+  "deleteImage": function(collection,id,num){
+    var connection = s("connection");
+    var server = connection.server;
+    var pass = connection.pass;
+    var route = server + "/collection/" + collection + "/entry/" + id + "/image/" + num;
+    var method = "DELETE";
+    m.request({
+      headers: {Pass: pass},
+      method: method,
+      url: route,
+      extract: function(xhr) {return {status: xhr.status, body: xhr.responseText}}
+    })
+    .then (function(response) {
+      if (response.status && response.status == 204) {
+       DictionaryBack.entry.get(collection,id);
+     } else {
+        var err = Messaging.parse("warning", "system.response.problem",method,route,response);
+        Messaging.add("collection_" + collection,err);
+        m.redraw();
+      }
+    });
   },
   "deleting": ""
 }
@@ -4388,13 +4621,20 @@ var UserPages = {
   }
 }
 
+var CountryBack = {
+  cc: ""
+}
+
 var CountryPages = {
   "head": {
     oninit: function(vnode){
+      CountryBack.cc = vnode.attrs.cc;
       CollectionBack.getCollections(vnode.attrs.cc);
     },
     onupdate: function(vnode){
-//      CountryPages.head.oninit(vnode);
+      if (CountryBack.cc != vnode.attrs.cc){
+        CountryPages.head.oninit(vnode);
+      }
     },
     view: function(vnode) {
       var cc = vnode.attrs.cc;

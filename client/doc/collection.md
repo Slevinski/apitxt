@@ -94,6 +94,46 @@ Specific collection
 
 + Response 204
 
+### Collection entry image resource [/collection/{name}/entry/{ik}/image/{num}]
+Specific image for collection entry
+
++ Parameters
+
+     + name: `ase-US-dictionary-public` (string) - The name of an dictionary
+     + ik: 11244 (string) - An id number or key string
+     + num: 1 (string) - The image number of 1 thru 4
+
+#### update image for collection entry [PUT]
+
++ Request an update for an existing dictionary entry (application/json)
+
+     + Headers
+
+            Pass: 724fd4b4438fba9d0c5ab89d0833e5c9
+
+     + Body
+
+            {
+              "file": "name.png",
+              "data": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD..."
+            }
+
++ Response 204
+
+#### remove dictionary entry [DELETE]
+
++ Request the removal of a collection entry image
+
+     + Headers
+
+            Pass: 724fd4b4438fba9d0c5ab89d0833e5c9
+
+     + Body
+
+            null
+
++ Response 204
+
 ### Collection statistics [/collection/{name}/stats]
 Statistics about the collection
 

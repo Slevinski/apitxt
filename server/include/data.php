@@ -69,7 +69,7 @@ function filter($filter,$valids){
               $op = "like";
             }
             $num = count($params);
-//            $sel .= " and " . $param[0] . " " . $op . " :" . $param[0] . $num;
+  //          $sel .= " and " . $param[0] . " " . $op . " :" . $param[0] . $num;
             $params[] =[$param[0] . ' ' .$op, ':' . $param[0] . $num, $param[1]];
           }
           break;
@@ -419,6 +419,193 @@ function collectionDelete($collection,$pass){
   $ext = 'txt';
   $file = $dir . "/" . $ext . "/" . $collection . '.' . $ext;
   @unlink($file);
+}
+
+function collectionImageUpdate($collection,$ik,$num,$filedata,$pass){
+  rightsCheck($collection,$pass,SP_EDIT,$ik);
+  rightsCheck($collection,$pass,uploadLevel($collection));
+
+  // check valid img data
+  $data = explode(",", $filedata['data']);
+  if (count($data)!=2){
+    haltBadRequest("invalid base64 image data " + $data);
+  }
+
+  $parts = explode(";",$data[0]);
+  if (count($parts)!=2){
+    haltBadRequest("invalid image mime");
+  }
+  $sub = explode("/",$parts[0]);
+  if (count($sub)!=2){
+    haltBadRequest("invalid sub mime");
+  }
+  if($sub[0]!="data:image"){
+    haltBadRequest("not an image mime");
+  }
+  $allowed = array("jpg", "jpeg", "gif", "png", "svg+xml");
+  if (!in_array($sub[1],$allowed)){
+    haltBadRequest("image type not allowed");
+  }
+
+  $img = $data[1];
+  $file = fixname($filedata['file'],$ik);
+  
+  $filename = pathinfo($file,PATHINFO_FILENAME);
+  $ext = pathinfo($file,PATHINFO_EXTENSION);
+  if (!$ext){
+    $ext = $sub[1];
+    $file = $filename . '.' . $ext;
+  }
+
+  $db = collection_db($collection);
+
+  try {
+    $sql = 'SELECT detail from entry where ';
+    if (preg_match('/^\d+$/', $ik)) {
+      $sql .= 'id=:id;';
+      $stmt = $db->prepare($sql);
+      $stmt->bindParam(':id', $ik, PDO::PARAM_INT);
+    } else {
+      $sql .= 'key=:key';
+      $stmt = $db->prepare($sql);
+      $stmt->bindParam(':key', $ik, PDO::PARAM_STR);
+    }
+  } catch (PDOException $e) {
+    haltBadRequest($e->getCode() . ' ' . $e->getMessage());
+  }  
+  $stmt->execute();
+  $entry = $stmt->fetch();
+  if(!$entry) {
+    haltBadRequest("invalid id or key");
+  }
+  $detail = json_decode($entry['detail']);
+  if(!$detail){
+    $detail = new stdClass();
+  }
+  if(!isset($detail->images)){
+    $detail->images = new stdClass();
+  }
+  if(isset($detail->images->$num)){
+    $old = $detail->images->$num;
+  } else {
+    $old = false;
+  }
+
+  $dir = "data/img/" . $collection;
+  if (!is_dir($dir)){
+    mkdir($dir);
+  }
+
+  if ($old != $file){
+    if (file_exists($dir . "/" . $file)){
+      $ver = 1;
+      while(file_exists($dir . "/" . $filename . '_' . $ver . '.' . $ext)){
+        $ver++;
+      }
+      $file = $filename . '_' . $ver . '.' . $ext;
+    }
+  }
+
+  $ifp = fopen($dir . "/" . $file, 'wb' ); 
+  fwrite( $ifp, base64_decode( $img ) );
+  fclose( $ifp );
+
+  $dt = Timestamp();
+  $detail->images->$num = $file;
+  $detail = json_encode($detail,JSON_NUMERIC_CHECK);
+  try {
+    $sql = 'UPDATE entry set detail=:detail, updated_at=:updated_at where ';
+    if (preg_match('/^\d+$/', $ik)) {
+      $sql .= 'id=:id;';
+      $stmt = $db->prepare($sql);
+      $stmt->bindParam(':id', $ik, PDO::PARAM_INT);
+    } else {
+      $sql .= 'key=:key';
+      $stmt = $db->prepare($sql);
+      $stmt->bindParam(':key', $ik, PDO::PARAM_STR);
+    }
+    $stmt->bindParam(':updated_at', $dt, PDO::PARAM_STR);
+    $stmt->bindParam(':detail',$detail, PDO::PARAM_STR);
+    $stmt->execute();
+  } catch (PDOException $e) {
+    haltBadRequest($e->getCode() . ' ' . $e->getMessage());
+  }  
+}
+
+function collectionImageDelete($collection,$ik,$num,$pass){
+  rightsCheck($collection,$pass,SP_EDIT,$ik);
+
+  $db = collection_db($collection);
+
+  try {
+    $sql = 'SELECT detail from entry where ';
+    if (preg_match('/^\d+$/', $ik)) {
+      $sql .= 'id=:id;';
+      $stmt = $db->prepare($sql);
+      $stmt->bindParam(':id', $ik, PDO::PARAM_INT);
+    } else {
+      $sql .= 'key=:key';
+      $stmt = $db->prepare($sql);
+      $stmt->bindParam(':key', $ik, PDO::PARAM_STR);
+    }
+  } catch (PDOException $e) {
+    haltBadRequest($e->getCode() . ' ' . $e->getMessage());
+  }  
+  $stmt->execute();
+  $entry = $stmt->fetch();
+  if(!$entry) {
+    haltBadRequest("invalid id or key");
+  }
+  $detail = json_decode($entry['detail']);
+  if(!$detail){
+    return;
+  }
+  if(!isset($detail->images)){
+    return;
+  }
+  if(!isset($detail->images->$num)){
+    return;
+  }
+  $file = $detail->images->$num;
+  if (!$file){
+    return;
+  }
+  $dir = "data/img/" . $collection;
+  if (!is_dir($dir)){
+    return;
+  }
+
+  $dt = Timestamp();
+  unset($detail->images->$num);
+  if ($detail->images == new stdClass()){
+    unset ($detail->images);
+  }
+  $detail = json_encode($detail,JSON_NUMERIC_CHECK);
+  try {
+    $sql = 'UPDATE entry set detail=:detail, updated_at=:updated_at where ';
+    if (preg_match('/^\d+$/', $ik)) {
+      $sql .= 'id=:id;';
+      $stmt = $db->prepare($sql);
+      $stmt->bindParam(':id', $ik, PDO::PARAM_INT);
+    } else {
+      $sql .= 'key=:key';
+      $stmt = $db->prepare($sql);
+      $stmt->bindParam(':key', $ik, PDO::PARAM_STR);
+    }
+    $stmt->bindParam(':updated_at', $dt, PDO::PARAM_STR);
+    $stmt->bindParam(':detail',$detail, PDO::PARAM_STR);
+    $stmt->execute();
+  } catch (PDOException $e) {
+    haltBadRequest($e->getCode() . ' ' . $e->getMessage());
+  }
+
+  $sel = 'SELECT count(*) from entry where detail like "%' . $file . '%";';
+  $results=$db->query($sel);
+  $count = $results->fetch(PDO::FETCH_COLUMN);
+
+  if (!$count && file_exists($dir . "/" . $file)){
+    unlink($dir . '/' . $file);
+  }
 }
 
 function interface2json($interface,$pass=""){

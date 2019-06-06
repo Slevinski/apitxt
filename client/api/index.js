@@ -538,6 +538,101 @@ var data = {
           "methods": [
             {
               "code": [
+                "$err = invalidName($name);", 
+                "if ($err){", 
+                "  haltBadRequest($err);", 
+                "}", 
+                "$headers = getHeaders();", 
+                "$pass = isset($headers['Pass'])?$headers['Pass']:'';", 
+                "$data = $app->request->getbody();", 
+                "$data = json_decode($data,true);", 
+                "collectionImageUpdate($name,$ik,$num,$data,$pass);", 
+                "$app->response->setStatus(204);", 
+                "return;"
+              ], 
+              "method": "PUT", 
+              "dialog": [
+                {
+                  "request": {
+                    "body": [
+                      "{", 
+                      "  \"file\": \"name.png\",", 
+                      "  \"data\": \"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD...\"", 
+                      "}"
+                    ], 
+                    "headers": {
+                      "Pass": "724fd4b4438fba9d0c5ab89d0833e5c9"
+                    }, 
+                    "type": "application/json", 
+                    "name": "an update for an existing dictionary entry"
+                  }, 
+                  "responses": [
+                    {
+                      "status": 204
+                    }
+                  ]
+                }
+              ], 
+              "name": "update image for collection entry"
+            }, 
+            {
+              "code": [
+                "$err = invalidName($name);", 
+                "if ($err){", 
+                "  haltBadRequest($err);", 
+                "}", 
+                "$headers = getHeaders();", 
+                "$pass = isset($headers['Pass'])?$headers['Pass']:'';", 
+                "collectionImageDelete($name,$ik,$num,$pass);", 
+                "$app->response->setStatus(204);"
+              ], 
+              "method": "DELETE", 
+              "dialog": [
+                {
+                  "request": {
+                    "headers": {
+                      "Pass": "724fd4b4438fba9d0c5ab89d0833e5c9"
+                    }, 
+                    "name": "the removal of a collection entry image"
+                  }, 
+                  "responses": [
+                    {
+                      "status": 204
+                    }
+                  ]
+                }
+              ], 
+              "name": "remove dictionary entry"
+            }
+          ], 
+          "route": "/collection/{name}/entry/{ik}/image/{num}", 
+          "name": "Collection entry image resource", 
+          "parameters": [
+            {
+              "example": "`ase-US-dictionary-public`", 
+              "type": "string", 
+              "description": "The name of an dictionary", 
+              "name": "name"
+            }, 
+            {
+              "example": "11244", 
+              "type": "string", 
+              "description": "An id number or key string", 
+              "name": "ik"
+            }, 
+            {
+              "example": "1", 
+              "type": "string", 
+              "description": "The image number of 1 thru 4", 
+              "name": "num"
+            }
+          ], 
+          "description": "Specific image for collection entry"
+        }, 
+        {
+          "methods": [
+            {
+              "code": [
                 "$headers = getHeaders();", 
                 "$pass = isset($headers['Pass'])?$headers['Pass']:'';", 
                 "rightsCheck($name,$pass,SP_VIEW);", 

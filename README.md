@@ -32,7 +32,25 @@ This is a work in progress. Feedback, bug reports, and patches are welcomed.
 ## License
 MIT
 
-## To Do
+## To Do for beta
+
+* Interface and translations
+* reget dictionaries and images
+* sidebar and iswa 
+
+* url loading
+** override InterfaceFront.init for hash or state
+
+## To Do for later
+
+* searching filter
+
+* Other SP2 features
+
+* SignText
+** signmaker
+** searching
+** fingerspelling
 
 * General
 ** update flags
@@ -43,19 +61,18 @@ MIT
 ** request blank
 ** server side only manager can update interface keys
 
-* Initial UI
-** override InterfaceFront.init for hash or state
-
 * User
 ** register new user
 
 * security db
 ** update default files
 
-* Country page
-** onupdate needs to fire oninit without infinite updates
+* Images
+** unused checking
+** remove images on entry delete
 
 ## Version History
+* v3.0.0-alpha.22 - Jun 6th, 2019: image uploads
 * v3.0.0-alpha.18 - May 23rd, 2019: signmaker complete
 * v3.0.0-alpha.17 - May 2nd, 2019: dictionary entry editing and signmaker
 * v3.0.0-alpha.15 - Apr 19th, 2019: detail view and images

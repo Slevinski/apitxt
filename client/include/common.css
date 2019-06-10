@@ -776,7 +776,6 @@ section {
   margin: 2em auto;
   padding: 1em;
   padding-top: .5em;
-  max-width:780px;
   width:90%;
   min-height:75px;
   background:#FFF;
@@ -922,7 +921,6 @@ div#signbox {
   width: 250px;
   height: 250px;
   margin: auto;
-  margin-bottom: 10px;
   border: solid black 1px;
   vertical-align: top;
 }
@@ -984,7 +982,6 @@ div#sequence {
   width: 30px;
   height: 250px;
   border: 1px solid black;
-  margin-bottom: 10px;
   vertical-align: top;
 }
 div#sequence div.symbol {

@@ -968,7 +968,8 @@ function getOffset( el ) {
 
 function overlap(el1, el2){
   if (!el2) return false;
-  var offset1 = getOffset( el1 ), width1 = el1.offsetWidth, height1 = el1.offsetHeight,
+  var el1a = el1.firstElementChild;
+  var offset1 = getOffset( el1 ), width1 = el1a.clientWidth, height1 = el1a.clientHeight,
     offset2 = getOffset( el2 ), width2 = el2.offsetWidth, height2 = el2.offsetHeight;
   if (!(offset2.left > offset1.left + width1 - width1/2 || offset2.left + width2 < offset1.left + width1/2 || offset2.top > offset1.top + height1 - height1/2 || offset2.top + height2 < offset1.top + height1/2 )){
     return true;
@@ -1021,11 +1022,11 @@ var DictionaryBack = {
       var query = "Q";
       var prefix = "";
       DictionaryFront.sequence.symbols.map(function(sym){
-        prefix += sym.symbol + (DictionaryFront.search.seqFill?"":"f") + (DictionaryFront.search.seqRotation?"":"r");
+        prefix += sym.symbol + (DictionaryFront.search.fill?"":"f") + (DictionaryFront.search.rotation?"":"r");
       })
       query += prefix?"A" + prefix + "T":"";
       DictionaryFront.signbox.symbols.map(function(sym){
-        query += sym.symbol + (DictionaryFront.search.sbFill?"":"f") + (DictionaryFront.search.sbRotation?"":"r");
+        query += sym.symbol + (DictionaryFront.search.fill?"":"f") + (DictionaryFront.search.rotation?"":"r");
         query += DictionaryFront.search.location?ssw.fsw2swu(sym.x + 'x' + sym.y):'';
       })
       return query;
@@ -1320,10 +1321,8 @@ var DictionaryFront = {
   },
   "search": {
     "location": false,
-    "sbFill": false,
-    "sbRotation": false,
-    "seqFill": false,
-    "seqRotation": false
+    "fill": false,
+    "rotation": false
   },
   "signmaker": {
     "size": 250,
@@ -1496,7 +1495,7 @@ var DictionaryFront = {
   "signbox": {
     "symbol": {
       oncreate: function(vnode){
-        var draggie = new Draggabilly(vnode.dom,{containment:"#signbox"});
+        var draggie = new Draggabilly(vnode.dom,{containment:"#signmaker"});
         draggie.on( 'staticClick', DictionaryFront.signbox.click );
         draggie.on( 'dragEnd', DictionaryFront.signbox.drop );
       },
@@ -1508,7 +1507,8 @@ var DictionaryFront = {
             left: (parseInt(vnode.attrs.x)-500+adj).toString() + 'px',
             top: (parseInt(vnode.attrs.y)-500+adj).toString() + 'px'
           },
-          "index": vnode.attrs.index
+          "index": vnode.attrs.index,
+          "symbol": vnode.attrs.symbol
         },m.trust(ssw.svg(vnode.attrs.symbol)));
       }
     },
@@ -1532,13 +1532,23 @@ var DictionaryFront = {
       return false;
     },
     "drop": function(){
-      var adj = DictionaryFront.signmaker.size/2;
-      var index = this.element.getAttribute("index");
-      DictionaryFront.signbox.symbols[index].x = 500 - adj + parseInt(this.position.x);
-      DictionaryFront.signbox.symbols[index].y = 500 - adj + parseInt(this.position.y);
-      DictionaryFront.signmaker.selecting("signbox",index);
-      DictionaryFront.update();
-      m.redraw();
+      var seq = document.getElementById("sequence");
+      if (overlap(this.element,seq)){
+        var offset1 = getOffset( this.element ),
+        offset2 = getOffset( seq );
+        this.element.style.top=this.startPosition.y + "px";
+        this.element.style.left=this.startPosition.x + "px";;
+        var symbol = {symbol:this.element.getAttribute("symbol")};
+        DictionaryFront.sequence.addSymbol(symbol,parseInt((offset1.top-offset2.top)/28));
+      } else {
+        var adj = DictionaryFront.signmaker.size/2;
+        var index = this.element.getAttribute("index");
+        DictionaryFront.signbox.symbols[index].x = 500 - adj + parseInt(this.position.x);
+        DictionaryFront.signbox.symbols[index].y = 500 - adj + parseInt(this.position.y);
+        DictionaryFront.signmaker.selecting("signbox",index);
+        DictionaryFront.update();
+        m.redraw();
+      }
     },
     "over": function(){
       var sel = DictionaryFront.signbox.selected();
@@ -1570,6 +1580,7 @@ var DictionaryFront = {
     },
     "symbols": [],
     "addSymbol": function(sym,position){
+      position++;
       if (position>DictionaryFront.sequence.symbols.length){
         position = DictionaryFront.sequence.symbols.length
       }
@@ -2100,79 +2111,58 @@ var DictionaryPages = {
                   key:"signmaker.buttons.sizeplus"
                 })
               ]),
-              m("div.inline",[
-                m("div#signbox", {style: "height: " + DictionaryFront.signmaker.size + "px; width: " + DictionaryFront.signmaker.size + "px;"}, [
-                  m("div#sbV"),
-                  m("div#sbH"),
-                  DictionaryFront.signbox.symbols.map(function(sym,i){
-                    return m(DictionaryFront.signbox['symbol'], Object.assign(sym,{index:i}));
-                  }),
-                ]),
-                m("div.cmd",[
-                  m(CommonPages["button"],{
-                    class:DictionaryFront.search.location?"primary":"outline",
-                    onclick: function(e){
-                      e.preventDefault();
-                      DictionaryFront.search.location = !DictionaryFront.search.location;
-                      DictionaryBack.search.query = DictionaryBack.search.updatedQuery();
-                    },
-                    key:"collection.search.location"
-                  }),
-                  m(CommonPages["button"],{
-                    class:DictionaryFront.search.sbFill?"primary":"outline",
-                    onclick: function(e){
-                      e.preventDefault();
-                      DictionaryFront.search.sbFill = !DictionaryFront.search.sbFill;
-                      DictionaryBack.search.query = DictionaryBack.search.updatedQuery();
-                    },
-                    key:"collection.search.fill"
-                  }),
-                  m(CommonPages["button"],{
-                    class:DictionaryFront.search.sbRotation?"primary":"outline",
-                    onclick: function(e){
-                      e.preventDefault();
-                      DictionaryFront.search.sbRotation = !DictionaryFront.search.sbRotation;
-                      DictionaryBack.search.query = DictionaryBack.search.updatedQuery();
-                    },
-                    key:"collection.search.rotation"
-                  })
+              m("div.inline", 
+                m("div#signmaker",[
+                  m("div#signbox", {style: "height: " + DictionaryFront.signmaker.size + "px; width: " + DictionaryFront.signmaker.size + "px;"}, [
+                    m("div#sbV"),
+                    m("div#sbH"),
+                    DictionaryFront.signbox.symbols.map(function(sym,i){
+                      return m(DictionaryFront.signbox['symbol'], Object.assign(sym,{index:i}));
+                    }),
+                  ]),
+                  m("div#sequence", {style: "height: " + DictionaryFront.signmaker.size + "px"},
+                    DictionaryFront.sequence.symbols.map(function(sym,i){
+                      return m(DictionaryFront.sequence['symbol'], Object.assign(sym,{index:i}));
+                    }),
+                    m("div.symbol")
+                  )
                 ])
-              ]),
-              m("div.inline", [
-                m("div#sequence", {style: "height: " + DictionaryFront.signmaker.size + "px"},
-                  DictionaryFront.sequence.symbols.map(function(sym,i){
-                    return m(DictionaryFront.sequence['symbol'], Object.assign(sym,{index:i}));
-                  }),
-                  m("div.symbol")
-                ),
-                m("div.cmd",[
-                  m(CommonPages["button"],{
-                    class:DictionaryFront.search.seqFill?"primary":"outline",
-                    onclick: function(e){
-                      e.preventDefault();
-                      DictionaryFront.search.seqFill = !DictionaryFront.search.seqFill;
-                      DictionaryBack.search.query = DictionaryBack.search.updatedQuery();
-                    },
-                    key:"collection.search.fill"
-                  }),
-                  m(CommonPages["button"],{
-                    class:DictionaryFront.search.seqRotation?"primary":"outline",
-                    onclick: function(e){
-                      e.preventDefault();
-                      DictionaryFront.search.seqRotation = !DictionaryFront.search.seqRotation;
-                      DictionaryBack.search.query = DictionaryBack.search.updatedQuery();
-                    },
-                    key:"collection.search.rotation"
-                  })
-                ])
-              ]),
+              ),
               m(DictionaryPages.commands),
               m("label[for=query]",t('collection.search.query')),
               m("input#query[type=text]",{value: DictionaryBack.search.query,oninput: function(e){
                 e.preventDefault();
                 DictionaryBack.search.query=e.target.value;
               }}),
-              m("label"),
+              m("div.cmd",[
+                m(CommonPages["button"],{
+                  class:DictionaryFront.search.location?"primary":"outline",
+                  onclick: function(e){
+                    e.preventDefault();
+                    DictionaryFront.search.location = !DictionaryFront.search.location;
+                    DictionaryBack.search.query = DictionaryBack.search.updatedQuery();
+                  },
+                  key:"collection.search.location"
+                }),
+                m(CommonPages["button"],{
+                  class:DictionaryFront.search.fill?"primary":"outline",
+                  onclick: function(e){
+                    e.preventDefault();
+                    DictionaryFront.search.fill = !DictionaryFront.search.fill;
+                    DictionaryBack.search.query = DictionaryBack.search.updatedQuery();
+                  },
+                  key:"collection.search.fill"
+                }),
+                m(CommonPages["button"],{
+                  class:DictionaryFront.search.rotation?"primary":"outline",
+                  onclick: function(e){
+                    e.preventDefault();
+                    DictionaryFront.search.rotation = !DictionaryFront.search.rotation;
+                    DictionaryBack.search.query = DictionaryBack.search.updatedQuery();
+                  },
+                  key:"collection.search.rotation"
+                })
+              ]),
               m("div.wide", [
                 m(CommonPages["button"],{
                   class: "success",
@@ -2594,27 +2584,31 @@ var DictionaryPages = {
                   key:"signmaker.buttons.sizeplus"
                 })
               ]),
-              m("div.inline",[
-                m("div#signbox", {style: "height: " + DictionaryFront.signmaker.size + "px; width: " + DictionaryFront.signmaker.size + "px;"}, [
-                  m("div#sbV"),
-                  m("div#sbH"),
-                  DictionaryFront.signbox.symbols.map(function(sym,i){
-                    return m(DictionaryFront.signbox['symbol'], Object.assign(sym,{index:i}));
-                  }),
-                ]),
-                m("div#sequence", {style: "height: " + DictionaryFront.signmaker.size + "px"},
-                  DictionaryFront.sequence.symbols.map(function(sym,i){
-                    return m(DictionaryFront.sequence['symbol'], Object.assign(sym,{index:i}));
-                  }),
-                  m("div.symbol")
-                )
-              ]),
+              m("div.inline", 
+                m("div#signmaker",[
+                  m("div#signbox", {style: "height: " + DictionaryFront.signmaker.size + "px; width: " + DictionaryFront.signmaker.size + "px;"}, [
+                    m("div#sbV"),
+                    m("div#sbH"),
+                    DictionaryFront.signbox.symbols.map(function(sym,i){
+                      return m(DictionaryFront.signbox['symbol'], Object.assign(sym,{index:i}));
+                    }),
+                  ]),
+                  m("div#sequence", {style: "height: " + DictionaryFront.signmaker.size + "px"},
+                    DictionaryFront.sequence.symbols.map(function(sym,i){
+                      return m(DictionaryFront.sequence['symbol'], Object.assign(sym,{index:i}));
+                    }),
+                    m("div.symbol")
+                  )
+                ])
+              ),
               m(DictionaryPages.commands),
               m("label[for=query]",t('collection.fields.swu')),
               m("input#swu[type=text]",{value: DictionaryBack.entry.data.sign,onblur: function(e){
                 e.preventDefault();
-                DictionaryBack.entry.data.sign=ssw.norm(e.target.value);
-                DictionaryFront.signmaker.load();
+                sign = e.target.value;
+                DictionaryBack.entry.data.sign=ssw.norm(sign);
+                DictionaryFront.signmaker.history.push(sign)
+                DictionaryFront.signmaker.cursor = DictionaryFront.signmaker.history.length-1;                DictionaryFront.signmaker.load();
                 DictionaryFront.update();
               }}),
               m("label"),

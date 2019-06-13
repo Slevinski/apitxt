@@ -68,7 +68,27 @@ var statefn = {
     if (state === null){
       statefn.initial();
     } else {
-      state['status'] = localStorage.getItem('sp3-state-stamp');
+      var connection = s("connection");
+      var server = connection.server;
+      var pass = connection.pass;
+      username = s("profile","name");
+      data = {username:username,pass:pass};
+      var route = server + "/user/pass";
+      var method = "PUT";
+      m.request({
+        method: method,
+        url: route,
+        type: 'application/json',
+        body: data,
+        extract: function(xhr) {return {status: xhr.status, body: xhr.responseText}}
+      })
+      .then (function(response) {
+        if (response.status && response.status == 204) {
+          state['status'] = localStorage.getItem('sp3-state-stamp');
+        } else {
+          statefn.initial();
+        }
+      });
     }
   },
   "forget": function(){
@@ -2608,7 +2628,8 @@ var DictionaryPages = {
                 sign = e.target.value;
                 DictionaryBack.entry.data.sign=ssw.norm(sign);
                 DictionaryFront.signmaker.history.push(sign)
-                DictionaryFront.signmaker.cursor = DictionaryFront.signmaker.history.length-1;                DictionaryFront.signmaker.load();
+                DictionaryFront.signmaker.cursor = DictionaryFront.signmaker.history.length-1;
+                DictionaryFront.signmaker.load();
                 DictionaryFront.update();
               }}),
               m("label"),

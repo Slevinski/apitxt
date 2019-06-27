@@ -2,17 +2,20 @@
 @font-face {
   font-family: "SuttonSignWritingLine";
   src: local('SuttonSignWritingLine'),
-       url('fonts/SuttonSignWritingLine.ttf') format('truetype');
+       url('../fonts/SuttonSignWritingLine.ttf') format('truetype'),
+       url('https://cdn.rawgit.com/Slevinski/SuttonSignWriting/master/assets/SuttonSignWritingLine.ttf') format('truetype');
 }
 @font-face {
   font-family: "SuttonSignWritingFill";
   src: local('SuttonSignWritingFill'),
-       url('fonts/SuttonSignWritingFill.ttf') format('truetype');
+       url('../fonts/SuttonSignWritingFill.ttf') format('truetype'),
+       url('https://cdn.rawgit.com/Slevinski/SuttonSignWriting/master/assets/SuttonSignWritingFill.ttf') format('truetype');
 }
 @font-face {
   font-family: "SuttonSignWritingOneD";
   src: local('SuttonSignWritingOneD'),
-       url('fonts/SuttonSignWritingOneD.ttf') format('truetype');
+       url('../fonts/SuttonSignWritingOneD.ttf') format('truetype'),
+       url('https://cdn.rawgit.com/Slevinski/SuttonSignWriting/master/assets/SuttonSignWritingOneD.ttf') format('truetype');
 }    
 
 .sswOneD {
@@ -259,10 +262,12 @@ button > span {
 button img.icon, button i {
   height: 80%;
   min-width: 1.5em;
+  position: relative;
 }
 
 button > i > svg{
   height: 100%;
+  max-width: 100%;
 }
 
 i.icon svg {
@@ -705,6 +710,11 @@ pre {
   margin: 5px;
 } 
 
+main {
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+}
 header.main, header.group, header.route {
   width: 100%;
   display: flex;
@@ -785,22 +795,30 @@ section {
 section.entry {
   max-width: 100%;
 }
-div.dictionary {
-  width: 70%;
-  display: grid;
-  grid-template-columns: 100px auto;
+div.main {
+  width: 100%;
+  vertical-align: top;
 }
-div.dictionary header {
-  grid-column-end: span 2;
+nav.main {
+  width: 120px;
+  display: inline-flex;
+  flex-direction: column;
 }
-div.dictionary section.entry {
-  grid-column-end: span 2;
+nav.main.min {
+  width: 30px;
 }
-nav.dictionary {
-  margin-top: 15px;
-  display: grid;
-  grid-gap: 15px 10px;
-  align-content: start;
+nav.main.min button {
+  margin: 0;
+  width: 30px;
+}
+
+nav.main button:first-child {
+  height: 3em;
+  font-size: 1em;
+}
+
+nav.main button {
+  margin-bottom: 15px;
 }
 
 nav.search {
@@ -1017,28 +1035,49 @@ img.image {
   max-width: 200px;
 }
 div.btn{
-  position: relative;
-  float: left;
+  display:inline-block;
   text-align: center;
   background: #e7e7e7;
   border: 1px solid black;
   user-select: none;
   cursor: default;
-  width: 33%;
-  height: 9%;
+  width: 20%;
+  height: 3em;
+  vertical-align: top;
+}
+div.btn.spacer{
+  background: #888;
+  border: none;
+}
+#palette button{
+  width: 20%;
+  height: 3em;
+  vertical-align:top;
+  font-size: 1em;
+  padding: 0;
+}
+#palette.min button{
+  width: 30px;
 }
 #palette {
-  position:fixed; 
-  margin-left: 70%;
-  top:0; 
+  box-sizing: content-box;
+  position: relative;
   width:30%;
-  height: 100%;
+  min-width:30%;
+  margin-top: 3em;
+  top: -3em;
+  height: calc(100vh - 3em);
   z-index:1;
+}
+#palette.min{
+  width: 30px;
+  max-width: 30px;
+  min-width: 30px;
 }
 div.row {
   float: right;
   width: 100%;
-  height: 9%;
+  height: 10%;
 }
 div.row.smaller {
   height: 8.7%;
@@ -1046,7 +1085,7 @@ div.row.smaller {
 div.row div {
   position: relative;
   float: left;
-  width: 16.6%;
+  width: 33.33%;
   height: 100%;
   border: 1px solid black;
 }
@@ -1066,7 +1105,7 @@ div.row div svg, div.cmdrow svg, div.cmdfull svg, div.cmdlong svg {
 
 #palette div.row div.is-dragging {
   float: left;
-  width: 16.6%;
+  width: 33.3%;
   height: 100%;
   border:0px;
   overflow: visible;
@@ -1134,4 +1173,9 @@ button.long {
   button.long {display: inline-flex;}
   button.short {display: none;}
 }
-
+@media (min-width: 60em) {
+  #palette {
+    width: 15%;
+    min-width:15%
+  }
+}

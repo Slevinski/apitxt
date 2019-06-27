@@ -130,6 +130,16 @@ $app->post('/user/pass', function () use ($app) {
     echo json_pretty(userPass());
 });
 
+$app->options('/user/pass', function (){});
+$app->put('/user/pass', function () use ($app) {
+  $timein = microtime(true);
+    $data = $app->request->getbody();
+    $data = json_decode($data,true);
+    verifyPass($data['username'],$data['pass']);
+    $app->response->setStatus(204);
+    return;
+});
+
 $app->options('/user/login', function (){});
 $app->put('/user/login', function () use ($app) {
   $timein = microtime(true);
@@ -568,7 +578,12 @@ $app->get('/interface/:name', function ($name) use ($app) {
   $file = $dir . $name . $ext;
   $err = invalidName($name);
   if ($err){
-    haltBadRequest($err);
+    $files = glob('data/db/' . $name . '*interface-sp3.db');
+    if (count($files)==0){
+      haltBadRequest($err);
+    } else {
+  	$name = str_replace(".db",'',str_replace('data/db/','',$files[0]));
+    }
   }
   $lastModified = lastModified($name);
   if ($lastModified <= $check  && !$update){

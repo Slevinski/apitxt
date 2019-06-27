@@ -73,6 +73,37 @@
     "name": "String for accounting and validation"
   }, 
   {
+    "code": [
+      "  $data = $app->request->getbody();", 
+      "  $data = json_decode($data,true);", 
+      "  verifyPass($data['username'],$data['pass']);", 
+      "  $app->response->setStatus(204);", 
+      "  return;"
+    ], 
+    "method": "PUT", 
+    "dialog": [
+      {
+        "request": {
+          "body": [
+            "{\"username\":\"anonymous\",\"pass\":\"af77...\"}"
+          ], 
+          "lines": [
+            "+ Attributes", 
+            "    + username: anonymous (string) - name of the user", 
+            "    + pass: af77... (string) - pass for session validation"
+          ], 
+          "name": "user pass verify"
+        }, 
+        "responses": [
+          {
+            "status": 204
+          }
+        ]
+      }
+    ], 
+    "name": "Check pass against user"
+  }, 
+  {
     "route": "/user/login", 
     "name": "User login", 
     "description": "Validation of user with validated password"

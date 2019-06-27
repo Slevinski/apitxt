@@ -14,6 +14,18 @@ group	user	SignPuddle 3 collections are organized by country and language codes
 			request	user pass
 				response	200	text/plain
 					body	{"pass": "90c19ce2076db097c75b3406e966a6b6","ip": "192.168.254.2"}
+		method	PUT	Check pass against user
+			code	  $data = $app->request->getbody();
+			code	  $data = json_decode($data,true);
+			code	  verifyPass($data['username'],$data['pass']);
+			code	  $app->response->setStatus(204);
+			code	  return;
+			request	user pass verify
+				line	+ Attributes
+				line	    + username: anonymous (string) - name of the user
+				line	    + pass: af77... (string) - pass for session validation
+				body	{"username":"anonymous","pass":"af77..."}
+				response	204
 	route	/user/login	User login	Validation of user with validated password
 		method	PUT	Process log in to server
 			code	  $data = $app->request->getbody();

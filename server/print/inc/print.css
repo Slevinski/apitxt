@@ -2,12 +2,14 @@
   font-family: "SuttonSignWritingLine";
   src: 
     local('SuttonSignWritingLine'),
+    url('../../../client/fonts/SuttonSignWritingLine.ttf') format('truetype'),
     url('https://cdn.rawgit.com/Slevinski/SuttonSignWriting/master/assets/SuttonSignWritingLine.ttf') format('truetype');
 }
 @font-face {
   font-family: "SuttonSignWritingFill";
   src: 
     local('SuttonSignWritingFill'),
+    url('../../../client/fonts/SuttonSignWritingFill.ttf') format('truetype'),
     url('https://cdn.rawgit.com/Slevinski/SuttonSignWriting/master/assets/SuttonSignWritingFill.ttf') format('truetype');
 }
 

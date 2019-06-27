@@ -103,7 +103,12 @@ group	interface	Resources related to interface collections
 			code	$file = $dir . $name . $ext;
 			code	$err = invalidName($name);
 			code	if ($err){
-			code	  haltBadRequest($err);
+			code	  $files = glob('data/db/' . $name . '*interface-sp3.db');
+			code	  if (count($files)==0){
+			code	    haltBadRequest($err);
+			code	  } else {
+			code		$name = str_replace(".db",'',str_replace('data/db/','',$files[0]));
+			code	  }
 			code	}
 			code	$lastModified = lastModified($name);
 			code	if ($lastModified <= $check  && !$update){

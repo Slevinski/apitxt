@@ -1,6 +1,6 @@
 # SignPuddle 3 Project
 
-Welcome to the SignPuddle 3 alpha release.  
+Welcome to the SignPuddle 3 beta release.  
 
 > ONLINE: https://signpuddle.com  
 > REPOSITORY: https://github.com/slevinski/apitxt  
@@ -9,7 +9,7 @@ Welcome to the SignPuddle 3 alpha release.
 > SUPPORT: https://www.patreon.com/signwriting
 
 ## Group Status
-SignPuddle 3 is currently in alpha release.  It is under active development with several working sections and various functionality.  Some of the details will change.  This project is currently recommended for developers and power users.  
+SignPuddle 3 is currently in beta release.  We are actively testing the dictionary and interface sections.  Join us on the [SignWriting Email List](http://www.signwriting.org/forums/swlist/) or the public [Sutton SignWriting Facebook Group](https://www.facebook.com/groups/SuttonSignWriting/) for general discussion.  Visit the [SignPuddle 3 GitHub repository](https://github.com/slevinski/apitxt) for source code and technical issues.
 
 The SignPuddle 3 Development Project is divided into five sections.  The **tools** use the **source** to create the **client** and **server**.  The **system** is required if an Apache web server isn't available.
 
@@ -28,20 +28,10 @@ The [server](server) is available for use, with [some functionality](client/doc)
 ## Group Epilogue
 This is a work in progress. Feedback, bug reports, and patches are welcomed.
 
-
 ## License
 MIT
 
-## To Do for beta
-
-* Interface and translations
-* reget dictionaries and images
-* sidebar and iswa 
-
-* url loading
-** override InterfaceFront.init for hash or state
-
-## To Do for later
+## To Do
 
 * searching filter
 
@@ -52,14 +42,13 @@ MIT
 ** searching
 ** fingerspelling
 
-* General
-** update flags
-** standardize error responses in JSON
-** world.db
 
 * Interface
 ** request blank
 ** server side only manager can update interface keys
+
+* Dictionary
+** request public, practice, and others
 
 * User
 ** register new user
@@ -72,6 +61,7 @@ MIT
 ** remove images on entry delete
 
 ## Version History
+* v3.0.0-beta.1 - Jun 27, 2019: first beta release
 * v3.0.0-alpha.22 - Jun 6th, 2019: image uploads
 * v3.0.0-alpha.18 - May 23rd, 2019: signmaker complete
 * v3.0.0-alpha.17 - May 2nd, 2019: dictionary entry editing and signmaker

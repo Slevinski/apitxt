@@ -47,6 +47,20 @@ A string for accounting and validation
 
             {"pass": "90c19ce2076db097c75b3406e966a6b6","ip": "192.168.254.2"}
 
+#### Check pass against user [PUT]
+
++ Request user pass verify
+
+     + Attributes
+         + username: anonymous (string) - name of the user
+         + pass: af77... (string) - pass for session validation
+
+     + Body
+
+            {"username":"anonymous","pass":"af77..."}
+
++ Response 204
+
 ### User login [/user/login]
 Validation of user with validated password
 

@@ -64,6 +64,15 @@ function uploadLevel($collection){
   return $right;
 }
 
+function verifyPass($username,$pass){
+  $user = userVerified($pass,1);
+  if ($user == $username){
+    return true;
+  } else {
+    haltConflict();
+  }
+}
+
 function rightsCheck($collection,$pass,$right,$ik=false){
   $required = passRequired($collection,$right);
   if (!$required) return true;
@@ -187,6 +196,8 @@ function userVerified($pass,$named=false){
       $username = $user['user'];
       $userip = $ip[2] ?: ($ip[1] ?: $ip[0]);
       return $username ?: ($named ? $userip : '');
+    } else {
+      haltConflict();
     }
   } catch (PDOException $e) {
   }   

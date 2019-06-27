@@ -110,10 +110,7 @@ In this example, SignPuddle 3 will be available with this URL.
 
 The client can be configured by editing the [config](../client/config) directory.
 
-* [config.js](../client/config/config.js) - main configuration with initial state
+* [setting.js](../client/config/settings.js) - main configuration settings with initial state
 * [world.js](../client/config/world.js) - information about countries and languages
-* [interface-sp3.js](../client/config/interface-sp3.js) - default user interface language
-* [dictionary.js](../client/config/dictionary.js) - default dictionary for writing
-* [alphabet.js](../client/config/alphabet.js) - default symbol set of the ISWA 2010
-* [keyboard.js](../client/config/keyboard.js) - default mappings for specific keyboard
-* [fingerspell.js](../client/config/fingerspell.js) - default mapping of letter to handshape(s)
+* [interface-sp3.json](../client/config/interface-sp3.json) - default user interface language
+* [alphabet.json](../client/config/alphabet.json) - default symbol set of the ISWA 2010

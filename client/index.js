@@ -1028,7 +1028,8 @@ function getOffset( el ) {
 function overlap(el1, el2){
   if (!el2) return false;
   var el1a = el1.firstElementChild;
-  var offset1 = getOffset( el1 ), width1 = el1a.clientWidth, height1 = el1a.clientHeight,
+  var box = el1a.getBoundingClientRect();
+  var offset1 = getOffset( el1 ), width1 = box.width, height1 = box.height,
     offset2 = getOffset( el2 ), width2 = el2.offsetWidth, height2 = el2.offsetHeight;
   if (!(offset2.left > offset1.left + width1 - width1/2 || offset2.left + width2 < offset1.left + width1/2 || offset2.top > offset1.top + height1 - height1/2 || offset2.top + height2 < offset1.top + height1/2 )){
     return true;
@@ -3230,7 +3231,6 @@ var DictionaryPages = {
     oninit: function(vnode){
       Screen.palette = true;
       DictionaryBack.name = vnode.attrs.name;
-      DictionaryBack.entry.data={};
     },
     onupdate: function(vnode){
       if (DictionaryBack.name != vnode.attrs.name) {
@@ -3254,7 +3254,6 @@ var DictionaryPages = {
     oninit: function(vnode){
       Screen.palette = true;
       DictionaryBack.name = vnode.attrs.name;
-      DictionaryBack.entry.data = {};
       DictionaryFront.signmaker.history = [""];
       DictionaryFront.signbox.symbols = [];
       DictionaryFront.sequence.symbols = [];

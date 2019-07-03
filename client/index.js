@@ -1470,7 +1470,7 @@ var DictionaryFront = {
     "undo": function(){
       var cursor = DictionaryFront.signmaker.cursor-1;
       if (cursor >=0){
-        DictionaryBack.entry.data.sign = DictionaryFront.signmaker.history[cursor];
+        DictionaryBack.entry.data.sign = ssw.norm(DictionaryFront.signmaker.history[cursor]);
         DictionaryFront.signmaker.cursor = cursor;
         DictionaryFront.signmaker.load();
         if (DictionaryFront.type == "search"){
@@ -1481,7 +1481,7 @@ var DictionaryFront = {
     "redo": function() {
       var cursor = DictionaryFront.signmaker.cursor+1;
       if (cursor < DictionaryFront.signmaker.history.length){
-        DictionaryBack.entry.data.sign = DictionaryFront.signmaker.history[cursor];
+        DictionaryBack.entry.data.sign = ssw.norm(DictionaryFront.signmaker.history[cursor]);
         DictionaryFront.signmaker.cursor = cursor;
         DictionaryFront.signmaker.load();
         if (DictionaryFront.type == "search"){
@@ -2563,7 +2563,7 @@ var DictionaryPages = {
                     e.redraw=false;
                     var connection = s("connection");
                     var server = connection.server;
-                    window.open(server + "/print/?dictionary=" + vnode.attrs.name + "&ids=" + DictionaryBack.search.selection.join(','),"_blank");
+                    window.open(server + "/print/?dictionary=" + vnode.attrs.name + "&ids=" + DictionaryBack.search.selection.join(',') + "&interface=" + InterfaceFront.ui.name,"_blank");
                   },
                   key: "system.buttons.print"
                 })
@@ -2733,6 +2733,9 @@ var DictionaryPages = {
       var imagable = CollectionBack.imagable(vnode.attrs.name);
       var sorting = entry['sign'].match(ssw.re.swu.sort + "(" + ssw.re.swu.symbol + ")+");
       sorting = sorting?sorting[0].slice(2):"";
+      if (entry.terms[entry.terms.length-1]!=""){
+        entry.terms.push('');
+      }
       return m("section.entry.boxed",[
         m("div.signed",m.trust(ssw.svg(entry['sign']))),
         m("div.sequence",{class:"sswOneD"},(sorting.match(/.{2}/g)||[]).map(function(sym){
@@ -2744,9 +2747,6 @@ var DictionaryPages = {
             return m("input#terms[type=text]",{value:term,oninput: function(e){
               e.preventDefault();
               entry.terms[i] = e.target.value;
-              if (entry.terms[entry.terms.length-1]!=""){
-                entry.terms.push('');
-              }
             }})
           }),
           m("label[for=text]",t('collection.fields.text')),

@@ -44,7 +44,7 @@ $json = str_replace("\u0022","\\\"",json_encode( $output,JSON_HEX_QUOT));
     var entries = <?php echo $json;?>;
     var showing = '<?php echo $showing;?>';
   </script>
-  <link rel="stylesheet" href="inc/print.css?v=20190625" />
+  <link rel="stylesheet" href="inc/print.css?v=20190704" />
 </head>
 <body>
   <div id="printing"></div>

@@ -328,7 +328,7 @@ var InterfaceBack = {
   "search": function(search) {
     var server = s("connection","server");
     var interface_name = InterfaceFront.ui.name;
-    var route = server + "/interface?name=" + search;
+    var route = server + "/interface?name=" + search + serverfn.nocache("&");;
     var method = "GET";
     if (!server) return;
 
@@ -359,7 +359,7 @@ var InterfaceBack = {
     "get": function(collection) {
       var server = s("connection","server");
       if (!server) return;
-      var route = server + "/interface/" + collection + "/key";
+      var route = server + "/interface/" + collection + "/key" + serverfn.nocache("?");;
       var method = "GET";
       var headers = {};
       if (collection == InterfaceBack.name){
@@ -427,7 +427,7 @@ var InterfaceBack = {
       "fn": function(){
         var server = s("connection","server");
         if (!server) return;
-        var route = server + "/interface/" + InterfaceBack.name + "/search/" + InterfaceBack.entry.search.text;
+        var route = server + "/interface/" + InterfaceBack.name + "/search/" + InterfaceBack.entry.search.text + serverfn.nocache("?");
         var method = "GET";
         m.request({
           method: method,
@@ -471,12 +471,12 @@ var InterfaceBack = {
       var server = s("connection","server");
       if (!server) return;
       var subkey = q1 + '.' + q2;
-      var route = server + "/interface/" + collection + "/entry/" + subkey + '.%25';
+      var route = server + "/interface/" + collection + "/entry/" + subkey + '.%25' + serverfn.nocache("?");
       var method = "GET";
-      var headers = {'Cache-Control': 'no-cache'};
+      var headers = {};
       if (collection == InterfaceBack.name){
         if (subkey in InterfaceBack.entry.data){
-          headers = {'If-Modified-Since': InterfaceBack.entry.data[subkey].mod};
+          headers['If-Modified-Since'] = InterfaceBack.entry.data[subkey].mod;
         }
       }
       m.request({
@@ -1245,6 +1245,7 @@ var DictionaryBack = {
         default:
           return;
       }
+      route += serverfn.nocache("&");
       m.request({
         headers: {Pass: pass},
         background:true,
@@ -1275,10 +1276,10 @@ var DictionaryBack = {
       var connection = s("connection");
       var server = connection.server;
       var pass = connection.pass;
-      var route = server + "/dictionary/" + collection + "/search/id/" + id;
+      var route = server + "/dictionary/" + collection + "/search/id/" + id + serverfn.nocache("?");
       var method = "GET";
       m.request({
-        headers: {Pass: pass,'Cache-Control': 'no-cache'},
+        headers: {Pass: pass},
         background: true,
         method: method,
         url: route,
@@ -1516,6 +1517,8 @@ var DictionaryFront = {
           index = 0;
         }
         DictionaryFront.signmaker.selecting(section,index);
+      } else if (len) {
+        DictionaryFront.signmaker.selecting(section,0);
       }
     },
     "copy": function(){
@@ -3574,6 +3577,9 @@ window.onscroll = function(e){
   }
 };
 var serverfn = {
+  "nocache": function(pre){
+    return pre + "nocache=" + Date.now();
+  },
   "connect": function(){
     var connection = s("connection");
     var server = connection.server;
@@ -3854,8 +3860,8 @@ var CollectionBack = {
   "error": "",
   "collections": [],
   "getCollections": function(cc){
-    var method = "GET";  
-    var route = s("connection","server") + "/collection?name=-" + cc + "-";
+    var method = "GET";
+    var route = s("connection","server") + "/collection?name=-" + cc + "-" + serverfn.nocache("&");
     m.request({
       background:true,
       method: method,
@@ -3878,7 +3884,7 @@ var CollectionBack = {
   },
   "getAllCollections": function(){
     var method = "GET";  
-    var route = s("connection","server") + "/collection";
+    var route = s("connection","server") + "/collection" + serverfn.nocache("?");
     m.request({
       background:true,
       method: method,
@@ -3901,10 +3907,14 @@ var CollectionBack = {
   },
   "stats": {},
   "getStats": function(collection){
+    var connection = s("connection");
+    var server = connection.server;
+    var pass = connection.pass;
     if (CollectionBack.stats[collection]) return;
     var method = "GET";
-    var route = s("connection","server") + "/collection/" + collection + "/stats";
+    var route = server + "/collection/" + collection + "/stats" + serverfn.nocache("?");
     m.request({
+      headers: {Pass: pass},
       background:true,
       method: method,
       url: route,
@@ -3929,11 +3939,11 @@ var CollectionBack = {
   },
   "getAllSecurity": function(){
     var method = "GET";
-    var route = s("connection","server") + "/collection/security";
+    var route = s("connection","server") + "/collection/security" + serverfn.nocache("?");
     var headers = {};
     var mod = CollectionBack.securityMod();
     if (mod){
-      var headers = {'If-Modified-Since': mod};
+      headers['If-Modified-Since'] = mod;
     }
     m.request({
       background:true,
@@ -3961,7 +3971,7 @@ var CollectionBack = {
   },
   "getSecurity": function(collection){
     var method = "GET";
-    var route = s("connection","server") + "/collection/" + collection + "/security";
+    var route = s("connection","server") + "/collection/" + collection + "/security" + serverfn.nocache("?");
     m.request({
       background:true,
       method: method,
@@ -4036,7 +4046,7 @@ var CollectionBack = {
     var server = connection.server;
     var pass = connection.pass;
     var method = "GET";
-    var route = server + "/collection/" + collection + "/manage";
+    var route = server + "/collection/" + collection + "/manage" + serverfn.nocache("?");
     m.request({
       headers: {Pass: pass},
       background:true,
@@ -4135,7 +4145,7 @@ var CollectionBack = {
   "unknown": [],
   "getUnknown": function(){
     var method = "GET";  
-    var route = s("connection","server") + "/collection/manage/unknown";
+    var route = s("connection","server") + "/collection/manage/unknown" + serverfn.nocache("?");
     m.request({
       background:true,
       method: method,
@@ -5381,8 +5391,29 @@ var CountryPages = {
           m("div.main",[
             m(CountryPages['head'],{cc:vnode.attrs.cc}),
             m("section.boxed",
-              m("h2",t('sections.dictionary.available')),
-              CollectionBack.collections.filter(function(collection){return collection.indexOf("-" + cc + "-dictionary-")>-1}).map(function(collection){
+              m("h2",t('sections.dictionary.public')),
+              CollectionBack.collections.filter(function(collection){return collection.indexOf("-" + cc + "-dictionary-public")>-1}).map(function(collection){
+                var buttons = [
+                  m(CommonPages["button"],{class: "primary", key:'system.buttons.open', onclick: function(e){e.preventDefault();
+                    routesfn.set("/dictionary/" + collection);
+                    return false;
+                  }}),
+                  m(CommonPages["button"],{class: "primary", key:'system.buttons.manage', onclick: function(e){e.preventDefault();
+                    routesfn.set("/manage/" + collection);
+                    return false;
+                  }})
+                ];
+                return m("form", [
+                    m("label[for=interface]",collection),
+                    m("input#dictionary[type=text]",{"disabled": true, "class":"primary","value":InterfaceFront.collection(collection)}),
+                    m("label"),
+                    m("div.wide",buttons)
+                ])
+              })
+            ),
+            m("section.boxed",
+              m("h2",t('sections.dictionary.other')),
+              CollectionBack.collections.filter(function(collection){return collection.indexOf("-" + cc + "-dictionary-")>-1 && collection.indexOf("-" + cc + "-dictionary-public")==-1}).map(function(collection){
                 var buttons = [
                   m(CommonPages["button"],{class: "primary", key:'system.buttons.open', onclick: function(e){e.preventDefault();
                     routesfn.set("/dictionary/" + collection);
@@ -5701,7 +5732,7 @@ var AdminPages = {
     var server = connection.server;
     var pass = connection.pass;
     var method = "GET";
-    var route = server + "/user/email";
+    var route = server + "/user/email" + serverfn.nocache("?");
     m.request({
       headers: {Pass: pass},
       background:true,

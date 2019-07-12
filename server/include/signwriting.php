@@ -1,7 +1,5 @@
 <?php
 namespace SignWriting;
-ini_set('memory_limit', '2048M');
-ini_set('max_execution_time', 300);
 
 $structure = ["kind"=>['S100','S37f','S387'],
   "category"=>['S100','S205','S2f7','S2ff','S36d','S37f','S387'],

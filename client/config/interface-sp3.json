@@ -229,7 +229,7 @@
             "message": "Key",
             "description": "Interface Key field label",
             "icon": "",
-            "user": "",
+            "user": "slevinski",
             "created_at": "2019-01-31T21:09:50.285Z",
             "updated_at": "2019-02-20T21:11:42.562Z"
         },
@@ -237,7 +237,7 @@
             "message": "Message",
             "description": "The user interface message",
             "icon": "",
-            "user": "",
+            "user": "slevinski",
             "created_at": "2019-02-06T16:01:05.017Z",
             "updated_at": "2019-02-20T21:11:48.680Z"
         },
@@ -245,7 +245,7 @@
             "message": "Description",
             "description": "The description of the interface message",
             "icon": "",
-            "user": "",
+            "user": "slevinski",
             "created_at": "2019-02-06T16:03:58.757Z",
             "updated_at": "2019-02-20T21:11:28.716Z"
         },
@@ -253,7 +253,7 @@
             "message": "Icon",
             "description": "The icon for the interface message",
             "icon": "",
-            "user": "",
+            "user": "slevinski",
             "created_at": "2019-02-06T16:04:17.358Z",
             "updated_at": "2019-02-20T21:11:36.136Z"
         },
@@ -261,7 +261,7 @@
             "message": "Search",
             "description": "General search button",
             "icon": "search",
-            "user": "",
+            "user": "slevinski",
             "created_at": "2019-02-06T16:16:00.988Z",
             "updated_at": "2019-02-25T16:11:03Z"
         },
@@ -269,7 +269,7 @@
             "message": "Delete",
             "description": "General delete button",
             "icon": "",
-            "user": "",
+            "user": "slevinski",
             "created_at": "2019-02-06T16:33:20.101Z",
             "updated_at": "2019-02-06T16:33:20.101Z"
         },
@@ -277,7 +277,7 @@
             "message": "Connect",
             "description": "Connect to server",
             "icon": "",
-            "user": "",
+            "user": "slevinski",
             "created_at": "2019-02-06T16:34:54.087Z",
             "updated_at": "2019-02-20T20:57:10.157Z"
         },
@@ -285,7 +285,7 @@
             "message": "Disconnect",
             "description": "Disconnect from server",
             "icon": "",
-            "user": "",
+            "user": "slevinski",
             "created_at": "2019-02-06T16:35:29.784Z",
             "updated_at": "2019-02-20T20:57:22.668Z"
         },
@@ -293,7 +293,7 @@
             "message": "SignPuddle $1",
             "description": "Title for SignPuddle",
             "icon": "",
-            "user": "",
+            "user": "slevinski",
             "created_at": "2019-02-06T16:38:55.239Z",
             "updated_at": "2019-02-06T16:38:55.239Z"
         },
@@ -301,7 +301,7 @@
             "message": "Update",
             "description": "General update button",
             "icon": "refresh",
-            "user": "",
+            "user": "slevinski",
             "created_at": "2019-02-06T16:45:52.905Z",
             "updated_at": "2019-02-25T16:02:49Z"
         },
@@ -309,7 +309,7 @@
             "message": "Country",
             "description": "Country settings title",
             "icon": "",
-            "user": "",
+            "user": "slevinski",
             "created_at": "2019-02-06T16:46:27.283Z",
             "updated_at": "2019-02-20T20:58:26.987Z"
         },
@@ -317,7 +317,7 @@
             "message": "View All",
             "description": "General view all button",
             "icon": "",
-            "user": "",
+            "user": "slevinski",
             "created_at": "2019-02-06T16:48:11.877Z",
             "updated_at": "2019-02-06T16:48:42.794Z"
         },
@@ -325,7 +325,7 @@
             "message": "Country",
             "description": "",
             "icon": "",
-            "user": "192.168.254.7",
+            "user": "slevinski",
             "created_at": "2019-02-08T19:45:34.243Z",
             "updated_at": "2019-02-25T20:25:10Z"
         },
@@ -669,7 +669,7 @@
             "message": "Reset Password",
             "description": "",
             "icon": "",
-            "user": "admin",
+            "user": "slevinski",
             "created_at": "2019-03-04T17:03:52Z",
             "updated_at": "2019-03-04T17:03:52Z"
         },
@@ -677,7 +677,7 @@
             "message": "Forgot Username",
             "description": "",
             "icon": "",
-            "user": "admin",
+            "user": "slevinski",
             "created_at": "2019-03-04T17:04:07Z",
             "updated_at": "2019-03-04T17:04:07Z"
         },
@@ -685,7 +685,7 @@
             "message": "Have Temporary",
             "description": "",
             "icon": "",
-            "user": "admin",
+            "user": "slevinski",
             "created_at": "2019-03-04T17:04:22Z",
             "updated_at": "2019-03-04T17:04:22Z"
         },
@@ -693,7 +693,7 @@
             "message": "Temporary Pass",
             "description": "",
             "icon": "",
-            "user": "admin",
+            "user": "slevinski",
             "created_at": "2019-03-04T17:06:40Z",
             "updated_at": "2019-03-04T17:06:40Z"
         },
@@ -1576,6 +1576,22 @@
             "user": "slevinski",
             "created_at": "2019-05-30T19:32:28Z",
             "updated_at": "2019-05-30T19:32:28Z"
+        },
+        "sections.dictionary.other": {
+            "message": "Other Dictionaries",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-07-12T21:26:59Z",
+            "updated_at": "2019-07-12T21:26:59Z"
+        },
+        "sections.dictionary.public": {
+            "message": "Public Dictionary",
+            "description": "",
+            "icon": "",
+            "user": "slevinski",
+            "created_at": "2019-07-12T21:27:12Z",
+            "updated_at": "2019-07-12T21:27:12Z"
         }
     }
 }

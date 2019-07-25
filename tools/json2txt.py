@@ -85,7 +85,7 @@ for segment in data:
 				fields = ["		parameter"]
 				for field in ["name", "example", "type", "description"]:
 					try:
-						fields.append(param[field])
+						fields.append(param[field].encode("utf-8"))
 					except:
 						fields.append("")
 				while not fields[-1]:

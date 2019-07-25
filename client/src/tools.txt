@@ -89,10 +89,24 @@ group	tools	Resources related to tools
 			code	$json = json_pretty($parse);
 			code	echo SignWriting\cast($json,$utf);
 			response	200	text/plain;charset=utf-8
-				body	parse results of text
+				body	{
+				body	  "fsw": {
+				body	    "symbol": [
+				body	      "S10000"
+				body	    ]
+				body	  },
+				body	  "query": {
+				body	    "base": [
+				body	      100
+				body	    ],
+				body	    "symbol": [
+				body	      "S10000"
+				body	    ]
+				body	  }
+				body	}
 	route	/tools/encode{?text,slash}	Encode text
 		line	A function to encode SignWriting in Unicode (SWU) as UTF-16
-		parameter	text	\x{1D800}	string	The text to encode
+		parameter	text	𝠀񆄱񈠣񍉡𝠃𝤛𝤵񍉡𝣴𝣵񆄱𝤌𝤆񈠣𝤉𝤚	string	The text to encode
 		parameter	slash	1	number	The number of slashes for escaping
 		method	GET	Get encoded query string
 			code	$encode = SignWriting\encode($text,$slash);
@@ -100,7 +114,7 @@ group	tools	Resources related to tools
 			code	header("Search-Time: " . $searchTime);
 			code	echo $encode;
 			response	200	text/plain;charset=utf-8
-				body	\uD836\uDC00
+				body	\uD836\uDC00\uD8D8\uDD31\uD8E2\uDC23\uD8F4\uDE61\uD836\uDC03\uD836\uDD1B\uD836\uDD35\uD8F4\uDE61\uD836\uDCF4\uD836\uDCF5\uD8D8\uDD31\uD836\uDD0C\uD836\uDD06\uD8E2\uDC23\uD836\uDD09\uD836\uDD1A
 	route	/tools/decode{?text}	Decode text
 		line	A function to decode SignWriting in Unicode (SWU) from UTF-16
 		parameter	text	\\uD836\\uDC00	string	The text to decode
@@ -110,16 +124,16 @@ group	tools	Resources related to tools
 			code	header("Search-Time: " . $searchTime);
 			code	echo $decode;
 			response	200	text/plain;charset=utf-8
-				body	\x{1D800}
+				body	𝠀
 	route	/tools/utf8{?text}	UTF-8 encode text
-		parameter	text	\x{1D800}	string	The text to encode
+		parameter	text	𝠀񆄱񈠣񍉡𝠃𝤛𝤵񍉡𝣴𝣵񆄱𝤌𝤆񈠣𝤉𝤚	string	The text to encode
 		method	GET	Get utf-8 encoded query string
 			code	$encode = SignWriting\utf8($text);
 			code	$searchTime = searchtime($timein);
 			code	header("Search-Time: " . $searchTime);
 			code	echo $encode;
 			response	200	text/plain;charset=utf-8
-				body	%F0%9D%A0%80
+				body	%F0%9D%A0%80%F1%86%84%B1%F1%88%A0%A3%F1%8D%89%A1%F0%9D%A0%83%F0%9D%A4%9B%F0%9D%A4%B5%F1%8D%89%A1%F0%9D%A3%B4%F0%9D%A3%B5%F1%86%84%B1%F0%9D%A4%8C%F0%9D%A4%86%F1%88%A0%A3%F0%9D%A4%89%F0%9D%A4%9A
 	route	/tools/test{?text,opt1,opt2}	Test with input
 		line	A general purpose function for testing
 		parameter	text	S10000	string	Input for testing

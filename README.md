@@ -61,6 +61,7 @@ MIT
 ** remove images on entry delete
 
 ## Version History
+* v3.0.0-beta.6 - Jul 25, 2019: SWU documents, tools, and server
 * v3.0.0-beta.5 - Jul 12, 2019: caching and other fixes
 * v3.0.0-beta.1 - Jun 27, 2019: first beta release
 * v3.0.0-alpha.22 - Jun 6th, 2019: image uploads

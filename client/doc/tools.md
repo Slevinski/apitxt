@@ -110,7 +110,21 @@ A function to analyze text and parse it into individual components
 
      + Body
 
-            parse results of text
+            {
+              "fsw": {
+                "symbol": [
+                  "S10000"
+                ]
+              },
+              "query": {
+                "base": [
+                  100
+                ],
+                "symbol": [
+                  "S10000"
+                ]
+              }
+            }
 
 ### Encode text [/tools/encode{?text,slash}]
 
@@ -118,7 +132,7 @@ A function to encode SignWriting in Unicode (SWU) as UTF-16
 
 + Parameters
 
-     + text: \x{1D800} (string) - The text to encode
+     + text: 𝠀񆄱񈠣񍉡𝠃𝤛𝤵񍉡𝣴𝣵񆄱𝤌𝤆񈠣𝤉𝤚 (string) - The text to encode
      + slash: 1 (number) - The number of slashes for escaping
 
 #### Get encoded query string [GET]
@@ -127,7 +141,7 @@ A function to encode SignWriting in Unicode (SWU) as UTF-16
 
      + Body
 
-            \uD836\uDC00
+            \uD836\uDC00\uD8D8\uDD31\uD8E2\uDC23\uD8F4\uDE61\uD836\uDC03\uD836\uDD1B\uD836\uDD35\uD8F4\uDE61\uD836\uDCF4\uD836\uDCF5\uD8D8\uDD31\uD836\uDD0C\uD836\uDD06\uD8E2\uDC23\uD836\uDD09\uD836\uDD1A
 
 ### Decode text [/tools/decode{?text}]
 
@@ -143,13 +157,13 @@ A function to decode SignWriting in Unicode (SWU) from UTF-16
 
      + Body
 
-            \x{1D800}
+            𝠀
 
 ### UTF-8 encode text [/tools/utf8{?text}]
 
 + Parameters
 
-     + text: \x{1D800} (string) - The text to encode
+     + text: 𝠀񆄱񈠣񍉡𝠃𝤛𝤵񍉡𝣴𝣵񆄱𝤌𝤆񈠣𝤉𝤚 (string) - The text to encode
 
 #### Get utf-8 encoded query string [GET]
 
@@ -157,7 +171,7 @@ A function to decode SignWriting in Unicode (SWU) from UTF-16
 
      + Body
 
-            %F0%9D%A0%80
+            %F0%9D%A0%80%F1%86%84%B1%F1%88%A0%A3%F1%8D%89%A1%F0%9D%A0%83%F0%9D%A4%9B%F0%9D%A4%B5%F1%8D%89%A1%F0%9D%A3%B4%F0%9D%A3%B5%F1%86%84%B1%F0%9D%A4%8C%F0%9D%A4%86%F1%88%A0%A3%F0%9D%A4%89%F0%9D%A4%9A
 
 ### Test with input [/tools/test{?text,opt1,opt2}]
 

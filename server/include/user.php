@@ -74,6 +74,7 @@ function verifyPass($username,$pass){
 }
 
 function rightsCheck($collection,$pass,$right,$ik=false){
+
   $required = passRequired($collection,$right);
   if (!$required) return true;
   $rights = userRights($collection,$pass);
@@ -183,6 +184,10 @@ function userRights($collection,$pass){
 function userVerified($pass,$named=false){
   global $db0;
   $ip = userIP();
+  $userip = $ip[2] ?: ($ip[1] ?: $ip[0]);
+  if (!$pass){
+    return $userip;
+  }
   $sel = 'select user from verify where pass=:pass and ip0=:ip0 and ip1=:ip1 and ip2=:ip2;';
   try {
     $stmt = $db0->prepare($sel);
@@ -194,7 +199,6 @@ function userVerified($pass,$named=false){
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
     if ($user) {
       $username = $user['user'];
-      $userip = $ip[2] ?: ($ip[1] ?: $ip[0]);
       return $username ?: ($named ? $userip : '');
     } else {
       haltConflict();

@@ -239,7 +239,21 @@ var data = {
                     {
                       "status": 200, 
                       "body": [
-                        "parse results of text"
+                        "{", 
+                        "  \"fsw\": {", 
+                        "    \"symbol\": [", 
+                        "      \"S10000\"", 
+                        "    ]", 
+                        "  },", 
+                        "  \"query\": {", 
+                        "    \"base\": [", 
+                        "      100", 
+                        "    ],", 
+                        "    \"symbol\": [", 
+                        "      \"S10000\"", 
+                        "    ]", 
+                        "  }", 
+                        "}"
                       ], 
                       "type": "text/plain;charset=utf-8"
                     }
@@ -254,7 +268,7 @@ var data = {
           "name": "Encode text", 
           "parameters": [
             {
-              "example": "\\x{1D800}", 
+              "example": "\ud836\udc00\ud8d8\udd31\ud8e2\udc23\ud8f4\ude61\ud836\udc03\ud836\udd1b\ud836\udd35\ud8f4\ude61\ud836\udcf4\ud836\udcf5\ud8d8\udd31\ud836\udd0c\ud836\udd06\ud8e2\udc23\ud836\udd09\ud836\udd1a", 
               "type": "string", 
               "description": "The text to encode", 
               "name": "text"
@@ -286,7 +300,7 @@ var data = {
                     {
                       "status": 200, 
                       "body": [
-                        "\\uD836\\uDC00"
+                        "\\uD836\\uDC00\\uD8D8\\uDD31\\uD8E2\\uDC23\\uD8F4\\uDE61\\uD836\\uDC03\\uD836\\uDD1B\\uD836\\uDD35\\uD8F4\\uDE61\\uD836\\uDCF4\\uD836\\uDCF5\\uD8D8\\uDD31\\uD836\\uDD0C\\uD836\\uDD06\\uD8E2\\uDC23\\uD836\\uDD09\\uD836\\uDD1A"
                       ], 
                       "type": "text/plain;charset=utf-8"
                     }
@@ -327,7 +341,7 @@ var data = {
                     {
                       "status": 200, 
                       "body": [
-                        "\\x{1D800}"
+                        "\ud836\udc00"
                       ], 
                       "type": "text/plain;charset=utf-8"
                     }
@@ -343,7 +357,7 @@ var data = {
           "name": "UTF-8 encode text", 
           "parameters": [
             {
-              "example": "\\x{1D800}", 
+              "example": "\ud836\udc00\ud8d8\udd31\ud8e2\udc23\ud8f4\ude61\ud836\udc03\ud836\udd1b\ud836\udd35\ud8f4\ude61\ud836\udcf4\ud836\udcf5\ud8d8\udd31\ud836\udd0c\ud836\udd06\ud8e2\udc23\ud836\udd09\ud836\udd1a", 
               "type": "string", 
               "description": "The text to encode", 
               "name": "text"
@@ -364,7 +378,7 @@ var data = {
                     {
                       "status": 200, 
                       "body": [
-                        "%F0%9D%A0%80"
+                        "%F0%9D%A0%80%F1%86%84%B1%F1%88%A0%A3%F1%8D%89%A1%F0%9D%A0%83%F0%9D%A4%9B%F0%9D%A4%B5%F1%8D%89%A1%F0%9D%A3%B4%F0%9D%A3%B5%F1%86%84%B1%F0%9D%A4%8C%F0%9D%A4%86%F1%88%A0%A3%F0%9D%A4%89%F0%9D%A4%9A"
                       ], 
                       "type": "text/plain;charset=utf-8"
                     }

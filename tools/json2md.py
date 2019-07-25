@@ -92,7 +92,7 @@ for segment in data:
 					line += " (" + param['type'] + ")"
 				if "description" in param:
 					line += " - " + param['description']
-				print line
+				print line.encode('utf-8')
 			print
 	
 	elif 'method' in segment:

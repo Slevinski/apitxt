@@ -615,6 +615,10 @@ function bbox ($text){
 }
 
 function svg ($text,$font=false){
+  $swu = swu($text);
+  if ($swu){
+    $text = swu2fsw($text);
+  }
   $options = stylingArray($text);
   $fsw = fsw($text);
   if (!$fsw){
@@ -728,7 +732,7 @@ function svg ($text,$font=false){
       $svg .= " width=\"" . ($w * $options['size']) . "\" height=\"" . ($h * $options['size']) . "\"";
     }
     $svg .= " viewBox=\"" . $x1 . " " . $y1 . " " . $w . " " . $h . "\">" . "\n";
-    $svg .= "  <text font-size=\"0\">" . $text . "</text>" . "\n";
+    $svg .= "  <text font-size=\"0\">" . ($swu?:$text) . "</text>" . "\n";
     if ($options['back']) {
       $svg .= '  <rect x="' . $x1 . '" y="' . $y1 . '" width="' . $w . '" height="' . $h . '" style="fill:' . $options['back'] . ';" />' . "\n";
     }

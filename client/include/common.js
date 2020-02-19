@@ -185,28 +185,28 @@ var swFonts = {
   swLine: {
     "file": "SuttonSignWritingLine.ttf",
     "local": "fonts/SuttonSignWritingLine.ttf",
-    "cdn": "https://cdn.rawgit.com/Slevinski/SuttonSignWriting/master/assets/SuttonSignWritingLine.ttf",
+    "cdn": "https://unpkg.com/@sutton-signwriting/font-ttf@1.0.0/font/SuttonSignWritingLine.ttf",
     "name": "Sutton SignWriting Line (font)",
     "desc": "The Sutton SignWriting Line Font contains glyphs for the positive space of the symbol images with characters on Unicode plane 15."
   },
   swFill: {
     "file": "SuttonSignWritingFill.ttf",
     "local": "fonts/SuttonSignWritingFill.ttf",
-    "cdn": "https://cdn.rawgit.com/Slevinski/SuttonSignWriting/master/assets/SuttonSignWritingFill.ttf",
+    "cdn": "https://unpkg.com/@sutton-signwriting/font-ttf@1.0.0/font/SuttonSignWritingFill.ttf",
     "name": "Sutton SignWriting Fill (font)",
     "desc": "The Sutton SignWriting Fill Font contains glyphs for the negative space of the symbol images with characters on Unicode plane 16."
   },
   swOneD: {
     "file": "SuttonSignWritingOneD.ttf",
     "local": "fonts/SuttonSignWritingOneD.ttf",
-    "cdn": "https://cdn.rawgit.com/Slevinski/SuttonSignWriting/master/assets/SuttonSignWriting1dOpt.ttf",
+    "cdn": "https://unpkg.com/@sutton-signwriting/font-ttf@1.0.0/font/SuttonSignWritingOneD.ttf",
     "name": "Sutton SignWriting One D (font)",
     "desc": "The Sutton SignWriting One D Font contains glyphs for symbols, markers, and numbers for use in traditional one dimensional text using SWU as an experimental Unicode design."
   },
   swNull: {
     "file": "SuttonSignWritingNull.ttf",
     "local": "fonts/SuttonSignWritingNull.ttf",
-    "cdn": "https://cdn.rawgit.com/Slevinski/SuttonSignWriting/master/assets/SuttonSignWritingLine.ttf",
+    "cdn": "https://github.com/Slevinski/SuttonSignWriting/raw/master/assets/SuttonSignWritingNull.ttf",
     "name": "Sutton SignWriting Null (font)",
     "desc": "The Sutton SignWriting Null Font contains empty glyphs for invalid symbol codes on Plane 4 and Plane 15. This font is useful to normalize how browsers and software process invalid characters."
   }
@@ -216,7 +216,7 @@ var swProfiles = {
   swSymbol: {
     "file": "SuttonSignWritingSymbol.mobileconfig",
     "local": "fonts/SuttonSignWritingSymbol.mobileconfig",
-    "cdn": "https://cdn.rawgit.com/Slevinski/SuttonSignWriting/master/assets/SuttonSignWritingSymbol.mobileconfig",
+    "cdn": "https://github.com/Slevinski/SuttonSignWriting/raw/master/assets/SuttonSignWritingSymbol.mobileconfig",
     "name": "Sutton SignWriting Symbol (profile)",
     "desc": "The Sutton SignWriting Symbol configuration profile contains two fonts for use in SVG, the HTML Canvas, and other Cartesian coordinate based systems.",
     "fonts": [swFonts.swLine, swFonts.swFill]
@@ -224,7 +224,7 @@ var swProfiles = {
   swOne: {
     "file": "SuttonSignWritingOne.mobileconfig",
     "local": "fonts/SuttonSignWritingOne.mobileconfig",
-    "cdn": "https://cdn.rawgit.com/Slevinski/SuttonSignWriting/master/assets/SuttonSignWritingOne.mobileconfig",
+    "cdn": "https://github.com/Slevinski/SuttonSignWriting/raw/master/assets/SuttonSignWritingOne.mobileconfig",
     "name": "Sutton SignWriting One  (profile)",
     "desc": "The Sutton SignWriting One configuration profile contains two fonts for use in text input and for rendering normalization.",
     "fonts": [swFonts.swOneD, swFonts.swNull]
